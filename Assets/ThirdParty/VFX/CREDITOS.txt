@@ -1,0 +1,4 @@
+Efeitos visuais — pacote grátis revisado antes de entrar no projeto
+
+Kenney_ParticlePack/  Particle Pack 1.1, Kenney (www.kenney.nl) — CC0. Só os PNG transparentes (sem a pasta "Rotated",
+                      sem o .unitypackage de exemplo: os materiais dele são do pipeline antigo, não do URP).

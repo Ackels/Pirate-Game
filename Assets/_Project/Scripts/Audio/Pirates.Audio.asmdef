@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Audio",
+    "rootNamespace": "Pirates.Audio",
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Controls", "Pirates.CameraSystem", "Pirates.Base", "Pirates.Progression", "Pirates.Loot", "Pirates.Missions", "Pirates.Save"],
+    "autoReferenced": true
+}

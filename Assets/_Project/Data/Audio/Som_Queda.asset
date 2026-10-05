@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Queda
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 8bfbfe00c223ca440b2ff735f3bfbb19, type: 3}
+  - {fileID: 8300000, guid: de6d3b9404578274e97966d476d1813b, type: 3}
+  - {fileID: 8300000, guid: 2bc56f22e0e441e4fb22874101b78c43, type: 3}
+  - {fileID: 8300000, guid: 1ffb7b3909ed7f94ca8b9476e8b547f4, type: 3}
+  - {fileID: 8300000, guid: c8ba56f2e47ba224fb805d0c0cc0ba0a, type: 3}
+  channel: 1
+  volume: {x: 0.55, y: 0.65}
+  pitch: {x: 0.85, y: 1}
+  spatial: 1
+  minDistance: 2
+  maxDistance: 25
+  cooldown: 0

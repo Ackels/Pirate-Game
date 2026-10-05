@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_AcampamentoCaveira
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: acampamento_caveira
+  title: O acampamento da Caveira
+  giver: Velho Bento
+  description: "Piratas montaram acampamento na Ilha da Caveira, a leste. Derrote todos: o ba\xFA deles fica com voc\xEA."
+  type: 1
+  count: 1
+  targetId: acampamento_caveira
+  targetName: Ilha da Caveira
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 200
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 6
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 0
+  fameReward: 30

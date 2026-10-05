@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_OndasPraia
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 8cd0e47ad0954384dbdc0dd845511b24, type: 3}
+  - {fileID: 8300000, guid: 83ef93f419580314e8c187e7ac2bb1a6, type: 3}
+  - {fileID: 8300000, guid: 5fc36e5d09cc80d4d8f735b8bc42594f, type: 3}
+  - {fileID: 8300000, guid: 3787ad3ac94dc2e468e076733cd939bf, type: 3}
+  channel: 2
+  volume: {x: 0.5, y: 0.65}
+  pitch: {x: 0.85, y: 1.05}
+  spatial: 1
+  minDistance: 6
+  maxDistance: 32
+  cooldown: 0

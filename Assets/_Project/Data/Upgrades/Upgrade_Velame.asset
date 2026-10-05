@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95e2cb824b98824194c06ba4f403dd3, type: 3}
+  m_Name: Upgrade_Velame
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.UpgradeDefinition
+  displayName: Velame novo
+  description: "Velas e cordame novos: mais velocidade m\xE1xima."
+  stat: 2
+  levels:
+  - value: 8
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 40
+    crewRequired: 0
+    buildSeconds: 20
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 16
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 18
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 80
+    crewRequired: 0
+    buildSeconds: 40
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 25
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 28
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 150
+    crewRequired: 0
+    buildSeconds: 75
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 1
+  - value: 31
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 48
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 255
+    crewRequired: 0
+    buildSeconds: 120
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 2

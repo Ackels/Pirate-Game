@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95e2cb824b98824194c06ba4f403dd3, type: 3}
+  m_Name: Upgrade_Canhoes
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.UpgradeDefinition
+  displayName: "Canh\xF5es refor\xE7ados"
+  description: 'Bocas de ferro mais grossas aguentam carga maior: mais dano por bala.'
+  stat: 1
+  levels:
+  - value: 3
+    cost:
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 4
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 2
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 50
+    crewRequired: 0
+    buildSeconds: 20
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 6
+    cost:
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 8
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 4
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 100
+    crewRequired: 0
+    buildSeconds: 40
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 10
+    cost:
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 12
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 6
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 180
+    crewRequired: 0
+    buildSeconds: 75
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 1
+  - value: 13
+    cost:
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 305
+    crewRequired: 0
+    buildSeconds: 120
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 2

@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Progression",
+    "rootNamespace": "Pirates.Progression",
+    "references": ["Pirates.Core", "Pirates.Economy", "Pirates.Ships", "Pirates.Combat"],
+    "autoReferenced": true
+}

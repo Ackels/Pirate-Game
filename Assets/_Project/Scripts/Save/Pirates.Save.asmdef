@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Save",
+    "rootNamespace": "Pirates.Save",
+    "references": ["Pirates.Core", "Pirates.Economy", "Pirates.Combat", "Pirates.Ships", "Pirates.Progression", "Pirates.Base", "Pirates.Missions"],
+    "autoReferenced": true
+}

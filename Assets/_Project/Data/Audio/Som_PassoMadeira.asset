@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_PassoMadeira
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 20a8e568c11802240a3593d9dff0a99f, type: 3}
+  - {fileID: 8300000, guid: 1df69b6276daef94398c7bd45b014ff2, type: 3}
+  - {fileID: 8300000, guid: fae56bbb32307c5439ed9e862c1d3f4f, type: 3}
+  - {fileID: 8300000, guid: 78a8f54db776e474abe2a25f5f1b6375, type: 3}
+  - {fileID: 8300000, guid: 1138151b59d437744979aeba4b4822bc, type: 3}
+  channel: 1
+  volume: {x: 0.38, y: 0.45}
+  pitch: {x: 0.9, y: 1.1}
+  spatial: 1
+  minDistance: 1.5
+  maxDistance: 22
+  cooldown: 0

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Cavar
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: e182951012d5d9b4d98daad44065b011, type: 3}
+  - {fileID: 8300000, guid: b3fe171ccb113f94db961babff14f48a, type: 3}
+  - {fileID: 8300000, guid: 7ebce883ef13da641bf794e8167a7130, type: 3}
+  - {fileID: 8300000, guid: 06973057a50faf447b5582421aa5db8a, type: 3}
+  - {fileID: 8300000, guid: 739ef5186bae25c4dab226b10a115a36, type: 3}
+  channel: 1
+  volume: {x: 0.7, y: 0.8}
+  pitch: {x: 0.85, y: 1}
+  spatial: 1
+  minDistance: 2
+  maxDistance: 30
+  cooldown: 0

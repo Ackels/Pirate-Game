@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_TesouroIlhaOeste
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: tesouro_ilha_oeste
+  title: "O mapa do Z\xE9 Caolho"
+  giver: "Z\xE9 Caolho"
+  description: 'Ganhei um mapa no carteado: o X fica numa gruta de pedras no lado sul do morro da Ilha Oeste, depois da pedra grande. Desembarque no lado leste e cave!'
+  type: 3
+  count: 1
+  targetId: tesouro_ilha_oeste
+  targetName: Ilha Oeste
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 60
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 0
+  fameReward: 15

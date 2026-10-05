@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Loot",
+    "rootNamespace": "Pirates.Loot",
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy"],
+    "autoReferenced": true
+}

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2593b4e0dd2e8504dba4ad94360ad890, type: 3}
+  m_Name: WaveSettings_Default
+  m_EditorClassIdentifier: Pirates.Ocean::Pirates.Ocean.WaveSettings
+  seaLevel: 0
+  waves:
+  - directionDegrees: 0
+    wavelength: 60
+    amplitude: 0.55
+    speedMultiplier: 1
+  - directionDegrees: 38
+    wavelength: 31
+    amplitude: 0.32
+    speedMultiplier: 1
+  - directionDegrees: -57
+    wavelength: 17
+    amplitude: 0.16
+    speedMultiplier: 1
+  - directionDegrees: 105
+    wavelength: 9
+    amplitude: 0.07
+    speedMultiplier: 1

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_ContrabandistasOeste
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: contrabandistas_oeste
+  title: Os contrabandistas da Ilha Oeste
+  giver: "Dona Merc\xEAs, do armaz\xE9m"
+  description: "Contrabandistas montaram esconderijo na enseada norte da Ilha Oeste e andam roubando a nossa carga. Expulse o bando: o ba\xFA do contrabando fica com voc\xEA."
+  type: 1
+  count: 1
+  targetId: esconderijo_oeste
+  targetName: Ilha Oeste
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 160
+  - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+    amount: 6
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 1
+  fameReward: 30

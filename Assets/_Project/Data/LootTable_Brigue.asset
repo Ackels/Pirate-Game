@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15e89f0bde9b38e439f6563d311bb570, type: 3}
+  m_Name: LootTable_Brigue
+  m_EditorClassIdentifier: Pirates.Loot::Pirates.Loot.LootTable
+  drops:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    chance: 1
+    minAmount: 80
+    maxAmount: 160
+  - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+    chance: 1
+    minAmount: 15
+    maxAmount: 30
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    chance: 0.9
+    minAmount: 6
+    maxAmount: 14
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    chance: 0.8
+    minAmount: 5
+    maxAmount: 10
+  - item: {fileID: 11400000, guid: f80b6460aef0a004bab1e8d8cfdf47d2, type: 2}
+    chance: 0.8
+    minAmount: 2
+    maxAmount: 5
+  chestChance: 0.5
+  schematics:
+  - item: {fileID: 11400000, guid: c9748e8c38f49614d96277de9a9b8297, type: 2}
+    weight: 3
+  - item: {fileID: 11400000, guid: 445f1886bad0def458d94817fee4baed, type: 2}
+    weight: 3
+  - item: {fileID: 11400000, guid: 4bea0b04f7d68374185f707dffbf118a, type: 2}
+    weight: 3
+  - item: {fileID: 11400000, guid: 5a3f1b3df17a32b4f9483e8bd04bf4fd, type: 2}
+    weight: 1
+  - item: {fileID: 11400000, guid: f9d70df234835a64599a9c969855a0d6, type: 2}
+    weight: 3
+  chestFallback:
+    item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 250
+  wreckPrefab: {fileID: 4959156044795848318, guid: 547e22f6873a636409b20456fbd86293, type: 3}
+  lifetime: 120

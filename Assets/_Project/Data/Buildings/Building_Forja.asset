@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25660b05bc2c2ab42aba6b77ec4cb244, type: 3}
+  m_Name: Building_Forja
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.BuildingDefinition
+  displayName: Forja
+  description: "Ferreiros fundem sucata e min\xE9rio: produz ferro sozinho no armaz\xE9m."
+  schematic: {fileID: 11400000, guid: 445f1886bad0def458d94817fee4baed, type: 2}
+  effect: 2
+  producedItem: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+  levels:
+  - value: 30
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 25
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 5
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 80
+    buildSeconds: 40
+  - value: 20
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 40
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 160
+    buildSeconds: 60
+  - value: 12
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 60
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 18
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 280
+    buildSeconds: 90
+  - value: 9
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 95
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 29
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 450
+    buildSeconds: 130

@@ -1,0 +1,23 @@
+Sons e músicas do Pirate RPG — todos CC0 (domínio público; crédito não obrigatório).
+Revisados antes de entrar no projeto (02/10/2026). Os FLAC foram convertidos para WAV 16 bits (o Unity não importa FLAC),
+conferidos pelo MD5 do próprio FLAC.
+
+Kenney (www.kenney.nl) — License.txt em cada pasta:
+  Kenney_ImpactSounds    Impact Sounds        https://kenney.nl/assets/impact-sounds
+  Kenney_RPGAudio        RPG Audio            https://kenney.nl/assets/rpg-audio
+  Kenney_InterfaceSounds Interface Sounds     https://kenney.nl/assets/interface-sounds
+  Kenney_MusicJingles    Music Jingles        https://kenney.nl/assets/music-jingles
+
+OpenGameArt.org:
+  Ambiente/wave_0X*.wav            Beach Ocean Waves — jasinski (via qubodup)   https://opengameart.org/content/beach-ocean-waves
+  Ambiente/Seagull *.wav           Solo Seagull Sound Effects — Rango Mango      https://opengameart.org/content/solo-seagull-sound-effects
+  Ambiente/fire-1.wav              Fire Crackling — AntumDeluge                  https://opengameart.org/content/fire-crackling
+  Ambiente/tree_creak.wav          Tree Creaking — AntumDeluge (Department64)    https://opengameart.org/content/tree-creaking
+  Ambiente/birds-isaiah658.ogg     Ambient Bird Sounds — isaiah658               https://opengameart.org/content/ambient-bird-sounds
+  Efeitos/cannon_fire.ogg          Cannon fire — Thimras                         https://opengameart.org/content/cannon-fire
+  Efeitos/bang_/cannon_/fw_/shot_  25 CC0 bang / firework SFX — rubberduck       https://opengameart.org/content/25-cc0-bang-firework-sfx
+  Efeitos/slightscream-XX.wav      15 vocal male strain/hurt/pain sounds — qubodup https://opengameart.org/content/15-vocal-male-strainhurtpainjump-sounds
+  Musica/TownTheme.mp3             Town Theme RPG — cynicmusic                   https://opengameart.org/content/town-theme-rpg
+  Musica/pirate1uf.ogg             Pirate Game Tune — Tozan (2015)               https://opengameart.org/content/pirate-game-tune
+  Musica/Battle.mp3                Battle Theme — Wolfgang_                      https://opengameart.org/content/battle-theme-0
+  Musica/Exploration Theme.ogg     Exploration Theme — Cleyton Kauffman          https://opengameart.org/content/exploration-theme

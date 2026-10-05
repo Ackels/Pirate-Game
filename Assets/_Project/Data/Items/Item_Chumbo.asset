@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Chumbo
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Cargas de chumbo
+  category: 0
+  rarity: 0
+  color: {r: 0.55, g: 0.57, b: 0.62, a: 1}
+  spacePerUnit: 0.1
+  description: "Punhado de chumbo e p\xF3lvora para o bacamarte: cada tiro gasta uma. O capit\xE3o leva 12 do por\xE3o ao desembarcar."
+  keepAboard: 40
+  backpackCapacity: 0

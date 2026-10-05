@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_EncomendaArsenal
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_arsenal
+  title: Encomenda para o arsenal
+  giver: Almirante Teodoro
+  description: "A esquadra do almirante vai ca\xE7ar o Tormenta e precisa de muni\xE7\xE3o de verdade: doze cargas de corrente e doze de metralha. S\xF3 confio isso a um capit\xE3o temido."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: dd07da3a7ae73804ea650ed42bb48175, type: 2}
+    amount: 12
+  - item: {fileID: 11400000, guid: 5ba181c6d9213f842a5a810043157e99, type: 2}
+    amount: 12
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 250
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 6
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 3
+  fameReward: 50

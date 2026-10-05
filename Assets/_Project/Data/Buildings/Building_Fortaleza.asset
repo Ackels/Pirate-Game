@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25660b05bc2c2ab42aba6b77ec4cb244, type: 3}
+  m_Name: Building_Fortaleza
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.BuildingDefinition
+  displayName: Fortaleza Costeira
+  description: "Muralha e canh\xF5es no alto do morro: atiram nos inimigos perto do porto e aumentam a zona segura."
+  schematic: {fileID: 11400000, guid: 5a3f1b3df17a32b4f9483e8bd04bf4fd, type: 2}
+  effect: 3
+  producedItem: {fileID: 0}
+  levels:
+  - value: 25
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 60
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 30
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 300
+    buildSeconds: 90
+  - value: 45
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 90
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 45
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 30
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 480
+    buildSeconds: 150

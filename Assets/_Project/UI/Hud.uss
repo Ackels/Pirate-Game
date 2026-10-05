@@ -1,0 +1,1329 @@
+/*
+ * HUD de jogo (UI Toolkit). Medidas em unidades do painel: referência 1600×900 (o painel escala com a tela).
+ * Peças: Kenney UI Pack Adventure (PNG "Double", 2×: as fatias valem metade na tela) e RPG Expansion; fontes Pirata One
+ * (títulos, nomes no mundo, anúncios) e Alegreya (texto). Cores: creme sobre madeira, tinta marrom sobre pergaminho.
+ */
+
+.hud {
+    -unity-font-definition: url("Fonts/Alegreya SDF.asset");
+    font-size: 18px;
+    color: rgb(247, 233, 201);
+}
+
+/* Sem o recuo padrão do tema nos textos (mesma força da regra do tema; as classes abaixo põem as margens delas). */
+.unity-label {
+    padding: 0;
+    margin: 0;
+}
+
+/* ---------- Regiões da tela ---------- */
+
+.hud-world, .hud-hurt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.hud-top-left {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    align-items: flex-start;
+}
+
+.hud-top-center {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 14px;
+    align-items: center;
+}
+
+.hud-top-right {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    align-items: flex-end;
+}
+
+.hud-notices {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 20%;
+    align-items: center;
+}
+
+.hud-banners {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30%;
+    align-items: center;
+}
+
+.hud-pickups {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 30%;
+    align-items: center;
+}
+
+/* Com uma janela aberta no meio, os ganhos aparecem embaixo dela. */
+.hud-pickups--low {
+    bottom: 2%;
+}
+
+.hud-prompts {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 110px;
+    align-items: center;
+}
+
+.hud-bottom-right {
+    position: absolute;
+    right: 18px;
+    bottom: 64px;
+    align-items: flex-end;
+}
+
+.hud-hurt {
+    border-width: 30px;
+    border-color: rgba(200, 10, 0, 0.4);
+}
+
+/* ---------- Cartões ---------- */
+
+.hud-card {
+    padding: 14px 20px 14px 20px;
+    margin-bottom: 8px;
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+}
+
+/* Madeira escurecida (a peça do pacote é castanho claro: o creme não lia em cima dela). */
+.hud-card--wood, .hud-prompt, .hud-toast {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-background-image-tint-color: rgb(120, 92, 78);
+    color: rgb(247, 233, 201);
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+}
+
+.hud-card--paper {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    color: rgb(59, 36, 20);
+}
+
+.hud-card__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 28px;
+    color: rgb(255, 211, 107);
+    margin-bottom: 2px;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-card--paper > .hud-card__title {
+    color: rgb(122, 46, 22);
+    -unity-text-outline-width: 0;
+}
+
+.hud-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.hud-hint {
+    font-size: 14px;
+    color: rgb(190, 170, 135);
+    -unity-text-align: middle-right;
+    margin-top: 6px;
+}
+
+/* ---------- Status (navio, a pé) ---------- */
+
+.hud-status {
+    width: 350px;
+}
+
+.hud-status__name {
+    width: 82px;
+    font-size: 17px;
+    color: rgb(232, 211, 168);
+}
+
+/* Nome mais comprido que a coluna (ex.: "Carpinteiro"): largura do texto e um respiro antes do estado. */
+.hud-status__name--wide {
+    width: auto;
+    margin-right: 8px;
+}
+
+.hud-status__value {
+    min-width: 76px;
+    flex-shrink: 0;
+    margin-left: 10px;
+    font-size: 17px;
+    -unity-text-align: middle-right;
+}
+
+.hud-status__value--wide {
+    flex-grow: 1;
+}
+
+.hud-pips {
+    flex-direction: row;
+}
+
+.hud-pip {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(29, 18, 10);
+    background-color: rgb(74, 51, 32);
+}
+
+.hud-pip--on {
+    background-color: rgb(255, 211, 107);
+}
+
+.hud-rudder {
+    width: 120px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: rgba(20, 12, 6, 0.85);
+}
+
+.hud-rudder__center {
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background-color: rgba(247, 233, 201, 0.45);
+}
+
+.hud-rudder__knob {
+    position: absolute;
+    top: -3px;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(29, 18, 10);
+    background-color: rgb(255, 211, 107);
+}
+
+/* Munição (M9): título com a dica das teclas e uma ficha por munição (tecla + nome + cargas), uma embaixo da outra. */
+.hud-ammo {
+    margin-top: 6px;
+}
+
+.hud-ammo__hint {
+    font-size: 14px;
+    color: rgb(200, 185, 150);
+    -unity-font-style: italic;
+}
+
+.hud-ammo__chips {
+    flex-direction: column;
+    margin-top: 3px;
+}
+
+.hud-ammo__chip {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2px;
+    padding: 1px 6px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(232, 211, 168, 0.25);
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.hud-ammo__chip--on {
+    background-color: rgba(255, 211, 107, 0.3);
+    border-color: rgb(255, 211, 107);
+}
+
+.hud-ammo__chip--empty {
+    opacity: 0.45;
+}
+
+/* Classe dupla: o .hud-key (mais abaixo no arquivo) ganharia de uma classe só. */
+.hud-key.hud-ammo__key {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+    margin-right: 8px;
+}
+
+.hud-ammo__name {
+    font-size: 15px;
+    color: rgb(247, 233, 201);
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.hud-ammo__count {
+    font-size: 15px;
+    color: rgb(255, 211, 107);
+    -unity-font-style: bold;
+    margin-left: 2px;
+}
+
+.hud-battery {
+    margin-top: 5px;
+}
+
+.hud-battery > .hud-key {
+    margin-right: 8px;
+}
+
+.hud-battery__state {
+    flex-grow: 1;
+    font-size: 16px;
+}
+
+.hud-weapons {
+    margin-top: 4px;
+    font-size: 17px;
+    white-space: normal;
+}
+
+.hud-camps {
+    margin-top: 4px;
+}
+
+.hud-camp {
+    font-size: 16px;
+    margin-top: 2px;
+    white-space: normal;
+}
+
+.hud-help {
+    max-width: 560px;
+}
+
+.hud-help__text {
+    font-size: 16px;
+    white-space: normal;
+}
+
+/* ---------- Barras ---------- */
+
+.hud-bar {
+    height: 14px;
+    border-radius: 7px;
+    border-width: 2px;
+    border-color: rgb(29, 18, 10);
+    background-color: rgba(20, 12, 6, 0.85);
+    overflow: hidden;
+}
+
+.hud-card--paper .hud-bar, .hud-window .hud-bar {
+    background-color: rgb(214, 190, 150);
+    border-color: rgb(110, 75, 45);
+}
+
+.hud-bar__fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    background-color: rgb(107, 189, 84);
+}
+
+.hud-bar--grow {
+    flex-grow: 1;
+}
+
+.hud-bar--thin {
+    width: 70px;
+    height: 9px;
+}
+
+/* ---------- Tecla ---------- */
+
+.hud-key {
+    width: 32px;
+    height: 32px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/round_brown.png");
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 17px;
+    color: rgb(59, 36, 20);
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+/* ---------- Avisos de ação ---------- */
+
+.hud-prompt {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+    padding: 10px 24px 10px 14px;
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+}
+
+.hud-prompt > .hud-key {
+    margin-right: 12px;
+}
+
+.hud-prompt__text {
+    font-size: 22px;
+    color: rgb(247, 233, 201);
+}
+
+/* ---------- Faixa grande ---------- */
+
+.hud-banner {
+    width: 640px;
+    height: 160px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/banner_hanging.png");
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 14px;
+}
+
+.hud-banner__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 46px;
+    color: rgb(255, 240, 210);
+    -unity-text-outline-width: 0.8px;
+    -unity-text-outline-color: rgba(90, 20, 10, 0.9);
+}
+
+.hud-banner__subtitle {
+    font-size: 20px;
+    color: rgb(255, 236, 205);
+    margin-top: -4px;
+}
+
+/* ---------- Chefe (barra no topo) ---------- */
+
+.hud-boss {
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.hud-boss__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 34px;
+    color: rgb(255, 236, 205);
+    -unity-text-outline-width: 0.8px;
+    -unity-text-outline-color: rgba(60, 12, 8, 0.95);
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+}
+
+.hud-boss__subtitle {
+    -unity-font-definition: url("Fonts/Alegreya Italic SDF.asset");
+    font-size: 17px;
+    color: rgb(245, 225, 195);
+    margin-top: -6px;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.hud-boss__bar {
+    width: 480px;
+    height: 18px;
+    border-radius: 9px;
+    border-width: 3px;
+}
+
+/* ---------- Ganhos e anúncios ---------- */
+
+.hud-feed {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 24px;
+    margin-top: 2px;
+    -unity-text-align: middle-center;
+    -unity-text-outline-width: 0.9px;
+    -unity-text-outline-color: rgba(25, 14, 6, 0.95);
+    text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.55);
+}
+
+.hud-feed--notice {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 34px;
+    margin-top: 6px;
+}
+
+/* ---------- No mundo ---------- */
+
+.hud-world-label {
+    position: absolute;
+    translate: -50% -50%;
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 26px;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(25, 14, 6, 0.95);
+    text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hud-world-label--small {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 19px;
+}
+
+.hud-world-label--debug {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 15px;
+}
+
+.hud-alert {
+    width: 18px;
+    height: 36px;
+    translate: -50% -100%;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_exclamation_red.png");
+    -unity-text-outline-width: 0;
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.hud-world-bar {
+    position: absolute;
+    width: 66px;
+    height: 10px;
+    border-radius: 5px;
+    border-width: 2px;
+    translate: -50% -100%;
+}
+
+.hud-marker {
+    position: absolute;
+    translate: -50% -50%;
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-marker__star {
+    width: 26px;
+    height: 26px;
+    margin-right: 6px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_yellow.png");
+}
+
+.hud-marker__text {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 25px;
+    color: rgb(255, 211, 107);
+    white-space: nowrap;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(25, 14, 6, 0.95);
+    text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hud-marker__arrow {
+    position: absolute;
+    left: 1px;
+    top: -30px;
+    width: 24px;
+    height: 24px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_arrow_a.png");
+    -unity-background-image-tint-color: rgb(255, 211, 107);
+}
+
+/* ---------- Missões ---------- */
+
+.hud-missions {
+    width: 340px;
+}
+
+.hud-mission {
+    align-items: flex-start;
+    margin-top: 4px;
+}
+
+.hud-mission__icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_yellow.png");
+}
+
+.hud-mission__icon--done {
+    width: 20px;
+    height: 19px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/iconCheck_bronze.png");
+}
+
+.hud-mission__text {
+    flex-shrink: 1;
+    flex-grow: 1;
+    font-size: 16px;
+    white-space: normal;
+}
+
+/* ---------- Porão / mochila ---------- */
+
+.hud-cargo {
+    width: 300px;
+}
+
+.hud-cargo__capacity {
+    margin-left: 10px;
+    flex-shrink: 0;
+    font-size: 15px;
+    color: rgb(107, 74, 43);
+}
+
+.hud-cargo__empty {
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    white-space: normal;
+    margin-top: 2px;
+}
+
+.hud-cargo__list {
+    margin-top: 4px;
+}
+
+.hud-cargo__row {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.hud-swatch {
+    width: 13px;
+    height: 13px;
+    margin-right: 8px;
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: rgb(59, 36, 20);
+}
+
+.hud-cargo__name {
+    flex-grow: 1;
+    font-size: 17px;
+}
+
+.hud-cargo__count {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 17px;
+}
+
+.hud-cargo__subtitle {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 21px;
+    color: rgb(122, 46, 22);
+    margin-top: 6px;
+}
+
+.hud-cargo__schematic {
+    font-size: 16px;
+}
+
+/* ---------- Faixa do porto e aviso de jogo salvo ---------- */
+
+.hud-strip {
+    padding: 10px 26px 10px 26px;
+    align-items: center;
+}
+
+.hud-strip__line {
+    font-size: 17px;
+    -unity-text-align: middle-center;
+}
+
+.hud-toast {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 19px;
+    color: rgb(169, 240, 160);
+    padding: 10px 22px 10px 22px;
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+}
+
+.hud-toast--error {
+    color: rgb(255, 138, 112);
+}
+
+/* ---------- Janelas (porto, baú, destroços) ---------- */
+
+.hud-windows, .hud-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-window {
+    width: 960px;
+    max-width: 94%;
+    max-height: 84%;
+    padding: 22px 30px 20px 30px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    color: rgb(59, 36, 20);
+}
+
+.hud-window--harbor {
+    width: 1040px;
+    height: 680px;
+}
+
+.hud-window--loot {
+    width: 900px;
+}
+
+.hud-window__header {
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 6px;
+}
+
+.hud-window__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 40px;
+    color: rgb(122, 46, 22);
+}
+
+.hud-window__subtitle {
+    font-size: 17px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    margin-left: 14px;
+    margin-bottom: 7px;
+}
+
+.hud-window__body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+
+.hud-window__footer {
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.hud-window__columns {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+
+.hud-window__column {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 0;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.hud-window__summary {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    margin-bottom: 2px;
+}
+
+.hud-window__row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.hud-window__item-row {
+    flex-direction: row;
+    align-items: center;
+    min-height: 32px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(110, 75, 45, 0.18);
+}
+
+.hud-window__text {
+    white-space: normal;
+}
+
+.hud-window__label {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.hud-window__value {
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.hud-window__small {
+    font-size: 15px;
+    white-space: normal;
+}
+
+.hud-window__muted {
+    color: rgb(107, 74, 43);
+}
+
+.hud-window__empty {
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    margin-top: 4px;
+}
+
+.hud-window__subtitle-strong {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(122, 46, 22);
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.hud-window__hint {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+}
+
+.hud-section {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 8px 12px 8px 12px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(110, 75, 45, 0.45);
+    background-color: rgba(150, 100, 50, 0.1);
+}
+
+.hud-section--job {
+    flex-shrink: 0;
+    background-color: rgba(150, 100, 50, 0.18);
+}
+
+/* Navio novo no estaleiro: destaque dourado (é a maior compra do jogo). */
+.hud-section--ship {
+    border-width: 2px;
+    border-color: rgba(190, 140, 40, 0.8);
+    background-color: rgba(230, 180, 60, 0.14);
+}
+
+.hud-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 100px;
+    margin-top: 4px;
+}
+
+.hud-item {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.hud-item__name {
+    font-size: 17px;
+}
+
+.hud-item__note {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    margin-left: 12px;
+    margin-right: 6px;
+}
+
+.hud-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.hud-align-right {
+    -unity-text-align: middle-right;
+}
+
+.hud-spacer {
+    flex-grow: 1;
+}
+
+.hud-window .hud-pips {
+    margin-right: 10px;
+}
+
+.hud-window .hud-pip {
+    border-color: rgb(110, 75, 45);
+    background-color: rgb(225, 205, 170);
+}
+
+.hud-window .hud-pip--on {
+    background-color: rgb(230, 170, 50);
+}
+
+.hud-pips--small .hud-pip {
+    width: 13px;
+    height: 13px;
+    margin-right: 3px;
+}
+
+/* ---------- Botões (madeira, Kenney RPG Expansion: peça 1×) ---------- */
+
+.hud .hud-button {
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/buttonLong_brown.png");
+    -unity-slice-left: 10;
+    -unity-slice-right: 10;
+    -unity-slice-top: 10;
+    -unity-slice-bottom: 12;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-radius: 0;
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 17px;
+    color: rgb(255, 244, 222);
+    padding: 7px 16px 8px 16px;
+    margin: 2px 3px 2px 3px;
+    -unity-text-outline-width: 0.4px;
+    -unity-text-outline-color: rgba(40, 20, 8, 0.7);
+}
+
+.hud .hud-button:hover {
+    -unity-background-image-tint-color: rgb(255, 228, 185);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.hud .hud-button:active {
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/buttonLong_brown_pressed.png");
+}
+
+.hud .hud-button:disabled {
+    -unity-background-image-tint-color: rgb(205, 190, 170);
+    color: rgb(105, 78, 55);
+    -unity-text-outline-width: 0;
+}
+
+.hud .hud-button--small {
+    font-size: 15px;
+    padding: 4px 10px 5px 10px;
+    min-width: 46px;
+}
+
+.hud .hud-button--buy {
+    min-width: 250px;
+}
+
+.hud .hud-button--big {
+    font-size: 24px;
+    height: 54px;
+    margin: 6px 0 6px 0;
+}
+
+.hud-tabs {
+    flex-direction: row;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.hud .hud-tab {
+    -unity-background-image-tint-color: rgb(170, 140, 120);
+}
+
+.hud .hud-tab--on {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    color: rgb(255, 222, 140);
+}
+
+/* ---------- Menu inicial ---------- */
+
+.hud-menu__backdrop {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(12, 8, 4, 0.72);
+}
+
+.hud-menu__panel {
+    width: 600px;
+    height: auto;
+    padding: 34px 46px 26px 46px;
+    align-items: stretch;
+}
+
+.hud-menu__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 84px;
+    color: rgb(122, 46, 22);
+    -unity-text-align: middle-center;
+}
+
+.hud-menu__subtitle {
+    font-size: 18px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    -unity-text-align: middle-center;
+    margin-top: -6px;
+}
+
+.hud-menu__content {
+    margin-top: 22px;
+}
+
+.hud-menu__summary {
+    font-size: 16px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    margin-top: 4px;
+    margin-bottom: 14px;
+}
+
+.hud-menu__question {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 34px;
+    color: rgb(122, 46, 22);
+    -unity-text-align: middle-center;
+}
+
+.hud-menu__buttons {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.hud-menu__buttons > .hud-button {
+    flex-grow: 1;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.hud-menu__note {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    -unity-text-align: middle-center;
+    margin-top: 18px;
+}
+
+/* Dica passageira (câmera no primeiro desembarque): menor que o aviso de ação. */
+.hud-prompt--hint .hud-prompt__text {
+    font-size: 18px;
+}
+
+/* ---------- Fama do capitão (M10, tecla C) ---------- */
+
+/* Plaquinha no canto de cima à direita: patente, barra até a próxima e a tecla. */
+.hud-fame-chip {
+    min-width: 230px;
+    padding: 10px 16px 10px 14px;
+}
+
+.hud-fame-chip__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-fame-chip__star {
+    width: 26px;
+    height: 26px;
+    margin-right: 8px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_yellow.png");
+    flex-shrink: 0;
+}
+
+.hud-fame-chip__rank {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 26px;
+    color: rgb(255, 211, 107);
+    flex-grow: 1;
+    margin-right: 10px;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-fame-chip > .hud-bar {
+    height: 10px;
+    margin-top: 5px;
+}
+
+.hud-fame-chip__note {
+    font-size: 14px;
+    color: rgb(230, 214, 180);
+    margin-top: 3px;
+}
+
+/* Bônus para escolher: a plaquinha fica dourada. */
+.hud-fame-chip--pending {
+    -unity-background-image-tint-color: rgb(170, 120, 40);
+}
+
+.hud-fame-chip--pending .hud-fame-chip__note {
+    color: rgb(255, 236, 160);
+    -unity-font-style: bold;
+}
+
+/* Painel */
+.hud-window--fame {
+    width: 1080px;
+    height: 700px;
+}
+
+.hud-fame {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+
+.hud-fame__card {
+    width: 300px;
+    flex-shrink: 0;
+    align-items: center;
+    margin-right: 18px;
+    padding: 6px 8px 8px 8px;
+    border-radius: 8px;
+    background-color: rgba(120, 70, 30, 0.12);
+    border-width: 1px;
+    border-color: rgba(110, 75, 45, 0.4);
+}
+
+/* Retrato redondo (fundo de céu e mar) com a moldura de madeira por cima. */
+.hud-fame__frame {
+    width: 220px;
+    height: 220px;
+    margin-top: 4px;
+}
+
+.hud-fame__portrait {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-radius: 102px;
+    overflow: hidden;
+    background-color: rgb(96, 160, 196);
+    border-width: 3px;
+    border-color: rgb(70, 42, 20);
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.hud-fame__ring {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_ring_brown.png");
+}
+
+.hud-fame__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 36px;
+    color: rgb(122, 46, 22);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-top: 6px;
+}
+
+.hud-fame__rank {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(255, 222, 140);
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-background-image-tint-color: rgb(120, 92, 78);
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    padding: 2px 22px 4px 22px;
+    margin-top: 2px;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-fame__stars {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.hud-fame__star {
+    width: 24px;
+    height: 24px;
+    margin: 0 2px 0 2px;
+    flex-shrink: 0;
+}
+
+.hud-fame__star--on {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_yellow.png");
+}
+
+.hud-fame__star--off {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_white.png");
+    -unity-background-image-tint-color: rgba(120, 90, 60, 0.55);
+}
+
+.hud-fame__quote {
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-top: 6px;
+}
+
+.hud-fame__deeds {
+    align-self: stretch;
+    margin-top: 10px;
+}
+
+.hud-fame__deed {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-fame__deed-value {
+    font-size: 18px;
+    color: rgb(122, 46, 22);
+}
+
+.hud-fame__right {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-top: 0;
+}
+
+.hud-fame__progress {
+    background-color: rgba(230, 180, 60, 0.12);
+}
+
+.hud-fame__points {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 40px;
+    color: rgb(122, 46, 22);
+    margin-right: 8px;
+}
+
+.hud-fame__points-label {
+    font-size: 18px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    margin-top: 12px;
+}
+
+.hud-window .hud-fame__bar {
+    height: 20px;
+    border-radius: 10px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+
+.hud-fame__offers {
+    flex-direction: row;
+    align-items: stretch;
+    margin-top: 4px;
+}
+
+.hud-fame__offer {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 0 4px 0 4px;
+    background-color: rgba(255, 245, 220, 0.5);
+}
+
+.hud-fame__offer > .hud-button {
+    margin-top: 6px;
+    align-self: center;
+}
+
+.hud-fame__rank-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 10px 5px 8px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border-radius: 6px;
+}
+
+.hud-fame__rank-row > .hud-fame__star {
+    margin-right: 10px;
+}
+
+.hud-fame__rank-row--current {
+    background-color: rgba(230, 180, 60, 0.22);
+    border-width: 2px;
+    border-color: rgba(190, 140, 40, 0.8);
+}
+
+.hud-fame__rank-row--locked {
+    opacity: 0.62;
+}
+
+.hud-fame__you {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 20px;
+    color: rgb(168, 50, 31);
+    margin-left: 10px;
+}
+
+.hud-fame__perk {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.hud-fame__check {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    flex-shrink: 0;
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/iconCheck_bronze.png");
+}
+
+/* Nome do capitão no menu inicial (Novo jogo). */
+.hud-menu__name {
+    margin: 4px 0 10px 0;
+}
+
+.hud-menu__name > .unity-base-text-field__input {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 34px;
+    color: rgb(122, 46, 22);
+    background-color: rgba(255, 248, 230, 0.75);
+    border-width: 2px;
+    border-color: rgb(110, 75, 45);
+    border-radius: 6px;
+    padding: 4px 12px 4px 12px;
+    -unity-text-align: middle-center;
+}

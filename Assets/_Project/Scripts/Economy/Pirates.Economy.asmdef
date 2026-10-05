@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Economy",
+    "rootNamespace": "Pirates.Economy",
+    "references": ["Pirates.Core"],
+    "autoReferenced": true
+}

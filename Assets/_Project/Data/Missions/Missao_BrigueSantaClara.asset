@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_BrigueSantaClara
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: brigue_santa_clara
+  title: O brigue Santa Clara
+  giver: Contramestre Ferraz
+  description: "Um brigue mercante bem armado, o Santa Clara, ronda as \xE1guas ao norte, depois da Ilha Norte. Seis canh\xF5es por bordo: venha preparado. Afunde-o e o por\xE3o dele \xE9 seu."
+  type: 0
+  count: 1
+  targetId: brigue_santa_clara
+  targetName: brigue Santa Clara
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 300
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 8
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 1
+  fameReward: 50

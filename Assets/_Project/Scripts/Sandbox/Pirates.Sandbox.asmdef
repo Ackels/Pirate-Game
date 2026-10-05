@@ -1,0 +1,21 @@
+{
+    "name": "Pirates.Sandbox",
+    "rootNamespace": "Pirates.Sandbox",
+    "references": [
+        "Pirates.Core",
+        "Pirates.Ships",
+        "Pirates.Combat",
+        "Pirates.Economy",
+        "Pirates.Progression",
+        "Pirates.Base",
+        "Pirates.OnFoot",
+        "Pirates.LandCombat",
+        "Pirates.Controls",
+        "Pirates.Loot",
+        "Pirates.Missions",
+        "Pirates.Save",
+        "Pirates.Audio",
+        "Unity.InputSystem"
+    ],
+    "autoReferenced": true
+}

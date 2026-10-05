@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Ships",
+    "rootNamespace": "Pirates.Ships",
+    "references": ["Pirates.Core"],
+    "autoReferenced": true
+}

@@ -1,0 +1,9 @@
+Interface (HUD) — pacotes grátis revisados antes de entrar no projeto
+
+Kenney_UIAdventure/  UI Pack - Adventure 1.1, Kenney (www.kenney.nl) — CC0. Só os PNG "Double" (2x).
+Kenney_UIRPG/        UI Pack (RPG Expansion), Kenney (www.kenney.nl) — CC0.
+Fonts/PirataOne/     Pirata One, Rodrigo Fuenzalida e Nicolas Massi — SIL Open Font License 1.1 (OFL.txt).
+                     Nome reservado "Pirata": não renomear/modificar a fonte com esse nome.
+Fonts/Alegreya/      Alegreya, The Alegreya Project Authors (Huerta Tipográfica) — SIL Open Font License 1.1 (OFL.txt).
+
+As fontes OFL podem ser usadas e embutidas no jogo (inclusive vendido); só não podem ser vendidas sozinhas.

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_MapaContrabandista
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: mapa_contrabandista
+  title: O mapa do contrabandista
+  giver: Rato Velho
+  description: "Um contrabandista b\xEAbado perdeu este mapa no cais: um X na praia noroeste da Ilha Oeste, junto de um bote virado. Os comparsas dele est\xE3o logo ali..."
+  type: 3
+  count: 1
+  targetId: tesouro_oeste_2
+  targetName: Ilha Oeste
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 50
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 1
+  fameReward: 15

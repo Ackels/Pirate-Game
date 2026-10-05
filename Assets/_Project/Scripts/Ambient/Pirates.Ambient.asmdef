@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.Ambient",
+    "rootNamespace": "Pirates.Ambient",
+    "references": ["Pirates.Core"],
+    "autoReferenced": true
+}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4926e090014cfb43b74a02bcde458e2, type: 3}
+  m_Name: ShipClass_Chalupa
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.ShipClassDefinition
+  displayName: Chalupa
+  description: "Um mastro, r\xE1pida e \xE1gil, mas de casco fino e por\xE3o pequeno."
+  tier: 0
+  stats: {fileID: 11400000, guid: b267ccca399f68b4ba7159a8d9dd4da8, type: 2}
+  cannons: {fileID: 11400000, guid: 9fcd856e59994fe40b5b6a25b4693397, type: 2}
+  hullMax: 150
+  holdCapacity: 45
+  crewBerths: 16
+  hullUpgradeMultiplier: 1
+  damageUpgradeMultiplier: 1
+  speedUpgradeMultiplier: 1
+  reloadUpgradeMultiplier: 1
+  aimUpgradeMultiplier: 1
+  upgradeCostMultiplier: 1
+  minReloadSeconds: 2.5
+  schematic: {fileID: 0}
+  requiredBuilding: {fileID: 0}
+  cost: []
+  buildSeconds: 180

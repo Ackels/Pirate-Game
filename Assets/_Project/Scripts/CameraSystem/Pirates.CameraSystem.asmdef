@@ -1,0 +1,6 @@
+{
+    "name": "Pirates.CameraSystem",
+    "rootNamespace": "Pirates.CameraSystem",
+    "references": ["Pirates.Core", "Pirates.Controls", "Unity.InputSystem"],
+    "autoReferenced": true
+}

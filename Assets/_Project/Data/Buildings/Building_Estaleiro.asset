@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25660b05bc2c2ab42aba6b77ec4cb244, type: 3}
+  m_Name: Building_Estaleiro
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.BuildingDefinition
+  displayName: Estaleiro
+  description: "Carreira e guindastes para obras grandes: libera navios maiores e o n\xEDvel 3 dos upgrades do navio (n\xEDvel 2: o n\xEDvel 4 dos upgrades)."
+  schematic: {fileID: 11400000, guid: c9748e8c38f49614d96277de9a9b8297, type: 2}
+  effect: 1
+  producedItem: {fileID: 0}
+  levels:
+  - value: 3
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 40
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 150
+    buildSeconds: 60
+  - value: 4
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 80
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 25
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 400
+    buildSeconds: 120

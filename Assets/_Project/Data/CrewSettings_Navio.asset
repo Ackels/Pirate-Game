@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 126627bb5a04c1a42824a75b5267613f, type: 3}
+  m_Name: CrewSettings_Navio
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.CrewSettings
+  crewItem: {fileID: 11400000, guid: f80b6460aef0a004bab1e8d8cfdf47d2, type: 2}
+  berths: 16
+  reloadBonusAtFull: 0.2
+  handlingBonusAtFull: 0.15
+  damagePerCasualty: 40
+  recruitCost:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 30
+  carpenterWood: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+  carpenterHullPerWood: 5
+  carpenterHullPerSecond: 2
+  carpenterQuietSeconds: 8
+  carpenterMinCrew: 2
+  carpenterCooldownSeconds: 90

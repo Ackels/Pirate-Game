@@ -1,0 +1,27 @@
+# Sem conversão de fim de linha: os arquivos vão para o git exatamente como estão no disco (cenas e assets YAML do Unity).
+* -text
+
+# Binários: sem diff nem merge de texto.
+*.fbx binary
+*.FBX binary
+*.obj binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.tif binary
+*.tiff binary
+*.psd binary
+*.exr binary
+*.hdr binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+*.flac binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.so binary
+*.a binary
+*.unitypackage binary
+*.bytes binary

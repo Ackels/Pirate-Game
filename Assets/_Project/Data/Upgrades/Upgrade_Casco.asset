@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95e2cb824b98824194c06ba4f403dd3, type: 3}
+  m_Name: Upgrade_Casco
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.UpgradeDefinition
+  displayName: "Casco refor\xE7ado"
+  description: "T\xE1buas duplas e cintas de ferro: mais vida no casco."
+  stat: 0
+  levels:
+  - value: 40
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 3
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 60
+    crewRequired: 0
+    buildSeconds: 20
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 90
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 6
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 120
+    crewRequired: 0
+    buildSeconds: 40
+    requiredBuilding: {fileID: 0}
+    requiredBuildingLevel: 1
+  - value: 150
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 30
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 200
+    crewRequired: 0
+    buildSeconds: 75
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 1
+  - value: 200
+    cost:
+    - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+      amount: 51
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 17
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 340
+    crewRequired: 0
+    buildSeconds: 120
+    requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+    requiredBuildingLevel: 2

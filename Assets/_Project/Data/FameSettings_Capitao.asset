@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad13b57c64b18e540bc23f226eeb7e76, type: 3}
+  m_Name: FameSettings_Capitao
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.FameSettings
+  ranks:
+  - title: Grumete
+    fame: 0
+    description: "Ningu\xE9m nas tavernas sabe o seu nome... ainda."
+  - title: Marujo de Respeito
+    fame: 60
+    description: "Os marinheiros do porto j\xE1 cumprimentam voc\xEA."
+  - title: "Cors\xE1rio"
+    fame: 200
+    description: "Mercadores pagam para voc\xEA ficar longe das rotas deles."
+  - title: "Capit\xE3o Temido"
+    fame: 450
+    description: Bandeiras inimigas descem quando a sua aparece no horizonte.
+  - title: Lenda dos Sete Mares
+    fame: 900
+    description: "Contam hist\xF3rias suas em portos que voc\xEA nunca visitou."
+  perks:
+  - id: artilheiro_nato
+    title: Artilheiro nato
+    description: "Canh\xF5es do navio com +10% de dano."
+    effect: 0
+    value: 0.1
+  - id: lobo_do_mar
+    title: Lobo do mar
+    description: "Velocidade m\xE1xima do navio +8%."
+    effect: 1
+    value: 0.08
+  - id: casco_de_carvalho
+    title: Casco de carvalho
+    description: "Casco m\xE1ximo do navio +15%."
+    effect: 2
+    value: 0.15
+  - id: negociante
+    title: Negociante
+    description: "O mercado paga 20% a mais pelo que voc\xEA vende e cobra 10% a menos."
+    effect: 3
+    value: 0.2
+  - id: mestre_de_obras
+    title: Mestre de obras
+    description: "Obras do estaleiro e da base 25% mais r\xE1pidas."
+    effect: 4
+    value: 0.25
+  - id: fama_de_generoso
+    title: Nome que vale ouro
+    description: "Miss\xF5es pagam 20% a mais de ouro (menos as entregas)."
+    effect: 5
+    value: 0.2
+  - id: carpinteiro_habil
+    title: "Carpinteiro h\xE1bil"
+    description: "O carpinteiro conserta 50% mais r\xE1pido e descansa menos."
+    effect: 6
+    value: 0.5
+  - id: porao_arrumado
+    title: "Por\xE3o arrumado"
+    description: "Por\xE3o do navio com 15% mais espa\xE7o."
+    effect: 7
+    value: 0.15
+  - id: tripulacao_calejada
+    title: "Tripula\xE7\xE3o calejada"
+    description: Tiros no casco matam metade dos tripulantes.
+    effect: 8
+    value: 1
+  perksOffered: 3
+  missionGoldPerRank: 0.1
+  defaultCaptainName: "Capit\xE3o Barbarossa"

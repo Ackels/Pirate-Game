@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4926e090014cfb43b74a02bcde458e2, type: 3}
+  m_Name: ShipClass_Escuna
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.ShipClassDefinition
+  displayName: Escuna
+  description: "Dois mastros e seis canh\xF5es por bordo: casco mais grosso, por\xE3o e alojamento maiores. Um pouco mais lenta e pesada para virar que a chalupa."
+  tier: 1
+  stats: {fileID: 11400000, guid: 4562093625eeee14a978acc58a309192, type: 2}
+  cannons: {fileID: 11400000, guid: 156f03b5f2bf9cc4d8a489453b6869fa, type: 2}
+  hullMax: 260
+  holdCapacity: 75
+  crewBerths: 24
+  hullUpgradeMultiplier: 1.2
+  damageUpgradeMultiplier: 1
+  speedUpgradeMultiplier: 1.2
+  reloadUpgradeMultiplier: 1.2
+  aimUpgradeMultiplier: 1
+  upgradeCostMultiplier: 1
+  minReloadSeconds: 2.5
+  schematic: {fileID: 11400000, guid: f9d70df234835a64599a9c969855a0d6, type: 2}
+  requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+  cost:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 500
+  - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+    amount: 80
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 25
+  buildSeconds: 180

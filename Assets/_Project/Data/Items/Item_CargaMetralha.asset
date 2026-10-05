@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_CargaMetralha
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Carga de metralha
+  category: 0
+  rarity: 1
+  color: {r: 0.9, g: 0.62, b: 0.45, a: 1}
+  spacePerUnit: 1
+  description: "Saco de balinhas de ferro: espalha muito e alcan\xE7a pouco (60 m), mas de perto faz mais dano e abate a tripula\xE7\xE3o inimiga (ela recarrega mais devagar). Uma carga por bordada (tecla 3 no navio)."
+  keepAboard: 9999

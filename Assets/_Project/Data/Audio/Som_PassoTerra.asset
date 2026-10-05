@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_PassoTerra
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 8952c83cc16937741b4530920e0b2715, type: 3}
+  - {fileID: 8300000, guid: 8262dbb71152f7248944dfdc7463234c, type: 3}
+  - {fileID: 8300000, guid: 491b15a8fbbdd1942bea0a2ce29aa9bf, type: 3}
+  - {fileID: 8300000, guid: b20832599ea77ed4e92a52d101d55538, type: 3}
+  - {fileID: 8300000, guid: 6b296f0e7c90a8d4b9e9933a4a7ecb4c, type: 3}
+  - {fileID: 8300000, guid: 89a1d31710a6d3440b0c177fde6aa700, type: 3}
+  - {fileID: 8300000, guid: b4a2e00c5fcac664ca8d595be6ffb7e1, type: 3}
+  - {fileID: 8300000, guid: 6b7e852aa15b1f041a7488c347516677, type: 3}
+  - {fileID: 8300000, guid: a92a0d0f8e824894490224c85d33ec08, type: 3}
+  - {fileID: 8300000, guid: 60738826bb519274b802a8a395346b07, type: 3}
+  channel: 1
+  volume: {x: 0.38, y: 0.45}
+  pitch: {x: 0.9, y: 1.1}
+  spatial: 1
+  minDistance: 1.5
+  maxDistance: 22
+  cooldown: 0

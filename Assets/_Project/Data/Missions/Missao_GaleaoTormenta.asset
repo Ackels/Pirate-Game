@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_GaleaoTormenta
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: galeao_tormenta
+  title: "O gale\xE3o Tormenta"
+  giver: Velho Tobias
+  description: "O Capit\xE3o L\xE1zaro Negro voltou: o gale\xE3o Tormenta, de velas pretas, ca\xE7a no mar do sudeste, al\xE9m da Ilha da Caveira. Seis canh\xF5es por bordo, tripula\xE7\xE3o que nunca se rende, e dizem que ele chama cors\xE1rios quando aperta. Afunde o Tormenta e o tesouro do L\xE1zaro \xE9 seu."
+  type: 0
+  count: 1
+  targetId: galeao_tormenta
+  targetName: "gale\xE3o Tormenta"
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 450
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 12
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 10
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 3
+  fameReward: 120

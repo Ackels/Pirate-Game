@@ -1,0 +1,30 @@
+{
+    "name": "Pirates.Editor",
+    "rootNamespace": "Pirates.EditorTools",
+    "references": [
+        "Pirates.Core",
+        "Pirates.Ocean",
+        "Pirates.Ships",
+        "Pirates.Combat",
+        "Pirates.Economy",
+        "Pirates.Loot",
+        "Pirates.Base",
+        "Pirates.Progression",
+        "Pirates.Sandbox",
+        "Pirates.OnFoot",
+        "Pirates.Controls",
+        "Pirates.CameraSystem",
+        "Pirates.UI",
+        "Pirates.LandCombat",
+        "Unity.AI.Navigation",
+        "Pirates.Missions",
+        "Pirates.Save",
+        "Pirates.Ambient",
+        "Pirates.Audio",
+        "Pirates.VFX"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": false
+}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_PistolaTiro
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: a1889caf7570ef0478155fe629324930, type: 3}
+  - {fileID: 8300000, guid: 7098ed484c1dc88429837e88883ec70c, type: 3}
+  - {fileID: 8300000, guid: d3da908a8af55de478eed7ad0473fbb4, type: 3}
+  - {fileID: 8300000, guid: 9c85cfb91298d6b4b8ceda16f34d5481, type: 3}
+  - {fileID: 8300000, guid: d76849111843c6a408964de9ed7b31d4, type: 3}
+  - {fileID: 8300000, guid: 1c711b5a294bce74896df84455eb074d, type: 3}
+  channel: 1
+  volume: {x: 0.8, y: 0.95}
+  pitch: {x: 0.95, y: 1.12}
+  spatial: 1
+  minDistance: 6
+  maxDistance: 140
+  cooldown: 0

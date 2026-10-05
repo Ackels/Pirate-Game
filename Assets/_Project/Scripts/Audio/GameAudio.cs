@@ -1,0 +1,174 @@
+using System.Collections.Generic;
+using Pirates.Base;
+using Pirates.Combat;
+using Pirates.Controls;
+using Pirates.Core;
+using Pirates.Economy;
+using Pirates.Loot;
+using Pirates.Missions;
+using Pirates.OnFoot;
+using Pirates.Progression;
+using Pirates.Save;
+using Pirates.Ships;
+using UnityEngine;
+
+namespace Pirates.Audio
+{
+    /// <summary>
+    /// Liga os sons ao jogo sem que os sistemas conheçam o áudio: ouve os eventos que eles já têm (canhões, porto,
+    /// casas, missões, saque, jogo salvo, troca navio ↔ terra) e põe ShipAudio em cada navio e CharacterAudio em cada
+    /// personagem a pé (procura de novo a cada 2 s: navios inimigos reaparecem como cópias novas). O personagem começa
+    /// desligado (o jogador está no navio): as buscas incluem objetos desligados. Também o mar aberto
+    /// (ondas 2D enquanto navega). Os volumes de cada canal vêm do SoundSettings.
+    /// </summary>
+    public class GameAudio : MonoBehaviour
+    {
+        [SerializeField] GameSounds sounds = new();
+        [SerializeField] SoundSettings settings;
+        [Tooltip("Tom da voz dos piratas (o capitão é 1).")]
+        [SerializeField] float pirateVoicePitch = 0.82f;
+        [Tooltip("Segundos entre ondas do mar aberto (sorteado entre x e y).")]
+        [SerializeField] Vector2 seaInterval = new(1.6f, 3.4f);
+
+        readonly HashSet<Object> hooked = new();
+        PlayerModeSwitcher switcher;
+        float nextScan, nextWave;
+        readonly Dictionary<LandChest, bool> chestOpen = new();
+        readonly Dictionary<BuriedTreasure, bool> canDig = new();
+
+        public GameSounds Sounds => sounds;
+
+        public void Configure(GameSounds gameSounds, SoundSettings soundSettings)
+        {
+            sounds = gameSounds;
+            settings = soundSettings;
+        }
+
+        void Awake() => SoundMix.Apply(settings);
+
+        void Start()
+        {
+            switcher = FindAnyObjectByType<PlayerModeSwitcher>();
+            if (switcher) switcher.ModeChanged += OnModeChanged;
+            if (Services.TryGet(out CombatEffects effects))
+            {
+                effects.Blasted += (p, _) => SoundPlayer.At(sounds.cannonFire, p);
+                effects.Splashed += p => SoundPlayer.At(sounds.cannonSplash, p);
+                effects.Impacted += (p, _) => SoundPlayer.At(sounds.cannonImpact, p);
+            }
+            foreach (var visitor in FindObjectsByType<HarborVisitor>(FindObjectsInactive.Include))
+            {
+                visitor.Docked += d => SoundPlayer.At(sounds.harborBell, d.transform.position + Vector3.up * 6f);
+                visitor.Undocked += d => SoundPlayer.At(sounds.harborBell, d.transform.position + Vector3.up * 6f, 0.6f, 1.15f);
+                visitor.Transferred += (_, _) => SoundPlayer.Ui(sounds.cargoMoved);
+                visitor.Repaired += (_, _, _) => SoundPlayer.Ui(sounds.repair);
+                visitor.Traded += (_, _) => SoundPlayer.Ui(sounds.purchase);
+                visitor.CraftOrdered += _ => SoundPlayer.Ui(sounds.purchase);
+                visitor.Crafted += _ => SoundPlayer.Ui(sounds.cargoMoved);
+            }
+            foreach (var building in FindObjectsByType<HarborBuildingVisitor>(FindObjectsInactive.Include))
+            {
+                building.Entered += _ => SoundPlayer.Ui(sounds.doorOpen);
+                building.Left += _ => SoundPlayer.Ui(sounds.doorClose);
+            }
+            foreach (var dock in HarborDock.Active)
+            {
+                dock.ConstructionStarted += _ => SoundPlayer.Ui(sounds.purchase);
+                dock.ConstructionFinished += _ => SoundPlayer.Ui(sounds.buildDone);
+                dock.SmithyReady += _ => SoundPlayer.Ui(sounds.buildDone);
+                if (dock.Buildings) dock.Buildings.Built += (_, _) => SoundPlayer.Ui(sounds.buildDone);
+            }
+            foreach (var looter in FindObjectsByType<LandLooter>(FindObjectsInactive.Include))
+            {
+                looter.Transferred += (_, _) => SoundPlayer.Ui(sounds.pickup);
+                looter.BackpackFull += () => SoundPlayer.Ui(sounds.backpackFull);
+            }
+            foreach (var salvager in FindObjectsByType<WreckSalvager>(FindObjectsInactive.Include)) salvager.Transferred += (_, _) => SoundPlayer.Ui(sounds.pickup);
+            foreach (var unloader in FindObjectsByType<BackpackUnloader>(FindObjectsInactive.Include)) unloader.Unloaded += (_, _) => SoundPlayer.Ui(sounds.cargoMoved);
+            if (Services.TryGet(out MissionBoard board))
+            {
+                board.Accepted += _ => SoundPlayer.Ui(sounds.missionAccepted);
+                board.ObjectiveCompleted += _ => SoundPlayer.Ui(sounds.missionDone);
+                board.TurnedIn += (_, _) => SoundPlayer.Ui(sounds.missionPaid);
+            }
+            foreach (var save in FindObjectsByType<GameSave>()) save.Saved += _ => SoundPlayer.Ui(sounds.gameSaved);
+            // Patente nova (M10): a fanfarra da missão paga.
+            if (CaptainFame.Current) CaptainFame.Current.RankUp += _ => SoundPlayer.Ui(sounds.missionPaid);
+            foreach (var dummy in FindObjectsByType<TrainingDummy>())
+                if (dummy.TryGetComponent(out Health h)) h.Damaged += info => SoundPlayer.At(sounds.dummyHit, info.point);
+            Scan();
+        }
+
+        void OnDestroy()
+        {
+            if (switcher) switcher.ModeChanged -= OnModeChanged;
+        }
+
+        void OnModeChanged(bool onFoot)
+        {
+            if (!switcher.Ship) return;
+            // Âncora descendo (desembarcou) ou subindo (embarcou).
+            SoundPlayer.At(sounds.anchor, switcher.Ship.transform.position, onFoot ? 1f : 0.8f, onFoot ? 1f : 1.12f);
+        }
+
+        void Update()
+        {
+            if (Time.time >= nextScan)
+            {
+                nextScan = Time.time + 2f;
+                Scan();
+            }
+            WatchChests();
+            // Mar aberto: ondas 2D enquanto navega (em terra quem soa são as ondas da praia).
+            bool sailing = !switcher || !switcher.IsOnFoot;
+            if (sailing && Time.time >= nextWave)
+            {
+                nextWave = Time.time + Random.Range(seaInterval.x, seaInterval.y);
+                SoundPlayer.Ui(sounds.seaWaves);
+            }
+        }
+
+        /// <summary>Navios, personagens e caixotes novos ganham seus sons.</summary>
+        void Scan()
+        {
+            foreach (var ship in FindObjectsByType<ShipController>())
+            {
+                if (!hooked.Add(ship)) continue;
+                if (!ship.TryGetComponent(out ShipAudio audio)) audio = ship.gameObject.AddComponent<ShipAudio>();
+                audio.Init(sounds);
+            }
+            foreach (var character in FindObjectsByType<FootCharacter>(FindObjectsInactive.Include))
+            {
+                if (!hooked.Add(character)) continue;
+                bool player = character.TryGetComponent(out PlayerFootInput _);
+                if (!character.TryGetComponent(out CharacterAudio audio)) audio = character.gameObject.AddComponent<CharacterAudio>();
+                audio.Init(sounds, player ? 1f : pirateVoicePitch, 1f);
+            }
+            foreach (var crate in BreakableLoot.Active)
+            {
+                if (!hooked.Add(crate) || !crate.TryGetComponent(out Health h)) continue;
+                var at = crate.transform;
+                h.Died += () => SoundPlayer.At(sounds.crateBreak, at.position + Vector3.up * 0.4f);
+            }
+        }
+
+        /// <summary>Baú abrindo (começou a saquear) e tesouro desenterrado (deixou de dar para cavar).</summary>
+        void WatchChests()
+        {
+            for (int i = 0; i < LandChest.Active.Count; i++)
+            {
+                var chest = LandChest.Active[i];
+                bool open = chest.IsBeingLooted;
+                if (chestOpen.TryGetValue(chest, out bool was) && open && !was) SoundPlayer.At(sounds.chestOpen, chest.transform.position);
+                chestOpen[chest] = open;
+            }
+            for (int i = 0; i < BuriedTreasure.Active.Count; i++)
+            {
+                var spot = BuriedTreasure.Active[i];
+                bool can = spot.CanDig;
+                if (canDig.TryGetValue(spot, out bool was) && was && !can) SoundPlayer.At(sounds.dig, spot.transform.position);
+                canDig[spot] = can;
+            }
+        }
+    }
+}

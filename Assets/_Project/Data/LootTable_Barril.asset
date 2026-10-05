@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15e89f0bde9b38e439f6563d311bb570, type: 3}
+  m_Name: LootTable_Barril
+  m_EditorClassIdentifier: Pirates.Loot::Pirates.Loot.LootTable
+  drops:
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    chance: 0.9
+    minAmount: 1
+    maxAmount: 3
+  - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+    chance: 0.3
+    minAmount: 1
+    maxAmount: 2
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    chance: 0.25
+    minAmount: 5
+    maxAmount: 10
+  - item: {fileID: 11400000, guid: 4cd591a96eddd6845a3c543531c1e8b5, type: 2}
+    chance: 0.2
+    minAmount: 1
+    maxAmount: 1
+  - item: {fileID: 11400000, guid: c0be865e055b6c04989863b058f7cbd5, type: 2}
+    chance: 0.3
+    minAmount: 3
+    maxAmount: 6
+  - item: {fileID: 11400000, guid: dc460fcb18d6fb24f91a6c7ad4cb03e4, type: 2}
+    chance: 0.2
+    minAmount: 2
+    maxAmount: 4
+  chestChance: 0
+  schematics: []
+  chestFallback:
+    item: {fileID: 0}
+    amount: 0
+  wreckPrefab: {fileID: 0}
+  lifetime: 120
