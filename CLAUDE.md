@@ -20,6 +20,9 @@ como rodar cada protótipo em [README.md](README.md).
 4. **Segurança:** nunca coloque credenciais/tokens no projeto. Antes de instalar skill, pacote ou ferramenta de
    terceiros, revise o conteúdo. Nenhuma integração externa (Unity Cloud, analytics, serviços) sem o Jhonata pedir.
 5. Responda em **português**.
+6. **Git / GitHub (05/10):** backup em https://github.com/Ackels/Pirate-Game (**privado**: o Mixamo e o Starter Assets não permitem
+   distribuir os arquivos soltos), branch `main`. Fora do git: `Library`, `Temp`, `Logs`, `UserSettings`, arquivos de IDE e `_Downloads`
+   (`.gitignore`); `.gitattributes` = `* -text` (sem conversão de fim de linha) + binários. Commit e push só quando o Jhonata pedir.
 
 ## Arquitetura (resumo)
 
