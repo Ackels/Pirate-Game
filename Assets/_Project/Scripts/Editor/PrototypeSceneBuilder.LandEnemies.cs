@@ -52,6 +52,10 @@ namespace Pirates.EditorTools
             }
 
             Campfire(camp, center, "Fogueira");
+            // Lanternas dos dois lados do portão norte (o grande, da praia) e uma no portão sul.
+            foreach (var (deg, name) in new[] { (-19f, "Lanterna_PortaoN_O"), (19f, "Lanterna_PortaoN_L"), (169f, "Lanterna_PortaoS") })
+                if (GroundAt(center + Quaternion.Euler(0f, deg, 0f) * Vector3.forward * (CampRadius + 2.2f), out var lanternGround))
+                    PostLantern(camp, lanternGround, name, range: 8f);
 
             Tent(camp, "Cabana_NO", new Vector3(-9.5f, 0f, 6f), 30f);
             Tent(camp, "Cabana_NE", new Vector3(9.5f, 0f, 6.5f), -35f);

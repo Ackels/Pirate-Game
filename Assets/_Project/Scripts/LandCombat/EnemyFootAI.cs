@@ -33,6 +33,8 @@ namespace Pirates.LandCombat
 
         [Header("Percepção")]
         [SerializeField] float sightRange = 16f;
+        [Tooltip("Noite fechada (M11): o alcance da vista vira esta fração (o 'perto demais' e o tiro/golpe que provoca continuam iguais).")]
+        [SerializeField, Range(0.2f, 1f)] float nightSight = 0.6f;
         [Tooltip("Abertura da visão (graus à frente).")]
         [SerializeField] float sightAngle = 150f;
         [Tooltip("Mais perto que isto (m) percebe o jogador mesmo de costas.")]
@@ -418,7 +420,9 @@ namespace Pirates.LandCombat
             if (Distracted || !TargetAvailable) return false;
             Vector3 to = target.position - transform.position;
             float distance = Flat(to).magnitude;
-            if (distance > sightRange) return false;
+            float range = sightRange;
+            if (Services.TryGet(out ITimeOfDay time)) range *= Mathf.Lerp(1f, nightSight, time.Night);
+            if (distance > Mathf.Max(range, hearRange)) return false;
             if (distance > hearRange && Vector3.Angle(transform.forward, Flat(to)) > sightAngle * 0.5f) return false;
 
             // Linha de visão do olho ao peito: personagens (colisor do CharacterController) não tapam a vista.

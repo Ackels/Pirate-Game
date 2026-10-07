@@ -269,6 +269,8 @@ namespace Pirates.EditorTools
                 stilt.SetPositionAndRotation(new Vector3(g.x, Mathf.Min(g.y, 0.4f) - 0.2f, g.z), Quaternion.Euler(0f, k * 25f - 20f, 0f));
                 Kenney("structure-platform", stilt, Vector3.zero, 0f, 1.6f, "Plataforma");
                 Kenney("structure-roof", stilt, Vector3.up * 1.49f, 90f, 1.15f, "Cabana");
+                // Lanterna no deck de cada palafita: só a do meio ilumina (as outras brilham).
+                NightLantern(Model(Kit.Town, "lantern", stilt, new Vector3(1.3f, 1.49f, 1.3f), 0f, 1.1f, "Lanterna"), realLight: k == 1, range: 8f);
                 var box = stilt.gameObject.AddComponent<BoxCollider>();
                 box.center = new Vector3(0f, 2.6f, 0f);
                 box.size = new Vector3(4f, 5.2f, 4f);
@@ -290,6 +292,7 @@ namespace Pirates.EditorTools
             pier.position = new Vector3(pierStart.x, 0f, pierStart.z);
             for (int k = 0; k < 3; k++)
                 Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - 1.31f * 1.6f, 2f + k * 4f), 0f, 1.6f, $"Tabuas_{k}");
+            NightLantern(Model(Kit.Town, "lantern", pier, new Vector3(-1.75f, 1.25f, 1.5f), 0f, 1.5f, "Lanterna_Cais"), range: 8f);
             var deckBox = pier.gameObject.AddComponent<BoxCollider>();
             deckBox.center = new Vector3(0f, 1.05f, 6f);
             deckBox.size = new Vector3(4f, 0.4f, 12f);
@@ -385,6 +388,7 @@ namespace Pirates.EditorTools
                 float a = degrees * Mathf.Deg2Rad;
                 var pos = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * FortRadius;
                 var piece = Kenney(k % 4 == 0 ? "castle-window" : "castle-wall", g, pos + Vector3.down * 0.3f, -(degrees + 90f), FortWallScale, $"Muralha_{k}");
+                if (k % 4 == 0) PirateWindowGlow(piece, "castle-window", 0.2f + k * 0.01f);
                 var box = piece.AddComponent<BoxCollider>();
                 box.center = new Vector3(0f, 2.2f, 0f);
                 box.size = new Vector3(2.1f, 4.4f, 1.6f);
@@ -393,7 +397,13 @@ namespace Pirates.EditorTools
             Kenney("castle-gate", g, new Vector3(FortRadius, -0.3f, 0f), -90f, FortWallScale, "Portao");
             const float tower = 1.4f;
             Occluder(Kenney("tower-base-door", g, Vector3.zero, 90f, tower, "Torre_Base"));
-            Occluder(Kenney("tower-middle-windows", g, Vector3.up * 2f * tower, 90f, tower, "Torre_Meio"));
+            var towerMiddle = Kenney("tower-middle-windows", g, Vector3.up * 2f * tower, 90f, tower, "Torre_Meio");
+            PirateWindowGlow(towerMiddle, "tower-middle-windows", 0.15f);
+            Occluder(towerMiddle);
+            // Lanternas do lado de fora do portão (leste).
+            for (int s = -1; s <= 1; s += 2)
+                if (GroundAt(center + new Vector3(FortRadius + 1.8f, 0f, s * 2.8f), out var gateGround))
+                    PostLantern(g, gateGround, $"Lanterna_Portao_{(s < 0 ? "S" : "N")}", range: 8f);
             Occluder(Kenney("tower-top", g, Vector3.up * 4f * tower, 90f, tower, "Torre_Topo"));
             var towerCollider = root.AddComponent<CapsuleCollider>();
             towerCollider.center = Vector3.up * 3.2f * tower;

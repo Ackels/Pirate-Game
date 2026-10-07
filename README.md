@@ -658,6 +658,48 @@ muralha e zona segura +45 m.
 `Data/HarborSettings_Base` (preço, patente, receita), `Data/Items/Item_Chumbo`. Cor e espessura do laser: `CharacterAimRig` no `Model` do
 personagem (cores, ponto, anel) e os objetos `LinhaDeMira`/`BrilhoDoLaser` (largura).
 
+## Vento (M11, passo 2, parte 1) — todas as cenas
+
+- **Vento que muda:** a direção e a força mudam devagar ao longo do dia de jogo (de calmaria a vento forte), em volta de um vento que mais
+  sopra para lés-nordeste. Com o relógio acelerado no F1 ele muda junto.
+- **Na vela:** com o vento por trás ou de lado o navio anda mais (com vento forte, +12% com o vento bem por trás e +10% uns 45° fora dele); de bolina e contra
+  o vento, menos (até −30% com o vento bem de frente). Com vento fraco a diferença é menor. Vale para os inimigos também: numa perseguição
+  em linha reta os dois pegam o mesmo vento.
+- **Painel do navio:** linha "Vento" com uma seta (proa para cima: a seta mostra para onde o vento sopra em relação ao navio), a força
+  (fraco/moderado/forte) e quanto ele ajuda ou segura nesse rumo ("forte, a favor +10%").
+- **No mundo:** a fumaça das chaminés, fogueiras e tiros vai com o vento; com vento forte o mar tem mais espuma nas cristas.
+- **Riscos de vento:** fitas brancas finas passam voando pela tela na direção do vento, ondulando, e algumas dão um laço (como no Zelda
+  Wind Waker). Com vento forte vêm muitas, rápidas e compridas; com vento fraco, uma de vez em quando; de noite ficam mais apagadas.
+- **Som do vento:** um sopro contínuo que fica mais alto e mais agudo com vento forte, com rajadas; em terra fica mais baixo. O som foi
+  gerado pelo próprio projeto (`Assets/_Project/Audio/Vento_Gerado.wav`); para trocar por uma gravação, ponha o arquivo no `Data/Audio/Som_Vento`.
+- **F1 → Vento:** fixar de onde vem (norte, leste, sul, oeste), fraco ou forte, ou voltar ao vento que muda sozinho.
+
+**Onde ajustar:** `Assets/_Project/Data/Vento` (vento dominante, quanto vira, quão rápido muda, força mínima/máxima, curva de velocidade pelo
+ângulo, efeito com vento fraco); espuma do mar no objeto Ocean ("Wind Foam"); riscos no objeto "Vento" (`WindStreaks`: quantos por segundo,
+velocidade, chance de laço, largura, transparência); som no objeto "Audio" (`WindAudio`: volume com calmaria/forte, tom, rajadas, volume a pé).
+
+## Dia e noite (M11, passo 1) — todas as cenas (o horário é salvo na 07)
+
+- **Relógio:** o dia (6h às 19h) dura 14 minutos de jogo e a noite (19h às 6h), 6 minutos. A hora só anda com o jogo rodando (no menu fica
+  parada). Plaquinha no canto de cima à direita, embaixo da fama: "Dia 3 · 18:50" e a parte do dia, com um disco amarelo (dia), laranja
+  (amanhecer/anoitecer) ou azul-claro (noite). O jogo salvo guarda o dia e a hora; jogo novo (e save de antes) começa às 8h.
+- **Luz:** o sol anda de leste a oeste; no fim da tarde a luz fica dourada com sombras longas, e de noite a mesma luz vira a lua azulada.
+  O céu, a névoa e o mar escurecem juntos (o mar deixa de refletir o céu do dia; a lua e as lanternas refletem na água). Ao meio-dia o
+  jogo fica como era antes.
+- **Lanternas:** as 9 do porto (píer, frente da taverna, praça) e a da popa do seu navio acendem ao anoitecer e iluminam em volta. Os
+  navios inimigos têm a lanterna da popa só brilhando (dá para achá-los no escuro). As fogueiras continuam acesas o dia todo.
+- **Casas e construções:** as janelas acendem à noite (umas 3 de cada 4; cada casa acende numa hora, a vila vai acendendo aos poucos) e
+  uma luz na frente de cada casa ilumina a rua. Vale para a vila, as construções da base (o paiol e o depósito de pólvora ficam apagados)
+  e as torres de pedra (Fortaleza, moinho, forte inimigo). Lanternas novas nos portões da Fortaleza, do forte inimigo e do acampamento da
+  Caveira, e no cais e nas palafitas do esconderijo dos contrabandistas.
+- **Piratas de terra** veem menos à noite: até ~10 m (de dia, 16). Bem perto (~4,5 m) percebem igual, e tiro ou golpe provoca o
+  acampamento como sempre.
+- **F1 → Dia e noite:** pular para o amanhecer, meio-dia, pôr do sol ou noite, e acelerar o relógio (×10, ×60).
+
+**Onde ajustar:** `Assets/_Project/Data/DayNight_Ciclo` (durações, horas do nascer/pôr do sol, altura do sol e da lua, cores e intensidade
+da luz, luz ambiente e névoa da noite e do anoitecer, reflexo e céu da noite, quando as lanternas acendem); visão noturna dos piratas em
+`EnemyFootAI → Night Sight` (gerado: mude no gerador ou no prefab do pirata).
+
 ## Fama do capitão (M10) — cenas 05 e 07
 
 **Tecla C** (no navio e a pé; gamepad: Select) abre o painel da fama: retrato e nome do capitão, patente com estrelas, feitos (navios,

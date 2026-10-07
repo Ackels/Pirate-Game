@@ -41,6 +41,8 @@ namespace Pirates.EditorTools
             document.panelSettings = panel;
             var hud = go.AddComponent<GameHud>();
             hud.Configure(style);
+            // Relógio do dia (M11): some sozinho na cena sem ciclo.
+            go.AddComponent<ClockHUD>();
             return hud;
         }
 

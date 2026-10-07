@@ -28,7 +28,7 @@ A progressão vem de upgrades do barco: **casco (vida)**, **canhões (dano, alca
 | M3 | Recursos + Base | Inventário completo (ouro, madeira, pólvora, ferro, comida, tripulação), porto-base com construções liberadas por esquemas, loja de upgrades, stats via modificadores | ✅ |
 | M4 | Ilhas + Terra | Desembarque, personagem a pé (câmera elevada), combate corpo a corpo + pistola, baús, inimigos em terra | ✅ |
 | M5 | Missões | NPCs no porto, missões data-driven (afundar X, entregar Y, explorar Z), recompensas | ✅ M5.1 (quadro no porto; desde o M6.6, na taverna, a pé) |
-| M6 | Persistência + polish | Save/load, áudio, VFX, shader de oceano, arte low-poly (Kenney/Quaternius, CC0) | ⏳ M6.1 save/load ✅; M6.2 navios e objetos ✅; M6.3 ilhas geradas ✅; M6.4 porto vira vila ✅; M6.5 personagens do Quaternius ✅; M6.6 porto a pé (casas de serviço) ✅; M6.7 Caveira 2× + câmera translúcida |
+| M6 | Persistência + polish | Save/load, áudio, VFX, shader de oceano, arte low-poly (Kenney/Quaternius, CC0) | ✅ M6.1 a M6.12 (save, arte low-poly, ilhas, vila, personagens, porto a pé, som, HUD, efeitos, oceano), aprovados até 05/10 |
 
 **MVP = M1 a M5 como vertical slice:** 1 porto-base, 3 ilhas, 2 tipos de inimigo naval (chalupa e brigue ✅), 1 tipo em terra,
 5 missões e 3 níveis de upgrade por categoria.

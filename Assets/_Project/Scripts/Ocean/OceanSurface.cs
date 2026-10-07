@@ -57,6 +57,12 @@ namespace Pirates.Ocean
         [SerializeField, Range(0f, 1f)] float whitecapStart = 0.58f;
         [Tooltip("Quanto de espuma nas cristas (0 = nenhuma).")]
         [SerializeField, Range(0f, 1.5f)] float whitecapAmount = 0.85f;
+        [Tooltip("Espuma das cristas × isto com calmaria e com vento forte (M11: segue a força do IWind; sem vento, 1).")]
+        [SerializeField, Range(0f, 2f)] float windFoamCalm = 0.55f, windFoamStrong = 1.35f;
+        [Tooltip("Com vento forte a espuma começa mais embaixo na onda (fração da altura).")]
+        [SerializeField, Range(0f, 0.3f)] float windFoamLower = 0.1f;
+
+        float windStrength = -1f, nextWindCheck;
 
         Mesh mesh;
         Vector3[] baseVertices;
@@ -136,11 +142,34 @@ namespace Pirates.Ocean
             Shader.SetGlobalVector(FoamColorId, foamColor.linear.WithAlpha(foamColor.a));
             Shader.SetGlobalVector(ShoreParamsId, new Vector4(Mathf.Max(0.1f, shallowWidth), Mathf.Max(0.01f, foamDepth), foamNoiseScale, Mathf.Max(0.1f, foamWaveReach)));
             Shader.SetGlobalVector(FoamWavesId, new Vector4(Mathf.Max(0.1f, foamWaveSpacing), foamWaveSpeed, foamWaveWidth, 0f));
+            SendCrest();
+        }
+
+        /// <summary>Crista e espuma do mar aberto; a espuma acompanha a força do vento (sem vento na cena, como no Inspector).</summary>
+        void SendCrest()
+        {
             float amplitude = 0f;
             if (waves)
                 foreach (var term in waves.Terms) amplitude += term.amplitude;
-            Shader.SetGlobalVector(CrestId, new Vector4(Mathf.Max(0.01f, amplitude), crestTintStart, whitecapStart, whitecapAmount));
+            float foam = whitecapAmount, start = whitecapStart;
+            if (windStrength >= 0f)
+            {
+                foam *= Mathf.Lerp(windFoamCalm, windFoamStrong, windStrength);
+                start = Mathf.Clamp01(start + Mathf.Lerp(windFoamLower * 0.5f, -windFoamLower, windStrength));
+            }
+            Shader.SetGlobalVector(CrestId, new Vector4(Mathf.Max(0.01f, amplitude), crestTintStart, start, foam));
             Shader.SetGlobalVector(CrestColorId, crestColor.linear.WithAlpha(crestColor.a));
+        }
+
+        /// <summary>A força do vento mudou o bastante: manda a espuma de novo (confere duas vezes por segundo).</summary>
+        void FollowWind()
+        {
+            if (Time.time < nextWindCheck) return;
+            nextWindCheck = Time.time + 0.5f;
+            float strength = Services.TryGet(out IWind wind) ? wind.Strength : -1f;
+            if (Mathf.Abs(strength - windStrength) < 0.02f) return;
+            windStrength = strength;
+            SendCrest();
         }
         void OnDisable() => Services.Unregister<IOceanSampler>(this);
 
@@ -197,6 +226,7 @@ namespace Pirates.Ocean
         void LateUpdate()
         {
             if (!waves || mesh == null) return;
+            FollowWind();
 
             // Segue o alvo em passos de "spacing" para os vértices não "nadarem".
             if (followTarget)

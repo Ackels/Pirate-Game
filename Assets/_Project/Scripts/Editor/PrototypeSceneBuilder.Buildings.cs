@@ -130,11 +130,18 @@ namespace Pirates.EditorTools
                 Visual(b.magazine,
                     Group(root, "Paiol_N1", g =>
                     {
-                        var magazine = HouseAt(g, Spec("Paiol", 1, 2, 1, false, 61), MagazineArea, 30f);
+                        var paiol = Spec("Paiol", 1, 2, 1, false, 61);
+                        paiol.lit = false;   // pólvora: nada de vela acesa
+                        var magazine = HouseAt(g, paiol, MagazineArea, 30f);
                         for (int k = 0; k < 3; k++)
                             Kenney("barrel", g, magazine.TransformPoint(new Vector3(-2.6f, 0f, -2f + k * 1.5f)), k * 40f, 0.75f, $"Polvora_{k}");
                     }),
-                    Group(root, "Paiol_N2", g => HouseAt(g, Spec("Deposito", 2, 1, 1, false, 62), MagazineArea + new Vector2(7f, -4f), 30f)),
+                    Group(root, "Paiol_N2", g =>
+                    {
+                        var depot = Spec("Deposito", 2, 1, 1, false, 62);
+                        depot.lit = false;
+                        HouseAt(g, depot, MagazineArea + new Vector2(7f, -4f), 30f);
+                    }),
                     Group(root, "Paiol_N3", g => Windmill(g, PortGround(MagazineArea + new Vector2(-6f, 6f)))),
                     // N4 (M9): pilha de barris de pólvora e caixotes ao lado do paiol.
                     Group(root, "Paiol_N4", g =>
@@ -190,7 +197,7 @@ namespace Pirates.EditorTools
         {
             var local = ground - g.position;
             Kenney("tower-base", g, local, 0f, 1.3f, "Torre_Base");
-            Kenney("tower-middle-windows", g, local + Vector3.up * 2.6f, 0f, 1.3f, "Torre_Meio");
+            PirateWindowGlow(Kenney("tower-middle-windows", g, local + Vector3.up * 2.6f, 0f, 1.3f, "Torre_Meio"), "tower-middle-windows", 0.35f);
             Kenney("tower-roof", g, local + Vector3.up * 5.2f, 0f, 1.3f, "Torre_Telhado");
             var hub = new GameObject("Eixo_Pas").transform;
             hub.SetParent(g, false);
@@ -277,7 +284,9 @@ namespace Pirates.EditorTools
                 var local = top - g.position;
                 const float tower = 1.6f;
                 Occluder(Kenney("tower-base-door", g, local, 0f, tower, "Torre_Base"));
-                Occluder(Kenney("tower-middle-windows", g, local + Vector3.up * 2f * tower, 0f, tower, "Torre_Meio"));
+                var middle = Kenney("tower-middle-windows", g, local + Vector3.up * 2f * tower, 0f, tower, "Torre_Meio");
+                PirateWindowGlow(middle, "tower-middle-windows", 0.2f);
+                Occluder(middle);
                 Occluder(Kenney("tower-top", g, local + Vector3.up * 4f * tower, 0f, tower, "Torre_Topo"));
                 var towerCollider = g.gameObject.AddComponent<CapsuleCollider>();
                 towerCollider.center = local + Vector3.up * 3.2f;
@@ -305,11 +314,16 @@ namespace Pirates.EditorTools
                 var pos = center + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * radius;
                 // Giro que põe o comprimento da peça (X) na tangente do anel.
                 var piece = Kenney(k % 3 == 0 ? "castle-window" : "castle-wall", g, pos + Vector3.down * 0.3f, -(degrees + 90f), scale, $"Muralha_{k}");
+                if (k % 3 == 0) PirateWindowGlow(piece, "castle-window", 0.2f + k * 0.015f);
                 var box = piece.AddComponent<BoxCollider>();
                 box.center = new Vector3(0f, 2.2f, 0f);
                 box.size = new Vector3(2.1f, 4.4f, 1.6f);
             }
             Kenney("castle-gate", g, center + new Vector3(0f, -0.3f, radius), 180f, scale, "Portao");
+            // Lanternas dos dois lados do portão, do lado de fora (a trilha da vila chega aqui).
+            for (int s = -1; s <= 1; s += 2)
+                if (GroundAt(g.TransformPoint(center + new Vector3(s * 2.6f, 0f, radius + 1.6f)), out var ground))
+                    PostLantern(g, ground, $"Lanterna_Portao_{(s < 0 ? "O" : "L")}", range: 8f);
         }
 
         static void FortressGun(Transform parent, string name, Vector3 position, CannonStats stats, Material iron)

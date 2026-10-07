@@ -198,6 +198,20 @@
     background-color: rgb(255, 211, 107);
 }
 
+/* Vento (M11): mostrador redondo com a seta girando (proa para cima). */
+.hud-wind__dial {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: rgba(20, 12, 6, 0.85);
+    margin-right: 6px;
+    padding: 3px;
+}
+
+.hud-wind__arrow {
+    flex-grow: 1;
+}
+
 .hud-rudder {
     width: 120px;
     height: 10px;
@@ -1035,6 +1049,54 @@
 /* Dica passageira (câmera no primeiro desembarque): menor que o aviso de ação. */
 .hud-prompt--hint .hud-prompt__text {
     font-size: 18px;
+}
+
+/* ---------- Relógio do dia (M11) ---------- */
+
+/* Plaquinha embaixo da fama: disco de sol/lua, "Dia N · HH:MM" e a parte do dia. */
+.hud-clock {
+    min-width: 230px;
+    padding: 6px 16px 6px 14px;
+    margin-top: 6px;
+}
+
+.hud-clock__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-clock__disc {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    border-bottom-left-radius: 9px;
+    border-bottom-right-radius: 9px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(30, 16, 6, 0.8);
+    border-right-color: rgba(30, 16, 6, 0.8);
+    border-top-color: rgba(30, 16, 6, 0.8);
+    border-bottom-color: rgba(30, 16, 6, 0.8);
+    background-color: rgb(255, 212, 89);
+    flex-shrink: 0;
+}
+
+.hud-clock__time {
+    font-size: 18px;
+    color: rgb(240, 226, 196);
+    -unity-font-style: bold;
+    flex-grow: 1;
+}
+
+.hud-clock__part {
+    font-size: 15px;
+    color: rgb(214, 196, 160);
+    margin-left: 10px;
+    -unity-font-style: italic;
 }
 
 /* ---------- Fama do capitão (M10, tecla C) ---------- */

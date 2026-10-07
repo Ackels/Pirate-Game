@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d0a2d5e6c8edb488220f23466bc9f0, type: 3}
+  m_Name: DayNight_Ciclo
+  m_EditorClassIdentifier: Pirates.Ambient::Pirates.Ambient.DayNightSettings
+  dayMinutes: 14
+  nightMinutes: 6
+  sunrise: 6
+  sunset: 19
+  startHour: 8
+  twilightHours: 1.6
+  sunMaxElevation: 55
+  sunNoonAzimuth: -35
+  sunAzimuthSwing: 70
+  sunIntensity: 1.3
+  sunColor:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.5, b: 0.28, a: 1}
+    key1: {r: 1, g: 0.8, b: 0.6, a: 1}
+    key2: {r: 1, g: 0.95, b: 0.86, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 16384
+    ctime2: 39321
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+  moonMaxElevation: 50
+  moonAzimuth: 145
+  moonIntensity: 0.35
+  moonColor: {r: 0.55, g: 0.65, b: 0.95, a: 1}
+  moonShadowStrength: 0.6
+  nightAmbient: {r: 0.08, g: 0.1, b: 0.18, a: 1}
+  twilightTint: {r: 1, g: 0.72, b: 0.55, a: 1}
+  nightFog: {r: 0.05, g: 0.07, b: 0.12, a: 1}
+  twilightFog: {r: 0.86, g: 0.6, b: 0.46, a: 1}
+  nightReflection: 0.08
+  nightSkyExposure: 0.08
+  lanternsFrom: 0.25

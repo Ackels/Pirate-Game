@@ -121,6 +121,8 @@ namespace Pirates.EditorTools
                 seagulls = Cue("Gaivotas", Join(Numbered("Ambiente", "Seagull Ambient {0}.wav", 1, 7), Clips("Ambiente", "Seagull Big Ambient.wav", "Seagull Big Ambient 2.wav")), amb,
                     V(0.45f, 0.6f), V(0.92f, 1.08f), true, 10f, 70f),
                 shoreWaves = Cue("OndasPraia", waves, amb, V(0.5f, 0.65f), V(0.85f, 1.05f), true, 6f, 32f),
+                // M11: loop feito pelo gerador (PrototypeSceneBuilder.Weather.cs); volume e tom no WindAudio, pela força do vento.
+                wind = Cue("Vento", new[] { WindLoopClip() }, amb, V(0.55f, 0.55f), V(1f, 1f), false, 1f, 2f),
 
                 musicPort = Cue("MusicaPorto", Clips("Musica", "TownTheme.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
                 musicSea = Cue("MusicaMar", Clips("Musica", "pirate1uf.ogg"), music, V(0.7f, 0.7f), V(1f, 1f), false, 1f, 2f),
@@ -138,6 +140,7 @@ namespace Pirates.EditorTools
             var root = new GameObject("Audio");
             root.AddComponent<SoundPlayer>();
             root.AddComponent<GameAudio>().Configure(sounds, settings);
+            root.AddComponent<WindAudio>().Configure(sounds.wind);
             root.AddComponent<MusicDirector>().Configure(sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
                 Object.FindAnyObjectByType<PlayerModeSwitcher>(), playerShip ? playerShip.transform : null);
 

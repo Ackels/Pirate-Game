@@ -44,6 +44,11 @@ namespace Pirates.Save
         public string[] perks = Array.Empty<string>();
         public string[] perkOffer = Array.Empty<string>();
         public int shipsSunk, campsCleared, treasuresFound, missionsDone;
+
+        // Hora do dia (M11). Save de antes não tem (hasTime falso): começa na hora do jogo novo.
+        public bool hasTime;
+        public int day;
+        public float hour;
     }
 
     [Serializable]

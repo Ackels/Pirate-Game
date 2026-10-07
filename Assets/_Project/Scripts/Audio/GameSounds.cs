@@ -16,7 +16,7 @@ namespace Pirates.Audio
         public SoundCue doorOpen, doorClose, cargoMoved, repair, purchase, buildDone, missionAccepted, missionDone,
             missionPaid, gameSaved;
         // Ambiente
-        public SoundCue fire, jungleBirds, seagulls, shoreWaves;
+        public SoundCue fire, jungleBirds, seagulls, shoreWaves, wind;
         // Música
         public SoundCue musicPort, musicSea, musicIsland, musicCombat;
     }

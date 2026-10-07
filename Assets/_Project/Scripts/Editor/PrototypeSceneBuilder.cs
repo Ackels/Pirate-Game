@@ -136,6 +136,9 @@ namespace Pirates.EditorTools
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             RenderSettings.fogDensity = 0.0022f;
             RenderSettings.fogColor = new Color(0.64f, 0.75f, 0.83f);
+            // Dia e noite (M11): o ciclo move este sol (de noite, a lua) e acompanha o resto da luz.
+            CreateDayNight(sun);
+            CreateWind();
         }
 
         static OceanSurface CreateOcean(Material water, WaveSettings waves)
@@ -255,6 +258,8 @@ namespace Pirates.EditorTools
             visual.SetParent(root.transform, false);
             var model = Kenney(hull.model, visual, new Vector3(0f, ShipModelKeel, 0f), objectName: "Casco");
             root.AddComponent<SailVisual>().Configure(controller, FurlableSails(model.transform));
+            // Lanterna da popa (M11): o navio do jogador ilumina o convés à noite; os outros só brilham (acha-se o inimigo no escuro).
+            ShipLantern(root.transform, hull, realLight: name == "PlayerShip");
 
             return controller;
         }

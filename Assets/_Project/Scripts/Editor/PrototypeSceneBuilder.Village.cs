@@ -30,6 +30,8 @@ namespace Pirates.EditorTools
             /// <summary>Estandarte na fachada (ex.: "banner-red"), no andar de cima.</summary>
             public string banner;
             public int seed;
+            /// <summary>Janelas acesas e luz na porta à noite (M11). Paiol e depósito de pólvora ficam apagados.</summary>
+            public bool lit = true;
         }
 
         /// <summary>Casa no ponto do chão <paramref name="ground"/>, com a frente (porta) virada para <paramref name="yaw"/>.</summary>
@@ -48,6 +50,10 @@ namespace Pirates.EditorTools
                 new Vector3(h.width * c + 0.3f, 1f, h.depth * c + 0.3f), Quaternion.identity, KenneyColors.Stone);
 
             int doorCell = rng.Next(h.width);
+            // Janelas acesas à noite: sorteio à parte, para não mudar as paredes que o "rng" já sorteava.
+            var nightRng = new Random(h.seed * 31 + 7);
+            var windowsLit = new GameObject("JanelasAcesas").transform;
+            windowsLit.SetParent(root, false);
             for (int f = 0; f < h.floors; f++)
             {
                 bool wood = f > 0 || h.woodGround;
@@ -66,7 +72,8 @@ namespace Pirates.EditorTools
                 {
                     bool front = side == 90f && floor == 0 && i == doorCell;
                     string piece = front ? h.door ?? (wood ? "wall-wood-door" : "wall-door") : windows[rng.Next(windows.Length)];
-                    Model(Kit.Town, piece, root, Cell(i, j, floor), side, c, $"Parede_{floor}_{i}_{j}_{side:0}");
+                    var wall = Model(Kit.Town, piece, root, Cell(i, j, floor), side, c, $"Parede_{floor}_{i}_{j}_{side:0}");
+                    if (h.lit && piece.Contains("window") && nightRng.NextDouble() < 0.75) TownWindowGlow(wall.transform, windowsLit);
                 }
             }
 
@@ -95,6 +102,8 @@ namespace Pirates.EditorTools
             var door = new GameObject("Porta").transform;
             door.SetParent(root, false);
             door.localPosition = Cell(doorCell, h.depth - 1, 0) + new Vector3(0f, 0f, 0.5f * c);
+            if (h.lit) HouseNightLight(root, windowsLit, door.localPosition, c, nightRng);
+            else Object.DestroyImmediate(windowsLit.gameObject);
 
             var box = root.gameObject.AddComponent<BoxCollider>();
             box.center = new Vector3(0f, h.floors * c * 0.5f, 0f);

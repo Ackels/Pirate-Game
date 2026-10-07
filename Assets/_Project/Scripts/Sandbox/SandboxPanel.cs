@@ -2,6 +2,7 @@ using Pirates.Audio;
 using Pirates.Base;
 using Pirates.Combat;
 using Pirates.Controls;
+using Pirates.Core;
 using Pirates.Economy;
 using Pirates.LandCombat;
 using Pirates.Loot;
@@ -122,6 +123,8 @@ namespace Pirates.Sandbox
             DrawEnemies();
             DrawMissions();
             DrawFame();
+            DrawDayNight();
+            DrawWind();
             DrawSave();
             DrawSound();
             DrawTime();
@@ -377,6 +380,53 @@ namespace Pirates.Sandbox
             GUILayout.EndHorizontal();
             GUILayout.Space(8f);
         }
+
+        /// <summary>Dia e noite (M11): pular para uma hora e acelerar o relógio.</summary>
+        void DrawDayNight()
+        {
+            if (!Services.TryGet(out ITimeOfDay time)) return;
+            GUILayout.Label("<b>Dia e noite</b>", small);
+            int minutes = Mathf.FloorToInt(time.Hour * 60f);
+            GUILayout.Label($"<size=11>Dia {time.Day}, {minutes / 60:00}:{minutes % 60:00} (noite {time.Night:0.00}); relógio ×{time.Speed:0}.</size>", small);
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Amanhecer")) time.SetTime(time.Day, 5.6f);
+            if (GUILayout.Button("Meio-dia")) time.SetTime(time.Day, 12f);
+            if (GUILayout.Button("Pôr do sol")) time.SetTime(time.Day, 18.6f);
+            if (GUILayout.Button("Noite")) time.SetTime(time.Day, 23f);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            foreach (float speed in new[] { 1f, 10f, 60f })
+                if (GUILayout.Button($"×{speed:0}")) time.Speed = speed;
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        static readonly string[] CompassNames = { "norte", "nordeste", "leste", "sudeste", "sul", "sudoeste", "oeste", "noroeste" };
+
+        /// <summary>Vento (M11): mostra de onde vem e a força; fixa a direção (de onde vem) e a força, ou volta ao vento que muda sozinho.</summary>
+        void DrawWind()
+        {
+            if (!Services.TryGet(out IWind wind)) return;
+            GUILayout.Label("<b>Vento</b>", small);
+            // Vento se diz pelo lado de onde vem: soprando para o sul = vento norte.
+            int from = Mathf.RoundToInt(Mathf.Repeat(wind.Degrees + 180f, 360f) / 45f) % 8;
+            GUILayout.Label($"<size=11>Vem do {CompassNames[from]}, força {wind.Strength:0.00}{(wind.Overridden ? " (fixado aqui)" : " (muda sozinho)")}.</size>", small);
+            GUILayout.BeginHorizontal();
+            // Botão = de onde vem; o vento sopra para o lado oposto.
+            if (GUILayout.Button("Do norte")) wind.SetOverride(180f, FixedStrength(wind));
+            if (GUILayout.Button("Do leste")) wind.SetOverride(270f, FixedStrength(wind));
+            if (GUILayout.Button("Do sul")) wind.SetOverride(0f, FixedStrength(wind));
+            if (GUILayout.Button("Do oeste")) wind.SetOverride(90f, FixedStrength(wind));
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Fraco")) wind.SetOverride(wind.Degrees, 0.15f);
+            if (GUILayout.Button("Forte")) wind.SetOverride(wind.Degrees, 1f);
+            if (GUILayout.Button("Muda sozinho")) wind.SetOverride(null, null);
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        static float? FixedStrength(IWind wind) => wind.Overridden ? wind.Strength : null;
 
         // ---------- Jogo salvo ----------
 

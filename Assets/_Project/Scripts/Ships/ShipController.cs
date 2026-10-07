@@ -1,4 +1,5 @@
 using System;
+using Pirates.Core;
 using UnityEngine;
 
 namespace Pirates.Ships
@@ -40,6 +41,12 @@ namespace Pirates.Ships
 
         /// <summary>Velocidade máxima × isto (velas rasgadas por bala de corrente: menor que 1). Não mexe no ShipStats.</summary>
         public float SpeedMultiplier { get; set; } = 1f;
+
+        /// <summary>
+        /// Vento na vela (M11): velocidade máxima × isto, pelo ângulo entre a proa e o vento (<see cref="IWind"/>); 1 sem vento na cena ou
+        /// com as velas recolhidas/de ré. Vale igual para o jogador e a IA.
+        /// </summary>
+        public float WindFactor { get; private set; } = 1f;
 
         public void NotifyHullChanged() => HullChanged?.Invoke();
 
@@ -110,13 +117,14 @@ namespace Pirates.Ships
             Vector3 right = Vector3.Cross(Vector3.up, forward);
             Vector3 velocity = body.linearVelocity;
             ForwardSpeed = Vector3.Dot(velocity, forward);
+            WindFactor = Throttle > 0f && Services.TryGet(out IWind wind) ? wind.SailFactor(forward) : 1f;
 
             // Fora da água (ex.: saltando uma onda) velas e leme não têm efeito.
             float grip = Mathf.Clamp01(buoyancy.SubmergedRatio * 2f);
             if (grip <= 0.01f) return;
 
             // Propulsão: converge para a velocidade-alvo das velas.
-            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier - ForwardSpeed;
+            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier * WindFactor - ForwardSpeed;
             float accel = speedError > 0f
                 ? Mathf.Min(speedError * stats.speedResponse, stats.acceleration)
                 : Mathf.Max(speedError * stats.speedResponse, -stats.deceleration);

@@ -100,7 +100,7 @@ namespace Pirates.EditorTools
             // Mastro com a bandeira pirata na ponta: dá para achar o porto de longe.
             Kenney("flag-pirate-high", pier, new Vector3(1.5f, 1.25f, PierLength - 0.6f), 90f, 1.8f, "Bandeira");
             for (int i = 0; i < 3; i++)
-                Model(Kit.Town, "lantern", pier, new Vector3(-1.75f, 1.25f, 4f + i * 8f), 0f, 1.5f, $"Lanterna_{i}");
+                NightLantern(Model(Kit.Town, "lantern", pier, new Vector3(-1.75f, 1.25f, 4f + i * 8f), 0f, 1.5f, $"Lanterna_{i}"));
             Kenney("crate", pier, new Vector3(1.1f, 1.25f, 5f), 10f, 1f, "Caixote_A");
             Kenney("crate-bottles", pier, new Vector3(1.2f, 1.25f, 6.4f), -20f, 1f, "Caixote_B");
             Kenney("barrel", pier, new Vector3(-1.1f, 1.25f, 14f), 0f, 0.7f, "Barril_A");

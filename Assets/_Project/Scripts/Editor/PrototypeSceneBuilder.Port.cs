@@ -340,7 +340,7 @@ namespace Pirates.EditorTools
             var front = tavern.TransformPoint(new Vector3(0f, 0f, 3 * 3.5f * 0.5f + 1.6f));
             for (int s = -1; s <= 1; s += 2)
             {
-                Model(Kit.Town, "lantern", village, tavern.TransformPoint(new Vector3(s * 2.6f, 0f, 3 * 3.5f * 0.5f + 0.6f)), 0f, 1.6f, "Lanterna");
+                NightLantern(Model(Kit.Town, "lantern", village, tavern.TransformPoint(new Vector3(s * 2.6f, 0f, 3 * 3.5f * 0.5f + 0.6f)), 0f, 1.6f, "Lanterna"));
                 Model(Kit.Town, "stall-bench", village, front + tavern.right * (s * 3.6f), tavern.eulerAngles.y + 90f, 3f, "Banco");
             }
             Model(Kit.Survival, "barrel", village, front + tavern.right * 5.5f, 20f, SurvivalScale, "Barril_A");
@@ -391,7 +391,7 @@ namespace Pirates.EditorTools
             for (int k = 0; k < 4; k++)
             {
                 float a = (45f + k * 90f) * Mathf.Deg2Rad;
-                Model(Kit.Town, "lantern", village, PortGround(PlazaCenter + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 9.5f), 0f, 1.6f, $"Lanterna_Praca_{k}");
+                NightLantern(Model(Kit.Town, "lantern", village, PortGround(PlazaCenter + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 9.5f), 0f, 1.6f, $"Lanterna_Praca_{k}"));
             }
             Model(Kit.Survival, "box-large", village, PortGround(PlazaCenter + new Vector2(-9f, 6f)), 15f, SurvivalScale, "Caixa_A");
             Model(Kit.Survival, "box", village, PortGround(PlazaCenter + new Vector2(-8.2f, 7f)), 50f, SurvivalScale, "Caixa_B");
@@ -720,7 +720,7 @@ namespace Pirates.EditorTools
             var velocity = ps.velocityOverLifetime;
             velocity.enabled = true;
             velocity.space = ParticleSystemSimulationSpace.World;
-            // Vento leve para leste.
+            // Vento leve para leste (em Play o WindDrift troca pelo vento do momento).
             velocity.x = new ParticleSystem.MinMaxCurve(0.4f, 0.8f);
             velocity.y = new ParticleSystem.MinMaxCurve(0f, 0f);
             velocity.z = new ParticleSystem.MinMaxCurve(0f, 0.2f);
@@ -729,6 +729,7 @@ namespace Pirates.EditorTools
             renderer.mesh = SmokePuffMesh;
             renderer.sharedMaterial = GetMaterial("M_Fumaca", new Color(0.78f, 0.78f, 0.8f), 0.05f);
             renderer.shadowCastingMode = ShadowCastingMode.Off;
+            go.AddComponent<WindDrift>();
             Occluder(go, moving: true);
             return ps;
         }

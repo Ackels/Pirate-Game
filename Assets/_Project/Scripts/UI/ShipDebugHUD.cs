@@ -1,4 +1,5 @@
 using Pirates.Combat;
+using Pirates.Core;
 using Pirates.Progression;
 using Pirates.Ships;
 using UnityEngine;
@@ -7,8 +8,8 @@ using UnityEngine.UIElements;
 namespace Pirates.UI
 {
     /// <summary>
-    /// Painel do navio (UI Toolkit, canto de cima à esquerda): casco, tripulação (beliches ocupados), velas, velocidade e leme,
-    /// e cada bateria de canhões (pronta, mirando, recarregando), munição (1/2/3) e carpinteiro (R). Baixas na tripulação viram
+    /// Painel do navio (UI Toolkit, canto de cima à esquerda): casco, tripulação (beliches ocupados), velas, velocidade e leme, vento
+    /// (seta com a proa para cima, força e quanto ele ajuda ou segura o navio naquele rumo), e cada bateria de canhões (pronta, mirando, recarregando), munição (1/2/3) e carpinteiro (R). Baixas na tripulação viram
     /// um aviso (somadas por ~1 s). Ajuda dos controles com H; faixa "Seu navio afundou" quando o casco zera.
     /// Some em terra (o FootHUD desliga este componente).
     /// </summary>
@@ -21,7 +22,10 @@ namespace Pirates.UI
         VisualElement card, help;
         HudBanner sunk;
         HudBar hullBar, crewBar;
-        Label hullText, crewText, sailText, speedText, carpenterText;
+        Label hullText, crewText, sailText, speedText, carpenterText, windText;
+        VisualElement windRow, windArrow;
+        CachedText windLine;
+        float shownWindAngle = float.NaN;
         AmmoChip[] ammoChips;
         int shownAmmo = -1;
         bool[] ammoAnnounced;
@@ -139,6 +143,17 @@ namespace Pirates.UI
             helm.Add(speedText);
             card.Add(helm);
 
+            windRow = Hud.Row();
+            windRow.Add(Hud.Text("Vento", "hud-status__name"));
+            var dial = Hud.Box("hud-wind__dial");
+            windArrow = Hud.Box("hud-wind__arrow");
+            windArrow.generateVisualContent += DrawWindArrow;
+            dial.Add(windArrow);
+            windRow.Add(dial);
+            windText = Hud.Text("", "hud-status__value", "hud-status__value--wide");
+            windRow.Add(windText);
+            card.Add(windRow);
+
             batteries = ship.GetComponentsInChildren<CannonBattery>();
             rows = new BatteryRow[batteries.Length];
             for (int i = 0; i < batteries.Length; i++)
@@ -211,6 +226,51 @@ namespace Pirates.UI
             return true;
         }
 
+        /// <summary>Seta do vento (para onde ele sopra, com a proa para cima), força e o efeito nesse rumo com as velas cheias.</summary>
+        void RefreshWind()
+        {
+            bool has = Services.TryGet(out IWind wind);
+            Hud.Show(windRow, has);
+            if (!has) return;
+            var forward = Vector3.ProjectOnPlane(ship.transform.forward, Vector3.up);
+            float angle = Mathf.Round(Vector3.SignedAngle(forward, wind.Direction, Vector3.up) / 3f) * 3f;
+            if (angle != shownWindAngle)
+            {
+                shownWindAngle = angle;
+                windArrow.style.rotate = new Rotate(new Angle(angle, AngleUnit.Degree));
+            }
+            float off = Mathf.Abs(angle);
+            int point = off < 35f ? 0 : off < 75f ? 1 : off < 110f ? 2 : off < 150f ? 3 : 4;
+            int strength = wind.Strength < 0.4f ? 0 : wind.Strength < 0.7f ? 1 : 2;
+            int percent = Mathf.RoundToInt((wind.SailFactor(forward) - 1f) * 100f);
+            if (windLine.Stale(point, strength, percent))
+            {
+                string force = strength == 0 ? "fraco" : strength == 1 ? "moderado" : "forte";
+                string side = point switch { 0 => "por trás", 1 => "a favor", 2 => "de lado", 3 => "meio contra", _ => "contra" };
+                windLine.Text = percent == 0 ? $"{force}, {side}" : $"{force}, {side} {(percent > 0 ? "+" : "−")}{Mathf.Abs(percent)}%";
+            }
+            Hud.Set(windText, windLine.Text);
+        }
+
+        /// <summary>Seta apontando para cima (o elemento gira); desenhada uma vez, na cor do texto.</summary>
+        static void DrawWindArrow(MeshGenerationContext context)
+        {
+            var rect = context.visualElement.contentRect;
+            float w = rect.width, h = rect.height;
+            var paint = context.painter2D;
+            paint.fillColor = HudColors.Cream;
+            paint.BeginPath();
+            paint.MoveTo(new Vector2(w * 0.5f, h * 0.06f));
+            paint.LineTo(new Vector2(w * 0.86f, h * 0.48f));
+            paint.LineTo(new Vector2(w * 0.61f, h * 0.48f));
+            paint.LineTo(new Vector2(w * 0.61f, h * 0.94f));
+            paint.LineTo(new Vector2(w * 0.39f, h * 0.94f));
+            paint.LineTo(new Vector2(w * 0.39f, h * 0.48f));
+            paint.LineTo(new Vector2(w * 0.14f, h * 0.48f));
+            paint.ClosePath();
+            paint.Fill();
+        }
+
         void Update()
         {
             if (!ship || !ship.Stats) return;
@@ -255,6 +315,7 @@ namespace Pirates.UI
                 rudderKnob.style.left = Length.Percent((rudder + 1f) * 50f);
             }
 
+            RefreshWind();
             for (int i = 0; i < batteries.Length; i++) RefreshBattery(batteries[i], rows[i]);
             if (ammo) RefreshAmmo();
             if (carpenter) RefreshCarpenter();

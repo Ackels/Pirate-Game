@@ -36,8 +36,10 @@ namespace Pirates.VFX
         }
 
         [SerializeField] Materials materials = new();
-        [Tooltip("Vento (m/s²) que leva a fumaça.")]
+        [Tooltip("Vento (m/s²) que leva a fumaça (sem IWind na cena; com ele, segue a direção e a força do vento).")]
         [SerializeField] Vector3 wind = new(0.9f, 0.15f, 0.45f);
+        [Tooltip("Empurrão da fumaça (m/s²) com calmaria e com vento forte (M11).")]
+        [SerializeField] float windPushCalm = 0.4f, windPushStrong = 1.8f;
         [Header("Rastro")]
         [Tooltip("Velocidade (m/s) a partir da qual o navio deixa espuma.")]
         [SerializeField] float wakeMinSpeed = 1.2f;
@@ -54,7 +56,8 @@ namespace Pirates.VFX
         FxSystem smoke, blast, glow, sparks, water, drops, ring, foam, fire, splinters;
         CombatEffects effects;
         IOceanSampler ocean;
-        float nextScan;
+        float nextScan, nextWind;
+        Vector3 shownWind = new(float.NaN, 0f, 0f);
         readonly List<ShipTrack> ships = new();
         readonly HashSet<ShipController> known = new();
 
@@ -191,6 +194,20 @@ namespace Pirates.VFX
             }
         }
 
+        /// <summary>Fumaça (tiros, avaria) e poeira com o vento do <see cref="IWind"/>; confere duas vezes por segundo.</summary>
+        void FollowWind()
+        {
+            if (Time.time < nextWind) return;
+            nextWind = Time.time + 0.5f;
+            if (!Services.TryGet(out IWind current)) return;
+            var push = current.Direction * Mathf.Lerp(windPushCalm, windPushStrong, current.Strength);
+            push.y = wind.y;
+            if ((push - shownWind).sqrMagnitude < 0.0025f) return;
+            shownWind = push;
+            smoke.SetWind(push);
+            dust?.SetWind(push * 0.4f);
+        }
+
         // ---------- Navios ----------
 
         void Update()
@@ -200,6 +217,7 @@ namespace Pirates.VFX
                 nextScan = Time.time + 2f;
                 Scan();
             }
+            FollowWind();
             float dt = Time.deltaTime;
             if (dt <= 0f) return;
             for (int i = ships.Count - 1; i >= 0; i--)

@@ -165,6 +165,7 @@ namespace Pirates.Save
         {
             SaveFile.Archive();
             if (fame) fame.ResetAll(captainName);
+            if (Services.TryGet(out ITimeOfDay time)) time.ResetToStart();
             if (hold)
                 foreach (var stack in newGameKit)
                     if (stack.item && stack.amount > 0) hold.Add(stack.item, stack.amount);
@@ -254,6 +255,13 @@ namespace Pirates.Save
                 data.production = timers.ToArray();
                 if (buildings.Job != null)
                     data.buildingJob = Job(buildings.Job.building, buildings.Job.level, buildings.Job.duration, buildings.Job.progress, buildings.Job.paid);
+            }
+
+            if (Services.TryGet(out ITimeOfDay clock))
+            {
+                data.hasTime = true;
+                data.day = clock.Day;
+                data.hour = clock.Hour;
             }
 
             if (fame)
@@ -468,6 +476,8 @@ namespace Pirates.Save
                 }
                 fame.Restore(data.captainName, fameValue, data.perks ?? Array.Empty<string>(), data.perkOffer ?? Array.Empty<string>(), stats);
             }
+
+            if (data.hasTime && Services.TryGet(out ITimeOfDay time)) time.SetTime(data.day, data.hour);
 
             PlaceShipAtBerth();
             if (missing.Count > 0)

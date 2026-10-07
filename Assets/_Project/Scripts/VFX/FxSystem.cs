@@ -89,15 +89,7 @@ namespace Pirates.VFX
                 limit.multiplyDragByParticleVelocity = true;
             }
 
-            if (style.wind != Vector3.zero)
-            {
-                var force = system.forceOverLifetime;
-                force.enabled = true;
-                force.space = ParticleSystemSimulationSpace.World;
-                force.x = style.wind.x;
-                force.y = style.wind.y;
-                force.z = style.wind.z;
-            }
+            if (style.wind != Vector3.zero) SetWind(style.wind);
 
             var renderer = go.GetComponent<ParticleSystemRenderer>();
             renderer.renderMode = style.mesh ? ParticleSystemRenderMode.Mesh : style.mode;
@@ -115,6 +107,17 @@ namespace Pirates.VFX
             if (material) renderer.sharedMaterial = material;
 
             system.Play();
+        }
+
+        /// <summary>Vento que empurra as partículas (m/s², mundo). Vale também para as que já estão no ar (M11: segue o IWind).</summary>
+        public void SetWind(Vector3 wind)
+        {
+            var force = system.forceOverLifetime;
+            force.enabled = wind != Vector3.zero;
+            force.space = ParticleSystemSimulationSpace.World;
+            force.x = wind.x;
+            force.y = wind.y;
+            force.z = wind.z;
         }
 
         /// <summary>Uma partícula. <paramref name="spin"/> em graus por segundo (2D) ou um eixo aleatório (lascas).</summary>
