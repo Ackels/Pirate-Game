@@ -70,6 +70,9 @@ namespace Pirates.EditorTools
             // Navio novo (M8.2): a planta da escuna; constrói-se no estaleiro do porto (PrototypeSceneBuilder.Ships.cs).
             var schooner = Item(SchoonerSchematic, "Escuna", ItemCategory.Schematic, ItemRarity.Rare, RareColor, 0f,
                 "Planta de navio: a escuna de dois mastros, maior que a chalupa. Construída no estaleiro do porto.");
+            // Galeão (3ª classe): só no baú do Tormenta e no mercado da patente 4 (não entra nos outros baús).
+            Item(GalleonSchematic, "Galeão", ItemCategory.Schematic, ItemRarity.Epic, EpicColor, 0f,
+                "Planta de navio: o galeão de três mastros, o maior navio do mar. Construído no estaleiro do porto (pede o Estaleiro nível 2).");
 
             // Cores da paleta do Kenney: as primitivas que sobraram combinam com os modelos do kit.
             var m = new LootMaterials

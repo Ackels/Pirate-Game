@@ -54,6 +54,26 @@ namespace Pirates.Ambient
         [Tooltip("Noite (0–1) em que as lanternas começam a acender; cheias com a noite fechada.")]
         [Range(0f, 1f)] public float lanternsFrom = 0.25f;
 
+        [Header("Céu fechado (clima: nublado, chuva, tempestade)")]
+        [Tooltip("Sol × isto com o céu todo fechado (a lua também).")]
+        [Range(0f, 1f)] public float overcastSun = 0.2f;
+        [Tooltip("Luz ambiente × isto com o céu todo fechado.")]
+        [Range(0f, 1f)] public float overcastAmbient = 0.5f;
+        [Tooltip("Tom da luz (sol e ambiente) com o céu todo fechado: cinza-azulado de chuva.")]
+        public Color overcastTint = new(0.78f, 0.84f, 0.95f);
+        [Tooltip("Sombras com o céu todo fechado (força).")]
+        [Range(0f, 1f)] public float overcastShadow = 0.25f;
+        [Tooltip("Cor da névoa com o céu fechado de dia (de noite continua a da noite).")]
+        public Color overcastFog = new(0.42f, 0.47f, 0.52f);
+        [Tooltip("Névoa × isto com o céu todo fechado (mais densa: enxerga menos longe).")]
+        [Min(1f)] public float overcastFogDensity = 2.4f;
+        [Tooltip("Exposição do céu × isto com o céu todo fechado.")]
+        [Range(0f, 1f)] public float overcastSky = 0.45f;
+        [Tooltip("Reflexo do céu na água × isto com o céu todo fechado.")]
+        [Range(0f, 1f)] public float overcastReflection = 0.5f;
+        [Tooltip("Lanternas acesas (0–1) com a tempestade cheia, mesmo de dia.")]
+        [Range(0f, 1f)] public float stormLanterns = 0.7f;
+
         static Gradient DefaultSunColor()
         {
             var g = new Gradient();

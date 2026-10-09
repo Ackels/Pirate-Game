@@ -47,12 +47,24 @@ namespace Pirates.EditorTools
         // Vida base de cada tipo de alvo. Um tiro de canhão tira 12 (CannonStats.damagePerBall).
         const float PlayerHull = 150f, TargetShipHull = 100f, EnemyHull = 100f, RaftHull = 36f, BarrelHull = 12f;
 
+        /// <summary>
+        /// "CombatSystems" com o <see cref="CombatEffects"/> (efeitos e sons ouvem por ele): um por cena, criado por quem precisar primeiro
+        /// (canhões ou barris de pólvora; a cena 06 não tem combate naval e precisa dele para as explosões).
+        /// </summary>
+        static GameObject CombatSystemsObject()
+        {
+            var existing = Object.FindAnyObjectByType<CombatEffects>(FindObjectsInactive.Include);
+            if (existing) return existing.gameObject;
+            var systems = new GameObject("CombatSystems");
+            systems.AddComponent<CombatEffects>();
+            return systems;
+        }
+
         static void AddNavalCombat(CombatAssets assets, CombatScenario scenario, ShipController ship, ShipStats stats,
             Material deck, LootAssets loot)
         {
-            var systems = new GameObject("CombatSystems");
+            var systems = CombatSystemsObject();
             systems.AddComponent<CannonballSystem>().Configure(assets.iron, assets.particles);
-            systems.AddComponent<CombatEffects>();
 
             var body = ship.GetComponent<Rigidbody>();
             var cannons = new GameObject("Cannons").transform;

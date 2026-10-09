@@ -37,8 +37,21 @@ namespace Pirates.OnFoot
         static readonly int HitVariant = Animator.StringToHash("HitVariant");
         static readonly int DeathVariant = Animator.StringToHash("DeathVariant");
         static readonly int Eat = Animator.StringToHash("Eat");
+        static readonly int DodgeTrigger = Animator.StringToHash("Dodge");
+        static readonly int KickTrigger = Animator.StringToHash("Kick");
+        static readonly int Knock = Animator.StringToHash("Knock");
+        static readonly int KnockVariant = Animator.StringToHash("KnockVariant");
+        static readonly int Down = Animator.StringToHash("Down");
+        static readonly int DeadBool = Animator.StringToHash("Dead");
+        /// <summary>
+        /// Segundos do começo da queda até sair dela para o levantar, por variante (0 = chute, 1 = explosão, 2 = explosão com levantar rápido):
+        /// morreu antes disso, a queda termina deitada e ele fica (iguais às saídas do gerador).
+        /// </summary>
+        static readonly float[] KnockFallSeconds = { 0.8f, 1.5f, 0.47f };
         static readonly int FullBodyTag = Animator.StringToHash("CorpoInteiro");
         static readonly int AimTag = Animator.StringToHash("Mira");
+        /// <summary>Corpo inteiro mesmo andando (rolamento: o personagem se move durante a ação).</summary>
+        static readonly int MovingFullBodyTag = Animator.StringToHash("CorpoInteiroAndando");
 
         [SerializeField] FootCharacter character;
         [Tooltip("Suavização do Speed (s) para o blend tree não pular de um clipe para outro.")]
@@ -64,6 +77,7 @@ namespace Pirates.OnFoot
         float fullWeight, fullWeightVelocity;
         bool dead;
         int hitVariants, deathVariants, lastHit = -1, lastDeath = -1;
+        float knockedAt = float.NegativeInfinity, knockFall;
 
         /// <summary>O controller tem estados de levar golpe / de morrer (clipes do Mixamo presentes).</summary>
         public bool HasHitAnimation => hitVariants > 0;
@@ -109,26 +123,36 @@ namespace Pirates.OnFoot
 
         void OnEnable()
         {
-            if (character) character.Jumped += OnJumped;
+            if (character)
+            {
+                character.Jumped += OnJumped;
+                character.Dodged += OnDodged;
+            }
             if (combat)
             {
                 combat.Attacked += OnAttacked;
                 combat.WeaponChanged += OnWeaponChanged;
                 combat.Drawing += OnDrawing;
                 combat.Holstering += OnHolstering;
+                combat.Kicked += OnKicked;
                 if (combat.Current) OnWeaponChanged(combat.Current);
             }
         }
 
         void OnDisable()
         {
-            if (character) character.Jumped -= OnJumped;
+            if (character)
+            {
+                character.Jumped -= OnJumped;
+                character.Dodged -= OnDodged;
+            }
             if (combat)
             {
                 combat.Attacked -= OnAttacked;
                 combat.WeaponChanged -= OnWeaponChanged;
                 combat.Drawing -= OnDrawing;
                 combat.Holstering -= OnHolstering;
+                combat.Kicked -= OnKicked;
             }
         }
 
@@ -146,6 +170,10 @@ namespace Pirates.OnFoot
             dead = true;
             ResetTrigger(Hit);
             ResetTrigger(Attack);
+            if (parameters.Contains(DeadBool)) animator.SetBool(DeadBool, true);
+            // Morreu no meio da queda (explosão que mata, golpe logo depois do chute): a queda termina deitada e ele não levanta
+            // (o "Dead" segura a saída para o levantar). Já deitado ou levantando: "MortoNoChao". De pé: a morte normal.
+            if (character && character.IsDown && Time.time - knockedAt < knockFall && parameters.Contains(DeadBool)) return;
             if (parameters.Contains(DeathVariant)) animator.SetInteger(DeathVariant, Pick(deathVariants, ref lastDeath));
             SetTrigger(Die);
         }
@@ -160,6 +188,8 @@ namespace Pirates.OnFoot
         public void PlayRevive()
         {
             dead = false;
+            knockedAt = float.NegativeInfinity;
+            if (parameters.Contains(DeadBool)) animator.SetBool(DeadBool, false);
             ResetTrigger(Die);
             SetTrigger(Revive);
             if (combat && combat.Current) OnWeaponChanged(combat.Current);
@@ -193,6 +223,33 @@ namespace Pirates.OnFoot
 
         void OnHolstering(WeaponDefinition weapon) => SetTrigger(Holster);
 
+        /// <summary>Derrubado: cai (chute = cambaleia e senta; explosão = arremessado de costas) e levanta. Falso se o controller não tem os estados.</summary>
+        public bool PlayKnockdown(int variant)
+        {
+            if (dead || !parameters.Contains(Knock)) return false;
+            variant = Mathf.Clamp(variant, 0, KnockFallSeconds.Length - 1);
+            knockedAt = Time.time;
+            knockFall = KnockFallSeconds[variant];
+            ResetTrigger(Hit);
+            ResetTrigger(Attack);
+            ResetTrigger(KickTrigger);
+            if (parameters.Contains(KnockVariant)) animator.SetInteger(KnockVariant, variant);
+            SetTrigger(Knock);
+            return true;
+        }
+
+        void OnKicked()
+        {
+            if (!dead) SetTrigger(KickTrigger);
+        }
+
+        void OnDodged()
+        {
+            if (dead) return;
+            ResetTrigger(Attack);
+            SetTrigger(DodgeTrigger);
+        }
+
         void OnJumped()
         {
             if (parameters.Contains(Jump)) animator.SetBool(Jump, true);
@@ -208,6 +265,7 @@ namespace Pirates.OnFoot
             if (parameters.Contains(Speed)) animator.SetFloat(Speed, character.PlanarSpeed, speedDamp, dt);
             if (parameters.Contains(MotionSpeed)) animator.SetFloat(MotionSpeed, character.WalkingBackward ? -1f : 1f);
             if (parameters.Contains(Grounded)) animator.SetBool(Grounded, grounded || dead);
+            if (parameters.Contains(Down)) animator.SetBool(Down, character.IsDown);
             if (parameters.Contains(FreeFall)) animator.SetBool(FreeFall, !dead && !grounded && airTime > freeFallDelay && character.VerticalVelocity < 0f);
             if (parameters.Contains(Jump) && grounded && character.VerticalVelocity <= 0f) animator.SetBool(Jump, false);
             if (combat)
@@ -228,8 +286,14 @@ namespace Pirates.OnFoot
             var state = animator.IsInTransition(upperIndex) ? animator.GetNextAnimatorStateInfo(upperIndex) : animator.GetCurrentAnimatorStateInfo(upperIndex);
             bool action = state.tagHash == FullBodyTag || state.tagHash == AimTag;
             float still = 1f - Mathf.InverseLerp(fullBodyUntilSpeed, upperBodyFromSpeed, character.PlanarSpeed);
-            float target = dead && HasDeathAnimation ? 1f : action && grounded ? still : 0f;
-            fullWeight = Mathf.SmoothDamp(fullWeight, target, ref fullWeightVelocity, fullBodyBlendTime, Mathf.Infinity, dt);
+            float target = dead && HasDeathAnimation ? 1f : state.tagHash == MovingFullBodyTag ? 1f : action && grounded ? still : 0f;
+            // Rolamento: corpo todo na hora (com a mistura, os primeiros 0,1 s saíam meio corrida, meio rolamento).
+            if (state.tagHash == MovingFullBodyTag && !dead)
+            {
+                fullWeight = 1f;
+                fullWeightVelocity = 0f;
+            }
+            else fullWeight = Mathf.SmoothDamp(fullWeight, target, ref fullWeightVelocity, fullBodyBlendTime, Mathf.Infinity, dt);
             animator.SetLayerWeight(fullIndex, fullWeight);
         }
 

@@ -23,6 +23,15 @@ namespace Pirates.LandCombat
         [Tooltip("Fração da velocidade enquanto atordoado.")]
         [SerializeField, Range(0f, 1f)] float staggerSpeed = 0.3f;
 
+        [Header("Derrubado (pacote A, 09/10)")]
+        [Tooltip("Segundos no chão até ficar de pé: chute (cambaleia e cai sentado) e explosão (arremessado de costas). Iguais às animações.")]
+        [SerializeField] float stumbleSeconds = 1.5f, blastSeconds = 2.9f;
+        [Tooltip("Levanta rápido da explosão (o capitão: ~1,3 s; os piratas ficam blastSeconds) e fica invencível um instante ao levantar.")]
+        [SerializeField] bool quickRecovery;
+        [SerializeField] float quickBlastSeconds = 1.3f, getUpInvulnerable = 0.5f;
+        [Tooltip("Depois de levantar, segundos em que não cai de novo (chute atrás de chute travava o pirata no chão: revisão de 09/10).")]
+        [SerializeField] float knockImmunity = 2f;
+
         [Header("Provisório (sem clipes do Mixamo)")]
         [Tooltip("Graus que o corpo tomba para trás ao levar golpe.")]
         [SerializeField] float flinchDegrees = 14f;
@@ -38,6 +47,11 @@ namespace Pirates.LandCombat
         float flinch;
         Coroutine falling;
         GameObject lastAttacker;
+        /// <summary>Esta peça ligou o Invulnerable da vida pelo rolamento (o F1 também liga: só desligamos o que ligamos).</summary>
+        bool dodgeShield;
+
+        /// <summary>Capitão do jogador: levanta rápido da explosão e fica invencível um instante ao levantar.</summary>
+        public void SetQuickRecovery(bool value) => quickRecovery = value;
 
         public Health Health => health;
         public bool IsDead => health.IsDead;
@@ -86,6 +100,23 @@ namespace Pirates.LandCombat
             if (push.sqrMagnitude < 0.0001f) push = -transform.forward;
             hitAxis = transform.InverseTransformDirection(Vector3.Cross(Vector3.up, push.normalized));
             if (health.IsDead) return;
+            // No chão: leva o dano, mas sem tranco nem queda nova (não fica preso caindo).
+            if (character.IsDown) return;
+            if (info.knockdown != Knockdown.None && Time.time >= character.DownUntil + knockImmunity)
+            {
+                bool blast = info.knockdown == Knockdown.Blast;
+                float seconds = !blast ? stumbleSeconds : quickRecovery ? quickBlastSeconds : blastSeconds;
+                int variant = !blast ? 0 : quickRecovery ? 2 : 1;
+                if (combat) combat.Interrupt(seconds);
+                if (driver && driver.PlayKnockdown(variant)) character.KnockDown(seconds);
+                else
+                {
+                    // Sem os clipes: só o tranco e um atordoamento curto.
+                    flinch = 1f;
+                    character.SetSpeedMultiplier(staggerSpeed, 1f);
+                }
+                return;
+            }
 
             if (staggerSeconds > 0f)
             {
@@ -118,6 +149,17 @@ namespace Pirates.LandCombat
             health.Revive();
             character.SetIncapacitated(false);
             if (driver) driver.PlayRevive();
+        }
+
+        /// <summary>Rolamento: nada acerta no meio dele (golpe, tiro, explosão).</summary>
+        void Update()
+        {
+            float sinceUp = Time.time - character.DownUntil;
+            bool shield = (character.DodgeInvulnerable || (quickRecovery && sinceUp >= 0f && sinceUp < getUpInvulnerable)) && !health.IsDead;
+            if (shield == dodgeShield) return;
+            if (shield && health.Invulnerable) return;   // já invulnerável por outro motivo (F1)
+            dodgeShield = shield;
+            health.Invulnerable = shield;
         }
 
         void LateUpdate()

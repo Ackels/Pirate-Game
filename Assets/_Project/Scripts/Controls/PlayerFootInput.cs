@@ -44,6 +44,8 @@ namespace Pirates.Controls
                 move = CameraRelative(Vector2.ClampMagnitude(input.Move.ReadValue<Vector2>(), 1f)),
                 run = input.Run.IsPressed(),
                 jump = input.Jump.WasPressedThisFrame(),
+                dodge = input.Dodge.WasPressedThisFrame(),
+                kick = input.Kick.WasPressedThisFrame(),
                 attack = input.Attack.WasPressedThisFrame(),
                 aim = input.Aim.IsPressed(),
                 selectWeapon = input.Weapon1.WasPressedThisFrame() ? 1 : input.Weapon2.WasPressedThisFrame() ? 2
@@ -53,7 +55,7 @@ namespace Pirates.Controls
             command.hasAim = TryCursorAim(out command.aimPoint);
             if (WindowOpen)
             {
-                command.attack = command.aim = command.jump = command.nextWeapon = false;
+                command.attack = command.aim = command.jump = command.dodge = command.kick = command.nextWeapon = false;
                 command.selectWeapon = 0;
             }
             return command;

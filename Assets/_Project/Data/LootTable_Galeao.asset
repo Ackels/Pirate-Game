@@ -45,6 +45,8 @@ MonoBehaviour:
     weight: 1
   - item: {fileID: 11400000, guid: f9d70df234835a64599a9c969855a0d6, type: 2}
     weight: 3
+  - item: {fileID: 11400000, guid: b93f90f117496284cab7b2e91ad306fa, type: 2}
+    weight: 6
   chestFallback:
     item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
     amount: 400

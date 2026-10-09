@@ -45,8 +45,17 @@ namespace Pirates.OnFoot
         [Tooltip("Segundos para a arma assentar na mão ou na bainha ao trocar de lugar (sem estalo de posição).")]
         [SerializeField] float attachBlendTime = 0.15f;
 
+        [Header("Chute (V)")]
+        [Tooltip("Dano do chute (pouco: o que vale é derrubar), alcance (m) do peito, arco (°) à frente.")]
+        [SerializeField] float kickDamage = 8f, kickRange = 1.8f, kickAngle = 100f;
+        [Tooltip("Segundos até o pé acertar (no clipe, o pé fica esticado de 0,6 a 0,8 s; tocado 1,4× mais rápido), parado no chute e espera até o próximo.")]
+        [SerializeField] float kickImpact = 0.45f, kickBusy = 0.9f, kickCooldown = 3f;
+        [Tooltip("Empurrão (m/s) em quem leva o chute.")]
+        [SerializeField] float kickPush = 3.5f;
+
         readonly HashSet<IDamageable> hitThisSwing = new();
         FootCharacter character;
+        float nextKickTime;
         float busyUntil, nextAttackTime, tracerUntil, aimPoseUntil, lastAttackTime = float.NegativeInfinity;
         int lastVariant = -1;
         float bufferedUntil = float.NegativeInfinity, lastShotTime = float.NegativeInfinity;
@@ -109,6 +118,10 @@ namespace Pirates.OnFoot
         public event Action<WeaponDefinition, Vector3, Vector3> PelletLanded;
         /// <summary>A pose de arma mudou (arma que está sendo sacada ou que já está na mão; null = mãos vazias na troca).</summary>
         public event Action<WeaponDefinition> WeaponChanged;
+        /// <summary>Começou a chutar (animação).</summary>
+        public event Action Kicked;
+        /// <summary>O chute acertou alguém ou algo (ponto): som e brilho.</summary>
+        public event Action<Vector3> KickLanded;
         /// <summary>Começou a guardar / sacar esta arma (animações).</summary>
         public event Action<WeaponDefinition> Holstering;
         public event Action<WeaponDefinition> Drawing;
@@ -221,6 +234,8 @@ namespace Pirates.OnFoot
                 AimTarget = command.hasAim ? ShotTarget(command.aimPoint, out onTarget) : transform.position + transform.forward * 10f + Vector3.up * chestHeight;
                 AimOnTarget = onTarget;
             }
+
+            if (command.kick && CanKick) Kick(command);
 
             // Clique guardado: tenta de novo enquanto não vence (o comando atual traz a mira mais nova).
             if (command.attack) bufferedUntil = Time.time + attackBuffer;
@@ -389,6 +404,53 @@ namespace Pirates.OnFoot
             }
         }
 
+        public bool CanKick => !swapping && !IsAttacking && Time.time >= nextKickTime;
+
+        /// <summary>Chute para a mira (sem mira, para a frente): pouco dano, empurra e derruba (cambaleia e cai sentado).</summary>
+        void Kick(in FootCommand command)
+        {
+            Vector3 direction = transform.forward;
+            if (command.hasAim)
+            {
+                Vector3 toAim = command.aimPoint - transform.position;
+                toAim.y = 0f;
+                if (toAim.sqrMagnitude > 0.04f) direction = toAim.normalized;
+            }
+            busyUntil = Time.time + kickBusy;
+            nextAttackTime = Mathf.Max(nextAttackTime, Time.time + kickBusy);
+            nextKickTime = Time.time + kickCooldown;
+            bufferedUntil = float.NegativeInfinity;
+            character.FaceDuring(direction, kickImpact + 0.2f);
+            character.SetSpeedMultiplier(0.15f, kickBusy);
+            Kicked?.Invoke();
+            pendingStrike = StartCoroutine(KickStrike(direction));
+        }
+
+        IEnumerator KickStrike(Vector3 direction)
+        {
+            yield return new WaitForSeconds(kickImpact);
+            pendingStrike = null;
+            hitThisSwing.Clear();
+            Vector3 chest = transform.position + Vector3.up * chestHeight * 0.6f;
+            int count = Physics.OverlapSphereNonAlloc(chest, kickRange, snapHits, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                var col = snapHits[i];
+                if (col.transform.IsChildOf(transform) || IsAlly(col)) continue;
+                var target = col.GetComponentInParent<IDamageable>();
+                if (target == null || !hitThisSwing.Add(target)) continue;
+                Vector3 closest = col.bounds.ClosestPoint(chest);
+                Vector3 to = closest - chest;
+                to.y = 0f;
+                if (to.sqrMagnitude > 0.0001f && Vector3.Angle(direction, to) > kickAngle * 0.5f) continue;
+                target.TakeDamage(new DamageInfo { amount = kickDamage, point = closest, direction = direction, source = gameObject, knockdown = Knockdown.Stumble });
+                var pushable = col.GetComponentInParent<IPushable>();
+                if (pushable != null) pushable.Push(direction * kickPush);
+                KickLanded?.Invoke(closest);
+            }
+            hitThisSwing.Clear();
+        }
+
         bool TryAttack(in FootCommand command)
         {
             var weapon = Current;
@@ -498,7 +560,7 @@ namespace Pirates.OnFoot
             foreach (var pair in pelletDamage)
             {
                 var (amount, point, dir) = pair.Value;
-                pair.Key.TakeDamage(new DamageInfo { amount = amount, point = point, direction = dir, source = gameObject });
+                pair.Key.TakeDamage(new DamageInfo { amount = amount, point = point, direction = dir, source = gameObject, ignites = true });
                 Hit?.Invoke(weapon, point);
             }
             pelletDamage.Clear();

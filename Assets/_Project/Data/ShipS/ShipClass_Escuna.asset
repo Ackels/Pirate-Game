@@ -29,6 +29,7 @@ MonoBehaviour:
   minReloadSeconds: 2.5
   schematic: {fileID: 11400000, guid: f9d70df234835a64599a9c969855a0d6, type: 2}
   requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+  requiredBuildingLevel: 1
   cost:
   - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
     amount: 500

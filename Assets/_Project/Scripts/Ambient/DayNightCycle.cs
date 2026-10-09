@@ -8,7 +8,8 @@ namespace Pirates.Ambient
     /// Ciclo de dia e noite (M11): a hora anda com o jogo (parado no menu, parada também) e move a luz do sol, que de noite vira a lua
     /// (mesma luz, outra cor, outra direção: as sombras continuam). Acompanham a hora: a luz ambiente, a névoa, o céu, o reflexo do céu na
     /// água e as lanternas (<see cref="NightLight"/>). O dia claro fica como a cena já era: as cores do dia são lidas da cena ao começar.
-    /// Registra <see cref="ITimeOfDay"/> no <see cref="Services"/> (IA de terra, save, HUD e sandbox leem por lá).
+    /// Registra <see cref="ITimeOfDay"/> no <see cref="Services"/> (IA de terra, save, HUD e sandbox leem por lá). O céu fechado do clima
+    /// (<see cref="IWeather.Overcast"/>) escurece o sol, a luz ambiente e o céu, adensa a névoa e, na tempestade, acende as lanternas.
     /// </summary>
     public class DayNightCycle : MonoBehaviour, ITimeOfDay
     {
@@ -18,12 +19,12 @@ namespace Pirates.Ambient
 
         float hour;
         int day = 1;
-        float appliedHour = -1f;
+        float appliedHour = -1f, appliedOvercast = -1f, appliedStorm = -1f;
 
         // Como a cena era de dia (lido no Awake): o dia claro continua igual.
         SphericalHarmonicsL2 dayAmbient;
         Color dayFog;
-        float dayReflection = 1f, daySkyExposure = 1f, dayShadowStrength = 1f;
+        float dayReflection = 1f, daySkyExposure = 1f, dayShadowStrength = 1f, dayFogDensity = 0.002f;
         Material sky, sceneSky;
 
         public float Hour => hour;
@@ -44,6 +45,7 @@ namespace Pirates.Ambient
             dayAmbient = RenderSettings.ambientProbe;
             dayFog = RenderSettings.fogColor;
             dayReflection = RenderSettings.reflectionIntensity;
+            dayFogDensity = RenderSettings.fogDensity;
             if (sun) dayShadowStrength = sun.shadowStrength;
             // Cópia do céu: mexer na exposição do material da cena mudaria o asset (fica salvo depois do Play).
             sceneSky = RenderSettings.skybox;
@@ -91,14 +93,32 @@ namespace Pirates.Ambient
                 day++;
             }
             // Mudou o bastante para aparecer (~10 s de jogo): reaplica (o sol anda ~0,04°; ninguém vê os degraus).
-            if (Mathf.Abs(Mathf.DeltaAngle(hour * 15f, appliedHour * 15f)) > 0.045f) Apply();
+            if (Mathf.Abs(Mathf.DeltaAngle(hour * 15f, appliedHour * 15f)) > 0.045f || WeatherMoved()) Apply();
         }
 
-        /// <summary>Luz do sol/lua, ambiente, névoa, céu, reflexo e lanternas para a hora atual.</summary>
+        /// <summary>O céu fechou ou abriu o bastante para aparecer (o clima muda aos poucos).</summary>
+        bool WeatherMoved()
+        {
+            Weather(out float overcast, out float storm);
+            return Mathf.Abs(overcast - appliedOvercast) > 0.01f || Mathf.Abs(storm - appliedStorm) > 0.01f;
+        }
+
+        static void Weather(out float overcast, out float storm)
+        {
+            overcast = storm = 0f;
+            if (!Services.TryGet(out IWeather weather)) return;
+            overcast = weather.Overcast;
+            storm = weather.Storm;
+        }
+
+        /// <summary>Luz do sol/lua, ambiente, névoa, céu, reflexo e lanternas para a hora atual (e o céu fechado do clima).</summary>
         void Apply()
         {
             appliedHour = hour;
             if (!settings) return;
+            Weather(out float overcast, out float storm);
+            appliedOvercast = overcast;
+            appliedStorm = storm;
             float half = settings.twilightHours * 0.5f;
             // Claridade: sobe do nascer (−meia transição) até o dia claro e desce no pôr do sol.
             float daylight = Mathf.Min(Ramp(hour, settings.sunrise - half, settings.sunrise + half),
@@ -108,20 +128,32 @@ namespace Pirates.Ambient
             Night = night;
 
             PlaceSunOrMoon();
+            if (sun)
+            {
+                sun.intensity *= Mathf.Lerp(1f, settings.overcastSun, overcast);
+                sun.color = Color.Lerp(sun.color, sun.color * settings.overcastTint, overcast);
+                sun.shadowStrength = Mathf.Lerp(sun.shadowStrength, settings.overcastShadow, overcast);
+            }
 
             // Luz ambiente: a do céu da cena de dia (com tom de amanhecer/anoitecer), a da noite fechada de noite.
             var ambient = dayAmbient;
             Tint(ref ambient, Color.Lerp(Color.white, settings.twilightTint, twilight));
             var nightAmbient = new SphericalHarmonicsL2();
             nightAmbient.AddAmbientLight(settings.nightAmbient);
-            RenderSettings.ambientProbe = ambient * daylight + nightAmbient * night;
+            var lit = (ambient * daylight + nightAmbient * night) * Mathf.Lerp(1f, settings.overcastAmbient, overcast);
+            Tint(ref lit, Color.Lerp(Color.white, settings.overcastTint, overcast));
+            RenderSettings.ambientProbe = lit;
 
-            var fog = Color.Lerp(dayFog, settings.nightFog, night);
-            RenderSettings.fogColor = Color.Lerp(fog, settings.twilightFog, twilight * 0.55f);
-            RenderSettings.reflectionIntensity = Mathf.Lerp(dayReflection, settings.nightReflection, night);
-            if (sky && sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", Mathf.Lerp(daySkyExposure, settings.nightSkyExposure, night));
+            // Céu fechado: névoa cinza de dia (de noite a da noite manda) e mais densa.
+            var fog = Color.Lerp(Color.Lerp(dayFog, settings.overcastFog, overcast), settings.nightFog, night);
+            RenderSettings.fogColor = Color.Lerp(fog, settings.twilightFog, twilight * 0.55f * (1f - overcast));
+            RenderSettings.fogDensity = dayFogDensity * Mathf.Lerp(1f, settings.overcastFogDensity, overcast);
+            RenderSettings.reflectionIntensity = Mathf.Lerp(dayReflection, settings.nightReflection, night) * Mathf.Lerp(1f, settings.overcastReflection, overcast);
+            if (sky && sky.HasProperty("_Exposure"))
+                sky.SetFloat("_Exposure", Mathf.Lerp(daySkyExposure, settings.nightSkyExposure, night) * Mathf.Lerp(1f, settings.overcastSky, overcast));
 
-            NightLight.Level = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(settings.lanternsFrom, 0.85f, night));
+            float lanterns = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(settings.lanternsFrom, 0.85f, night));
+            NightLight.Level = Mathf.Max(lanterns, settings.stormLanterns * storm);
         }
 
         /// <summary>De dia o sol anda de leste a oeste; de noite a mesma luz vira a lua. Perto do horizonte a luz some (troca escondida).</summary>

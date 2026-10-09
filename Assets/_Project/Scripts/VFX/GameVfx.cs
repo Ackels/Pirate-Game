@@ -109,6 +109,7 @@ namespace Pirates.VFX
                 effects.Blasted += OnBlasted;
                 effects.Splashed += OnSplashed;
                 effects.Impacted += OnImpacted;
+                effects.Exploded += OnExploded;
             }
             Scan();
         }
@@ -122,6 +123,7 @@ namespace Pirates.VFX
             effects.Blasted -= OnBlasted;
             effects.Splashed -= OnSplashed;
             effects.Impacted -= OnImpacted;
+            effects.Exploded -= OnExploded;
         }
 
         float WaterHeight(Vector3 p) => ocean != null ? ocean.GetHeight(p) : 0f;
@@ -191,6 +193,46 @@ namespace Pirates.VFX
                 float grey = Random.Range(0.5f, 0.65f);
                 smoke.Emit(point + normal * 0.5f, normal * Random.Range(0.5f, 2f) + Random.insideUnitSphere * 0.5f,
                     Random.Range(1.2f, 1.7f), Random.Range(2f, 3f), new Color(grey, grey * 0.95f, grey * 0.9f, 0.6f), Random.Range(-30f, 30f));
+            }
+        }
+
+        /// <summary>
+        /// Barril de pólvora: clarão grande, bola de fogo que sobe, faíscas e aduelas voando, poeira rasteira em anel e uma coluna de
+        /// fumaça escura que fica no ar e vai com o vento. Tudo pelos sistemas que já existem (nada criado por explosão).
+        /// </summary>
+        void OnExploded(Vector3 center, float radius)
+        {
+            float r = Mathf.Max(1f, radius);
+            glow.Emit(center + Vector3.up * 0.6f, Vector3.zero, r * 3f, 0.22f, new Color(1f, 0.82f, 0.5f, 1f));
+            for (int i = 0; i < 9; i++)
+                blast.Emit(center + Random.insideUnitSphere * 0.9f + Vector3.up * 0.5f, Random.insideUnitSphere * 4f + Vector3.up * Random.Range(2f, 5f),
+                    r * Random.Range(0.7f, 1.05f), Random.Range(0.25f, 0.4f), new Color(1f, Random.Range(0.45f, 0.65f), 0.2f, 1f), Random.Range(-90f, 90f));
+            for (int i = 0; i < 14; i++)
+                fire.Emit(center + Random.insideUnitSphere * 1.2f, Random.insideUnitSphere * 3f + Vector3.up * Random.Range(1.5f, 4.5f),
+                    Random.Range(1.4f, 2.4f), Random.Range(0.45f, 0.8f), new Color(1f, 0.6f, 0.25f, 1f));
+            for (int i = 0; i < 26; i++)
+                sparks.Emit(center, (Random.insideUnitSphere + Vector3.up * 0.6f) * Random.Range(8f, 18f), Random.Range(0.1f, 0.18f),
+                    Random.Range(0.4f, 0.8f), new Color(1f, 0.8f, 0.45f, 1f));
+            for (int i = 0; i < 16; i++)
+            {
+                float shade = Random.Range(0.6f, 1f);
+                splinters.EmitSized(center, (Random.insideUnitSphere + Vector3.up * 0.9f) * Random.Range(5f, 11f),
+                    new Vector3(Random.Range(0.1f, 0.18f), Random.Range(0.05f, 0.09f), Random.Range(0.45f, 0.8f)),
+                    Random.Range(1.4f, 2f), new Color(0.42f * shade, 0.27f * shade, 0.15f * shade, 1f), Random.Range(300f, 900f));
+            }
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 ring = Random.insideUnitCircle.normalized;
+                var flat = new Vector3(ring.x, 0f, ring.y);
+                dust?.Emit(center - Vector3.up * 0.35f + flat * 0.6f, flat * Random.Range(4f, 7f) + Vector3.up * 0.3f, Random.Range(1f, 1.6f),
+                    Random.Range(0.9f, 1.4f), new Color(0.72f, 0.64f, 0.52f, 0.7f), Random.Range(-40f, 40f));
+            }
+            for (int i = 0; i < 16; i++)
+            {
+                float grey = Random.Range(0.28f, 0.42f);
+                smoke.Emit(center + Random.insideUnitSphere * 0.8f + Vector3.up * Random.Range(0.3f, 2.5f),
+                    Random.insideUnitSphere * 1.6f + Vector3.up * Random.Range(1.5f, 4f), Random.Range(1.8f, 2.8f), Random.Range(4.5f, 7f),
+                    new Color(grey, grey * 0.95f, grey * 0.9f, 0.85f), Random.Range(-30f, 30f));
             }
         }
 

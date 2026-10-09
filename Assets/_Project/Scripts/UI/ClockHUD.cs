@@ -6,7 +6,8 @@ namespace Pirates.UI
 {
     /// <summary>
     /// Relógio do dia (M11): plaquinha no canto de cima à direita (embaixo da fama) com um disco de sol/lua, "Dia N · HH:MM" e a parte do
-    /// dia. Lê o <see cref="ITimeOfDay"/> do <see cref="Services"/>; sem ciclo na cena, some. O texto só muda a cada 10 min de jogo.
+    /// dia (com o tempo do <see cref="IWeather"/> quando não é céu limpo: "tarde · chuva"). Lê o <see cref="ITimeOfDay"/> do
+    /// <see cref="Services"/>; sem ciclo na cena, some. O texto só muda a cada 10 min de jogo.
     /// </summary>
     public class ClockHUD : MonoBehaviour
     {
@@ -34,8 +35,19 @@ namespace Pirates.UI
             float night = clock.Night;
             int band = night < 0.15f ? 0 : night > 0.85f ? 2 : 1;
             bool morning = clock.Hour < 12f;
-            if (partText.Stale(band, morning ? 1 : 0))
-                partText.Text = band == 0 ? (clock.Hour < 12f ? "manhã" : "tarde") : band == 2 ? "noite" : morning ? "amanhecer" : "anoitecer";
+            // Clima (M11): "tarde · chuva"; céu limpo não aparece.
+            int sky = 0;
+            string skyLabel = null;
+            if (Services.TryGet(out IWeather weather))
+            {
+                sky = weather.Storm > 0.5f ? 3 : weather.Rain > 0.4f ? 2 : weather.Overcast > 0.35f ? 1 : 0;
+                skyLabel = weather.Label;
+            }
+            if (partText.Stale(band, morning ? 1 : 0, sky))
+            {
+                string part = band == 0 ? (clock.Hour < 12f ? "manhã" : "tarde") : band == 2 ? "noite" : morning ? "amanhecer" : "anoitecer";
+                partText.Text = sky == 0 ? part : $"{part} · {skyLabel}";
+            }
             Hud.Set(part, partText.Text);
             if (band != shownBand)
             {

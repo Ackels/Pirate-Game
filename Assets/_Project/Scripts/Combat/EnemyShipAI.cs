@@ -120,6 +120,13 @@ namespace Pirates.Combat
         public int Fame => fame;
         public void SetFame(int value) => fame = Mathf.Max(0, value);
 
+        /// <summary>Caçador (<see cref="BountyHunters"/>): enxerga e persegue o alvo de qualquer lugar até <paramref name="range"/>.</summary>
+        public void Hunt(float range)
+        {
+            detectRange = range;
+            loseRange = range;
+        }
+
         public ShipCommand GetCommand() => command;
 
         void Awake()

@@ -139,6 +139,7 @@ namespace Pirates.EditorTools
             // Dia e noite (M11): o ciclo move este sol (de noite, a lua) e acompanha o resto da luz.
             CreateDayNight(sun);
             CreateWind();
+            CreateWeather();
         }
 
         static OceanSurface CreateOcean(Material water, WaveSettings waves)

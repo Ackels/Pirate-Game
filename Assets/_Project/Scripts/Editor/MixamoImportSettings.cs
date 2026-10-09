@@ -23,6 +23,17 @@ namespace Pirates.EditorTools
             importer.importAnimation = true;
         }
 
+        /// <summary>
+        /// Ciclo = pose parada, andar, correr, de lado, mira; menos golpes, pulos, giros, rolamentos e transições ("crouch to standing idle",
+        /// "run jump attack", "jump running": pacotes do Mixamo de 09/10).
+        /// </summary>
+        static bool IsCycle(string lower)
+        {
+            bool cycleWord = lower.Contains("idle") || lower.Contains("run") || lower.Contains("walk") || lower.Contains("aim") || lower.Contains("strafe");
+            bool oneShot = lower.Contains("attack") || lower.Contains("jump") || lower.Contains(" to ") || lower.Contains("turn") || lower.Contains("roll");
+            return cycleWord && !oneShot;
+        }
+
         void OnPreprocessAnimation()
         {
             if (!InFolder) return;
@@ -35,11 +46,15 @@ namespace Pirates.EditorTools
                 clip.name = clips.Length == 1 ? name : $"{name}_{i}";
                 // Ciclos (correr, pose parada, mira) repetem; golpes, tiros, sacar/guardar tocam uma vez.
                 string lower = name.ToLowerInvariant();
-                clip.loopTime = lower.Contains("idle") || lower.Contains("run") || lower.Contains("walk") || lower.Contains("aim");
+                clip.loopTime = IsCycle(lower);
                 // "No lugar": giro, altura e posição da raiz ficam na pose (bake into pose), sem mover o objeto.
-                clip.lockRootRotation = true;
+                // Pacotes de 09/10 (subpastas Combate/Espadao/Machado): vários clipes andam e giram (rolamento 5,5 m, derrubado 1,8 m e 125°,
+                // ataques com salto 3 m). Com a raiz na pose o corpo sairia do lugar e voltaria num pulo; fora da pose, o Animator sem root
+                // motion descarta o deslocamento: a animação fica no lugar e o FootCharacter move o personagem. A altura fica na pose (pulos).
+                bool scriptMoves = assetPath.Replace('\\', '/').Substring(Folder.Length + 1).Contains("/");
+                clip.lockRootRotation = !scriptMoves;
                 clip.lockRootHeightY = true;
-                clip.lockRootPositionXZ = true;
+                clip.lockRootPositionXZ = !scriptMoves;
                 clip.keepOriginalOrientation = true;
                 clip.keepOriginalPositionY = true;
                 clip.keepOriginalPositionXZ = true;

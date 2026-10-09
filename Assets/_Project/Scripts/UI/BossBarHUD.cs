@@ -37,11 +37,16 @@ namespace Pirates.UI
             return true;
         }
 
-        void OnEnable() => ShipBoss.EscortArrived += OnEscortArrived;
+        void OnEnable()
+        {
+            ShipBoss.EscortArrived += OnEscortArrived;
+            BountyHunters.Arrived += OnHunterArrived;
+        }
 
         void OnDisable()
         {
             ShipBoss.EscortArrived -= OnEscortArrived;
+            BountyHunters.Arrived -= OnHunterArrived;
             shown = null;
             if (card != null) Hud.Show(card, false);
         }
@@ -67,6 +72,11 @@ namespace Pirates.UI
             Hud.Set(title, boss.ShipName);
             Hud.Set(subtitle, boss.CaptainName);
             Hud.Show(subtitle, !string.IsNullOrEmpty(boss.CaptainName));
+        }
+
+        void OnHunterArrived(ShipBoss boss)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Sua cabeça tem preço: {boss.CaptainName} vem atrás de você!", escortNoticeColor);
         }
 
         void OnEscortArrived(ShipBoss boss)

@@ -41,11 +41,14 @@ namespace Pirates.Audio
         void OnEnable()
         {
             character.Jumped += OnJumped;
+            character.Dodged += OnDodged;
+            character.KnockedDown += OnKnockedDown;
             if (combat)
             {
                 combat.Attacked += OnAttacked;
                 combat.Fired += OnFired;
                 combat.Hit += OnHit;
+                combat.KickLanded += OnKickLanded;
                 combat.Drawing += OnDrawing;
                 combat.Holstering += OnDrawing;
             }
@@ -59,11 +62,14 @@ namespace Pirates.Audio
         void OnDisable()
         {
             character.Jumped -= OnJumped;
+            character.Dodged -= OnDodged;
+            character.KnockedDown -= OnKnockedDown;
             if (combat)
             {
                 combat.Attacked -= OnAttacked;
                 combat.Fired -= OnFired;
                 combat.Hit -= OnHit;
+                combat.KickLanded -= OnKickLanded;
                 combat.Drawing -= OnDrawing;
                 combat.Holstering -= OnDrawing;
             }
@@ -141,6 +147,15 @@ namespace Pirates.Audio
         }
 
         void OnJumped() => Play(sounds?.jump, transform.position);
+
+        void OnDodged() => Play(sounds?.dodge, transform.position);
+
+        void OnKickLanded(Vector3 point) => Play(sounds?.kick, point);
+
+        void OnKnockedDown()
+        {
+            if (sounds != null && isActiveAndEnabled) StartCoroutine(Fall());
+        }
 
         void OnAttacked(WeaponDefinition weapon, int combo)
         {

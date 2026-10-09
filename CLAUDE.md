@@ -67,6 +67,13 @@ Máquina do Jhonata: i5-1235U + **Intel Iris Xe (vídeo integrado)**: a GPU é o
 - Gráficos (02/10, O1): **SSAO desligado** (era o maior custo de GPU; sem diferença visível na nossa câmera), HDR desligado (não há pós-processamento),
   sem cópia de textura de cor/profundidade (nada usa), sombras com **2 cascatas** e suavidade média, **static batching desligado** (o GPU Resident
   Drawer agrupa as peças repetidas; static batching tira os objetos dele). Não religue sem medir.
+  **Anti-aliasing (09/10, pedido do Jhonata: "serrilhado"): MSAA 2×** no `PC_RPAsset` (`m_MSAA: 2`; `QualitySettings` PC `antiAliasing: 2` só
+  para combinar, o URP usa o do asset; Mobile continua sem). Medido no editor, mesmo quadro em RenderTexture 1366×768 (MSAA na RT igual ao
+  da tela), mediana de 3 rodadas: desligado × MSAA 2× × MSAA 4× × FXAA × SMAA = mar 6,6/8,5/8,8/8,3/9,1 ms, Caveira a pé 10,1/12,1/12,9/
+  12,8/13,6, vila 8,3/10,1/11,0/10,3/10,8 → **MSAA 2× ≈ +2 ms** (CPU do editor + GPU), o mais barato junto com o FXAA; na foto ampliada o
+  MSAA 2× alisa as bordas sem borrar, o FXAA borra as texturas (e liga o pós-processamento da câmera). No jogo compilado o limite é a CPU
+  (GPU ~2,5 ms na vila) e o VSync trava em 60: não deve mudar o FPS. Build de desenvolvimento com MSAA 2×: 0 erros, `Player.log` sem
+  "Exception". "Serrilhado" no editor também vem da janela Game com "Low Resolution Aspect Ratios" e o Windows em 125% (desenha 80% dos pixels).
   **Efeito de renderer desligado = REMOVA, não desative** (O7): o SSAO ficou no `PC_Renderer` com `m_Active: 0`; o build tira os
   recursos dele e o URP falhava ao criar o renderizador (`ScreenSpaceAmbientOcclusion.TryPrepareResources` NullReference, depois
   "Blitter is already initialized" **a cada quadro**, ~48 KB de lixo/quadro e 350 MB de log). No editor não aparece. Removido em 04/10
@@ -213,7 +220,15 @@ Máquina do Jhonata: i5-1235U + **Intel Iris Xe (vídeo integrado)**: a GPU é o
 | A3 Laser e bacamarte (05/10, cenas 06 e 07): mira a pé vira laser vermelho com brilho até onde a bala bate (ponto no fim; travado = anel dourado no alvo); pistola maior (0,3 → 0,45), corrigida a pistola do cinto (1 cm) e agora deitada na faixa (em pé quase tocava o chão); bacamarte (modelo × 0,6, ~1,7 m: o capitão é cabeçudo) = arma 3 de duas mãos (animações de rifle do Mixamo), 7 chumbos × 14 em leque de 16°, 16 m, recarga 3,5 s; compra única no mercado (350, patente 1), nas costas; munição própria "Cargas de chumbo" (mercado 5, Forja 10 por 1 ferro + 1 pólvora em 60 s, barris/baú; leva 12 ao desembarcar) | ✅ aprovado (05/10) |
 | M11 Dia e noite, passo 1 (todas as cenas; save na 07): relógio com dia de 14 min (6h–19h) e noite de 6 min; o sol anda de leste a oeste (hora dourada com sombras longas no fim da tarde) e de noite vira a lua azulada (mesma luz); luz ambiente, névoa, céu e reflexo do céu no mar acompanham; o dia claro continua igual ao de antes; 9 lanternas do porto (píer, taverna, praça) e a lanterna da popa do seu navio acendem com luz de verdade (os navios inimigos só brilham); ajuste pedido (05/10, "muitas casas sem iluminação"): janelas acesas em todas as casas (vila e construções da base, menos paiol/depósito de pólvora; ~3 de cada 4, cada casa acende numa hora) e nas torres de pedra (Fortaleza, moinho, forte inimigo, janelas das muralhas), luz curta na frente de cada casa, lanternas nos portões da Fortaleza, do forte inimigo e do acampamento da Caveira e no esconderijo dos contrabandistas (cais e palafitas); piratas de terra veem até ~10 m à noite (16 de dia); relógio no HUD embaixo da fama ("Dia N · HH:MM", disco de sol/lua); o save guarda dia e hora (save antigo começa às 8h); F1: amanhecer/meio-dia/pôr do sol/noite e relógio ×1/×10/×60 | ✅ aprovado (07/10) |
 | M11 Clima, passo 2, parte 1 — vento (todas as cenas): direção e força mudam devagar com a hora do jogo (ruído pela hora: o save do relógio já traz o vento), em volta de um vento dominante soprando para lés-nordeste (±110°), de calmaria a forte; navios (jogador e IA) andam mais com o vento por trás/de lado e menos contra ele (vento forte: bem por trás +12%, 45° +10%, de lado +4%, meio contra −16%, contra −30%; vento fraco: 45% disso; 07/10: o pico era a 55° e o Jhonata alinhava com a seta sem ganhar o bônus); linha "Vento" no painel do navio (seta com a proa para cima, força e quanto ajuda/segura nesse rumo); fumaça do cenário e dos tiros vai com o vento; espuma das cristas do mar cresce com a força; F1: de onde vem (N/L/S/O), fraco/forte, muda sozinho; ajuste pedido (07/10, "algo bonito para saber que é o vento" + som): riscos de vento na tela à moda do Wind Waker (fitas brancas que voam com o vento perto do que a câmera olha, ondulando, algumas com laço; mais e mais rápidas com vento forte, mais fracas de noite) e som de vento (loop gerado por código, volume e tom pela força, rajadas, mais baixo a pé) | ✅ aprovado (07/10) |
-| Depois | Progressão (galeão como 3ª classe; tripulação: salário/moral, papéis como carpinteiro e artilheiro, marujos no convés); Conteúdo (novo tipo de inimigo, missões repetíveis, ilha nova); Mundo (dia/noite, clima) |
+| M11 Clima, passo 2, partes 2 e 3 — chuva e tempestade (todas as cenas): o tempo muda sozinho com a hora do jogo (céu fechado ~27% do tempo, chuva ~16%, tempestade ~6%: uma a cada ~2,4 dias de jogo, ~3 min reais; jogo novo começa limpo); céu fechado escurece o sol (até ×0,2) e a luz ambiente, puxa a luz para cinza-azulado, adensa a névoa (×2,4) e apaga o céu; chuva na tela (gotas esticadas inclinadas pelo vento, mais fortes na tempestade, mais fracas de noite); vento sobe com a chuva (≥ 0,4) e fica forte na tempestade (≥ 0,95); tempestade: raios (clarão azulado em toda a cena + risco do raio em zigue-zague para um lado da tela) e trovões, lanternas acesas mesmo de dia, todos os navios (jogador e IA) balançam muito mais (até ~17°) e giram 12% menos, canhões de todos (IA e fortes também) espalham +50%; sons de chuva e trovão; relógio do HUD mostra "tarde · chuva"/"· tempestade"; F1: limpo/nublado/chuva/tempestade, raio agora, muda sozinho; ajuste pedido (09/10, "gotas de lado na tela", chuva mais bonita e caindo na água): corrigido o erro que fazia as gotas voarem deitadas (a caixa nunca girava para a queda), gotas finas e mais densas caindo na vertical (inclinadas só pelo vento), anéis que se abrem e pinguinhos onde a chuva bate na água, pinguinhos no chão, no píer e no convés; som trocado por gravações CC0 do Freesound (baixadas pelo Jhonata): chuva calma em loop, chuva pesada da tempestade por cima e 5 trovões | ✅ aprovado (09/10) |
+| M12 Marujos no convés, passo 1 (visual; cenas 05 e 07): a tripulação aparece como marujos no navio do jogador (moradores do kit com cores de marujo; quantos = fração dos beliches: até 4 na chalupa, 6 na escuna; eram 5 e 7, o Jhonata pediu menos para sobrar espaço (09/10)); andam pelo convés e param, às vezes conversam (sim/não com a cabeça); ao mudar a vela dois correm ao mastro e puxam o cabo; em combate (tiro dado ou levado) correm para trás dos canhões do convés principal; no disparo levam o tranco, viram, abaixam para pegar a bala nova e voltam socando até a bateria ficar pronta (ajuste pedido em 09/10, só com as animações do kit); tiro no casco faz alguns se encolherem; baixa na tripulação = um marujo cai morto e some; na escuna também ficam no tombadilho (perto do leme); navio novo, contratar e descarregar mudam quantos aparecem; longe da câmera (> 250 m, fora de combate) param | ✅ aprovado (09/10) |
+| M8.3 Galeão, 3ª classe do navio (cenas 05 e 07; passo 2 do plano de 09/10): ship-pirate-large (o casco do Tormenta, medidas do brigue), casco 420, 8 canhões por bordo, porão 110, beliches 32 (8 marujos), velocidade 10, giro 20 (o mais lento); upgrades de casco e recarga rendem ×1,4 e de velocidade ×1,3 (com 1,4 empatava com a escuna no nível 4); construído no Estaleiro do porto com o esquema "Galeão" (baú do Tormenta, peso 6, ou mercado na patente 4 por 1600) + **Estaleiro nível 2** + 1200 ouro, 160 madeira, 60 ferro, 40 pólvora, 5 min de obra; dá para ir direto da chalupa; lanterna da popa no lugar de cada casco; artilheiros dos marujos ganharam o ciclo do canhão (tranco, pega a bala, soca) | ✅ aprovado (09/10) |
+| M13 Inimigos novos (passo 3 de 09/10): **bacamarteiros** em terra (cenas 06 e 07: 2 no acampamento da Caveira, 1 nos contrabandistas, 1 na guarnição do forte; o bacamarte do jogador num tubarão: 6 chumbos × 7 = 42 colado, leque de 18°, até 13 m, recarga 4,5 s; chega a ~9 m, mira 1,1–1,5 s com a linha vermelha e recua só colado) e **caçadores de recompensas** no mar (cena 07: a partir da patente Corsário, a cada ~7–12 min navegando fora do porto, um navio de velas brancas (ship-medium) aparece a 230 m atrás da câmera e persegue você pelo mapa, com aviso e barra no topo; força pela patente: Corsário 280 de casco 6 × 13 e pontaria de veterano, Capitão Temido 560 6 × 15, Lenda 820 6 × 18 recarga 3,8 (acima do Tormenta); 20/35/60 de fama e saque com baú 35%; desiste depois de 90 s com você no porto ou ancorado a pé, ou longe; F1: chamar caçador) | ✅ aprovado (09/10) |
+| A.1 Barris de pólvora (pacote A, passo 1; cenas 06 e 07): barril do Kenney com faixas vermelhas e tampa preta; tiro, bala de canhão ou outra explosão acendem (golpe de cutelo não), pavio 0,1–0,25 s, explosão de 5 m (80 de dano no centro → 12 na borda, empurra os personagens, quebra caixotes, acende os barris em volta: cadeia), efeito (clarão, bola de fogo, aduelas, fumaça escura) e som; 4 no acampamento da Caveira, 2 nos contrabandistas, 4 no forte (3 juntos no paiol); voltam com o acampamento repovoado | ✅ aprovado (09/10) |
+| A.2 Rolamento / esquiva (pacote A, passo 2; cenas 06 e 07): **Ctrl** (gamepad RB) rola ~4,5 m em 0,8 s para onde você anda (parado: para a frente), com o "Sprinting Forward Roll" do Mixamo no corpo todo, mesmo correndo; do início até 60% do rolamento nada acerta (golpe, tiro, explosão); cancela o golpe/tiro que ia sair; 0,4 s de espera entre rolamentos; som de roupa/baque e poeira; o comando vale para a IA também (duelista, depois); ajuda do H atualizada | ✅ aprovado (09/10, "achei legal") |
+| A.3 Chute e quedas (pacote A, passo 3; cenas 06 e 07): **V** (gamepad LB) = chute frontal ("Mma Kick1"): 8 de dano, empurra 0,6 m e **derruba** (o pirata cambaleia, cai sentado e levanta em ~1,5 s), 3 s entre chutes, e quem levantou fica 2 s sem cair de novo; **explosão derruba** quem está a até ~3 m do barril (arremessado de costas: piratas ~2,9 s no chão; o capitão ~1,3 s, invencível 0,5 s ao levantar, e depois de 0,8 s caído o Ctrl levanta rolando); no chão leva dano mas não cai de novo; quem morre caindo termina a queda e fica deitado (sem levantar para cair de novo); som do chute e da queda, brilho e poeira; ajuda do H | ✅ aprovado (09/10) |
+| Próximos (pedido do Jhonata em 09/10: "só descemos, limpamos o acampamento e saímos", quer mais coisas a fazer, sobretudo a pé) | **Agora: A + B.** A. Combate a pé melhor (barris de pólvora que explodem, rolamento/esquiva, chute, bomba de arremesso); B. Inimigos variados em terra (brutamontes de machado duplo, duelista de adaga, esqueletos amaldiçoados à noite, chefe pirata a pé). Depois: C. Exploração (mapas do tesouro em pedaços, ruínas/caverna com alavancas e armadilhas, prisioneiros que viram tripulação, coletáveis); D. Atividades (pesca, cortar árvores/minerar, 2 marujos lutando junto a pé); F. Kraken (`Characters_Tentacle` do Quaternius, em `_Downloads`) e tubarões (`Characters_Shark`); G. Marinha / nível de procurado; H. Ilha amaldiçoada. Abordagem (E) ficou de fora. Ainda na fila: (4) detalhes do clima (bandeiras e velas com o vento, ondas maiores na tempestade) |
+| Depois | Progressão (tripulação: salário/moral, papéis como carpinteiro e artilheiro); Conteúdo (missões repetíveis, ilha nova) |
 
 **Para o Jhonata testar (lembrete pedido em 03/10):** cavar o baú de uma missão de tesouro de verdade (aceitar na taverna, ir até o X,
 F para cavar, baú sobe, saquear, missão cumprida e paga no armazém). Pela CLI só o efeito de cavar foi visto (`BuriedTreasure.Dig()`).
@@ -413,6 +428,20 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   `NextCost`/`NextBuildSeconds` pelo `upgradeCostMultiplier` (o `HarborVisitor` cobra e a janela mostra por eles). Balanceamento
   (chat de otimização, nível 3): casco 440 × 300, dano por segundo ~1,7× (base 1,5×), recarga 2,3 × 2,6 s, velocidade 13,65 × 13,75. A classe exige `requiredBuilding` (Estaleiro) na base.
   Save de antes da regra (escuna com níveis herdados da chalupa) carrega os níveis como estão, já rendendo os multiplicadores da escuna.
+  **Galeão (M8.3, 09/10):** 3º rig "Visual_Galeao"/"Cannons_Galeao" (`AddGalleon` em `PrototypeSceneBuilder.Ships.cs`, casco `BrigHull(BossModel)`),
+  `Data/ShipStats_GaleaoJogador` e `CannonStats_GaleaoJogador` (clonados da escuna; o `ShipStats_Galeao` é o do chefe), `ShipS/ShipClass_Galeao`
+  (tier 2). `ShipClassDefinition.requiredBuildingLevel` (novo, padrão 1) → `HarborVisitor.ShipBlockReason` "precisa de Estaleiro nível 2".
+  Esquema `Esquema_Galeao` (épico): só no `LootTable_Galeao` (peso 6; não entra nos outros baús) e no mercado (patente 4, 1600). Lanterna da
+  popa: `PlayerShipClass.Rig.lantern/lanternPosition` (o `ApplyRig` move a "Lanterna_Popa" para a popa de cada casco; antes ficava no meio da
+  escuna). Marujos: 3º layout (8; convés principal 38 pontos + castelos). Testado: requisitos na ordem (Estaleiro 2 → esquema → custo), compra,
+  obra, troca; 8 + 8 canhões, 32 beliches, 8 marujos.
+  **Revisão (chat de otimização, 09/10):** custo igual à escuna (CPU igual, GPU +0,15 ms; rigs desligados não custam). Luta parada a 70 m, tudo
+  no nível 4: escuna 124 por bordada (50/s no Tormenta, afunda em ~14 s, aguenta ~27 s), galeão 171 (68,8/s, +38%; afunda o Tormenta em ~10 s,
+  aguenta ~45 s); uma bordada cala o forte. Domina tudo o que existe: **o próximo inimigo precisa estar acima do Tormenta.** Recarga no limite
+  de 2,5 s já no nível 3. Caminho até o galeão no nível 4: ~4.300 ouro (+1.600 se comprar o esquema), ~2–2,5 h no fim do jogo. Esquema: 6/13 =
+  46% por vitória com Estaleiro e Escuna na mão. Recém-comprado (upgrades no zero) é bem mais fraco que a escuna no máximo até ~2.900 de ouro
+  em upgrades: decisão do Jhonata se mantém parte dos níveis na troca. Sandbox: voltar do galeão para um navio menor pelo F1 deixa a tripulação
+  acima dos beliches (o porão não corta; no jogo não dá para construir um navio menor).
   **Testar:** esquema no armazém (`GameSave.FindItem("Esquema_Escuna")`), `HarborVisitor.BuyShip`, `HarborDock.FinishNow()`; ou F1 → Navio.
   Depois de gerar, as classes em memória ficavam apontando para ShipStats/CannonStats destruídos (o arquivo certo): o gerador agora
   descarrega as `ShipClass_*` (`ReloadShipClasses`) **antes** de reabrir a cena (depois quebra a referência da cena: a escuna virou null).
@@ -561,6 +590,177 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   **Custo (chat de otimização, 07/10):** riscos ligados × desligados no mar com vento forte: CPU igual (≤ 0,2 ms, ruído), sem lixo por quadro
   (depois de trocar um `Mathf.Min` de 3 argumentos); o som não aparece. Sobra pequena e antiga: `GameVfx.Update` (~75 B) e `GameAudio.Update`
   (~54 B) em média, do `Scan` a cada 2 s. **Testar:** `IWind.SetOverride(graus, força)` + navio com `Teleport` e `SetSail(máx.)`, ~20 s de jogo.
+  **Chuva e tempestade (M11, passo 2, partes 2 e 3):** `Ambient/WeatherSystem` (objeto "Clima", `CreateWeather` no `CreateEnvironment` de todas as
+  cenas, ajustes em `Data/Clima`) registra `Core/IWeather` (`Overcast`, `Rain`, `Storm` 0–1, `Label`, evento `LightningStruck`, `SetOverride(WeatherKind?)`,
+  `StrikeNow`). Tempo = Perlin pela hora corrida do `ITimeOfDay` / `changeHours` (9), esticado como o do vento; limites `cloudyFrom` 0,62, `rainFrom`
+  0,80, `stormFrom` 0,95 (± `blend` 0,05): o ruído esticado fica "colado" em 1 nos 10% mais altos (p90 = 0,89, p95 = 0,97), por isso a tempestade
+  usa 0,95. Medido em 100 dias: céu fechado 27%, chuva 16%, tempestade 6% (41 tempestades de ~3,6 h de jogo ≈ 3 min reais). Dia 1 limpo até as 14h
+  (`clearStartHours`). Sem save próprio. Troca gradual (`transitionSeconds` 20) quando o F1 fixa ou a hora pula. `DayNightCycle.Apply` lê o
+  `IWeather` (reaplica quando o céu muda 0,01): sol × `overcastSun`, sombra → `overcastShadow`, ambiente × `overcastAmbient` e tingido por
+  `overcastTint`, névoa cinza e densidade × `overcastFogDensity` (guarda a da cena no Awake), céu e reflexo mais fracos, `NightLight.Level` ≥
+  `stormLanterns` × tempestade (campos novos em `DayNight_Ciclo`). `WindSystem`: força ≥ `rainWindFloor` × chuva e `stormWindFloor` × tempestade.
+  Chuva: `Ambient/RainEffect` (3 ParticleSystems em espaço de mundo, criados no Awake e religados no `OnEnable`: "GotasDeChuva" Stretch, máx. 2800, sem Collision: a gota morre pela vida; caixa em
+  cima do `ViewFocus`, girada para a queda inclinada pelo vento (09/10: o `shownWind` começava em NaN, a comparação dava sempre falso e a caixa
+  ficava sem girar: as gotas voavam deitadas para +Z); "Aneis" (HorizontalBillboard, máx. 400, 0,5–0,75 s) e "Respingos" (pinguinho com gravidade,
+  máx. 300): **sem colisão das gotas** (caro com ~2000 no ar): ~380–620 pontos por segundo sorteados na tela (`ViewportPointToRay` até o nível
+  do mar, ≤ 80 m); se o raio acha chão/convés/telhado antes (normal para cima, acima do mar), só o pinguinho; senão anel + pinguinho na altura
+  da onda (`IOceanSampler.GetHeight`). Materiais `M_FX_Chuva` (circle_05), `M_FX_Anel` e `M_FX_Gotas` (os mesmos do `GameVfx`). Custo (chat de otimização, 09/10, tempestade
+  cheia: ~2300 gotas, ~380 anéis, ~145 respingos): GPU ~+0,2 ms, CPU igual (os raios dos respingos ~0,1 ms no LateUpdate), lixo 0. Raio: `Light` direcional "Clarao" (desligada, sem sombra; liga 0,07 s + 0,13 s) e
+  `LineRenderer` "Raio" (`M_FX_Raio` aditivo, 12 pontos, até 45 m de altura: mais alto passa por cima da câmera) a 18–38 m do ponto olhado, 20–55°
+  para um lado (à frente cairia acima da tela). Tempestade nos navios: `ShipController.stormRoll` (4 rad/s² de balanço por ruído lento por navio:
+  ~17° de pico; 2,4 dava ~10°, 5 dava ~26°) e `stormTurnLoss` (−12% de giro); `CannonBattery.StormSpreadBonus` (+50% no espalhamento final:
+  depois das reduções do jogador, vale para IA e fortes). Som: `Audio/WeatherAudio` (dois loops 2D: `Som_Chuva` pela chuva, −35% na tempestade, e
+  `Som_Tempestade` pela tempestade; trovão `Som_Trovao` 0,3–1,4 s depois do raio). Clipes em `ThirdParty/Audio/Clima` (gravações CC0 do Freesound
+  baixadas pelo Jhonata em 09/10, originais em `_Downloads/Sons`; pasta importada em **estéreo**, Vorbis comprimido na memória): `Chuva_Loop` (Snoopy20111,
+  60 s), `Tempestade_Loop` (felix.blume, 80 s sem trovão), `Trovao_1..5` (bajko ×2, Dave Welsh, netaj, Fugeni). Cortados e emendados por um script
+  Python sem bibliotecas (o MP3 do jm foi decodificado pelo `UnityWebRequestMultimedia` num eval: fraco e irregular, ficou de fora; o do barco é quase
+  só ronco de vento): loop = trecho + 4 s misturado no começo (potência constante); volume por RMS (chuva −21, tempestade −18 dBFS; trovões pelo
+  segundo mais forte = −15) com limitador suave acima de 0,7 (< 0,01% das amostras nos loops). `Recorded(cue, clipes)` no gerador troca os clipes
+  de um som que ainda apontava para os gerados (`_Project/Audio`, apagados); clipe escolhido à mão fica. HUD: `ClockHUD` põe o `Label` depois da parte do dia. F1: `DrawWeather`.
+  **Custo e equilíbrio (chat de otimização, 09/10):** mesmo quadro em RenderTexture 1366×768 no mar com 1333 gotas: gotas visíveis × escondidas
+  igual (8,43 × 8,43 ms); tempestade inteira × céu limpo alternando 5 vezes: igual (a 1ª rodada "+3 ms" era o notebook variando); CPU igual
+  (7,8–7,9 ms); lixo 0. Na tempestade de dia acendem as ~34 luzes da noite (de propósito: ~1 ms na vila, longe no mar). O balanço de 17° não
+  estraga a mira (`FireDirection` usa o través no plano; a boca sobe/desce ~0,5 m); espalhamento ×1,5 na escuna = ±3,9 → ±5,8 m no alcance,
+  ~20–35% menos acertos para os dois lados: com 6% do tempo é um evento, não mexe na economia, e premia chegar perto.
+  **Testar:** `IWeather.SetOverride(WeatherKind.Storm)` + ~25 s de jogo (`timeScale` 4, 3 × 90 `Step`), navio no mar aberto (`Teleport` em
+  (−120, 0,2, −500): (30, −250) é em cima da vila); `StrikeNow()` + 2 `Step` antes da foto. **Saves (09/10):** apareceram `save.json` 072357ce e
+  `.bak` 472a5c03 (Barbarossa, fama 267, de 05/10 17:18–17:19, jogando à noite) onde em 07/10 só havia o `.bak` df21aef4; nenhum chat copiou
+  (provavelmente o Jhonata). Testei com cópia e devolvi igual.
+  **Marujos no convés (M12, passo 1):** `Progression/DeckCrew` no navio do jogador (cenas 05 e 07, `AddDeckCrew` em
+  `PrototypeSceneBuilder.DeckCrew.cs`, chamado depois do `AddShipClasses`). Os marujos ("Marujos/Marujo_0..5", filhos do navio: balançam
+  junto; sem colisor, sem física, sem NavMesh) são `KitCharacter` do Henry/Anne com `CivilianMaterial` e o `Animation/Marujo.controller`
+  (locomoção Idle/Walk 1,1/Run 3,2 pela "Speed"; "Puxar" = Punch do kit (cabo e socar a bala), "Abaixar" = Duck (coice), "Tranco" = HitReact,
+  "Sim"/"Nao", "Morte" fica no chão; override `Marujo_Anne`). Cada marujo é um suporte "Marujo_i" (o DeckCrew anda e gira ele) com o "Model"
+  animado dentro: o HitReact e o Duck do kit mexem na raiz do modelo e anulavam o giro feito nela. Artilheiro (`Gunner`): tranco no disparo,
+  vira para dentro (+160°: giro de 180° com `Quaternion.RotateTowards` travava; o giro é por `Mathf.MoveTowardsAngle`), abaixa aos 0,8 s
+  (pega a bala), volta aos 1,45 s e soca até a bateria ficar pronta. **Sono só fora de combate e a > 250 m:** mirando os canhões a câmera vai
+  até o ponto de mira (> 100 m do navio) e, com 110 m, os marujos "dormiam" no meio da luta. O convés de cada casco é medido no gerador (`MeasureDeck`, grade de 0,25 m no
+  espaço do navio): altura pelo `DeckProbe.DeckHeight` (de 3,05 m, abaixo da verga; sem acerto = o raio nasceu dentro do castelo, tenta de 6 m),
+  ponto livre = mesma altura nas 8 vizinhas + `DeckProbe.Touches` (esfera de 0,3 m no joelho não encosta no casco: amurada, mastro, cabine; na
+  cabeça não dá, as vergas passam a ~1 m do convés) + fora da caixa de cada canhão (0,35 m para os lados, de 0,25 m para dentro a 0,95 m para fora; um círculo comia o corredor entre
+  os canhões); áreas < 8 células saem. Cada nível é uma área à parte (sem escadas):
+  na escuna o tombadilho tem 23 pontos e quem nasce lá fica lá. Estações: atrás dos canhões do **convés principal** (= o canhão mais baixo;
+  os dos castelos ficam sem artilheiro) e dos dois lados dos mastros do convés principal (`HitsNearCenter`: raio de lado a 1,2 m acerta perto
+  do meio). Chalupa: 106 pontos (~6,6 m²), 4 de 8 canhões, 2 cabos; escuna: 79 (56 no principal, 23 no
+  tombadilho em duas ilhas dos lados do leme), 4 de 12, 2. O passeio sorteia só na área (nível) de quem anda (`zoneCells`), a partir de 0,6 m
+  (convés pequeno; antes pedia 1 m e quase nunca achava: 3 caminhadas em 18 s), e "cheio" = outro a < 0,67 m: ~1 caminhada a cada 5 s por marujo. Caminho = busca em largura na grade
+  (8 vizinhos, sem cortar quina) + corte de cantos em linha reta; nada aloca por quadro. Eventos: `ShipController.SailChanged` (2 ao mastro),
+  `CannonBattery.Fired`/`State` (artilheiros; combate dura 25 s depois do último tiro dado ou levado), `Health.Damaged` (tranco),
+  `ShipCrew.Lost` (quem sobra no `SyncCount` cai morto; descarregar/contratar só some/aparece), `HullChanged` (casco novo: mede de novo).
+  Quantos: `ceil(Fraction × maxSailors)`; a maioria nasce no convés principal. **Testar:** `hold.Add(crew.CrewItem, n)` + 100 `Step`,
+  `ship.SetSail(2)`, `CannonBattery.FireAtRange(60)`, `Health.TakeDamage` (cuidado: 200 afunda a chalupa, que tem 150), `PlayerShipClass.SetClass`
+  (escuna); foto com câmera de teste perto do navio (`mj_shot.cs` no scratchpad: `ship.TransformPoint(offset)`). Desligar/religar o componente
+  liga as baterias de novo no `OnEnable` (achado do chat de otimização).
+  **Custo (chat de otimização, 09/10):** escuna com 7 marujos, GPU +0,7 ms (74 mil triângulos com sombra, ~10,6 mil por marujo; chalupa +0,35),
+  CPU do DeckCrew < 0,07 ms, Animators ~+0,1, render ~+0,4 ms no editor, lixo 0; física igual; dormem com a câmera a 130 m. No build não muda o
+  FPS. Se precisar cortar: sombra desligada nos marujos ou modelo mais leve.
+  **Inimigos novos (M13, 09/10):** *Bacamarteiros*: posto com nome "Bacamarteiro_..." nas listas dos acampamentos (`PostWeapon` em
+  `PrototypeSceneBuilder.FootCombat.cs`) leva `Weapon_Bacamarte_Pirata` (cópia do `Weapon_Bacamarte` do jogador, mais fraca); `CreatePirate`
+  monta como o do jogador (`BlunderbussOn`, `SetMuzzles`, `AddAimRig` + `ConfigureTwoHanded`) e chama `EnemyFootAI.ConfigureRanged(6, 2,5, 9,
+  (1,1–1,5), 2,5)` (com 12 m de alcance ele parava a 11 m e pegavam 3 de 6 chumbos). Munição infinita (sem `IAmmoSupply`), como os de pistola.
+  Medido sozinho contra o capitão parado: 1 tiro a cada ~5 s, 14–21 de dano a 8–11 m. *Caçadores*: `Combat/BountyHunters` (objeto
+  "CacadoresDeRecompensa", `PrototypeSceneBuilder.Hunters.cs`): conta o tempo do navio do jogador fora de `SafeZone` (o navio ancorado com o
+  capitão a pé tem zona própria: não conta) e, na patente do `ICaptainRank` ≥ `Tier.minRank`, instancia o molde "Cacador_Molde" (desligado em
+  (2500, 0, 2500)) a 230 m atrás da câmera em água aberta, aplica o `Tier` (casco `Health.SetMax`, `CannonBattery.SetStats`, fama) e chama
+  `EnemyShipAI.Hunt` (detecta/perde a 2400 m). `ShipBoss` no molde = barra no topo (sem escolta); `BountyHunters.Arrived` → aviso no
+  `BossBarHUD`. Os 3 tiers usam 6 canhões por bordo (os canhões são montados no casco: muda dano/recarga/espalhamento). Assets:
+  `ShipStats_Cacador` (vel 11, giro 25), `CannonStats_Cacador_1..3`, `LootTable_Cacador`. Testado: aparece a 230 m, chega em ~15 s, troca
+  tiros a ~70 m (39–52 de dano por bordada na chalupa parada), some 90 s depois de o jogador entrar no porto, chega sozinho pelo relógio e na
+  patente 4 vem com 820/18/3,8; afundado dá a fama. Nada é salvo (relógio recomeça ao carregar). **Testar:** F1 → "Chamar caçador" ou
+  `BountyHunters.SpawnNow()`; `CaptainFame.Current.Add(950, "x")` para a patente 4.
+  **Revisão (chat de otimização, 09/10):** duelos parados a 70 m com mira perfeita: patente 3 × escuna nv3 e patente 4 × escuna nv4/galeão nv4
+  o jogador vence com folga (proporção como a do Tormenta); a patente 2 com 360 e pontaria de elite vencia a chalupa nível 1 por pouco →
+  **280 de casco e pontaria de veterano** (lead 0,2, alcance 0,04, reação 0,25–0,6; `Tier.leadError/rangeError/reaction`, aplicados no
+  spawn) e o primeiro caçador com **420 s** de mar (era 240). Fuga: a chalupa nv1 só abre ~0,8 m/s (fugir = ir ao porto e esperar 90 s);
+  escuna nv0 leva tiros mas escapa (ele perde velocidade ao virar para a bordada); escuna nv3 foge fácil. Fora de 120 m ele só persegue.
+  Custo: +~0,6 ms de CPU com ele perto (Buoyancy + IA), lixo 0; o Instantiate do spawn leva 10–13 ms (1 quadro, fora da tela, a cada
+  7–12 min; se incomodar, deixar a próxima cópia pronta e desligada, como a escolta do Tormenta). Bacamarteiros: Caveira com 2 bacamarteiros
+  + 2 pistoleiros provocados mata o capitão parado em ~15–20 s.
+  **Barris de pólvora (pacote A, passo 1, 09/10):** `Combat/PowderKeg` é o próprio `IDamageable` do barril (sem `Health`): só acende com
+  `DamageInfo.ignites` (campo novo: tiro do `CharacterCombat`, `CannonballSystem` e a própria explosão; o golpe de cutelo não acende), pavio
+  sorteado em `fuseSeconds` (atraso também na cadeia: nada explode no mesmo quadro, dica do chat de otimização), `OverlapSphereNonAlloc`
+  (buffer estático) + dano pela caixa do colisor (`bounds.ClosestPoint`: `ClosestPoint` não vale no chão côncavo da ilha), um dano por
+  `IDamageable` e um empurrão por `Core/IPushable` (`FootCharacter.Push`: `pushVelocity` somada ao movimento e freada por `pushDrag`;
+  morto não é empurrado). `CombatEffects.Explosion` → `GameVfx.OnExploded` (só `Emit` nos sistemas que já existem) e `GameAudio`
+  (`Som_Explosao`: bang_06/08/10 + cannon_fire, tom mais grave). O "CombatSystems" com o `CombatEffects` agora é criado por quem precisar
+  primeiro (`CombatSystemsObject()`: canhões ou barris); a cena 06 não tinha e a explosão saía muda e sem efeito. Gerador:
+  `PrototypeSceneBuilder.PowderKegs.cs` (`PowderKegsAt(site, locais)`: procura chão da ilha livre num raio de 0,6 m, até 2,5 m do ponto; barris
+  encostados valem), antes do NavMesh; `EnemyCamp.SetKegs` (restaurados no `ResetAll`); F1 → restaurar caixotes também restaura.
+  **Parede protege** (`Sheltered`: raio do centro até o meio do colisor do alvo; bloqueia o que não é `IDamageable` ou é `EnemyFort`
+  (muralha); personagens, caixotes e barris não protegem): capitão a 2,8 m atrás da paliçada 0 de dano e sem empurrão, no aberto 47 e 1,7 m.
+  Só faz a conta (e o raio) para quem tem `IDamageable`/`IPushable`.
+  **Revisão (chat de otimização, 09/10):** `Explode()` 0,22–0,25 ms, 0 B de lixo; cadeia de 8 a 3 m leva ~1,1–1,5 s (uma a cada 6–12
+  quadros), quadros com explosão 9–14 ms no editor (mediana +2 ms = efeitos na tela; no build não muda o FPS). Dano num pirata (60) pela
+  distância do barril ao centro dele: 5,5 m 0 · 5,0 m 16 · 4,6 m 22 · 4,0 m 30 · 3,0 m 43 · 2,5 m 50 · 2,0 m 57 · ≤ 1,5 m mata. Um barril
+  nunca mata o capitão (máx. 80); dois juntos matam até ~2,5 m, os 3 do paiol até ~3,5 m. Tiro de pirata também acende (o pistoleiro pode
+  explodir o barril ao lado do capitão). Navio ancorado a ≤ 5 m leva o dano (improvável). Cadeia de 4 em fila (1, 2 e 6,5 m) na 06:
+  0,18/0,30/0,42/0,48 s; tiro de pistola de verdade a 9 m acende (o mastro da bandeira tapa o barril da torre visto de oeste).
+  **Nos testes:** o `open06` pode dar timeout e o Play entrar na **07** (aconteceu: parei antes de mexer em algo, save igual). O `p06.sh`
+  do scratchpad agora só dá Play com a 06 aberta, e os scripts conferem a cena. **Testar:** `PowderKeg.Active`, `keg.TakeDamage(new DamageInfo { ignites = true })` ou `Explode()`, `Restore()`.
+  **Animações do Mixamo de 09/10 (o Jhonata baixou "VÁRIAS" e pediu para usar o máximo, inclusive em chefes de ilha):** 121 FBX revisados
+  (binários, sem malha, esqueleto `mixamorig` do mesmo personagem "Pirate") em `Animation/Mixamo/Combate` (avulsas, `Pirata@...`),
+  `Espadao` (pacote do espadão inteiro, `Espadao@...`) e `Machado` (pacote corpo a corpo com machado + desarmado, `Machado@...`); originais
+  em `_Downloads/Combate`. 5 avulsas eram cópias exatas de clipes dos pacotes (curvas iguais) e foram apagadas. `MixamoImportSettings`:
+  nas subpastas, **raiz fora da pose** (posição XZ e giro): vários clipes andam/giram (rolamento 5,5 m, derrubado 1,8 m e 125°, ataques
+  com salto ~3 m) e o Animator sem root motion descarta isso, então tocam no lugar e o script move; as antigas da pasta raiz não mudaram.
+  Ciclo (`IsCycle`): idle/walk/run/strafe/aim, menos attack/jump/turn/roll/" to ". `MixamoClip(nome)` acha pelo fim do nome do arquivo
+  em todas as subpastas (nomes curtos dos pacotes, "Idle", "Run", repetem entre pastas: use o nome completo quando criar estados deles).
+  Catálogo medido (duração, quanto anda/gira): `anim_measure.cs` no scratchpad. **Destino planejado:**
+  capitão: rolamento ✅, chute (Mma Kick 1–3 / Kicking), bomba (Throw Object), bloquear/aparar com o cutelo (Machado Standing Block Idle /
+  Block React Large), derrubado pela explosão + levantar (Knocked Down, Getting Up 1–2), atordoado (Stunned) no pirata chutado;
+  **brutamontes** (pacote Machado inteiro: idle/olhando, andar nas 4 direções, correr, virar 90°, ataques downward/horizontal/backhand/
+  360 alto e baixo/combos 1–3/chutes/run jump attack, reações esquerda/direita/barriga, bloqueio, provocações battlecry e chest thump,
+  sacar/guardar das costas); **duelista** (Stabbing 1–3 + rolamento); **chefe de ilha com espadão** (pacote Espadão inteiro: 5 idles,
+  andar/correr/de lado, giros, 5 cortes, attack, high spin, jump attack, slide attack, 2 chutes, 5 impactos, 3 bloqueios, power up = fase 2,
+  casting, 2 mortes, sacar, pulo); **esqueletos amaldiçoados** (Zombie Stand Up 1–3 levantando do chão à noite; Spell Cast para um
+  feiticeiro; Crouch Idle/To Standing para emboscada); desarmado (Unarmed idle/andar/correr/pular/virar): prisioneiros resgatados e marujos
+  em terra (pacote D).
+  **Rolamento (pacote A, passo 2):** `FootCommand.dodge` (jogador: ação `GameInput.Dodge` = Ctrl esquerdo / RB; a IA pode usar) →
+  `FootCharacter`: `dodgeDistance` 4,5 m em `dodgeSeconds` 0,8 s (ritmo do clipe, freia no último quinto), `dodgeCooldown` 0,4 s,
+  `DodgeInvulnerable` no trecho `dodgeInvulnerable` (0,05–0,6); rolando ignora o resto do comando (`combat.Tick(default)`), cancela o golpe
+  (`Interrupt`), evento `Dodged`. `FootHealthReactions.Update` liga/desliga `Health.Invulnerable` só se foi ele que ligou (o F1 também usa).
+  Animator: estado "Rolar" no Tronco (Any + trigger "Dodge", velocidade = duração do clipe / 0,8 s, `DodgeSeconds` no gerador igual ao do
+  FootCharacter), tag **"CorpoInteiroAndando"**: o driver põe o corpo inteiro em 1 na hora mesmo correndo (com a mistura de 0,12 s, os
+  primeiros 0,1 s saíam meio corrida). Som `Som_Rolamento` (roupa + baque), poeira na saída (`GameVfx.Foot`, `FootTrack.dodging`).
+  Testado na 06: 4,6 m em 0,8 s; golpe aos 0,1 s e 0,4 s não acerta, aos 0,9 s acerta; `Invulnerable` volta a falso; fotos de lado: mergulho,
+  costas, levanta agachado e sai correndo com o cutelo.
+  **Revisão (chat de otimização, 09/10):** ok como está. Capitão a 3 m de um pirata no meio da Caveira (10 provocados, 24 s): parado
+  ~24 de dano/s; correndo de lado ~3,3/s; rolando sem parar ~0–0,8/s, **com ou sem a invencibilidade** (o que protege é sair 4,5 m do
+  alcance de 2 m do cutelo; a mira atrasada dos atiradores não acompanha). Ninguém ataca rolando, e parar para bater continua punido.
+  Se ficar fácil, a alavanca é a IA (estocada do cutelo que avança ~1,5 m; atirador antecipando quem corre, só em patente alta ou
+  chefe), não o rolamento. A invencibilidade vale de verdade contra tiro mirado e barril (pavio 0,1–0,25 s). Sem alocação por quadro (lido no código, não medido no Profiler).
+  **Chute e quedas (pacote A, passo 3, 09/10):** `FootCommand.kick` (jogador: `GameInput.Kick` = V / LB) → `CharacterCombat.Kick`
+  (`kickDamage` 8, `kickRange` 1,8, `kickAngle` 100°, `kickImpact` 0,45 s, `kickBusy` 0,9, `kickCooldown` 3, `kickPush` 3,5; eventos `Kicked`
+  e `KickLanded`); o golpe leva `DamageInfo.knockdown` (enum `Core/Knockdown`: `Stumble` = chute, `Blast` = explosão; o `PowderKeg` põe
+  `Blast` até `knockdownWithin` 0,6 do raio). `FootHealthReactions.OnDamaged`: com knockdown e de pé → `CharacterAnimatorDriver.PlayKnockdown`
+  + `FootCharacter.KnockDown(stumbleSeconds 2,6 / blastSeconds 2,9)` (sem os clipes: só o tranco); **já no chão** = só o dano (nem tranco
+  nem queda nova). `FootCharacter.IsDown`: ignora comandos, freia, o empurrão e a gravidade continuam (`MoveBody`, o mesmo do rolamento);
+  morto continua "no chão" (só `SetIncapacitated(false)` zera). Animator: "Chute" (Mma Kick1 ×1,4, tag "CorpoInteiroAndando"); "Tropeco"
+  (Stunned ×1,5) e "Arremessado" (Knocked Down ×1,4 a partir de 18%) → "Levantar" (Getting Up ×1,5, sai aos 72%), saídas para o levantar
+  só com o bool **"Dead"** desligado (`ExitAlive`); "MortoNoChao" (fim do Knocked Down) por Any com "Die" + "Down"; as mortes normais pedem
+  "Down" desligado. `PlayDeath`: no chão há menos de 1,4 s (ainda caindo) liga só o "Dead" (a queda termina deitada), senão o "Die".
+  Medidos nos clipes (esqueleto do capitão por `clip.SampleAnimation` numa cópia do modelo em edição): Mma Kick1 pé esticado 0,6–0,8 s;
+  Stunned senta a ~0,9 s; Knocked Down de pé até ~0,6 s e no chão a ~1,1 s; Getting Up de pé a ~1,9 s. Testado na 06: chute → pirata
+  60 → 52, empurrado 0,6 m, cai, levanta e volta a lutar ~3,2 s depois; explosão a 2,6 m → capitão arremessado 2 m, 100 → 49, de pé e
+  andando aos ~2,9 s; pirata colado no barril morre e fica no "Arremessado" (deitado); morto depois do chute → "MortoNoChao". **Risco a
+  saber:** caído perto de um acampamento provocado, os atiradores podem matar o capitão no chão (aconteceu no teste).
+  **Revisão (chat de otimização, 09/10, aplicada antes da revisão do Jhonata):** (1) chute 3 s + 2,6 s no chão travava o pirata (87% do
+  tempo caído; "chute + 3 golpes" = 83 > 60 matava qualquer um sem ele agir) → queda do chute **1,5 s** ("Tropeco" ×1,6 sai aos 60% para o
+  "LevantarRapido" = Getting Up ×2 a partir de 15%, sai aos 72%) e `FootHealthReactions.knockImmunity` 2 s depois de levantar (só o dano);
+  (2) capitão derrubado morria no chão (barril ≥ 43 + acampamento ~24/s × 2,9 s) → `SetQuickRecovery(true)` no capitão: explosão
+  `quickBlastSeconds` 1,3 s (variante 2, "ArremessadoRapido" ×1,8, sai aos 48%), `getUpInvulnerable` 0,5 s ao levantar, e
+  `FootCharacter.AllowRollOutOfKnockdown(true)`: depois de `rollOutAfter` 0,8 s caído o Ctrl levanta rolando. Piratas continuam com 2,9 s
+  na explosão (recompensa de armar o barril). `CharacterAnimatorDriver.KnockFallSeconds` por variante (0,8/1,5/0,47 s): morreu antes disso
+  = termina a queda deitado. Testado na 06: chute → 1,52 s no chão; segundo chute aos 3,1 s só tira 8 (imune); terceiro depois da
+  imunidade derruba de novo; capitão na explosão 1,28 s no chão, invencível logo depois; Ctrl aos 0,6 s não faz nada, aos 0,9 s rola 4,7 m.
+  **Save (09/10 16:27):** o Jhonata jogou (testou o rolamento) e o save andou: `save.json` 6197a6e4 + `.bak` 0d0024bb (Barbarossa, fama 267,
+  escuna, dia 2). É o progresso dele, não restaurar o antigo; cópia nova em `savebak26` (scratchpad, `rest26.cs`).
+  **Água funda a pé (bug, 09/10):** o capitão caiu do píer num fundo de 0,9–2,5 m e ficou preso ("Água funda", todo passo desfeito, até o de
+  volta). `FootCharacter.KeepOutOfDeepWater`: de pé no fundo a mais de `maxWadeDepth` + 0,15 m (andando não se chega: o limite segura em 0,90)
+  = resgate para o `lastSafePosition` (como o afogamento); na água funda só o passo que desce é desfeito, e no chão volta com a altura (antes
+  mantinha a nova e descia uns centímetros por quadro empurrando a beira). Testado: queda do píer em 1,1/1,5/2,2 m volta ao píer/praia; da praia
+  para o mar para em 0,90 e volta andando, sem resgate. **Nos testes:** `FootCharacter.Teleport` grava o lugar seguro (para cair "de verdade",
+  mova com o CharacterController desligado).
   **Save trocado por um antigo (05/10):** a cópia que fiz às 16h já era um save de 04/10 22:07 (sem fama, sem missões); nenhuma sessão do
   Claude tinha mexido nele desde as 11:19 (origem não achada; talvez o `.exe` antigo do O7, que usa a mesma pasta). Voltei o das 11:19
   (`savebak19`, o mesmo da cópia do outro chat). **Ao fazer a cópia antes de testar, confira `savedAt`, `captainName` e `fame`** (não só o

@@ -57,6 +57,7 @@ namespace Pirates.EditorTools
             CreateIsles(materials, deck, hull, island.loot, loot.items, foot.character, ship);
             AddBrig(ship, combat, loot);
             AddBoss(ship, combat, loot);
+            AddBountyHunters(ship, combat, loot);
 
             // Porto a pé: F no cais atraca e desce no píer; as casas da vila abrem cada parte do porto.
             var visitor = ship.GetComponent<HarborVisitor>();

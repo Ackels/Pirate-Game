@@ -73,6 +73,14 @@ namespace Pirates.EditorTools
                 importer.forceToMono = false;
                 importer.loadInBackground = true;
             }
+            else if (sub.StartsWith("Clima/"))
+            {
+                // Chuva e trovões tocam em 2D: ficam em estéreo (loops longos comprimidos na memória).
+                settings.loadType = AudioClipLoadType.CompressedInMemory;
+                settings.compressionFormat = AudioCompressionFormat.Vorbis;
+                settings.quality = 0.6f;
+                importer.forceToMono = false;
+            }
             else if (sub.StartsWith("Ambiente/"))
             {
                 settings.loadType = AudioClipLoadType.CompressedInMemory;

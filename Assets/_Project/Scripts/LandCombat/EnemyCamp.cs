@@ -32,6 +32,8 @@ namespace Pirates.LandCombat
         [Tooltip("Segundos mínimos entre golpes de piratas diferentes: não batem todos no mesmo instante.")]
         [SerializeField] float strikeSpacing = 0.45f;
         [SerializeField] EnemyFootAI[] members = System.Array.Empty<EnemyFootAI>();
+        [Tooltip("Barris de pólvora do acampamento: inteiros de novo quando ele é repovoado.")]
+        [SerializeField] PowderKeg[] kegs = System.Array.Empty<PowderKeg>();
 
         [Header("Longe do jogador")]
         [Tooltip("Mais longe que isto (m) da câmera e fora de combate, os piratas dormem: ficam parados na pose, sem IA, " +
@@ -111,6 +113,8 @@ namespace Pirates.LandCombat
             leashRadius = leash;
             maxAttackers = Mathf.Max(1, attackersAtOnce);
         }
+
+        public void SetKegs(PowderKeg[] powderKegs) => kegs = powderKegs ?? System.Array.Empty<PowderKeg>();
 
         void OnEnable()
         {
@@ -242,6 +246,7 @@ namespace Pirates.LandCombat
             attackers.Clear();
             provokedUntil = float.NegativeInfinity;
             foreach (var m in members) if (m) m.ResetToPost();
+            foreach (var keg in kegs) if (keg) keg.Restore();
         }
     }
 }

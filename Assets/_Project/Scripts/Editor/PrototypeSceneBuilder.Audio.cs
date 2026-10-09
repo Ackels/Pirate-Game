@@ -54,6 +54,20 @@ namespace Pirates.EditorTools
             return cue;
         }
 
+        /// <summary>
+        /// Som que antes usava clipes feitos pelo gerador (em <c>_Project/Audio</c>, chuva e trovão até 09/10): troca pelas gravações. Um
+        /// som com clipes escolhidos à mão fica como está.
+        /// </summary>
+        static SoundCue Recorded(SoundCue cue, AudioClip[] clips)
+        {
+            if (clips.Length == 0 || cue.clips == null) return cue;
+            bool generated = cue.clips.Length == 0 || cue.clips.Any(c => !c || AssetDatabase.GetAssetPath(c).StartsWith(GeneratedAudioFolder + "/"));
+            if (!generated) return cue;
+            cue.clips = clips;
+            EditorUtility.SetDirty(cue);
+            return cue;
+        }
+
         static GameSounds LoadSounds()
         {
             EnsureFolder(DataFolder, "Audio");
@@ -69,6 +83,9 @@ namespace Pirates.EditorTools
                 cannonSplash = Cue("CanhaoAgua", waves, fx, V(0.85f, 1f), V(1.35f, 1.6f), true, 10f, 160f),
                 cannonImpact = Cue("CanhaoImpacto", Join(Numbered(imp, "impactWood_heavy_{0:000}.ogg", 0, 4), Numbered(imp, "impactPlank_medium_{0:000}.ogg", 0, 4)), fx,
                     V(0.85f, 1f), V(0.8f, 1f), true, 10f, 200f),
+                // Barril de pólvora (pacote A, 09/10): os estouros mais graves do pacote CC0 + o canhão, um pouco mais grave.
+                explosion = Cue("Explosao", Join(Clips("Efeitos", "bang_06.ogg", "bang_08.ogg", "bang_10.ogg"), Clips("Efeitos", "cannon_fire.ogg")), fx,
+                    V(0.95f, 1f), V(0.7f, 0.85f), true, 15f, 220f),
                 shipSinking = Cue("NavioAfundando", Clips("Efeitos", "bang_06.ogg", "bang_10.ogg", "fw_04.ogg"), fx, V(0.9f, 1f), V(0.75f, 0.9f), true, 25f, 300f),
                 sails = Cue("Velas", Join(Numbered(rpg, "cloth{0}.ogg", 1, 4), Clips(rpg, "clothBelt.ogg", "clothBelt2.ogg")), fx, V(0.55f, 0.7f), V(0.75f, 0.9f), true, 6f, 60f),
                 anchor = Cue("Ancora", Join(Numbered(imp, "impactMetal_heavy_{0:000}.ogg", 0, 4), Clips(rpg, "metalPot1.ogg")), fx, V(0.7f, 0.85f), V(0.7f, 0.85f), true, 6f, 60f),
@@ -82,7 +99,12 @@ namespace Pirates.EditorTools
                 stepRock = Cue("PassoPedra", Numbered(imp, "footstep_concrete_{0:000}.ogg", 0, 4), fx, V(0.45f, 0.55f), V(0.9f, 1.1f), true, 1.5f, 22f),
                 stepWood = Cue("PassoMadeira", Numbered(imp, "footstep_wood_{0:000}.ogg", 0, 4), fx, V(0.38f, 0.45f), V(0.9f, 1.1f), true, 1.5f, 22f),
                 stepWater = Cue("PassoAgua", waves, fx, V(0.12f, 0.2f), V(1.6f, 1.9f), true, 1.5f, 18f),
+                // Rolamento (pacote A, 09/10): roupa e o baque do corpo no chão.
+                dodge = Cue("Rolamento", Join(Numbered(rpg, "cloth{0}.ogg", 1, 4), Numbered(imp, "impactSoft_medium_{0:000}.ogg", 0, 4)), fx,
+                    V(0.5f, 0.6f), V(0.85f, 1f), true, 1.5f, 20f),
                 jump = Cue("Pulo", Numbered(rpg, "cloth{0}.ogg", 1, 4), fx, V(0.4f, 0.5f), V(1f, 1.2f), true, 1.5f, 15f),
+                // Chute (pacote A, 09/10): baque forte de soco.
+                kick = Cue("Chute", Numbered(imp, "impactPunch_heavy_{0:000}.ogg", 0, 4), fx, V(0.75f, 0.9f), V(0.8f, 0.95f), true, 2f, 35f),
                 swordSwing = Cue("CuteloGolpe", Clips(rpg, "knifeSlice.ogg", "knifeSlice2.ogg"), fx, V(0.65f, 0.8f), V(0.85f, 1.05f), true, 2f, 30f),
                 swordHit = Cue("CuteloAcerto", Join(Numbered(imp, "impactPunch_medium_{0:000}.ogg", 0, 4), Numbered(imp, "impactPunch_heavy_{0:000}.ogg", 0, 4)), fx,
                     V(0.6f, 0.75f), V(0.9f, 1.05f), true, 2f, 35f),
@@ -123,6 +145,11 @@ namespace Pirates.EditorTools
                 shoreWaves = Cue("OndasPraia", waves, amb, V(0.5f, 0.65f), V(0.85f, 1.05f), true, 6f, 32f),
                 // M11: loop feito pelo gerador (PrototypeSceneBuilder.Weather.cs); volume e tom no WindAudio, pela força do vento.
                 wind = Cue("Vento", new[] { WindLoopClip() }, amb, V(0.55f, 0.55f), V(1f, 1f), false, 1f, 2f),
+                // M11 (clima): chuva e tempestade em loop (gravações CC0 cortadas e emendadas) e trovões; volume no WeatherAudio.
+                rain = Recorded(Cue("Chuva", Clips("Clima", "Chuva_Loop.wav"), amb, V(0.6f, 0.6f), V(1f, 1f), false, 1f, 2f), Clips("Clima", "Chuva_Loop.wav")),
+                storm = Cue("Tempestade", Clips("Clima", "Tempestade_Loop.wav"), amb, V(0.6f, 0.6f), V(1f, 1f), false, 1f, 2f),
+                thunder = Recorded(Cue("Trovao", Numbered("Clima", "Trovao_{0}.wav", 1, 5), fx, V(0.85f, 1f), V(0.9f, 1.05f), false, 1f, 2f),
+                    Numbered("Clima", "Trovao_{0}.wav", 1, 5)),
 
                 musicPort = Cue("MusicaPorto", Clips("Musica", "TownTheme.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
                 musicSea = Cue("MusicaMar", Clips("Musica", "pirate1uf.ogg"), music, V(0.7f, 0.7f), V(1f, 1f), false, 1f, 2f),
@@ -141,6 +168,7 @@ namespace Pirates.EditorTools
             root.AddComponent<SoundPlayer>();
             root.AddComponent<GameAudio>().Configure(sounds, settings);
             root.AddComponent<WindAudio>().Configure(sounds.wind);
+            root.AddComponent<WeatherAudio>().Configure(sounds.rain, sounds.storm, sounds.thunder);
             root.AddComponent<MusicDirector>().Configure(sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
                 Object.FindAnyObjectByType<PlayerModeSwitcher>(), playerShip ? playerShip.transform : null);
 

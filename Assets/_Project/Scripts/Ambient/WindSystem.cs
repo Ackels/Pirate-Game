@@ -49,9 +49,17 @@ namespace Pirates.Ambient
             float degrees = fixedDegrees ?? settings.prevailingDegrees + (Mathf.PerlinNoise(t, 7.31f) - 0.5f) * 2f * settings.directionSwing;
             // O ruído fica quase todo entre 0,25 e 0,75: esticado para ir de calmaria a vento forte.
             float gust = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.25f, 0.75f, Mathf.PerlinNoise(t * 1.37f + 11.3f, 91.7f)));
-            Strength = fixedStrength ?? Mathf.Lerp(settings.minStrength, settings.maxStrength, gust);
+            Strength = fixedStrength ?? Mathf.Max(Mathf.Lerp(settings.minStrength, settings.maxStrength, gust), WeatherFloor());
             Degrees = Mathf.Repeat(degrees, 360f);
             Direction = Quaternion.Euler(0f, Degrees, 0f) * Vector3.forward;
+        }
+
+        /// <summary>Força mínima pelo clima: com chuva o vento sobe, com a tempestade fica forte (<see cref="WeatherSettings"/>).</summary>
+        static float WeatherFloor()
+        {
+            if (!Services.TryGet(out IWeather weather) || weather is not WeatherSystem system || !system.Settings) return 0f;
+            var s = system.Settings;
+            return Mathf.Max(s.rainWindFloor * weather.Rain, s.stormWindFloor * weather.Storm);
         }
 
         public float SailFactor(Vector3 forward)

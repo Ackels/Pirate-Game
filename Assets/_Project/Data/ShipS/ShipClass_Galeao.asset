@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4926e090014cfb43b74a02bcde458e2, type: 3}
+  m_Name: ShipClass_Galeao
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.ShipClassDefinition
+  displayName: "Gale\xE3o"
+  description: "Tr\xEAs mastros e oito canh\xF5es por bordo: o casco mais grosso, o maior por\xE3o e o maior alojamento. O mais lento e o mais pesado para virar dos tr\xEAs."
+  tier: 2
+  stats: {fileID: 11400000, guid: 9091765210f7c1642b76343cd3166a3b, type: 2}
+  cannons: {fileID: 11400000, guid: bcf3d0c9e1b36124f86c7b7dbe8d7bae, type: 2}
+  hullMax: 420
+  holdCapacity: 110
+  crewBerths: 32
+  hullUpgradeMultiplier: 1.4
+  damageUpgradeMultiplier: 1
+  speedUpgradeMultiplier: 1.3
+  reloadUpgradeMultiplier: 1.4
+  aimUpgradeMultiplier: 1
+  upgradeCostMultiplier: 1
+  minReloadSeconds: 2.5
+  schematic: {fileID: 11400000, guid: b93f90f117496284cab7b2e91ad306fa, type: 2}
+  requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
+  requiredBuildingLevel: 2
+  cost:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 1200
+  - item: {fileID: 11400000, guid: f7750e5aa05a08a468c13f18761fc41e, type: 2}
+    amount: 160
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 60
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 40
+  buildSeconds: 300

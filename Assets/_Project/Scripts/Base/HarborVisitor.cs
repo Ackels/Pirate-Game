@@ -258,8 +258,9 @@ namespace Pirates.Base
             if (target == mine) return "é o seu navio";
             if (mine && target.tier <= mine.tier) return "seu navio já é maior";
             if (Current.IsBusy) return Current.Job.shipClass == target ? "em obra" : "estaleiro ocupado";
-            if (target.requiredBuilding && !(Current.Buildings && Current.Buildings.Has(target.requiredBuilding)))
-                return $"precisa de {target.requiredBuilding.displayName}";
+            int level = Mathf.Max(1, target.requiredBuildingLevel);
+            if (target.requiredBuilding && !(Current.Buildings && Current.Buildings.Level(target.requiredBuilding) >= level))
+                return level > 1 ? $"precisa de {target.requiredBuilding.displayName} nível {level}" : $"precisa de {target.requiredBuilding.displayName}";
             if (!HasSchematic(target.schematic)) return $"precisa do esquema {target.schematic.displayName}";
             foreach (var c in target.cost)
                 if (c.item && Available(c.item) < c.amount) return $"falta {c.item.displayName.ToLowerInvariant()}";

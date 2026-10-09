@@ -148,11 +148,11 @@ namespace Pirates.EditorTools
             }
 
             /// <summary>Altura do convés em (x, z); NaN se ali não há casco.</summary>
-            public float DeckHeight(float x, float z)
+            public float DeckHeight(float x, float z, float startHeight = StartHeight)
             {
                 float top = float.NaN;
-                var from = probe.transform.TransformPoint(new Vector3(x, StartHeight, z));
-                foreach (var hit in Physics.RaycastAll(from, -probe.transform.up, StartHeight + 1f))
+                var from = probe.transform.TransformPoint(new Vector3(x, startHeight, z));
+                foreach (var hit in Physics.RaycastAll(from, -probe.transform.up, startHeight + 1f))
                 {
                     if (hit.collider != collider) continue;
                     float y = probe.transform.InverseTransformPoint(hit.point).y;
@@ -173,6 +173,29 @@ namespace Pirates.EditorTools
                     if (float.IsNaN(half) || x > half) half = x;
                 }
                 return half;
+            }
+
+            /// <summary>Um raio de lado na altura y, em z, acerta o casco perto do meio (|x| ≤ <paramref name="half"/>)? = mastro (M12).</summary>
+            public bool HitsNearCenter(float y, float z, float half)
+            {
+                var from = probe.transform.TransformPoint(new Vector3(5f, y, z));
+                foreach (var hit in Physics.RaycastAll(from, -probe.transform.right, 10f))
+                {
+                    if (hit.collider != collider) continue;
+                    if (Mathf.Abs(probe.transform.InverseTransformPoint(hit.point).x) <= half) return true;
+                }
+                return false;
+            }
+
+            static readonly Collider[] overlaps = new Collider[64];
+
+            /// <summary>Uma esfera (centro no espaço do mundo) encosta no casco? Amurada, mastro, parede da cabine (M12).</summary>
+            public bool Touches(Vector3 worldCenter, float radius)
+            {
+                int n = Physics.OverlapSphereNonAlloc(worldCenter, radius, overlaps, Physics.AllLayers, QueryTriggerInteraction.Collide);
+                for (int i = 0; i < n; i++)
+                    if (overlaps[i] == collider) return true;
+                return false;
             }
 
             public void Dispose() => Object.DestroyImmediate(probe);

@@ -171,6 +171,7 @@ namespace Pirates.Combat
                 source = b.shooter ? b.shooter.gameObject : null,
                 sailDamage = b.sailDamage,
                 crewDamage = b.crewDamage,
+                ignites = true,
             });
 
             if (b.effects || Time.time >= nextPelletImpact)

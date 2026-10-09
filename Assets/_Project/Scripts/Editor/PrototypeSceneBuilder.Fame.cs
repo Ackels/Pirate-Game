@@ -90,6 +90,7 @@ namespace Pirates.EditorTools
             Add("Esquema_Paiol", 300, 2);
             Add("Esquema_Escuna", 650, 3);
             Add("Esquema_Fortaleza", 900, 3);
+            Add(GalleonSchematic, 1600, 4);
             if (!changed) return;
             settings.market = list.ToArray();
             EditorUtility.SetDirty(settings);

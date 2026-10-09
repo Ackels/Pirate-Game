@@ -158,6 +158,7 @@ namespace Pirates.EditorTools
                 (SmugglersCove + new Vector2(-8f, -1.6f), false), (SmugglersCove + new Vector2(2f, 6f), true), (new Vector2(28f, -3f), false),
                 (WestGrotto + new Vector2(4f, -2f), true), (new Vector2(-18f, 8f), false),
             });
+            PowderKegsAt(hideout, HideoutKegs);
 
             // Norte: desembarque a leste e o forte.
             SkullLanding(north, "Desembarque_IlhaNorte", "Ilha Norte", new Vector2(NorthRX, 0f), Vector2.right, deck, hull, "flag-pennant");
@@ -189,8 +190,10 @@ namespace Pirates.EditorTools
                 ("Contrabandista_Fogo", new Vector3(-2f, 0f, 1.5f), 160f, false, KitCharacters.Mako),
                 ("Contrabandista_Cabanas", new Vector3(-5f, 0f, -2f), 120f, false, KitCharacters.Sharky),
                 ("Contrabandista_Atirador", new Vector3(4f, 0f, -4f), 140f, true, KitCharacters.Skeleton),
+                ("Bacamarteiro_Contrabando", new Vector3(0.5f, 0f, -3.5f), 170f, true, KitCharacters.Mako),
             });
             hideoutChest.SetLock(smugglers);
+            smugglers.SetKegs(hideout.GetComponentsInChildren<PowderKeg>(true));
             var garrison = Gang(fort.transform, "Guarnição do forte", GarrisonCampId, player, cutlass, pistol, m, 26f, new[]
             {
                 ("Guarda_Portao_A", new Vector3(FortRadius + 1.5f, 0f, 2f), 90f, false, KitCharacters.Mako),
@@ -198,8 +201,10 @@ namespace Pirates.EditorTools
                 ("Guarda_Patio", new Vector3(4f, 0f, -5f), 60f, false, KitCharacters.Mako),
                 ("Atirador_Paiol", new Vector3(-4f, 0f, 5f), 120f, true, KitCharacters.HeadlessSkeleton),
                 ("Atirador_Patio", new Vector3(-5f, 0f, -4f), 80f, true, KitCharacters.Skeleton),
+                ("Bacamarteiro_Patio", new Vector3(1.5f, 0f, -6f), 70f, true, KitCharacters.Sharky),
             });
             magazineChest.SetLock(garrison);
+            garrison.SetKegs(fort.GetComponentsInChildren<PowderKeg>(true));
 
             hideout.gameObject.AddComponent<WorldMarker>().Configure(HideoutCampId, "Esconderijo (Ilha Oeste)", 8f);
             fort.gameObject.AddComponent<WorldMarker>().Configure(FortMissionId, "Forte da Ilha Norte", 14f);
@@ -215,7 +220,7 @@ namespace Pirates.EditorTools
             for (int k = 0; k < posts.Length; k++)
             {
                 var p = posts[k];
-                members[k] = CreatePirate(parent, p.name, site.TransformPoint(p.local), p.yaw, p.gunner ? pistol : cutlass, player, camp,
+                members[k] = CreatePirate(parent, p.name, site.TransformPoint(p.local), p.yaw, PostWeapon(p.name, p.gunner, cutlass, pistol), player, camp,
                     m.iron, m.wood, m.brass, p.model);
             }
             camp.Configure(name, id, members, leash, attackersAtOnce: 2);
@@ -415,7 +420,8 @@ namespace Pirates.EditorTools
             magBox.center = new Vector3(0f, 1.1f, 0f);
             magBox.size = new Vector3(2.5f, 2.2f, 2.5f);
             Occluder(magazine);
-            for (int k = 0; k < 3; k++) Kenney("barrel", g, new Vector3(1.2f + k * 0.9f, 0f, 7f), k * 30f, 0.75f, $"Polvora_{k}");
+            // Os barris do paiol explodem (pacote A, 09/10): três juntos (cadeia) e um no pátio, perto do bacamarteiro.
+            PowderKegsAt(g, new[] { new Vector3(1.2f, 0f, 7f), new Vector3(2.15f, 0f, 7f), new Vector3(3.1f, 0f, 7f), new Vector3(3f, 0f, -3.6f) });
 
             // Canhões no alto da muralha do lado do mar (sul), virados para fora.
             float gunHeight = 4.4f * FortWallScale + 0.65f;

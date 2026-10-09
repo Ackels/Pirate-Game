@@ -53,7 +53,13 @@ namespace Pirates.Combat
         public float ReloadMultiplier { get; set; } = 1f;
         /// <summary>Alcance máximo com a munição atual (metralha alcança menos).</summary>
         public float MaxRange => Ammo && Ammo.maxRange > 0f ? Mathf.Min(stats.maxRange, Ammo.maxRange) : stats.maxRange;
-        float SpreadDegrees => stats.spreadDegrees * (Ammo ? Ammo.spreadMultiplier : 1f);
+        float SpreadDegrees => stats.spreadDegrees * (Ammo ? Ammo.spreadMultiplier : 1f) * StormSpread;
+
+        /// <summary>Tempestade (M11): o convés jogando espalha a salva (vale para todos, IA e fortes também).</summary>
+        static float StormSpread => Services.TryGet(out IWeather weather) ? 1f + StormSpreadBonus * weather.Storm : 1f;
+
+        /// <summary>Espalhamento a mais com a tempestade cheia (0,5 = +50%).</summary>
+        public const float StormSpreadBonus = 0.5f;
 
         float assistedRange, assistYaw, assistCloseness;
 
@@ -240,7 +246,7 @@ namespace Pirates.Combat
                 (order[i], order[j]) = (order[j], order[i]);
             }
 
-            float spread = stats.spreadDegrees * (ammo ? ammo.spreadMultiplier : 1f);
+            float spread = stats.spreadDegrees * (ammo ? ammo.spreadMultiplier : 1f) * StormSpread;
             int pellets = ammo ? Mathf.Max(1, ammo.pellets) : 1;
             float damage = stats.damagePerBall * (ammo ? ammo.damageMultiplier : 1f) / pellets;
             float sail = ammo ? ammo.sailDamagePerHit : 0f, crew = ammo ? ammo.crewDamagePerHit : 0f;

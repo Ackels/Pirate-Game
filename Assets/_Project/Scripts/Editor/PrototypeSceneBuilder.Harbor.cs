@@ -49,6 +49,7 @@ namespace Pirates.EditorTools
             AddBuildings(dockGo, buildings, combat, deck, hullWood);
             AddUpgrades(player, items, buildings.shipyard);
             AddShipClasses(player, items, combat, buildings.shipyard);
+            AddDeckCrew(player);
             var supplies = LoadSupplies();
             AddPlayerSupplies(player, supplies, items);
             ConfigureHarborTrade(settings, items, supplies, buildings.forge);

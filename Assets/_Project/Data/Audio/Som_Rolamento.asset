@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Rolamento
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: d57b57c4862b02b4d8f2601b938fea8e, type: 3}
+  - {fileID: 8300000, guid: 06ebce74149248c47b5f94125e9d2534, type: 3}
+  - {fileID: 8300000, guid: 1d87cad44d4890f4d9f298e3964b7494, type: 3}
+  - {fileID: 8300000, guid: 68fa89f2254cac649aeb848fe2752ff1, type: 3}
+  - {fileID: 8300000, guid: c3633e86219545944a634fdabb94532e, type: 3}
+  - {fileID: 8300000, guid: 09a33b36c261cb04792c6ef7fbc5c90a, type: 3}
+  - {fileID: 8300000, guid: 8c1b8198fa00b694d864ebfed66a738f, type: 3}
+  - {fileID: 8300000, guid: ba10aaf485ae81f48acbc1e805f2e274, type: 3}
+  - {fileID: 8300000, guid: 1aeeaf7aac1cf8d4dacd9dd8250be788, type: 3}
+  channel: 1
+  volume: {x: 0.5, y: 0.6}
+  pitch: {x: 0.85, y: 1}
+  spatial: 1
+  minDistance: 1.5
+  maxDistance: 20
+  cooldown: 0

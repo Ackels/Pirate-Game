@@ -59,6 +59,8 @@ namespace Pirates.Progression
         public ItemDefinition schematic;
         [Tooltip("Construção da base exigida (o Estaleiro). Vazio = nenhuma.")]
         public BuildingDefinition requiredBuilding;
+        [Tooltip("Nível mínimo dessa construção (o galeão pede o Estaleiro 2).")]
+        [Min(1)] public int requiredBuildingLevel = 1;
         public ItemStack[] cost = Array.Empty<ItemStack>();
         [Tooltip("Segundos de obra, na velocidade normal dos trabalhadores (só anda com o navio na zona do porto).")]
         [Min(0f)] public float buildSeconds = 180f;

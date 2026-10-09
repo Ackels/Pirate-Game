@@ -55,6 +55,7 @@ namespace Pirates.Audio
                 effects.Blasted += (p, _) => SoundPlayer.At(sounds.cannonFire, p);
                 effects.Splashed += p => SoundPlayer.At(sounds.cannonSplash, p);
                 effects.Impacted += (p, _) => SoundPlayer.At(sounds.cannonImpact, p);
+                effects.Exploded += (p, _) => SoundPlayer.At(sounds.explosion, p);
             }
             foreach (var visitor in FindObjectsByType<HarborVisitor>(FindObjectsInactive.Include))
             {

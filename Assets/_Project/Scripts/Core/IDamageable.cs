@@ -12,11 +12,29 @@ namespace Pirates.Core
         public float sailDamage;
         /// <summary>Munição especial (M9): fração da tripulação abatida por este acerto (canhões recarregam mais devagar).</summary>
         public float crewDamage;
+        /// <summary>Fogo de pólvora (tiro, bala de canhão, explosão): acende barril de pólvora. Golpe de cutelo não acende.</summary>
+        public bool ignites;
+        /// <summary>Derruba o personagem a pé: <see cref="Knockdown.Stumble"/> (chute: cambaleia e cai sentado) ou <see cref="Knockdown.Blast"/> (explosão: arremessado de costas).</summary>
+        public Knockdown knockdown;
+    }
+
+    /// <summary>Como o golpe derruba quem está a pé (pacote A, 09/10).</summary>
+    public enum Knockdown : byte
+    {
+        None,
+        Stumble,
+        Blast,
     }
 
     /// <summary>Qualquer coisa que recebe dano: casco de navio, barril, inimigo em terra (M4).</summary>
     public interface IDamageable
     {
         void TakeDamage(in DamageInfo info);
+    }
+
+    /// <summary>Pode ser empurrado por uma explosão (personagem a pé): velocidade somada à dele, que some aos poucos.</summary>
+    public interface IPushable
+    {
+        void Push(Vector3 velocity);
     }
 }

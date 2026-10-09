@@ -134,11 +134,7 @@ namespace Pirates.Ambient
             if (free < 0) return;
 
             // Centro: onde a câmera olha (no nível do mar); a área cresce com a distância da câmera.
-            var camT = cam.transform;
-            Vector3 focus = camT.forward.y < -0.05f
-                ? camT.position + camT.forward * (-camT.position.y / camT.forward.y)
-                : camT.position + camT.forward * 30f;
-            float reach = Mathf.Clamp(Vector3.Distance(camT.position, focus), 12f, 70f);
+            var focus = ViewFocus.Of(cam, out float reach);
             var dir = wind.Direction;
             var side = Vector3.Cross(Vector3.up, dir);
             float speed = Mathf.Lerp(speedCalm, speedStrong, strength) * Random.Range(0.85f, 1.15f);

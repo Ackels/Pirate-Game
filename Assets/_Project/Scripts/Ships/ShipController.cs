@@ -15,12 +15,17 @@ namespace Pirates.Ships
         const float MetersPerSecondToKnots = 1.943844f;
 
         [SerializeField] ShipStats stats;
+        [Header("Tempestade (M11, clima)")]
+        [Tooltip("Empurrão de balanço (rad/s²) com a tempestade cheia: o casco joga de lado e de proa a popa.")]
+        [SerializeField] float stormRoll = 4f;
+        [Tooltip("Giro × (1 − isto) com a tempestade cheia (o mar agitado segura o leme).")]
+        [SerializeField, Range(0f, 0.5f)] float stormTurnLoss = 0.12f;
 
         Rigidbody body;
         Buoyancy buoyancy;
         IShipInput input;
         int sailIndex;
-        float steerInput;
+        float steerInput, stormSeed;
 
         public event Action<int> SailChanged;
         /// <summary>
@@ -63,6 +68,7 @@ namespace Pirates.Ships
                 return;
             }
             body.centerOfMass = stats.centerOfMass;
+            stormSeed = UnityEngine.Random.Range(0f, 100f);
             sailIndex = Mathf.Clamp(stats.startingSailIndex, 0, stats.sailLevels.Length - 1);
         }
 
@@ -138,12 +144,22 @@ namespace Pirates.Ships
             float speed01 = Mathf.Clamp01(Mathf.Abs(ForwardSpeed) / stats.maxSpeed);
             float steerage = stats.steerageBySpeed.Evaluate(speed01);
             float direction = ForwardSpeed < -0.1f ? -1f : 1f;
-            float targetYawRate = Rudder * stats.turnRate * Mathf.Deg2Rad * steerage * direction;
+            float storm = Services.TryGet(out IWeather weather) ? weather.Storm : 0f;
+            float targetYawRate = Rudder * stats.turnRate * Mathf.Deg2Rad * steerage * direction * (1f - stormTurnLoss * storm);
             float yawError = targetYawRate - body.angularVelocity.y;
             body.AddTorque(Vector3.up * (yawError * stats.turnResponse * grip), ForceMode.Acceleration);
 
             // Inclinação para fora da curva.
             body.AddTorque(forward * (Rudder * speed01 * stats.heelStrength * grip), ForceMode.Acceleration);
+
+            // Tempestade: o mar joga o casco (balanço lento e irregular, cada navio no seu ritmo).
+            if (storm > 0.01f)
+            {
+                float t = Time.time * 0.45f;
+                float roll = (Mathf.PerlinNoise(t, stormSeed) - 0.5f) * 2f;
+                float pitch = (Mathf.PerlinNoise(t * 1.3f, stormSeed + 17f) - 0.5f) * 2f;
+                body.AddTorque((forward * roll + right * (pitch * 0.6f)) * (stormRoll * storm * grip), ForceMode.Acceleration);
+            }
         }
     }
 }

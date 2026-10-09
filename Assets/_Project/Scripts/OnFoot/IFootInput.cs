@@ -9,6 +9,10 @@ namespace Pirates.OnFoot
         public Vector2 move;
         public bool run;
         public bool jump;
+        /// <summary>Rolar (esquiva) neste frame, na direção de <see cref="move"/> (parado: para a frente).</summary>
+        public bool dodge;
+        /// <summary>Chutar neste frame (derruba quem está na frente).</summary>
+        public bool kick;
         /// <summary>Atacar com a arma atual neste frame.</summary>
         public bool attack;
         /// <summary>Segurando mirar (pistola): fica em pose de mira seguindo o ponto de mira, e o ataque atira na hora.</summary>

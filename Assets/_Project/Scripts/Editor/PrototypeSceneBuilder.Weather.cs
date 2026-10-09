@@ -10,6 +10,8 @@ namespace Pirates.EditorTools
     /// Clima (M11, passo 2). Parte 1, vento: o WindSystem (ajustes em Data/Vento) em todas as cenas; a fumaça do cenário vai com ele
     /// (WindDrift, posto pelo Smoke); navios, espuma do mar, fumaça dos tiros e HUD leem o IWind sozinhos. Riscos de vento na tela
     /// (WindStreaks, fitas do material do rastro do cutelo) e o som do vento (WindAudio no objeto "Audio", com o loop gerado aqui).
+    /// Partes 2 e 3, chuva e tempestade: o WeatherSystem (ajustes em Data/Clima) com o clarão e o risco do raio, a chuva na tela
+    /// (RainEffect); os sons de chuva, tempestade e trovão (WeatherAudio no objeto "Audio") são gravações CC0 em ThirdParty/Audio/Clima.
     /// </summary>
     public static partial class PrototypeSceneBuilder
     {
@@ -17,6 +19,7 @@ namespace Pirates.EditorTools
         const string WindLoopPath = GeneratedAudioFolder + "/Vento_Gerado.wav";
         /// <summary>Muda a receita do som? Suba a versão: o arquivo é refeito no mesmo lugar (mesmo GUID, o Som_Vento continua apontando).</summary>
         const string WindLoopVersion = "vento-v2";
+        const int AudioRate = 44100;
 
         static WindSettings WindAsset() => LoadOrCreateAsset<WindSettings>(DataFolder + "/Vento.asset");
 
@@ -28,18 +31,48 @@ namespace Pirates.EditorTools
             go.AddComponent<WindStreaks>().Configure(TrailMaterial());
         }
 
+        static WeatherSettings WeatherAsset() => LoadOrCreateAsset<WeatherSettings>(DataFolder + "/Clima.asset");
+
+        /// <summary>Clima: tempo que muda, clarão do raio (luz direcional desligada), risco do raio e a chuva na tela.</summary>
+        static void CreateWeather()
+        {
+            var go = new GameObject("Clima");
+            var flashGo = new GameObject("Clarao");
+            flashGo.transform.SetParent(go.transform, false);
+            var flash = flashGo.AddComponent<Light>();
+            flash.type = LightType.Directional;
+            flash.shadows = LightShadows.None;
+            flash.intensity = 0f;
+            flash.enabled = false;
+
+            EnsureFolder(MaterialsFolder, "VFX");
+            var boltGo = new GameObject("Raio");
+            boltGo.transform.SetParent(go.transform, false);
+            var bolt = boltGo.AddComponent<LineRenderer>();
+            bolt.sharedMaterial = FxMaterial("M_FX_Raio", null, additive: true);
+            bolt.useWorldSpace = true;
+            bolt.alignment = LineAlignment.View;
+            bolt.widthCurve = new AnimationCurve(new Keyframe(0f, 0.6f), new Keyframe(0.8f, 1f), new Keyframe(1f, 0.7f));
+            bolt.startColor = bolt.endColor = new Color(0.9f, 0.93f, 1f, 1f);
+            bolt.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            bolt.receiveShadows = false;
+            bolt.positionCount = 0;
+            bolt.enabled = false;
+
+            go.AddComponent<WeatherSystem>().Configure(WeatherAsset(), flash, bolt);
+            // Gota = bolinha suave esticada pela queda; anel e pinguinho com os mesmos materiais dos efeitos da água (GameVfx).
+            go.AddComponent<RainEffect>().Configure(FxMaterial("M_FX_Chuva", "circle_05", additive: false),
+                FxMaterial("M_FX_Anel", "circle_02", additive: false), FxMaterial("M_FX_Gotas", "circle_05", additive: false));
+        }
+
         /// <summary>
         /// Loop de vento feito aqui (sem gravação de terceiros): ruído com passa-baixa (o "sopro") + um passa-faixa ressonante que sobe e
         /// desce devagar (o assobio), com o volume ondulando. Todas as ondulações têm período que divide os 12 s do loop e o fim é
         /// misturado com o começo: dá a volta sem emenda. Refeito quando a versão (userData do importador) muda.
         /// </summary>
-        static AudioClip WindLoopClip()
+        static AudioClip WindLoopClip() => GeneratedClip(WindLoopPath, WindLoopVersion, 0.125f, () =>
         {
-            var existing = AssetImporter.GetAtPath(WindLoopPath);
-            if (!File.Exists(WindLoopPath) || !existing || existing.userData != WindLoopVersion)
-            {
-                EnsureFolder("Assets/_Project", "Audio");
-                const int rate = 44100, seconds = 12;
+                const int rate = AudioRate, seconds = 12;
                 int n = rate * seconds, fade = rate;
                 var raw = new float[n + fade];
                 var rng = new System.Random(1717);
@@ -63,15 +96,34 @@ namespace Pirates.EditorTools
                     float swell = 0.78f + 0.22f * Mathf.Sin(2f * Mathf.PI * t / 4f + 0.7f);
                     raw[i] = (lowpass2 * 6f + band * 0.18f * whistle) * swell;
                 }
-                // Fim misturado com o começo (potência constante): o loop fecha sem clique.
-                var samples = new float[n];
-                for (int i = 0; i < n; i++) samples[i] = raw[i];
-                for (int i = 0; i < fade; i++)
-                {
-                    float k = (float)i / fade;
-                    samples[i] = raw[i] * Mathf.Sqrt(k) + raw[n + i] * Mathf.Sqrt(1f - k);
-                }
-                // Volume: RMS ~ −18 dBFS, pico no máximo 0,95.
+                return SeamlessLoop(raw, n, fade);
+        });
+
+        /// <summary>Fim misturado com o começo (potência constante): o loop fecha sem clique. <paramref name="raw"/> tem n + fade amostras.</summary>
+        static float[] SeamlessLoop(float[] raw, int n, int fade)
+        {
+            var samples = new float[n];
+            for (int i = 0; i < n; i++) samples[i] = raw[i];
+            for (int i = 0; i < fade; i++)
+            {
+                float k = (float)i / fade;
+                samples[i] = raw[i] * Mathf.Sqrt(k) + raw[n + i] * Mathf.Sqrt(1f - k);
+            }
+            return samples;
+        }
+
+        /// <summary>
+        /// Som feito aqui (sem gravação de terceiros) salvo como WAV em _Project/Audio: só refaz quando a versão (userData do importador)
+        /// muda, no mesmo arquivo (mesmo GUID: os SoundCue continuam apontando). Volume: RMS em <paramref name="targetRms"/> (0 = só pelo
+        /// pico), pico no máximo 0,95. Loop em PCM (o Vorbis pode deixar um tiquinho de silêncio na volta); avulso em ADPCM.
+        /// </summary>
+        static AudioClip GeneratedClip(string path, string version, float targetRms, Func<float[]> make, bool loop = true)
+        {
+            var existing = AssetImporter.GetAtPath(path);
+            if (!File.Exists(path) || !existing || existing.userData != version)
+            {
+                EnsureFolder("Assets/_Project", "Audio");
+                var samples = make();
                 double sum = 0;
                 float peak = 0f;
                 foreach (float s in samples)
@@ -79,23 +131,23 @@ namespace Pirates.EditorTools
                     sum += s * s;
                     peak = Mathf.Max(peak, Mathf.Abs(s));
                 }
-                float rms = (float)Math.Sqrt(sum / n);
-                float gain = Mathf.Min(0.125f / Mathf.Max(1e-6f, rms), 0.95f / Mathf.Max(1e-6f, peak));
-                WriteWav(WindLoopPath, samples, gain, rate);
-                AssetDatabase.ImportAsset(WindLoopPath);
-                if (AssetImporter.GetAtPath(WindLoopPath) is AudioImporter importer)
+                float rms = (float)Math.Sqrt(sum / samples.Length);
+                float gain = 0.95f / Mathf.Max(1e-6f, peak);
+                if (targetRms > 0f) gain = Mathf.Min(targetRms / Mathf.Max(1e-6f, rms), gain);
+                WriteWav(path, samples, gain, AudioRate);
+                AssetDatabase.ImportAsset(path);
+                if (AssetImporter.GetAtPath(path) is AudioImporter importer)
                 {
-                    // PCM: o Vorbis pode deixar um tiquinho de silêncio na volta do loop.
                     var settings = importer.defaultSampleSettings;
-                    settings.compressionFormat = AudioCompressionFormat.PCM;
+                    settings.compressionFormat = loop ? AudioCompressionFormat.PCM : AudioCompressionFormat.ADPCM;
                     settings.loadType = AudioClipLoadType.DecompressOnLoad;
                     importer.defaultSampleSettings = settings;
                     importer.forceToMono = true;
-                    importer.userData = WindLoopVersion;
+                    importer.userData = version;
                     importer.SaveAndReimport();
                 }
             }
-            return AssetDatabase.LoadAssetAtPath<AudioClip>(WindLoopPath);
+            return AssetDatabase.LoadAssetAtPath<AudioClip>(path);
         }
 
         static void WriteWav(string path, float[] samples, float gain, int rate)

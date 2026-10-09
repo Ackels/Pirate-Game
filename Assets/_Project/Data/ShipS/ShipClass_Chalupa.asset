@@ -29,5 +29,6 @@ MonoBehaviour:
   minReloadSeconds: 2.5
   schematic: {fileID: 0}
   requiredBuilding: {fileID: 0}
+  requiredBuildingLevel: 1
   cost: []
   buildSeconds: 180

@@ -151,6 +151,7 @@ namespace Pirates.EditorTools
             var loot = LoadLandLootAssets(lootAssets);
             var treasure = CreateTreasureChest(campSite, loot);
             CreateBreakables(campSite, skull, loot);
+            PowderKegsAt(campSite, SkullCampKegs);
             if (trainingDummies) CreateTrainingDummies(m.wood, m.sack);
             PlantSkullJungle(skull);
             // NavMesh antes dos personagens: eles não podem entrar como obstáculo.
@@ -187,7 +188,11 @@ namespace Pirates.EditorTools
             var health = character.gameObject.AddComponent<Health>();
             health.Configure(100f);
             // O jogador não é interrompido ao levar golpe (os piratas são).
-            character.gameObject.AddComponent<FootHealthReactions>().Configure(model, 0f);
+            var reactions = character.gameObject.AddComponent<FootHealthReactions>();
+            reactions.Configure(model, 0f);
+            // Derrubado (revisão de 09/10): levanta rápido da explosão, invencível um instante, e pode levantar rolando (Ctrl).
+            reactions.SetQuickRecovery(true);
+            character.AllowRollOutOfKnockdown(true);
             character.gameObject.AddComponent<Inventory>().Configure(BackpackCapacity);
             var looter = character.gameObject.AddComponent<LandLooter>();
             looter.Configure(hold);

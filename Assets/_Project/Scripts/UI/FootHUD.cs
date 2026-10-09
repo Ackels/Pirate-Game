@@ -176,7 +176,7 @@ namespace Pirates.UI
             help = Hud.Card(paper: true, "A pé");
             help.AddToClassList("hud-help");
             help.Add(Hud.Text(
-                "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular\n" +
+                "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular     <b>Ctrl</b>   rolar (esquiva)     <b>V</b>   chutar (derruba)\n" +
                 "<b>Botão esquerdo</b>   atacar (mira no cursor)\n" +
                 "<b>Botão direito (segurar)</b>   mirar (laser): o esquerdo atira na hora\n" +
                 "<b>1 / 2 / 3</b>   cutelo / pistola / bacamarte (comprado no mercado)\n" +

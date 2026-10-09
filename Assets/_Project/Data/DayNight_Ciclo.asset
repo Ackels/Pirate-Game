@@ -64,3 +64,12 @@ MonoBehaviour:
   nightReflection: 0.08
   nightSkyExposure: 0.08
   lanternsFrom: 0.25
+  overcastSun: 0.2
+  overcastAmbient: 0.5
+  overcastTint: {r: 0.78, g: 0.84, b: 0.95, a: 1}
+  overcastShadow: 0.25
+  overcastFog: {r: 0.42, g: 0.47, b: 0.52, a: 1}
+  overcastFogDensity: 2.4
+  overcastSky: 0.45
+  overcastReflection: 0.5
+  stormLanterns: 0.7

@@ -658,6 +658,97 @@ muralha e zona segura +45 m.
 `Data/HarborSettings_Base` (preço, patente, receita), `Data/Items/Item_Chumbo`. Cor e espessura do laser: `CharacterAimRig` no `Model` do
 personagem (cores, ponto, anel) e os objetos `LinhaDeMira`/`BrilhoDoLaser` (largura).
 
+## Chute e quedas (pacote A, passo 3) — cenas 06 e 07
+
+- **V** (gamepad: LB) chuta para a mira: pouco dano (8), mas **derruba** o pirata da frente: ele cambaleia, cai sentado e leva ~1,5 s
+  para levantar (dá 1 ou 2 golpes). Espera de 3 s entre um chute e outro; quem acabou de levantar fica 2 s sem cair de novo.
+- **Barril de pólvora derruba** quem estiver a até ~3 m: os piratas ficam ~2,9 s no chão; você ~1,3 s, e depois de 0,8 s caído o **Ctrl
+  levanta rolando**. Ao levantar você fica meio segundo invencível.
+- No chão o personagem leva dano, mas não é derrubado de novo. Quem morre caindo fica deitado.
+
+**Onde ajustar:** `CharacterCombat` (Chute: dano, alcance, arco, tempos, empurrão), `FootHealthReactions` (Derrubado: segundos no chão),
+`PowderKeg` (até onde derruba).
+
+## Rolamento / esquiva (pacote A, passo 2) — cenas 06 e 07
+
+- **Ctrl** (gamepad: RB) rola ~4,5 m para onde você está andando (parado: para a frente). No começo e no meio do rolamento nada
+  acerta: golpe, tiro, bala de chumbo ou explosão. Use para atravessar o leque do bacamarteiro ou sair do raio do barril.
+- Cancela o golpe ou tiro que ia sair; espera curta (0,4 s) entre um rolamento e outro.
+
+**Onde ajustar:** `FootCharacter` do capitão (Rolamento: distância, duração, espera, trecho invencível).
+
+## Barris de pólvora (pacote A, passo 1) — cenas 06 e 07
+
+- Barris com **faixas vermelhas e tampa preta** (diferentes dos barris de saque) perto de onde os piratas ficam: 4 no acampamento da
+  Caveira (fogueira, portão norte, torre, portão sul), 2 no esconderijo dos contrabandistas e 4 no forte da Ilha Norte (3 juntos no
+  paiol e 1 no pátio).
+- **Tiro** (pistola, bacamarte, piratas inimigos e balas de canhão) acende; **golpe de cutelo não**. Depois de um pavio curto
+  (0,1–0,25 s) explode: até 80 de dano no centro e 12 na borda (raio de 5 m), empurra quem estiver perto e quebra caixotes.
+  Outro barril no raio também explode, um pouco depois (cadeia). **Cuidado: pega você também** (um barril sozinho não mata o capitão;
+  dois ou três juntos matam de perto). Paliçada, casa, muralha e morro protegem; o tiro dos piratas também acende.
+- A mira da pistola "gruda" no barril como nos piratas: mire nele e atire de longe.
+- Os barris voltam quando o acampamento é repovoado (missão aceita de novo) e no F1 → restaurar caixotes.
+
+**Onde ajustar:** componente `PowderKeg` de cada barril (raio, dano, empurrão, pavio); posições em
+`PrototypeSceneBuilder.PowderKegs.cs` (`SkullCampKegs`, `HideoutKegs`) e no forte (`EnemyFortAt`).
+
+## Inimigos novos (M13) — bacamarteiros (cenas 06 e 07) e caçadores de recompensas (cena 07)
+
+- **Bacamarteiros** (tubarões de bacamarte): 2 no acampamento da Caveira, 1 no esconderijo dos contrabandistas e 1 na guarnição do forte.
+  Chegam perto (~9 m), miram com a linha vermelha por 1 a 1,5 s e soltam um leque de chumbo (até 42 de dano colado); a recarga é longa
+  (4,5 s): saia do leque correndo de lado e aproveite a recarga para atacar.
+- **Caçadores de recompensas**: com a fama vem a cabeça a prêmio. A partir da patente Corsário, de tempos em tempos (uns 7 a 12 min
+  navegando fora do porto) um navio de velas brancas aparece longe e vem atrás de você pelo mapa todo, com aviso e barra de vida no topo.
+  Fica mais forte a cada patente; na Lenda dos Sete Mares é mais forte que o Tormenta. Afundar dá fama e saque. Se você ficar no porto (ou
+  ancorado, a pé) ou fugir para longe, ele desiste depois de uns 90 s.
+- F1 → Inimigos → "Chamar caçador de recompensas" (testar na hora).
+
+**Onde ajustar:** `Data/Weapons/Weapon_Bacamarte_Pirata` (dano, chumbos, alcance, recarga); objeto "CacadoresDeRecompensa" na cena 07
+(patentes, casco e fama de cada caçador, intervalo, distância, desistência); `Data/ShipStats_Cacador`, `Data/CannonStats_Cacador_1..3`,
+`Data/LootTable_Cacador`.
+
+## Galeão, o 3º navio (M8.3) — cenas 05 e 07
+
+- Depois da chalupa e da escuna: o **galeão**, o maior navio (o mesmo casco do Tormenta). Casco 420, **8 canhões por bordo**, porão 110,
+  32 beliches; o mais lento e o mais pesado para virar. Os upgrades de casco e recarga rendem 40% a mais nele, e o de velocidade 30% (e voltam a zero no
+  navio novo, como na escuna).
+- **Para construir** (Estaleiro do porto, casa do Estaleiro): o esquema "Galeão" — sai no baú do galeão Tormenta ou no mercado na patente
+  Lenda dos Sete Mares (1600) —, o **Estaleiro da base no nível 2**, 1200 de ouro, 160 de madeira, 60 de ferro e 40 de pólvora; 5 min de obra.
+  Dá para ir direto da chalupa para o galeão.
+- F1 → Navio: troca na hora (para testar).
+
+**Onde ajustar:** `Data/ShipS/ShipClass_Galeao` (casco, porão, beliches, custo, obra, multiplicadores, nível do Estaleiro),
+`Data/ShipStats_GaleaoJogador` (velocidade, giro) e `Data/CannonStats_GaleaoJogador` (canhões); chance do esquema no `Data/LootTable_Galeao`.
+
+## Marujos no convés (M12, passo 1) — cenas 05 e 07
+
+- A sua **tripulação aparece no navio**: com os beliches cheios, 4 marujos na chalupa e 6 na escuna (com menos gente, menos marujos).
+- Eles andam pelo convés, param e conversam; na escuna alguns ficam lá em cima no tombadilho, perto do leme.
+- **Mudou a vela?** Dois correm até o mastro e puxam os cabos.
+- **Combate** (tiro dado ou levado): correm para trás dos canhões, se abaixam no disparo e socam a bala nova enquanto a bateria recarrega;
+  uns 25 s depois do último tiro voltam ao normal. Tiro no casco faz alguns se encolherem; cada baixa na tripulação derruba um marujo.
+- Só visual: não muda velocidade, recarga nem nada do jogo (a tripulação continua valendo como antes).
+
+**Onde ajustar:** no navio do jogador, componente `DeckCrew` (velocidade de andar e correr, quanto tempo dura o combate, distância em que param,
+tempo puxando o cabo).
+
+## Chuva e tempestade (M11, passo 2) — todas as cenas
+
+- **O tempo muda sozinho** ao longo dos dias de jogo: céu limpo na maior parte do tempo, nublado (~1/4 do tempo), chuva (~1/6) e, de vez em
+  quando, tempestade (~6% do tempo: mais ou menos uma a cada 2 ou 3 dias de jogo, durando uns 3 minutos). O jogo novo começa com céu limpo.
+  O relógio mostra o tempo: "tarde · chuva", "noite · tempestade".
+- **Céu fechado:** o dia escurece e fica cinza-azulado, a névoa fecha (enxerga-se menos longe) e as sombras somem.
+- **Chuva:** gotas finas caindo, inclinadas pelo vento; onde batem na água abrem anéis e pulam pinguinhos (no chão, no píer e no convés só os
+  pinguinhos); com chuva o vento também aumenta. Som de chuva gravado (e a chuva pesada por cima na tempestade).
+- **Tempestade:** chuva forte, vento forte, raios (clarão em toda a cena e o risco do raio) e trovões, lanternas acesas mesmo de dia. Todos os
+  navios balançam muito mais e viram um pouco pior (−12%), e os canhões de todo mundo (inimigos e fortes também) espalham 50% mais.
+- **F1 → Clima:** céu limpo, nublado, chuva ou tempestade (a troca leva uns 20 s), "Raio agora" e "Muda sozinho".
+
+**Onde ajustar:** `Assets/_Project/Data/Clima` (com que frequência chove e vem a tempestade, quanto dura a troca, vento mínimo na chuva e na
+tempestade, intervalo e distância dos raios, força do clarão); `Data/DayNight_Ciclo` → "Céu fechado" (quanto escurece, cor da luz e da névoa,
+névoa, lanternas na tempestade); chuva no objeto "Clima" (`RainEffect`: gotas por segundo, velocidade, cor, respingos e anéis por segundo, tamanho e duração do anel); balanço dos navios no
+`ShipController` (Storm Roll, Storm Turn Loss); sons no objeto "Audio" (`WeatherAudio`).
+
 ## Vento (M11, passo 2, parte 1) — todas as cenas
 
 - **Vento que muda:** a direção e a força mudam devagar ao longo do dia de jogo (de calmaria a vento forte), em volta de um vento que mais

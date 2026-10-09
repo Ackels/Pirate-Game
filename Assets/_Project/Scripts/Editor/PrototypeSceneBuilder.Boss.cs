@@ -103,6 +103,10 @@ namespace Pirates.EditorTools
                 t.chestFallback = new ItemStack(items.gold, 400);
             });
             table.wreckPrefab = loot.enemyTable.wreckPrefab;
+            // A planta do galeão sai do galeão (peso alto: com as outras plantas já guardadas, é ela). Tabela que já existia também ganha.
+            var galleonPlan = LoadItem(GalleonSchematic);
+            if (galleonPlan && !System.Array.Exists(table.schematics, s => s.item == galleonPlan))
+                table.schematics = new System.Collections.Generic.List<LootTable.WeightedItem>(table.schematics) { Weighted(galleonPlan, 6f) }.ToArray();
             EditorUtility.SetDirty(table);
             boss.gameObject.AddComponent<LootDropper>().Configure(table);
             boss.gameObject.AddComponent<WorldMarker>().Configure(BossMissionId, "Galeão Tormenta", 13f);

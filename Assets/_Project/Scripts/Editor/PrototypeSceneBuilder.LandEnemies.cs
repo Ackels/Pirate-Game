@@ -139,7 +139,8 @@ namespace Pirates.EditorTools
 
         /// <summary>
         /// Cinco piratas de cutelo (dois no portão norte, um na fogueira, um nas cabanas, um no portão sul) e três atiradores
-        /// de pistola (atrás do portão, nos fundos perto da bandeira e ao pé da torre), e o EnemyCamp (o da missão).
+        /// de pistola (atrás do portão, nos fundos perto da bandeira e ao pé da torre), dois de bacamarte (fogueira e portão sul) e o
+        /// EnemyCamp (o da missão).
         /// </summary>
         static EnemyCamp CreatePirates(Transform campSite, FootCharacter player, Material iron, Material wood, Material brass,
             string campName, string campId)
@@ -158,13 +159,17 @@ namespace Pirates.EditorTools
                 ("Atirador_Portao", new Vector3(5f, 0f, CampRadius - 3f), 5f, true, KitCharacters.Skeleton),
                 ("Atirador_Bandeira", new Vector3(-4.5f, 0f, -10f), -5f, true, KitCharacters.HeadlessSkeleton),
                 ("Atirador_Torre", new Vector3(8.5f, 0f, -5.5f), 160f, true, KitCharacters.Skeleton),
+                // Bacamarteiros (passo 3, 09/10): perto da fogueira e do portão sul, onde o capitão entra no corpo a corpo.
+                ("Bacamarteiro_Fogueira", new Vector3(-2.6f, 0f, 1.8f), -30f, true, KitCharacters.Mako),
+                ("Bacamarteiro_PortaoSul", new Vector3(3.2f, 0f, -CampRadius + 1.2f), 170f, true, KitCharacters.Sharky),
             };
             var parent = new GameObject("Piratas").transform;
             var members = new EnemyFootAI[posts.Length];
             for (int k = 0; k < posts.Length; k++)
                 members[k] = CreatePirate(parent, posts[k].name, campSite.TransformPoint(posts[k].local), posts[k].yaw,
-                    posts[k].gunner ? pistol : cutlass, player, camp, iron, wood, brass, posts[k].model);
+                    PostWeapon(posts[k].name, posts[k].gunner, cutlass, pistol), player, camp, iron, wood, brass, posts[k].model);
             camp.Configure(campName, campId, members, leash: 40f, attackersAtOnce: 2);
+            camp.SetKegs(campSite.GetComponentsInChildren<PowderKeg>(true));
             return camp;
         }
 
@@ -196,7 +201,21 @@ namespace Pirates.EditorTools
             }
             var model = go.transform.Find("Model");
             var combat = go.AddComponent<CharacterCombat>();
-            if (gunner)
+            if (weapon.twoHanded)
+            {
+                // Bacamarteiro: o bacamarte do jogador (duas mãos, pose de rifle), com a mesma linha vermelha de aviso.
+                var gun = BlunderbussOn(model, iron, wood, out Transform muzzle, out Transform hand, out Transform holster);
+                combat.Configure(new[] { weapon }, new[] { gun }, new[] { hand }, new[] { holster }, muzzle, ShotTracer(go.transform));
+                combat.SetMuzzles(new[] { muzzle });
+                combat.SetAimSnap(0f);
+                var rig = AddAimRig(model, combat, muzzle, AimLine(go.transform, new Color(1f, 0.1f, 0.05f, 0.95f), 0.045f));
+                if (rig)
+                {
+                    RifleAimYaw(model, out float upper, out float full);
+                    rig.ConfigureTwoHanded(upper, full);
+                }
+            }
+            else if (gunner)
             {
                 var gun = PistolOn(model, iron, wood, brass, out Transform muzzle, out Transform hand, out Transform holster);
                 combat.Configure(new[] { weapon }, new[] { gun }, new[] { hand }, new[] { holster }, muzzle, ShotTracer(go.transform));
@@ -214,6 +233,9 @@ namespace Pirates.EditorTools
             go.AddComponent<FootHealthReactions>().Configure(model, 0.6f);
             var ai = go.AddComponent<EnemyFootAI>();
             ai.Configure(player.transform, camp);
+            // Chega perto (só mira a 9 m: a 11 m pegavam 3 de 6 chumbos), recua só colado (2,5 m) e segura a mira 1,1–1,5 s (dá para sair
+            // do leque correndo de lado).
+            if (weapon.twoHanded) ai.ConfigureRanged(6f, 2.5f, 9f, new Vector2(1.1f, 1.5f), 2.5f);
             return ai;
         }
 

@@ -129,6 +129,13 @@ MonoBehaviour:
     demand: 20
     demandRefillSeconds: 45
     requiredRank: 1
+  - item: {fileID: 11400000, guid: b93f90f117496284cab7b2e91ad306fa, type: 2}
+    buyPrice: 1600
+    sellPrice: 0
+    toHold: 0
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 4
   smithy:
   - result:
       item: {fileID: 11400000, guid: c0be865e055b6c04989863b058f7cbd5, type: 2}

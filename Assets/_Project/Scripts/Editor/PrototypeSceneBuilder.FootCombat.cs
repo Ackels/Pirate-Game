@@ -25,7 +25,18 @@ namespace Pirates.EditorTools
         const string AttackLayerName = "Tronco";
         const string FullBodyLayerName = "CorpoInteiro";
         // Tags dos estados do tronco: "CorpoInteiro" = parado usa o corpo todo; "Mira" = idem + braço segue a mira.
-        const string FullBodyTag = "CorpoInteiro", AimTag = "Mira";
+        const string FullBodyTag = "CorpoInteiro", AimTag = "Mira", MovingFullBodyTag = "CorpoInteiroAndando";
+        const string ClipRoll = "Sprinting Forward Roll";
+        // Chute e quedas (pacote A, passo 3). Medidos no esqueleto do capitão: Mma Kick1 com o pé esticado de 0,6 a 0,8 s; Stunned
+        // cambaleia e cai sentado (quadril no chão a ~0,9 s); Knocked Down arremessado de costas (de pé até ~0,6 s, no chão a ~1,1 s);
+        // Getting Up começa deitado e fica de pé a ~1,9 s.
+        const string ClipKick = "Mma Kick1", ClipStumble = "Stunned", ClipBlast = "Knocked Down", ClipGetUp = "Getting Up";
+        // Tempos (revisão de 09/10, para não travar o pirata no chão): chute ~1,5 s no chão (cai sentado 0,8 s + levanta rápido 0,77 s);
+        // explosão nos piratas ~2,9 s (arremessado + levantar normal); no capitão ~1,3 s (arremessado rápido 0,47 s + levanta rápido).
+        const float KickSpeed = 1.4f, StumbleSpeed = 1.6f, StumbleExit = 0.6f, BlastSpeed = 1.4f, BlastStart = 0.18f, GetUpSpeed = 1.5f;
+        const float QuickBlastSpeed = 1.8f, QuickBlastExit = 0.48f, QuickGetUpSpeed = 2f, QuickGetUpStart = 0.15f;
+        /// <summary>Igual ao padrão do FootCharacter.dodgeSeconds (a animação dura o mesmo que o rolamento).</summary>
+        const float DodgeSeconds = 0.8f;
 
         // Clipes do Mixamo (arquivos "X Bot@<nome>.fbx") e como tocam. Medidos nos clipes: golpe para fora acerta em 0,87 s,
         // para dentro em 1,30 s; o saque pega a espada na cintura em 0,60 s; o guardar solta em 1,27 s; o tiro sai em ~0,37 s.
@@ -209,6 +220,25 @@ namespace Pirates.EditorTools
             w.aimMoveSpeed = 0.6f;
             w.recoilDegrees = 14f;
         });
+
+        /// <summary>
+        /// Bacamarte dos piratas (inimigo novo, passo 3 de 09/10): 6 chumbos × 7 = 42 colado (o capitão tem 100), leque de 18°, só até 13 m,
+        /// recarga de 4,5 s: perigoso de perto, fácil de punir na recarga. Mesmo modelo e animações do bacamarte do jogador.
+        /// </summary>
+        static WeaponDefinition EnemyBlunderbuss() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Bacamarte_Pirata.asset", w =>
+        {
+            JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(BlunderbussWeapon()), w);
+            w.displayName = "Bacamarte de pirata";
+            w.damage = 7f;
+            w.pellets = 6;
+            w.pelletSpread = 18f;
+            w.range = 13f;
+            w.reloadTime = 4.5f;
+        });
+
+        /// <summary>Arma de quem está no posto: "Bacamarteiro_..." leva o bacamarte; os outros, pistola (atirador) ou cutelo.</summary>
+        static WeaponDefinition PostWeapon(string name, bool gunner, WeaponDefinition cutlass, WeaponDefinition pistol) =>
+            name.StartsWith("Bacamarteiro") ? EnemyBlunderbuss() : gunner ? pistol : cutlass;
 
         /// <summary>Cutelo dos piratas inimigos: mais fraco e com o golpe mais lento (dá para ver vindo e reagir).</summary>
         static WeaponDefinition EnemyCutlass() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Cutelo_Pirata.asset", w =>
@@ -529,6 +559,12 @@ namespace Pirates.EditorTools
             AddParameter(controller, "HitVariant", AnimatorControllerParameterType.Int);
             AddParameter(controller, "DeathVariant", AnimatorControllerParameterType.Int);
             AddParameter(controller, "Eat", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "Dodge", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "Kick", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "Knock", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "KnockVariant", AnimatorControllerParameterType.Int);
+            AddParameter(controller, "Down", AnimatorControllerParameterType.Bool);
+            AddParameter(controller, "Dead", AnimatorControllerParameterType.Bool);
             var parameters = controller.parameters;
             foreach (var p in parameters)
             {
@@ -623,6 +659,8 @@ namespace Pirates.EditorTools
                 Or(ClipRifleReload, ClipGunplay), MixamoClip(ClipRifleRun) ? ClipRifleRun : null);
 
             AddHitAndDeath(sm, empty);
+            AddDodge(sm, empty);
+            AddKickAndKnockdown(sm, empty);
 
             // Corpo inteiro: mesmos estados e tempos do tronco, sem máscara. Peso 0 até o driver ligar.
             controller.AddLayer(FullBodyLayerName);
@@ -729,6 +767,7 @@ namespace Pirates.EditorTools
                 toDeath.canTransitionToSelf = false;
                 toDeath.AddCondition(AnimatorConditionMode.If, 0, "Die");
                 toDeath.AddCondition(AnimatorConditionMode.Equals, deaths.Count, "DeathVariant");
+                toDeath.AddCondition(AnimatorConditionMode.IfNot, 0, "Down");
                 deaths.Add(name);
             }
             // Levantou: volta ao vazio (e dali à pose da arma). Existe mesmo sem clipe, para consumir o trigger.
@@ -761,6 +800,77 @@ namespace Pirates.EditorTools
             t.offset = startAt;   // começa o clipe já adiantado (pula o preparo lento do Mixamo)
             t.canTransitionToSelf = true;
             foreach (var c in conditions) t.AddCondition(c.mode, c.v, c.p);
+        }
+
+        /// <summary>
+        /// Rolamento (pacote A de 09/10): "Sprinting Forward Roll" do Mixamo inteiro (rola do começo ao fim e termina de pé; o
+        /// deslocamento do clipe fica fora da pose e quem move é o FootCharacter), no tempo do <see cref="FootCharacter.DodgeSeconds"/>.
+        /// Tag "CorpoInteiroAndando": corpo todo mesmo correndo.
+        /// </summary>
+        static void AddDodge(AnimatorStateMachine sm, AnimatorState empty)
+        {
+            var clip = MixamoClip(ClipRoll);
+            if (!clip) return;
+            var roll = State(sm, "Rolar", ClipRoll, clip.length / DodgeSeconds, new Vector3(-300f, -120f));
+            roll.tag = MovingFullBodyTag;
+            Any(sm, roll, 0f, 0.06f, ("Dodge", AnimatorConditionMode.If, 0));
+            Exit(roll, empty, 0.94f, 0.1f);
+        }
+
+        /// <summary>
+        /// Chute (trigger "Kick", corpo todo) e as quedas (trigger "Knock" + "KnockVariant": 0 = chute, cambaleia e cai sentado; 1 = explosão,
+        /// arremessado de costas) que emendam no levantar e voltam ao vazio. Tempos iguais aos do FootHealthReactions (stumbleSeconds 2,6 s,
+        /// blastSeconds 2,9 s). Morrer no chão ("Down" ligado) fica deitado: a morte normal começa de pé e ele levantaria para cair de novo.
+        /// </summary>
+        static void AddKickAndKnockdown(AnimatorStateMachine sm, AnimatorState empty)
+        {
+            if (MixamoClip(ClipKick))
+            {
+                var kick = State(sm, "Chute", ClipKick, KickSpeed, new Vector3(-300f, -200f));
+                kick.tag = MovingFullBodyTag;
+                Any(sm, kick, 0.05f, 0.08f, ("Kick", AnimatorConditionMode.If, 0));
+                Exit(kick, empty, 0.8f, 0.15f);
+            }
+            if (!MixamoClip(ClipStumble) || !MixamoClip(ClipBlast) || !MixamoClip(ClipGetUp)) return;
+            var getUp = State(sm, "Levantar", ClipGetUp, GetUpSpeed, new Vector3(-600f, -300f));
+            getUp.tag = MovingFullBodyTag;
+            Exit(getUp, empty, 0.72f, 0.25f);
+            var quickGetUp = State(sm, "LevantarRapido", ClipGetUp, QuickGetUpSpeed, new Vector3(-600f, -480f));
+            quickGetUp.tag = MovingFullBodyTag;
+            Exit(quickGetUp, empty, 0.72f, 0.2f);
+            var stumble = State(sm, "Tropeco", ClipStumble, StumbleSpeed, new Vector3(-900f, -360f));
+            stumble.tag = MovingFullBodyTag;
+            Any(sm, stumble, 0f, 0.1f, ("Knock", AnimatorConditionMode.If, 0), ("KnockVariant", AnimatorConditionMode.Equals, 0));
+            ExitAlive(stumble, quickGetUp, StumbleExit, 0.15f, QuickGetUpStart);
+            var blast = State(sm, "Arremessado", ClipBlast, BlastSpeed, new Vector3(-900f, -240f));
+            blast.tag = MovingFullBodyTag;
+            Any(sm, blast, BlastStart, 0.08f, ("Knock", AnimatorConditionMode.If, 0), ("KnockVariant", AnimatorConditionMode.Equals, 1));
+            ExitAlive(blast, getUp, 0.9f, 0.25f);
+            var quickBlast = State(sm, "ArremessadoRapido", ClipBlast, QuickBlastSpeed, new Vector3(-900f, -480f));
+            quickBlast.tag = MovingFullBodyTag;
+            Any(sm, quickBlast, BlastStart, 0.08f, ("Knock", AnimatorConditionMode.If, 0), ("KnockVariant", AnimatorConditionMode.Equals, 2));
+            ExitAlive(quickBlast, quickGetUp, QuickBlastExit, 0.15f, QuickGetUpStart);
+
+            var dead = State(sm, "MortoNoChao", ClipBlast, 1f, new Vector3(-600f, -420f));
+            dead.tag = FullBodyTag;
+            var toDead = sm.AddAnyStateTransition(dead);
+            toDead.hasExitTime = false;
+            toDead.duration = 0.2f;
+            toDead.offset = 0.85f;
+            toDead.canTransitionToSelf = false;
+            toDead.AddCondition(AnimatorConditionMode.If, 0, "Die");
+            toDead.AddCondition(AnimatorConditionMode.If, 0, "Down");
+        }
+
+        /// <summary>Saída pelo tempo só se estiver vivo ("Dead" desligado): morto no meio da queda fica deitado no fim do clipe.</summary>
+        static void ExitAlive(AnimatorState from, AnimatorState to, float exitTime, float duration, float startAt = 0f)
+        {
+            var t = from.AddTransition(to);
+            t.hasExitTime = true;
+            t.exitTime = exitTime;
+            t.duration = duration;
+            t.offset = startAt;
+            t.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
         }
 
         static void Exit(AnimatorState from, AnimatorState to, float exitTime, float duration)

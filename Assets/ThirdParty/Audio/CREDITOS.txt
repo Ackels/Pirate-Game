@@ -21,3 +21,12 @@ OpenGameArt.org:
   Musica/pirate1uf.ogg             Pirate Game Tune — Tozan (2015)               https://opengameart.org/content/pirate-game-tune
   Musica/Battle.mp3                Battle Theme — Wolfgang_                      https://opengameart.org/content/battle-theme-0
   Musica/Exploration Theme.ogg     Exploration Theme — Cleyton Kauffman          https://opengameart.org/content/exploration-theme
+
+Freesound.org (CC0), baixados pelo Jhonata em 09/10/2026 (originais em _Downloads/Sons); cortados, emendados em loop e com o volume
+ajustado para o jogo (WAV 48 kHz 16 bits):
+  Clima/Chuva_Loop.wav       Rain_Loop.wav — Snoopy20111 (trecho 20–84 s)                           https://freesound.org/people/Snoopy20111/sounds/399072/
+  Clima/Tempestade_Loop.wav  Rain and thunder in Thailand — felix.blume (trecho 11:20–12:44)         https://freesound.org/people/felix.blume/sounds/447510/
+  Clima/Trovao_1.wav e _5    sfx_thunder blast.wav — bajko (0–5 s e 5–12 s)                          https://freesound.org/people/bajko/sounds/399656/
+  Clima/Trovao_2.wav         Thunder Clap OWB KY 441x16.wav — Dave Welsh (13,4–42 s)                 https://freesound.org/people/Dave%20Welsh/sounds/194364/
+  Clima/Trovao_3.wav         thunder — netaj                                                          https://freesound.org/people/netaj/sounds/193170/
+  Clima/Trovao_4.wav         Booming Thunder in Distance — Fugeni                                     https://freesound.org/people/Fugeni/sounds/559804/

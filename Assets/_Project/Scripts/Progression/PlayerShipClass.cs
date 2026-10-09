@@ -29,6 +29,9 @@ namespace Pirates.Progression
             public Vector3 inertia;
             public Vector3 colliderCenter, colliderSize;
             public Vector3[] floatPoints = Array.Empty<Vector3>();
+            [Tooltip("Lanterna da popa (a mesma em todos os cascos) e onde ela fica neste (popa de cada tamanho).")]
+            public Transform lantern;
+            public Vector3 lanternPosition;
         }
 
         [Tooltip("Cascos do navio; o primeiro é o da cena.")]
@@ -120,6 +123,8 @@ namespace Pirates.Progression
             body.inertiaTensor = rig.inertia;
             body.inertiaTensorRotation = Quaternion.identity;
             GetComponent<Buoyancy>().SetFloatPoints(rig.floatPoints);
+
+            if (rig.lantern) rig.lantern.localPosition = rig.lanternPosition;
 
             var ship = GetComponent<ShipController>();
             if (TryGetComponent(out SailVisual sails)) sails.Configure(ship, rig.sails);

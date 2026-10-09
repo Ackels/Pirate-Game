@@ -16,6 +16,8 @@ namespace Pirates.Combat
         public event System.Action<Vector3> Splashed;
         /// <summary>Ponto e normal da superfície atingida.</summary>
         public event System.Action<Vector3, Vector3> Impacted;
+        /// <summary>Explosão (barril de pólvora): centro e raio.</summary>
+        public event System.Action<Vector3, float> Exploded;
 
         void OnEnable() => Services.Register(this);
         void OnDisable() => Services.Unregister(this);
@@ -25,5 +27,7 @@ namespace Pirates.Combat
         public void MuzzleBlast(Vector3 position, Vector3 direction) => Blasted?.Invoke(position, direction);
 
         public void Impact(Vector3 position, Vector3 normal) => Impacted?.Invoke(position, normal);
+
+        public void Explosion(Vector3 center, float radius) => Exploded?.Invoke(center, radius);
     }
 }

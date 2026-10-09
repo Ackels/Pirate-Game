@@ -14,7 +14,7 @@ namespace Pirates.OnFoot
     /// O visual (e o Animator) fica num filho.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class FootCharacter : MonoBehaviour
+    public class FootCharacter : MonoBehaviour, IPushable
     {
         [Header("Movimento")]
         [SerializeField] float walkSpeed = 2.4f;
@@ -44,10 +44,26 @@ namespace Pirates.OnFoot
         [Tooltip("Abaixo desta profundidade (caiu de um barranco no mar) volta ao último chão seguro.")]
         [SerializeField] float drownDepth = 2.5f;
 
+        [Header("Rolamento (esquiva)")]
+        [Tooltip("Metros do rolamento e quanto tempo leva.")]
+        [SerializeField] float dodgeDistance = 4.5f, dodgeSeconds = 0.8f;
+        [Tooltip("Segundos de espera depois de um rolamento (não dá para rolar sem parar).")]
+        [SerializeField] float dodgeCooldown = 0.4f;
+        [Tooltip("Trecho do rolamento (fração 0–1) em que nada acerta o personagem.")]
+        [SerializeField] Vector2 dodgeInvulnerable = new(0.05f, 0.6f);
+
+        [Tooltip("Derrubado: depois destes segundos no chão, o rolamento levanta rolando (jogador; a IA fica até levantar).")]
+        [SerializeField] bool rollOutOfKnockdown;
+        [SerializeField] float rollOutAfter = 0.8f;
+
+        [Header("Empurrão (explosão)")]
+        [Tooltip("m/s² com que o empurrão some (o personagem desliza e recupera o controle).")]
+        [SerializeField] float pushDrag = 10f;
+
         CharacterController controller;
         IFootInput input;
         IOceanSampler ocean;
-        Vector3 planarVelocity;
+        Vector3 planarVelocity, pushVelocity;
         float verticalVelocity;
         float lastGroundedTime = float.NegativeInfinity;
         Vector3 lastSafePosition;
@@ -57,6 +73,8 @@ namespace Pirates.OnFoot
         bool backpedal;
         Vector3 faceDirection;
         float faceUntil, speedMultiplier = 1f, speedMultiplierUntil;
+        float dodgeStart = float.NegativeInfinity, dodgeReadyAt, downUntil = float.NegativeInfinity, downSince = float.NegativeInfinity;
+        Vector3 dodgeDirection;
 
         public float PlanarSpeed => planarVelocity.magnitude;
         public Vector3 PlanarVelocity => planarVelocity;
@@ -70,8 +88,28 @@ namespace Pirates.OnFoot
         public bool WalkingBackward { get; private set; }
         /// <summary>Fora de ação (morto): não obedece comandos e não colide (o colisor desliga).</summary>
         public bool Incapacitated { get; private set; }
+        /// <summary>Rolando (esquiva): anda sozinho na direção do rolamento, sem atacar nem mirar.</summary>
+        public bool IsDodging => Time.time - dodgeStart < dodgeSeconds;
+        /// <summary>No meio do rolamento: golpes, tiros e explosões não acertam (quem cuida é o FootHealthReactions, pela Health).</summary>
+        public bool DodgeInvulnerable
+        {
+            get
+            {
+                float f = (Time.time - dodgeStart) / dodgeSeconds;
+                return f >= dodgeInvulnerable.x && f < dodgeInvulnerable.y;
+            }
+        }
+        public float DodgeSeconds => dodgeSeconds;
+        /// <summary>Derrubado (chute, explosão): no chão até levantar, sem obedecer comandos (o empurrão e a gravidade continuam).</summary>
+        public bool IsDown => Time.time < downUntil;
+        /// <summary>Quando levantou (ou levanta) da última queda.</summary>
+        public float DownUntil => downUntil;
 
         public event Action Jumped;
+        /// <summary>Começou a rolar (animação, som, poeira).</summary>
+        public event Action Dodged;
+        /// <summary>Foi derrubado (som e poeira da queda).</summary>
+        public event Action KnockedDown;
         /// <summary>Caiu no mar fundo e voltou para o último chão seguro.</summary>
         public event Action RescuedFromWater;
 
@@ -94,11 +132,17 @@ namespace Pirates.OnFoot
         /// <summary>Comando fixo no lugar do input (testes automáticos, cutscenes). null volta ao input normal.</summary>
         public void SetCommandOverride(FootCommand? command) => commandOverride = command;
 
+        /// <summary>Derrubado, o rolamento levanta rolando depois de <see cref="rollOutAfter"/> (o capitão do jogador).</summary>
+        public void AllowRollOutOfKnockdown(bool value) => rollOutOfKnockdown = value;
+
         /// <summary>Liga/desliga o "fora de ação" (morto/levantando): para no lugar e o colisor some.</summary>
         public void SetIncapacitated(bool value)
         {
             Incapacitated = value;
-            planarVelocity = Vector3.zero;
+            dodgeStart = float.NegativeInfinity;
+            // Morto caído continua "no chão" (a animação fica deitada); só reviver zera.
+            if (!value) downUntil = float.NegativeInfinity;
+            planarVelocity = pushVelocity = Vector3.zero;
             verticalVelocity = 0f;
             WalkingBackward = backpedal = false;
             if (controller) controller.enabled = !value;
@@ -120,6 +164,18 @@ namespace Pirates.OnFoot
             speedMultiplierUntil = Time.time + seconds;
         }
 
+        /// <summary>Explosão: empurra para fora (desliza no chão e some aos poucos) e, com <c>velocity.y</c>, tira do chão.</summary>
+        public void Push(Vector3 velocity)
+        {
+            if (Incapacitated) return;
+            pushVelocity += new Vector3(velocity.x, 0f, velocity.z);
+            if (velocity.y > 0f)
+            {
+                verticalVelocity = Mathf.Max(verticalVelocity, velocity.y);
+                lastGroundedTime = float.NegativeInfinity;
+            }
+        }
+
         /// <summary>Coloca o personagem num ponto (desembarque, reaparecer): procura o chão logo abaixo.</summary>
         public void Teleport(Vector3 position, Quaternion rotation)
         {
@@ -129,7 +185,7 @@ namespace Pirates.OnFoot
                 position = hit.point + Vector3.up * 0.05f;
             transform.SetPositionAndRotation(position, Quaternion.Euler(0f, rotation.eulerAngles.y, 0f));
             controller.enabled = !Incapacitated;
-            planarVelocity = Vector3.zero;
+            planarVelocity = pushVelocity = Vector3.zero;
             verticalVelocity = 0f;
             lastSafePosition = position;
         }
@@ -139,6 +195,27 @@ namespace Pirates.OnFoot
             if (Incapacitated) return;
             float dt = Time.deltaTime;
             var command = commandOverride ?? (input != null ? input.GetCommand() : default);
+            if (IsDown && rollOutOfKnockdown && command.dodge && Time.time - downSince >= rollOutAfter && IsGrounded)
+            {
+                // Levanta rolando (revisão de 09/10: caído no meio da luta, o acampamento matava o capitão no chão).
+                downUntil = Time.time;
+                dodgeReadyAt = 0f;
+            }
+            if (IsDown)
+            {
+                if (combat) combat.Tick(default);
+                planarVelocity = Vector3.MoveTowards(planarVelocity, Vector3.zero, acceleration * dt);
+                MoveBody(dt);
+                return;
+            }
+            if (command.dodge && CanDodge) BeginDodge(command.move);
+            if (IsDodging)
+            {
+                // Rolando: só o rolamento (sem atacar, mirar, trocar de arma nem pular).
+                if (combat) combat.Tick(default);
+                Dodge(dt);
+                return;
+            }
             if (combat) combat.Tick(command);
             bool slowed = Time.time < speedMultiplierUntil;
             float speedScale = slowed ? speedMultiplier : 1f;
@@ -180,10 +257,63 @@ namespace Pirates.OnFoot
             verticalVelocity += gravity * dt;
 
             Vector3 before = transform.position;
-            controller.Move((planarVelocity + Vector3.up * verticalVelocity) * dt);
+            pushVelocity = Vector3.MoveTowards(pushVelocity, Vector3.zero, pushDrag * dt);
+            controller.Move((planarVelocity + pushVelocity + Vector3.up * verticalVelocity) * dt);
             IsGrounded = controller.isGrounded;
             if (IsGrounded) lastGroundedTime = Time.time;
 
+            KeepOutOfDeepWater(before);
+        }
+
+        /// <summary>Derruba por <paramref name="seconds"/> (quem chama cuida da animação); cancela o rolamento.</summary>
+        public void KnockDown(float seconds)
+        {
+            if (Incapacitated || seconds <= 0f) return;
+            downUntil = Time.time + seconds;
+            downSince = Time.time;
+            dodgeStart = float.NegativeInfinity;
+            faceUntil = 0f;
+            WalkingBackward = backpedal = false;
+            KnockedDown?.Invoke();
+        }
+
+        bool CanDodge => IsGrounded && !IsDodging && Time.time >= dodgeReadyAt && !InDeepWater;
+
+        /// <summary>Rola para onde está andando (parado: para a frente); o golpe ou tiro que ia sair é cancelado.</summary>
+        void BeginDodge(Vector2 move)
+        {
+            var wish = new Vector3(move.x, 0f, move.y);
+            dodgeDirection = wish.sqrMagnitude > 0.01f ? wish : transform.forward;
+            dodgeDirection.y = 0f;
+            dodgeDirection.Normalize();
+            dodgeStart = Time.time;
+            dodgeReadyAt = Time.time + dodgeSeconds + dodgeCooldown;
+            faceUntil = 0f;
+            WalkingBackward = backpedal = false;
+            if (combat) combat.Interrupt(0.1f);
+            Dodged?.Invoke();
+        }
+
+        /// <summary>Um quadro do rolamento: o clipe anda quase sempre no mesmo ritmo; freia no último quinto (sai já andando, sem tranco).</summary>
+        void Dodge(float dt)
+        {
+            float f = (Time.time - dodgeStart) / dodgeSeconds;
+            float speed = dodgeDistance / dodgeSeconds * (f < 0.8f ? 1.05f : Mathf.Lerp(1.05f, 0.6f, (f - 0.8f) / 0.2f));
+            planarVelocity = dodgeDirection * speed;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dodgeDirection, Vector3.up), 1f - Mathf.Exp(-turnSharpness * 2f * dt));
+            MoveBody(dt);
+        }
+
+        /// <summary>Move com a velocidade atual, o empurrão e a gravidade (rolamento, no chão), sem ler comando.</summary>
+        void MoveBody(float dt)
+        {
+            if (IsGrounded && verticalVelocity < 0f) verticalVelocity = -2f;
+            verticalVelocity += gravity * dt;
+            Vector3 before = transform.position;
+            pushVelocity = Vector3.MoveTowards(pushVelocity, Vector3.zero, pushDrag * dt);
+            controller.Move((planarVelocity + pushVelocity + Vector3.up * verticalVelocity) * dt);
+            IsGrounded = controller.isGrounded;
+            if (IsGrounded) lastGroundedTime = Time.time;
             KeepOutOfDeepWater(before);
         }
 
@@ -233,19 +363,24 @@ namespace Pirates.OnFoot
             float depth = ocean.SeaLevel - feet.y;
             InDeepWater = depth > maxWadeDepth;
 
-            if (depth > drownDepth)
+            // De pé no fundo além do limite (andando não se chega lá: o passo que afunda é desfeito no limite, que passa só uns 3 cm) =
+            // caiu do píer ou de uma pedra no mar. Antes ficava preso: todo passo era desfeito, inclusive o de volta (Jhonata, 09/10).
+            // Volta ao último lugar seguro.
+            if (depth > drownDepth || (IsGrounded && depth > maxWadeDepth + 0.15f))
             {
                 Teleport(lastSafePosition, transform.rotation);
                 RescuedFromWater?.Invoke();
                 return;
             }
-            if (InDeepWater)
+            // Na água funda, só o passo que afunda é desfeito: andar no plano ou para o raso continua valendo.
+            if (InDeepWater && feet.y < before.y - 0.001f)
             {
-                // Desfaz o passo para o fundo (mantém a queda vertical) e para de empurrar para lá.
+                // Desfaz o passo para o fundo e para de empurrar para lá. No chão volta inteiro (com a altura: mantendo a nova, o
+                // personagem descia uns centímetros a cada quadro empurrando a beira); no ar mantém a queda.
                 controller.enabled = false;
-                transform.position = new Vector3(before.x, feet.y, before.z);
+                transform.position = new Vector3(before.x, IsGrounded ? before.y : feet.y, before.z);
                 controller.enabled = true;
-                planarVelocity = Vector3.zero;
+                planarVelocity = pushVelocity = Vector3.zero;
                 return;
             }
             if (IsGrounded && depth < maxWadeDepth * 0.5f) lastSafePosition = feet;

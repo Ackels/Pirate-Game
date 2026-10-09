@@ -19,6 +19,7 @@ namespace Pirates.EditorTools
     {
         const string ShipsFolder = DataFolder + "/Ships";
         const string SchoonerSchematic = "Esquema_Escuna", SchoonerModel = "ship-pirate-medium";
+        const string GalleonSchematic = "Esquema_Galeao";
 
         static void AddShipClasses(ShipController player, LootItems items, CombatAssets combat, BuildingDefinition shipyard)
         {
@@ -100,7 +101,85 @@ namespace Pirates.EditorTools
             cannons.gameObject.SetActive(false);
             var schoonerRig = Rig(schooner, schoonerHull, sails, visual.gameObject, cannons.gameObject);
 
-            player.gameObject.AddComponent<PlayerShipClass>().Configure(new[] { sloopRig, schoonerRig });
+            var galleonRig = AddGalleon(player, items, combat, shipyard, schoonerStats, schoonerCannons);
+
+            // Lanterna da popa (uma só, criada no CreateShip pelo casco da chalupa): cada casco a põe na popa dele.
+            var lantern = root.Find("Lanterna_Popa");
+            foreach (var (rig, hull) in new[] { (sloopRig, sloopHull), (schoonerRig, schoonerHull), (galleonRig, BrigHull(BossModel)) })
+            {
+                rig.lantern = lantern;
+                rig.lanternPosition = Stern(hull);
+            }
+
+            player.gameObject.AddComponent<PlayerShipClass>().Configure(new[] { sloopRig, schoonerRig, galleonRig });
+        }
+
+        /// <summary>Lugar da lanterna da popa num casco (o mesmo cálculo do ShipLantern).</summary>
+        static Vector3 Stern(ShipHull hull) =>
+            hull.colliderCenter + new Vector3(0f, hull.colliderSize.y * 0.5f + 0.2f, -hull.colliderSize.z * 0.5f + 1.2f);
+
+        /// <summary>
+        /// Galeão (3ª classe, pedido do Jhonata em 09/10): o casco grande pirata do Tormenta (ship-pirate-large, medidas do brigue), 8 canhões
+        /// por bordo, o mais forte e o mais lento dos três. Planta só no baú do Tormenta ou no mercado da patente 4, e pede o Estaleiro 2.
+        /// Assets preservados depois de criados (ajuste de game design).
+        /// </summary>
+        static PlayerShipClass.Rig AddGalleon(ShipController player, LootItems items, CombatAssets combat, BuildingDefinition shipyard,
+            ShipStats schoonerStats, CannonStats schoonerCannons)
+        {
+            var root = player.transform;
+            var body = player.GetComponent<Rigidbody>();
+            var stats = LoadOrCreateAsset<ShipStats>(DataFolder + "/ShipStats_GaleaoJogador.asset", s =>
+            {
+                JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(schoonerStats), s);
+                s.maxSpeed = 10f;       // escuna 10,5, chalupa 11
+                s.acceleration = 1.2f;  // escuna 1,4
+                s.deceleration = 1.6f;  // escuna 1,9
+                s.turnRate = 20f;       // escuna 24, chalupa 28
+            });
+            var cannons = LoadOrCreateAsset<CannonStats>(DataFolder + "/CannonStats_GaleaoJogador.asset", c =>
+            {
+                JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(schoonerCannons), c);
+                c.cannonsPerSide = 8;   // escuna 6, chalupa 4
+            });
+            var galleon = LoadOrCreateAsset<ShipClassDefinition>(ShipsFolder + "/ShipClass_Galeao.asset", c =>
+            {
+                c.displayName = "Galeão";
+                c.description = "Três mastros e oito canhões por bordo: o casco mais grosso, o maior porão e o maior alojamento. " +
+                                "O mais lento e o mais pesado para virar dos três.";
+                c.tier = 2;
+                c.hullMax = 420f;
+                c.holdCapacity = 110f;
+                c.crewBerths = 32;
+                c.cost = new[]
+                {
+                    new ItemStack(items.gold, 1200), new ItemStack(items.wood, 160), new ItemStack(items.iron, 60), new ItemStack(items.powder, 40),
+                };
+                c.buildSeconds = 300f;
+                c.hullUpgradeMultiplier = 1.4f;
+                // Velocidade ×1,3 (não 1,4): com 1,4 o galeão no nível 4 empatava com a escuna (14,3 × 14,4) e deixava de ser o mais lento
+                // (revisão do chat de otimização, 09/10).
+                c.speedUpgradeMultiplier = 1.3f;
+                c.reloadUpgradeMultiplier = 1.4f;
+                c.requiredBuildingLevel = 2;
+            });
+            galleon.stats = stats;
+            galleon.cannons = cannons;
+            galleon.schematic = LoadItem(GalleonSchematic);
+            galleon.requiredBuilding = shipyard;
+            EditorUtility.SetDirty(galleon);
+
+            var hull = BrigHull(BossModel);
+            var visual = new GameObject("Visual_Galeao").transform;
+            visual.SetParent(root, false);
+            var model = Kenney(hull.model, visual, new Vector3(0f, ShipModelKeel, 0f), objectName: "Casco");
+            var sails = FurlableSails(model.transform);
+            var batteries = new GameObject("Cannons_Galeao").transform;
+            batteries.SetParent(root, false);
+            CreateBattery(BroadsideSide.Port, cannons, combat, batteries, body, hull, withAimPreview: true, hullModel: model.transform);
+            CreateBattery(BroadsideSide.Starboard, cannons, combat, batteries, body, hull, withAimPreview: true, hullModel: model.transform);
+            visual.gameObject.SetActive(false);
+            batteries.gameObject.SetActive(false);
+            return Rig(galleon, hull, sails, visual.gameObject, batteries.gameObject);
         }
 
         static PlayerShipClass.Rig Rig(ShipClassDefinition shipClass, ShipHull hull, Transform[] sails, params GameObject[] parts) => new()

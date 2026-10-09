@@ -107,6 +107,16 @@ namespace Pirates.LandCombat
             camp = enemyCamp;
         }
 
+        /// <summary>Distâncias de atirador de outra arma (o bacamarteiro chega bem mais perto que o de pistola e mira mais tempo).</summary>
+        public void ConfigureRanged(float keepAt, float backOffInside, float startAimingAt, Vector2 aimSeconds, float tracking)
+        {
+            preferredRange = keepAt;
+            tooClose = backOffInside;
+            shootRange = startAimingAt;
+            aimTime = aimSeconds;
+            aimTracking = tracking;
+        }
+
         void Awake()
         {
             character = GetComponent<FootCharacter>();

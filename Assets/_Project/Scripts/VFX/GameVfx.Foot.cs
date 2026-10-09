@@ -40,6 +40,7 @@ namespace Pirates.VFX
         /// <summary>Um personagem a pé acompanhado: passada, queda e o rastro do cutelo.</summary>
         sealed class FootTrack
         {
+            public bool dodging;
             public FootCharacter character;
             public CharacterCombat combat;
             public Health health;
@@ -66,6 +67,7 @@ namespace Pirates.VFX
                     w.combat.Fired -= OnPistolFired;
                     w.combat.PelletLanded -= OnPelletLanded;
                     w.combat.Hit -= OnWeaponHit;
+                    w.combat.KickLanded -= OnKickLanded;
                 }
                 w.trail?.Destroy();
             }
@@ -95,8 +97,10 @@ namespace Pirates.VFX
                     combat.Fired += OnPistolFired;
                     combat.PelletLanded += OnPelletLanded;
                     combat.Hit += OnWeaponHit;
+                    combat.KickLanded += OnKickLanded;
                 }
                 if (track.health) track.health.Died += () => track.bodyFallAt = Time.time + 0.75f;
+                character.KnockedDown += () => track.bodyFallAt = Time.time + 0.6f;
                 walkers.Add(track);
             }
             foreach (var crate in BreakableLoot.Active)
@@ -182,6 +186,16 @@ namespace Pirates.VFX
                 }
         }
 
+        void OnKickLanded(Vector3 point)
+        {
+            if (Far(point)) return;
+            stars.Emit(point, Vector3.zero, 1f, 0.16f, new Color(1f, 0.95f, 0.8f, 1f), Random.Range(-30f, 30f));
+            if (DustColor(point, out var color))
+                for (int i = 0; i < 4; i++)
+                    dust.Emit(point + Random.insideUnitSphere * 0.2f, Random.insideUnitSphere * 1.2f + Vector3.up * 0.4f, Random.Range(0.25f, 0.4f),
+                        Random.Range(0.5f, 0.8f), color, Random.Range(-40f, 40f));
+        }
+
         static bool NearCrate(Vector3 point)
         {
             for (int i = 0; i < BreakableLoot.Active.Count; i++)
@@ -235,6 +249,8 @@ namespace Pirates.VFX
                 w.fallSpeed = 0f;
             }
             if (!grounded && w.wasGrounded && c.VerticalVelocity > 1f) Land(p, 0f);   // pulo
+            if (c.IsDodging && !w.dodging && grounded) Land(p, 0.3f);   // rolamento: poeira na saída (o rastro é o da corrida)
+            w.dodging = c.IsDodging;
             w.wasGrounded = grounded;
 
             float speed = c.PlanarSpeed;

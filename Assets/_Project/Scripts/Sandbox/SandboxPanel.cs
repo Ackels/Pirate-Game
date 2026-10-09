@@ -39,7 +39,7 @@ namespace Pirates.Sandbox
 
         bool open;
         int target;
-        Rect window = new(16f, 16f, 470f, 640f);
+        Rect window = new(16f, 16f, 520f, 640f);
         Vector2 scroll;
         Inventory hold;
         Health hull;
@@ -53,6 +53,7 @@ namespace Pirates.Sandbox
         FootHealthReactions walkerReactions;
         Inventory backpack;
         GameSave save;
+        BountyHunters hunters;
 
         public void Configure(ShipController playerShip, ItemDefinition[] sandboxItems)
         {
@@ -76,6 +77,7 @@ namespace Pirates.Sandbox
             if (hold) originalCapacity = hold.Capacity;
             modes = FindAnyObjectByType<PlayerModeSwitcher>();
             save = FindAnyObjectByType<GameSave>();
+            hunters = FindAnyObjectByType<BountyHunters>();
             if (modes && modes.Character)
             {
                 walkerHealth = modes.Character.GetComponent<Health>();
@@ -104,7 +106,10 @@ namespace Pirates.Sandbox
                 GUI.Label(new Rect(Screen.width - 330f, Screen.height - 26f, 320f, 22f), Dock ? "F1  modo sandbox   ·   F2  ir para o porto" : "F1  modo sandbox");
                 return;
             }
-            small ??= new GUIStyle(GUI.skin.label) { fontSize = 12, richText = true };
+            // Texto quebra na largura da janela: uma linha comprida (ex.: "Jogo salvo") esticava o conteúdo e cortava os botões da direita.
+            small ??= new GUIStyle(GUI.skin.label) { fontSize = 12, richText = true, wordWrap = true };
+            window.width = Mathf.Min(520f, Screen.width - 32f);
+            window.height = Mathf.Min(640f, Screen.height - 32f);
             window = GUILayout.Window(GetHashCode(), window, DrawWindow, "Modo sandbox (F1 fecha)");
         }
 
@@ -114,7 +119,7 @@ namespace Pirates.Sandbox
 
         void DrawWindow(int id)
         {
-            scroll = GUILayout.BeginScrollView(scroll);
+            scroll = GUILayout.BeginScrollView(scroll, false, true, GUIStyle.none, GUI.skin.verticalScrollbar);
             DrawItems();
             GUILayout.Space(8f);
             DrawShip();
@@ -125,6 +130,7 @@ namespace Pirates.Sandbox
             DrawFame();
             DrawDayNight();
             DrawWind();
+            DrawWeather();
             DrawSave();
             DrawSound();
             DrawTime();
@@ -325,6 +331,7 @@ namespace Pirates.Sandbox
         {
             foreach (var chest in LandChest.Active) chest.ResetChest();
             foreach (var crate in BreakableLoot.Active) if (crate.IsBroken) crate.Restore();
+            foreach (var keg in PowderKeg.Active) if (keg.IsSpent) keg.Restore();
             foreach (var sack in new System.Collections.Generic.List<LootSack>(LootSack.Active)) Destroy(sack.gameObject);
         }
 
@@ -428,6 +435,26 @@ namespace Pirates.Sandbox
 
         static float? FixedStrength(IWind wind) => wind.Overridden ? wind.Strength : null;
 
+        /// <summary>Clima (M11): mostra o tempo; fixa céu limpo, nublado, chuva ou tempestade (troca em ~20 s), raio agora, ou volta a mudar sozinho.</summary>
+        void DrawWeather()
+        {
+            if (!Services.TryGet(out IWeather weather)) return;
+            GUILayout.Label("<b>Clima</b>", small);
+            GUILayout.Label($"<size=11>{weather.Label}: céu fechado {weather.Overcast:0.00}, chuva {weather.Rain:0.00}, tempestade {weather.Storm:0.00}" +
+                            $"{(weather.Overridden ? " (fixado aqui)" : " (muda sozinho)")}.</size>", small);
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Limpo")) weather.SetOverride(WeatherKind.Clear);
+            if (GUILayout.Button("Nublado")) weather.SetOverride(WeatherKind.Cloudy);
+            if (GUILayout.Button("Chuva")) weather.SetOverride(WeatherKind.Rain);
+            if (GUILayout.Button("Tempestade")) weather.SetOverride(WeatherKind.Storm);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Raio agora")) weather.StrikeNow();
+            if (GUILayout.Button("Muda sozinho")) weather.SetOverride(null);
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
         // ---------- Jogo salvo ----------
 
         void DrawSave()
@@ -484,6 +511,13 @@ namespace Pirates.Sandbox
                 if (GUILayout.Button("Navio na frente dele")) ShipInFrontOf(fort.transform);
                 GUI.enabled = true;
                 GUILayout.EndHorizontal();
+            }
+            // Caçador de recompensas (cena 07): chama um agora, na força da patente atual (abaixo de Corsário, o mais fraco).
+            if (hunters)
+            {
+                GUI.enabled = !hunters.HasHunter;
+                if (GUILayout.Button(hunters.HasHunter ? "Caçador de recompensas no mar" : "Chamar caçador de recompensas")) hunters.SpawnNow();
+                GUI.enabled = true;
             }
             GUILayout.Space(8f);
         }
