@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: Som_CanhaoTiro
   m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
   clips:
-  - {fileID: 8300000, guid: a7591efccc488d04290be217a6714c20, type: 3}
-  - {fileID: 8300000, guid: b4a4479781b52fd4ab6c15f67e84206e, type: 3}
-  - {fileID: 8300000, guid: 840dcf7c50d1c4c4e9abe1117c16aa33, type: 3}
-  - {fileID: 8300000, guid: 9448b3ba0ed81b946997a203953fcdeb, type: 3}
-  - {fileID: 8300000, guid: 06d85a48a5e7acd4380d67f08ed233f8, type: 3}
-  - {fileID: 8300000, guid: 54822797dcdeff74b801e03df322b3cb, type: 3}
+  - {fileID: 8300000, guid: 6fd548bebe62adb48a6d8c6a7267bb41, type: 3}
+  - {fileID: 8300000, guid: 5983590baaefff54ab510bc66a8b2a14, type: 3}
+  - {fileID: 8300000, guid: d3dddc2994495264a9a73a39e11d865e, type: 3}
+  - {fileID: 8300000, guid: bc24079dd21c04a42839fa9febb025e2, type: 3}
+  - {fileID: 8300000, guid: ac254618c8148a44eb36645e4fb61a7f, type: 3}
+  - {fileID: 8300000, guid: 7adbe0cda9bce7c4780b0a1560b3bbe1, type: 3}
   channel: 1
-  volume: {x: 0.85, y: 1}
+  volume: {x: 0.9, y: 1}
   pitch: {x: 0.88, y: 1.06}
   spatial: 1
   minDistance: 20
-  maxDistance: 300
+  maxDistance: 380
   cooldown: 0

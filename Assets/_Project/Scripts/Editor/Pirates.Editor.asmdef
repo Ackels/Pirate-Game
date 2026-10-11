@@ -14,6 +14,7 @@
         "Pirates.OnFoot",
         "Pirates.Controls",
         "Pirates.CameraSystem",
+        "Pirates.Tutorial",
         "Pirates.UI",
         "Pirates.LandCombat",
         "Unity.AI.Navigation",

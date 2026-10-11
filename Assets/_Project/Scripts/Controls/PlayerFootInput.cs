@@ -20,8 +20,19 @@ namespace Pirates.Controls
         static readonly RaycastHit[] aimHits = new RaycastHit[64];
 
         IInteraction[] interactions;
+        BombThrower bombs;
 
-        void Awake() => interactions = GetComponents<IInteraction>();
+        void Awake()
+        {
+            interactions = GetComponents<IInteraction>();
+            bombs = GetComponent<BombThrower>();
+        }
+
+        /// <summary>Janela do porto, baú ou painel aberto: o mouse é da janela (bomba e comida também esperam).</summary>
+        public bool IsWindowOpen => WindowOpen;
+
+        /// <summary>Ponto do chão sob o cursor (bomba de arremesso).</summary>
+        public bool TryGetCursorPoint(out Vector3 point) => TryCursorAim(out point);
 
         bool WindowOpen
         {
@@ -58,6 +69,8 @@ namespace Pirates.Controls
                 command.attack = command.aim = command.jump = command.dodge = command.kick = command.nextWeapon = false;
                 command.selectWeapon = 0;
             }
+            // Mirando a bomba (segurando G): o mouse é da mira, não ataca nem mira a pistola.
+            if (bombs && bombs.IsAiming) command.attack = command.aim = false;
             return command;
         }
 

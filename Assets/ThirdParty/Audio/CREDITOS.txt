@@ -30,3 +30,9 @@ ajustado para o jogo (WAV 48 kHz 16 bits):
   Clima/Trovao_2.wav         Thunder Clap OWB KY 441x16.wav — Dave Welsh (13,4–42 s)                 https://freesound.org/people/Dave%20Welsh/sounds/194364/
   Clima/Trovao_3.wav         thunder — netaj                                                          https://freesound.org/people/netaj/sounds/193170/
   Clima/Trovao_4.wav         Booming Thunder in Distance — Fugeni                                     https://freesound.org/people/Fugeni/sounds/559804/
+
+Unity Asset Store (grátis; licença padrão da Asset Store: uso em jogos, sem redistribuir os arquivos soltos), importados pelo Jhonata
+em 11/10/2026 e revisados (só áudio; o script de exemplo, a cena e o prefab do FC ficaram em _Downloads/Musica, junto com os MP3
+repetidos e as seções do Adventure Inn):
+  Musica/PirateMusicPack/Pirate 1..8.wav           Pirate Music Pack 1.0 (produto 232467)                 https://assetstore.unity.com/packages/audio/music/pirate-music-pack-232467
+  Musica/FC_PirateMusicLite/Adventure Inn Full Mix FC Pirate Music Pack [Lite] 1.0 — Fabrice, FC Audio (produto 164807)  https://assetstore.unity.com/packages/audio/music/fc-pirate-music-pack-lite-164807

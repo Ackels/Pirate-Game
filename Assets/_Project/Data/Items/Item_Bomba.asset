@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Bomba
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: "Bomba de p\xF3lvora"
+  category: 0
+  rarity: 0
+  color: {r: 0.3, g: 0.3, b: 0.34, a: 1}
+  spacePerUnit: 0.5
+  description: "Bala oca cheia de p\xF3lvora, com pavio. A p\xE9, G lan\xE7a no cursor: explode ~1,6 s depois, derruba e acende barris."
+  keepAboard: 10
+  backpackCapacity: 0

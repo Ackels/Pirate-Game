@@ -38,6 +38,8 @@ namespace Pirates.Combat
         public event Action Fired;
 
         public BroadsideSide Side => side;
+        /// <summary>Bocas dos canhões (a lula gigante vê quais estão perto de cada tentáculo no tiro à queima-roupa).</summary>
+        public IReadOnlyList<Transform> Muzzles => muzzles;
         public BatteryState State { get; private set; } = BatteryState.Ready;
         public float AimCharge { get; private set; }
         public float ReloadRemaining { get; private set; }
@@ -336,24 +338,32 @@ namespace Pirates.Combat
             Vector3 origin = MuzzleCenter();
             Vector3 beam = FireDirection(0f);
             Transform own = shipBody ? shipBody.transform : transform.root;
-            EnemyShipAI best = null;
+            Transform best = null;
             float bestAngle = AssistSearchAngle;
             for (int i = 0; i < EnemyShipAI.Active.Count; i++)
             {
                 var ai = EnemyShipAI.Active[i];
                 if (!ai || ai.IsDead || ai.transform == own) continue;
-                Vector3 to = Flat(ai.transform.position - origin);
-                float distance = to.magnitude;
-                if (distance < stats.minRange * 0.5f || distance > MaxRange * 1.1f) continue;
-                float angle = Mathf.Abs(Vector3.SignedAngle(beam, to, Vector3.up));
-                if (angle >= bestAngle) continue;
-                best = ai;
-                bestAngle = angle;
+                Consider(ai.transform);
             }
+            // Alvos que não são navio (a cabeça da lula gigante, só fora d'água).
+            for (int i = 0; i < AimTarget.Active.Count; i++)
+                if (AimTarget.Active[i].Exposed) Consider(AimTarget.Active[i].transform);
             if (!best) return;
 
+            void Consider(Transform candidate)
+            {
+                Vector3 to = Flat(candidate.position - origin);
+                float distance = to.magnitude;
+                if (distance < stats.minRange * 0.5f || distance > MaxRange * 1.1f) return;
+                float angle = Mathf.Abs(Vector3.SignedAngle(beam, to, Vector3.up));
+                if (angle >= bestAngle) return;
+                best = candidate;
+                bestAngle = angle;
+            }
+
             // Antecipação: onde o alvo vai estar quando a bala chegar (velocidade relativa, a bala herda a nossa).
-            Vector3 aimPoint = best.transform.position;
+            Vector3 aimPoint = best.position;
             float lead = Mathf.InverseLerp(0.7f, 1f, assist);
             if (lead > 0f && best.TryGetComponent(out Rigidbody targetBody))
             {
@@ -371,7 +381,7 @@ namespace Pirates.Combat
             assistYaw = Mathf.Clamp(signed, -traverse, traverse);
             float targetRange = toAim.magnitude * Mathf.Cos((signed - assistYaw) * Mathf.Deg2Rad);
 
-            AssistTarget = best.transform;
+            AssistTarget = best;
             float charged = ChargedRange;
             float diff = targetRange - charged;
             float window = Mathf.Lerp(15f, 60f, assist);

@@ -39,10 +39,17 @@ namespace Pirates.OnFoot
         static readonly int Eat = Animator.StringToHash("Eat");
         static readonly int DodgeTrigger = Animator.StringToHash("Dodge");
         static readonly int KickTrigger = Animator.StringToHash("Kick");
+        static readonly int ThrowState = Animator.StringToHash("Arremessar");
+        /// <summary>Segundo do clipe "Throw Object" em que começa o preparo (o mesmo ThrowStart do gerador).</summary>
+        const float ThrowClipStart = 1.3f;
         static readonly int Knock = Animator.StringToHash("Knock");
         static readonly int KnockVariant = Animator.StringToHash("KnockVariant");
         static readonly int Down = Animator.StringToHash("Down");
         static readonly int DeadBool = Animator.StringToHash("Dead");
+        static readonly int BlockBool = Animator.StringToHash("Block");
+        static readonly int BlockHit = Animator.StringToHash("BlockHit");
+        static readonly int ParriedTrigger = Animator.StringToHash("Parried");
+        static readonly int TauntTrigger = Animator.StringToHash("Taunt");
         /// <summary>
         /// Segundos do começo da queda até sair dela para o levantar, por variante (0 = chute, 1 = explosão, 2 = explosão com levantar rápido):
         /// morreu antes disso, a queda termina deitada e ele fica (iguais às saídas do gerador).
@@ -135,6 +142,8 @@ namespace Pirates.OnFoot
                 combat.Drawing += OnDrawing;
                 combat.Holstering += OnHolstering;
                 combat.Kicked += OnKicked;
+                combat.Blocked += OnBlocked;
+                combat.Parried += OnParried;
                 if (combat.Current) OnWeaponChanged(combat.Current);
             }
         }
@@ -153,6 +162,8 @@ namespace Pirates.OnFoot
                 combat.Drawing -= OnDrawing;
                 combat.Holstering -= OnHolstering;
                 combat.Kicked -= OnKicked;
+                combat.Blocked -= OnBlocked;
+                combat.Parried -= OnParried;
             }
         }
 
@@ -214,7 +225,7 @@ namespace Pirates.OnFoot
         void OnAttacked(WeaponDefinition weapon, int variant)
         {
             if (parameters.Contains(WeaponType)) animator.SetInteger(WeaponType, weapon.animatorWeaponType);
-            if (parameters.Contains(AttackVariant)) animator.SetInteger(AttackVariant, variant);
+            if (parameters.Contains(AttackVariant)) animator.SetInteger(AttackVariant, variant + weapon.animatorVariantOffset);
             if (parameters.Contains(AttackSpeed)) animator.SetFloat(AttackSpeed, weapon.attackAnimSpeed);
             SetTrigger(Attack);
         }
@@ -236,6 +247,71 @@ namespace Pirates.OnFoot
             if (parameters.Contains(KnockVariant)) animator.SetInteger(KnockVariant, variant);
             SetTrigger(Knock);
             return true;
+        }
+
+        /// <summary>Arremesso de bomba por cima do ombro (corpo todo). Sem o clipe, nada acontece.</summary>
+        public void PlayThrow()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, ThrowState)) return;
+            ResetTrigger(Attack);
+            // Direto (não pelo trigger): no meio de outra transição o "Any State" espera ela acabar e o braço atrasava ~0,2 s da bomba.
+            // Começa no preparo do clipe (1,3 s); a camada do corpo inteiro é sincronizada e acompanha.
+            animator.CrossFadeInFixedTime(ThrowState, 0.12f, upperIndex, ThrowClipStart);
+        }
+
+        /// <summary>Golpe na guarda: o tranco da defesa (aparar também).</summary>
+        void OnBlocked(Vector3 point, bool parried)
+        {
+            if (!dead) SetTrigger(BlockHit);
+        }
+
+        /// <summary>O golpe deste personagem foi aparado: cambaleia para trás.</summary>
+        void OnParried()
+        {
+            if (dead) return;
+            ResetTrigger(Attack);
+            SetTrigger(ParriedTrigger);
+        }
+
+        /// <summary>
+        /// Esqueleto amaldiçoado saindo da cova: "Erguer{variante}" (Zombie Stand Up) direto, já deitado (<paramref name="startSeconds"/> do
+        /// clipe), corpo todo. Chamado logo depois do Revive: o trigger dele sairia do estado na hora.
+        /// </summary>
+        public void PlayRise(int variant, float startSeconds)
+        {
+            if (dead || upperIndex < 0) return;
+            int hash = Animator.StringToHash(RiseStatePrefix + variant);
+            if (!animator.HasState(upperIndex, hash)) return;
+            ResetTrigger(Revive);
+            ResetTrigger(Hit);
+            ResetTrigger(Attack);
+            animator.CrossFadeInFixedTime(hash, 0f, upperIndex, startSeconds);
+            fullWeight = 1f;
+            fullWeightVelocity = 0f;
+            if (fullIndex >= 0) animator.SetLayerWeight(fullIndex, 1f);
+        }
+
+        /// <summary>Estados de sair da cova no tronco: "Erguer0", "Erguer1"...</summary>
+        public const string RiseStatePrefix = "Erguer";
+
+        static readonly int PowerUpState = Animator.StringToHash("Espadao_Furia");
+
+        /// <summary>Chefe se enfurecendo (fase 2): "Power Up" do espadão, corpo todo, direto (sem esperar transição). Sem o estado, nada.</summary>
+        public void PlayPowerUp()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, PowerUpState)) return;
+            ResetTrigger(Attack);
+            ResetTrigger(Hit);
+            animator.CrossFadeInFixedTime(PowerUpState, 0.15f, upperIndex, 0f);
+            fullWeight = 1f;
+            fullWeightVelocity = 0f;
+            if (fullIndex >= 0) animator.SetLayerWeight(fullIndex, 1f);
+        }
+
+        /// <summary>Provocação (grito de guerra do brutamontes ao ver o capitão). Sem o estado, nada acontece.</summary>
+        public void PlayTaunt()
+        {
+            if (!dead) SetTrigger(TauntTrigger);
         }
 
         void OnKicked()
@@ -272,6 +348,7 @@ namespace Pirates.OnFoot
             {
                 if (parameters.Contains(Reloading)) animator.SetBool(Reloading, combat.ReloadAnimating);
                 if (parameters.Contains(Aiming)) animator.SetBool(Aiming, combat.IsAimingPose);
+                if (parameters.Contains(BlockBool)) animator.SetBool(BlockBool, combat.IsBlocking && !dead);
             }
             UpdateFullBody(grounded, dt);
         }

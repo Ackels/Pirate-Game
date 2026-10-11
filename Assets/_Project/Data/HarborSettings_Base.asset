@@ -59,6 +59,13 @@ MonoBehaviour:
     demand: 20
     demandRefillSeconds: 45
     requiredRank: 0
+  - item: {fileID: 11400000, guid: e8792792983b9b7488b4ef0ed15ac2d7, type: 2}
+    buyPrice: 15
+    sellPrice: 0
+    toHold: 1
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 0
   - item: {fileID: 11400000, guid: dd07da3a7ae73804ea650ed42bb48175, type: 2}
     buyPrice: 18
     sellPrice: 0
@@ -157,6 +164,18 @@ MonoBehaviour:
       amount: 1
     - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
       amount: 1
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 60
+  - result:
+      item: {fileID: 11400000, guid: e8792792983b9b7488b4ef0ed15ac2d7, type: 2}
+      amount: 3
+    cost:
+    - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 2
     requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
     requiredLevel: 1
     toHold: 1

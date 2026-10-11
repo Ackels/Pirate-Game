@@ -196,8 +196,14 @@ namespace Pirates.LandCombat
 
         void OnMemberDied()
         {
-            if (IsCleared) EventBus.Publish(new CampClearedEvent { campId = campId, fame = fame });
+            if (IsCleared && !HoldClearedEvent) PublishCleared();
         }
+
+        /// <summary>Quem decide quando o acampamento está derrotado é outro (cemitério: os esqueletos levantam de novo uma vez).</summary>
+        public bool HoldClearedEvent { get; set; }
+
+        /// <summary>Acampamento derrotado de vez: fama e missões.</summary>
+        public void PublishCleared() => EventBus.Publish(new CampClearedEvent { campId = campId, fame = fame });
 
         /// <summary>Missão nova contra este acampamento: se já estava derrotado, os piratas voltam.</summary>
         void OnMissionStarted(MissionStartedEvent evt)

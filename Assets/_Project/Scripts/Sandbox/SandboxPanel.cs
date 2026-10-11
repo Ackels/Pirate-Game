@@ -129,6 +129,7 @@ namespace Pirates.Sandbox
             DrawMissions();
             DrawFame();
             DrawDayNight();
+            DrawTutorial();
             DrawWind();
             DrawWeather();
             DrawSave();
@@ -301,12 +302,34 @@ namespace Pirates.Sandbox
             {
                 GUILayout.Label($"<size=11>{camp.DisplayName}: {camp.Alive} / {camp.Total} piratas vivos</size>", small);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Levantar piratas")) camp.ResetAll();
+                var graveyard = camp.GetComponent<CursedGraveyard>();
+                if (graveyard)
+                {
+                    // Esqueletos amaldiçoados: só levantam de noite com você perto; aqui, na hora.
+                    if (GUILayout.Button(graveyard.IsRisen ? "Voltar às covas" : "Sair das covas"))
+                    {
+                        if (graveyard.IsRisen) graveyard.BuryNow();
+                        else graveyard.RiseNow();
+                    }
+                }
+                else if (GUILayout.Button("Levantar piratas")) camp.ResetAll();
                 if (GUILayout.Button("Derrotar todos")) DefeatCamp(camp);
                 GUI.enabled = onFoot && !walkerHealth.IsDead;
                 if (GUILayout.Button("Ir até lá")) GoToCamp(camp);
                 GUI.enabled = true;
                 GUILayout.EndHorizontal();
+                // Chefe a pé (pacote B, passo 4): vida e fase; enfurecer pula para a fase 2 (só lutando: fora da luta ele volta ao normal).
+                for (int i = 0; i < camp.Members.Count; i++)
+                {
+                    var boss = camp.Members[i] ? camp.Members[i].GetComponent<LandBoss>() : null;
+                    if (!boss) continue;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label($"<size=11>{boss.DisplayName}: {boss.Health.Current:0} / {boss.Health.Max:0}, fase {boss.Phase}</size>", small);
+                    GUI.enabled = boss.IsEngaged && boss.Phase == 1;
+                    if (GUILayout.Button("Enfurecer (fase 2)")) boss.EnrageNow();
+                    GUI.enabled = true;
+                    GUILayout.EndHorizontal();
+                }
             }
 
             if (backpack)
@@ -404,6 +427,20 @@ namespace Pirates.Sandbox
             GUILayout.BeginHorizontal();
             foreach (float speed in new[] { 1f, 10f, 60f })
                 if (GUILayout.Button($"×{speed:0}")) time.Speed = speed;
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        /// <summary>Tutorial (11/10): etapa atual; pular a etapa, recomeçar ou encerrar.</summary>
+        void DrawTutorial()
+        {
+            if (!Services.TryGet(out ITutorial tutorial)) return;
+            GUILayout.Label("<b>Tutorial</b>", small);
+            GUILayout.Label(tutorial.Running ? $"<size=11>Etapa {tutorial.Step + 1}.</size>" : "<size=11>Desligado.</size>", small);
+            GUILayout.BeginHorizontal();
+            if (tutorial.Running && GUILayout.Button("Próxima etapa")) tutorial.Restore(tutorial.Step + 1);
+            if (GUILayout.Button("Recomeçar")) tutorial.Begin(true);
+            if (tutorial.Running && GUILayout.Button("Encerrar")) tutorial.Restore(-1);
             GUILayout.EndHorizontal();
             GUILayout.Space(8f);
         }
@@ -512,6 +549,24 @@ namespace Pirates.Sandbox
                 GUI.enabled = true;
                 GUILayout.EndHorizontal();
             }
+            // Lula gigante (cena 07): muda o covil para onde o navio está e ataca agora; vai para o covil; enfurece; mata.
+            for (int i = 0; i < GiantSquid.Active.Count; i++)
+            {
+                var squid = GiantSquid.Active[i];
+                GUILayout.Label($"<size=11>{squid.DisplayName}: {squid.Health.Current:0} / {squid.Health.Max:0}, {SquidState(squid)}" +
+                                $"{(squid.IsEngaged ? $", {squid.Grabbing} agarrando" : "")}</size>", small);
+                GUILayout.BeginHorizontal();
+                GUI.enabled = !squid.IsEngaged && !squid.Health.IsDead && (modes == null || !modes.IsOnFoot);
+                if (GUILayout.Button("Atacar aqui")) squid.SummonNear();
+                GUI.enabled = modes == null || !modes.IsOnFoot;
+                if (GUILayout.Button("Ir ao covil")) ShipNear(squid.Lair, 75f);
+                GUI.enabled = squid.IsEngaged && !squid.PhaseTwo;
+                if (GUILayout.Button("Enfurecer")) squid.EnrageNow();
+                GUI.enabled = squid.IsEngaged;
+                if (GUILayout.Button("Matar")) squid.Health.TakeDamage(new Pirates.Core.DamageInfo { amount = squid.Health.Max * 10f, point = squid.transform.position });
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
             // Caçador de recompensas (cena 07): chama um agora, na força da patente atual (abaixo de Corsário, o mais fraco).
             if (hunters)
             {
@@ -520,6 +575,22 @@ namespace Pirates.Sandbox
                 GUI.enabled = true;
             }
             GUILayout.Space(8f);
+        }
+
+        static string SquidState(GiantSquid squid) => squid.Current switch
+        {
+            GiantSquid.Phase.Lurking => "esperando no covil",
+            GiantSquid.Phase.Ambush => "emboscando",
+            GiantSquid.Phase.Fight => squid.PhaseTwo ? "lutando (furiosa)" : "lutando",
+            GiantSquid.Phase.Retreat => "voltando ao covil",
+            _ => "morta",
+        };
+
+        /// <summary>Navio parado a <paramref name="distance"/> m ao sul do ponto, virado para leste.</summary>
+        void ShipNear(Vector3 point, float distance)
+        {
+            var pos = point + new Vector3(0f, 0f, -distance);
+            player.Teleport(new Vector3(pos.x, player.transform.position.y, pos.z), Quaternion.Euler(0f, 90f, 0f));
         }
 
         /// <summary>Navio parado a ~110 m ao sul do forte, de lado para ele (ao alcance dos canhões).</summary>

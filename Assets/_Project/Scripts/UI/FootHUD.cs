@@ -38,16 +38,19 @@ namespace Pirates.UI
         Health health;
         PlayerFootRespawn respawn;
         HarborBuildingVisitor buildingVisitor;
-        CachedText where, life, weapons, banner1, landingPrompt, foodLine;
+        CachedText where, life, weapons, banner1, landingPrompt, foodLine, bombLine;
         FoodEater food;
         PistolAmmo pistolAmmo;
+        BombThrower bombs;
         CachedText[] campLines = System.Array.Empty<CachedText>();
         readonly System.Collections.Generic.Dictionary<LandingPoint, string> landingLabels = new();
 
         GameHud hud;
         VisualElement card, help, campBox;
-        Label whereText, lifeText, weaponText, foodText;
-        HudBar lifeBar;
+        Label whereText, lifeText, weaponText, foodText, bombText;
+        VisualElement staminaRow;
+        HudBar lifeBar, staminaBar;
+        Stamina stamina;
         Label[] campLabels = System.Array.Empty<Label>();
         HudPrompt prompt, cameraHint;
         HudBanner banner;
@@ -68,6 +71,9 @@ namespace Pirates.UI
             if (switcher.Character) health = switcher.Character.GetComponent<Health>();
             if (switcher.Character) food = switcher.Character.GetComponent<FoodEater>();
             if (switcher.Character) pistolAmmo = switcher.Character.GetComponent<PistolAmmo>();
+            if (switcher.Character) bombs = switcher.Character.GetComponent<BombThrower>();
+            if (switcher.Character) combat = switcher.Character.GetComponent<CharacterCombat>();
+            if (switcher.Character) stamina = switcher.Character.GetComponent<Stamina>();
         }
 
         void OnEnable()
@@ -88,6 +94,16 @@ namespace Pirates.UI
                 pistolAmmo.Empty += OnNoCartridges;
                 pistolAmmo.Packed += OnCartridgesPacked;
             }
+            if (bombs)
+            {
+                bombs.Refused += OnBombRefused;
+                bombs.Packed += OnBombsPacked;
+            }
+            if (combat)
+            {
+                combat.Blocked += OnBlocked;
+                combat.GuardBroken += OnGuardBroken;
+            }
         }
 
         void OnDisable()
@@ -107,6 +123,16 @@ namespace Pirates.UI
             {
                 pistolAmmo.Empty -= OnNoCartridges;
                 pistolAmmo.Packed -= OnCartridgesPacked;
+            }
+            if (bombs)
+            {
+                bombs.Refused -= OnBombRefused;
+                bombs.Packed -= OnBombsPacked;
+            }
+            if (combat)
+            {
+                combat.Blocked -= OnBlocked;
+                combat.GuardBroken -= OnGuardBroken;
             }
             HideAll();
         }
@@ -132,6 +158,17 @@ namespace Pirates.UI
         void OnAte(float healed) => FoodFeed($"+{healed:0} vida  <size=80%>comeu uma ração</size>", HudColors.Good);
         void OnFoodRefused(string reason) => FoodFeed($"Não deu para comer: {reason}", HudColors.Muted);
         void OnFoodPacked(int n) => FoodFeed($"Levou {n} {(n == 1 ? "ração" : "rações")} na mochila  <size=80%>R para comer</size>", HudColors.Cream);
+
+        // Só o aparar avisa (cada golpe na guarda avisando viraria enxurrada).
+        void OnBlocked(Vector3 point, bool parried)
+        {
+            if (parried) FoodFeed("<b>Aparou!</b>  Ele ficou atordoado: solte a guarda e ataque", HudColors.Gold);
+        }
+
+        void OnGuardBroken() => FoodFeed("<b>Guarda quebrada!</b>  Sem fôlego: recue ou role", HudColors.Bad);
+
+        void OnBombRefused(string reason) => FoodFeed($"Não deu para lançar: {reason}", HudColors.Muted);
+        void OnBombsPacked(int n) => FoodFeed($"Levou {n} {(n == 1 ? "bomba" : "bombas")} na mochila  <size=80%>G para lançar</size>", HudColors.Cream);
 
         void OnNoCartridges(Pirates.Economy.ItemDefinition item) =>
             FoodFeed($"<b>Sem {AmmoName(item)}!</b>  <size=80%>compre no mercado ou faça na Forja (o cutelo é o 1)</size>", HudColors.Bad);
@@ -162,9 +199,20 @@ namespace Pirates.UI
             lifeText = Hud.Text("", "hud-status__value");
             lifeRow.Add(lifeText);
             card.Add(lifeRow);
+            // Fôlego (pacote A, passo 6): barra fina embaixo da vida; rolar e segurar a guarda gastam.
+            staminaRow = Hud.Row();
+            staminaRow.Add(Hud.Text("Fôlego", "hud-status__name"));
+            staminaBar = new HudBar("hud-bar--grow");
+            staminaBar.AddToClassList("hud-bar--thin");
+            staminaRow.Add(staminaBar);
+            staminaRow.style.display = DisplayStyle.None;
+            card.Add(staminaRow);
             foodText = Hud.Text("", "hud-weapons");
             foodText.style.display = DisplayStyle.None;
             card.Add(foodText);
+            bombText = Hud.Text("", "hud-weapons");
+            bombText.style.display = DisplayStyle.None;
+            card.Add(bombText);
             weaponText = Hud.Text("", "hud-weapons");
             card.Add(weaponText);
             campBox = Hud.Box("hud-camps");
@@ -176,9 +224,10 @@ namespace Pirates.UI
             help = Hud.Card(paper: true, "A pé");
             help.AddToClassList("hud-help");
             help.Add(Hud.Text(
-                "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular     <b>Ctrl</b>   rolar (esquiva)     <b>V</b>   chutar (derruba)\n" +
+                "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular     <b>Ctrl</b>   rolar (esquiva, gasta fôlego)     <b>V</b>   chutar (derruba)\n" +
                 "<b>Botão esquerdo</b>   atacar (mira no cursor)\n" +
-                "<b>Botão direito (segurar)</b>   mirar (laser): o esquerdo atira na hora\n" +
+                "<b>Botão direito (segurar)</b>   pistola/bacamarte: mirar (laser), o esquerdo atira na hora · cutelo: <b>guarda</b> (gasta fôlego; golpe de frente vira arranhão; erguida na hora do golpe, <b>apara</b>, devolve fôlego e o pirata fica atordoado)\n" +
+                "<b>G (segurar)</b>   mirar a bomba (arco e área da explosão): soltar lança, botão direito cancela\n" +
                 "<b>1 / 2 / 3</b>   cutelo / pistola / bacamarte (comprado no mercado)\n" +
                 "<b>Q / E</b>  ou  <b>botão do meio + mouse</b>   girar câmera     <b>Scroll</b>   zoom\n" +
                 "<b>F</b>   entrar nas casas do porto · perto do bote, voltar ao navio\n" +
@@ -275,6 +324,14 @@ namespace Pirates.UI
                     life.Text = $"{health.Current:0} / {health.Max:0}{(health.Invulnerable ? "  <color=#9be37f>invencível</color>" : "")}";
                 Hud.Set(lifeText, life.Text);
             }
+            if (stamina)
+            {
+                Hud.Show(staminaRow, true);
+                staminaBar.Set(stamina.Normalized);
+                // Faltou fôlego (rolar sem ter): pisca vermelho por 0,6 s; abaixo do custo do rolamento, amarela.
+                bool blink = Time.time - stamina.LastDenied < 0.6f && (int)((Time.time - stamina.LastDenied) * 10f) % 2 == 0;
+                staminaBar.SetColor(blink ? HudColors.Bad : stamina.CanDodge ? HudColors.Good : HudColors.Warn);
+            }
             if (food && food.Food)
             {
                 int n = food.Count;
@@ -283,6 +340,15 @@ namespace Pirates.UI
                     : "<color=#c8b89a><b>R</b>  sem ração na mochila</color>";
                 Hud.Set(foodText, foodLine.Text);
                 Hud.Show(foodText, true);
+            }
+            if (bombs && bombs.Bomb)
+            {
+                int n = bombs.Count;
+                if (bombLine.Stale(n)) bombLine.Text = n > 0
+                    ? $"<b>G</b>  segure e solte: bomba  <size=90%>({n} na mochila)</size>"
+                    : "<color=#c8b89a><b>G</b>  sem bomba na mochila</color>";
+                Hud.Set(bombText, bombLine.Text);
+                Hud.Show(bombText, true);
             }
             Hud.Show(weaponText, combat);
             if (combat) Hud.Set(weaponText, WeaponLine());
@@ -310,7 +376,7 @@ namespace Pirates.UI
         {
             var current = combat.Current;
             bool firearm = current && current.kind == WeaponKind.Firearm;
-            long state = !firearm ? 0 : combat.IsReloading ? 1 + HudDraw.Tenths(combat.ReloadRemaining) * 4 : combat.IsAiming ? 2 : 3;
+            long state = !firearm ? (combat.IsBlocking ? 5 : 0) : combat.IsReloading ? 1 + HudDraw.Tenths(combat.ReloadRemaining) * 4 : combat.IsAiming ? 2 : 3;
             if (firearm && combat.Ammo != null) state = state * 1000 + Mathf.Min(999, combat.AmmoFor(current));
             // Armas liberadas entram na conta (o bacamarte aparece ao ser comprado).
             long available = 0;
@@ -338,7 +404,7 @@ namespace Pirates.UI
             bool firearm = current && current.kind == WeaponKind.Firearm;
             int left = firearm ? combat.AmmoFor(current) : 0;
             string ammoName = firearm && pistolAmmo ? AmmoName(pistolAmmo.AmmoItem(current)) : "cartuchos";
-            string state = !firearm ? ""
+            string state = !firearm ? (combat.IsBlocking ? "\n<color=#9be37f>em guarda</color>" : "")
                 : left <= 0 ? $"\n<color=#ff8a70>sem {ammoName}</color>  <size=85%>(mercado ou Forja)</size>"
                 : combat.IsReloading ? $"\n<color=#ff9a66>recarregando {combat.ReloadRemaining:0.0} s</color>"
                 : combat.IsAiming ? "\n<color=#9be37f>mirando</color>" : "\n<color=#9be37f>carregada</color>";

@@ -18,6 +18,13 @@ namespace Pirates.Combat
         public event System.Action<Vector3, Vector3> Impacted;
         /// <summary>Explosão (barril de pólvora): centro e raio.</summary>
         public event System.Action<Vector3, float> Exploded;
+        /// <summary>Terra revolvida (esqueleto amaldiçoado saindo da cova = true; virando pó ao amanhecer = false): ponto no chão.</summary>
+        public event System.Action<Vector3, bool> Unearthed;
+        /// <summary>Água estourando para cima (tentáculo ou cabeça da lula rompendo a superfície, tentáculo batendo no mar): ponto e
+        /// tamanho (1 = um tentáculo).</summary>
+        public event System.Action<Vector3, float> Surged;
+        /// <summary>Urro de monstro marinho (a lula gigante): ponto.</summary>
+        public event System.Action<Vector3> Roared;
 
         void OnEnable() => Services.Register(this);
         void OnDisable() => Services.Unregister(this);
@@ -29,5 +36,11 @@ namespace Pirates.Combat
         public void Impact(Vector3 position, Vector3 normal) => Impacted?.Invoke(position, normal);
 
         public void Explosion(Vector3 center, float radius) => Exploded?.Invoke(center, radius);
+
+        public void Unearth(Vector3 point, bool rising) => Unearthed?.Invoke(point, rising);
+
+        public void Surge(Vector3 point, float size) => Surged?.Invoke(point, size);
+
+        public void Roar(Vector3 point) => Roared?.Invoke(point);
     }
 }

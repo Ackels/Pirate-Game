@@ -188,7 +188,7 @@ namespace Pirates.EditorTools
             {
                 ("Contrabandista_Cais", new Vector3(2f, 0f, 5f), 0f, false, KitCharacters.Sharky),
                 ("Contrabandista_Fogo", new Vector3(-2f, 0f, 1.5f), 160f, false, KitCharacters.Mako),
-                ("Contrabandista_Cabanas", new Vector3(-5f, 0f, -2f), 120f, false, KitCharacters.Sharky),
+                ("Duelista_Contrabando", new Vector3(-5f, 0f, -2f), 120f, false, KitCharacters.Anne),
                 ("Contrabandista_Atirador", new Vector3(4f, 0f, -4f), 140f, true, KitCharacters.Skeleton),
                 ("Bacamarteiro_Contrabando", new Vector3(0.5f, 0f, -3.5f), 170f, true, KitCharacters.Mako),
             });
@@ -202,11 +202,14 @@ namespace Pirates.EditorTools
                 ("Atirador_Paiol", new Vector3(-4f, 0f, 5f), 120f, true, KitCharacters.HeadlessSkeleton),
                 ("Atirador_Patio", new Vector3(-5f, 0f, -4f), 80f, true, KitCharacters.Skeleton),
                 ("Bacamarteiro_Patio", new Vector3(1.5f, 0f, -6f), 70f, true, KitCharacters.Sharky),
+                ("Brutamontes_Forte", new Vector3(2f, 0f, 2.5f), 90f, false, KitCharacters.Sharky),
             });
             magazineChest.SetLock(garrison);
             garrison.SetKegs(fort.GetComponentsInChildren<PowderKeg>(true));
 
             hideout.gameObject.AddComponent<WorldMarker>().Configure(HideoutCampId, "Esconderijo (Ilha Oeste)", 8f);
+            AddBounty(smugglers, "Duelista", DuelistHideoutId, "Duelista (Ilha Oeste)");
+            AddBounty(garrison, "Brutamontes", BruteFortId, "Brutamontes (forte)");
             fort.gameObject.AddComponent<WorldMarker>().Configure(FortMissionId, "Forte da Ilha Norte", 14f);
         }
 

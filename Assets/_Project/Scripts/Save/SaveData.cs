@@ -49,6 +49,10 @@ namespace Pirates.Save
         public bool hasTime;
         public int day;
         public float hour;
+
+        // Tutorial (11/10). Save de antes não tem (hasTutorial falso): sem tutorial. −1 = terminado ou pulado.
+        public bool hasTutorial;
+        public int tutorialStep = -1;
     }
 
     [Serializable]

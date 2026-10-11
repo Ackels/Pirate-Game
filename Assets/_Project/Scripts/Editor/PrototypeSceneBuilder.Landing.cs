@@ -87,6 +87,8 @@ namespace Pirates.EditorTools
             shipHud.Bind(ship, "Desembarque — Protótipo 06");
             hud.AddComponent<FootHUD>().Bind(foot.switcher, shipLanding, shipHud);
             hud.AddComponent<LandLootHUD>().Bind(foot.switcher, foot.looter, foot.unloader, hold);
+            // Barra do chefe a pé (o Barba-Negra nas ruínas; na 07 ela vem com o galeão Tormenta).
+            hud.AddComponent<BossBarHUD>();
             var debug = new GameObject("DebugTools");
             debug.AddComponent<DebugSceneReset>();
             debug.AddComponent<HealthBarsHUD>().Ignore(foot.health);
@@ -137,6 +139,7 @@ namespace Pirates.EditorTools
             public LandChest treasure;
             public LandLootAssets loot;
             public List<OutpostSite> outposts;
+            public Transform graveyard;
         }
 
         /// <summary>
@@ -159,7 +162,7 @@ namespace Pirates.EditorTools
             return new CampIsland
             {
                 landing = skull.north, southLanding = skull.south, campSite = campSite, treasure = treasure, loot = loot,
-                outposts = skull.outposts,
+                outposts = skull.outposts, graveyard = skull.graveyard,
             };
         }
 
@@ -193,12 +196,16 @@ namespace Pirates.EditorTools
             // Derrubado (revisão de 09/10): levanta rápido da explosão, invencível um instante, e pode levantar rolando (Ctrl).
             reactions.SetQuickRecovery(true);
             character.AllowRollOutOfKnockdown(true);
+            // Fôlego (pacote A, passo 6): limita rolar e segurar a guarda. Só o capitão (a IA não tem limite).
+            character.gameObject.AddComponent<Stamina>();
             character.gameObject.AddComponent<Inventory>().Configure(BackpackCapacity);
             var looter = character.gameObject.AddComponent<LandLooter>();
             looter.Configure(hold);
             var camp = CreatePirates(island.campSite, character, m.iron, m.wood, m.brass, campName, campId);
             island.treasure.SetLock(camp);
             var outposts = CreateOutpostGuards(island.outposts, character, m.iron, m.wood, m.brass);
+            // Esqueletos amaldiçoados (pacote B, passo 3): saem das covas à noite.
+            if (island.graveyard) CreateGraveyardSkeletons(island.graveyard, character, m.iron, m.wood, m.brass);
 
             var switcher = new GameObject("PlayerModes").AddComponent<PlayerModeSwitcher>();
             switcher.Configure(ship, character);

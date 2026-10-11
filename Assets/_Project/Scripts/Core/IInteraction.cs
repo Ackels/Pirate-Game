@@ -11,4 +11,10 @@ namespace Pirates.Core
         bool Open();
         void Close();
     }
+
+    /// <summary>Interação em páginas (conversa com um NPC): com ela aberta, F avança a fala em vez de fechar; Esc fecha.</summary>
+    public interface IPagedInteraction : IInteraction
+    {
+        void Advance();
+    }
 }

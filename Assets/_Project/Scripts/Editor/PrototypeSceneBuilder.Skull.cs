@@ -28,6 +28,8 @@ namespace Pirates.EditorTools
         static readonly Vector2[] TrailSouth = { new(0f, -17f), new(18f, -40f), new(28f, -58f), new(22f, -84f) };
 
         static Vector2 RuinsSpot => new(-72f, -38f);
+        const string ChiefLairId = "covil_barbanegra";
+        const int ChiefFame = 60;
         // Topo das ruínas na altura que o morro já tem ali (r ≈ 9 m): mais alto, vira um degrau que o NavMesh não sobe.
         const float RuinsHeight = 11.2f;
 
@@ -54,12 +56,12 @@ namespace Pirates.EditorTools
             },
             new()
             {
-                name = "Ruínas da Caveira", id = "posto_ruinas", local = new(-72f, -38f), camp = false,
+                // Covil do chefe (pacote B, passo 4): o Capitão Barba-Negra no meio das ruínas, de frente para a trilha (os guardas antigos
+                // saíram; os guarda-costas dele vêm no passo 2).
+                name = "Ruínas do Barba-Negra", id = ChiefLairId, local = new(-72f, -38f), camp = false,
                 guards = new[]
                 {
-                    ("Guarda_Ruinas_A", new Vector3(3.5f, 0f, 3f), 55f, false, KitCharacters.Mako),
-                    ("Guarda_Ruinas_B", new Vector3(5f, 0f, -1.5f), 70f, false, KitCharacters.Sharky),
-                    ("Atirador_Ruinas", new Vector3(-2f, 0f, -1f), 55f, true, KitCharacters.HeadlessSkeleton),
+                    ("Chefe_BarbaNegra", new Vector3(0.5f, 0f, 1.5f), 55f, false, KitCharacters.Captain),
                 },
             },
             new()
@@ -88,6 +90,8 @@ namespace Pirates.EditorTools
             public LandingPoint north, south;
             public Vector2 wreck, southBeach;
             public List<OutpostSite> outposts = new();
+            /// <summary>Cemitério amaldiçoado (os esqueletos entram depois do NavMesh).</summary>
+            public Transform graveyard;
             /// <summary>Pontos locais onde a mata não nasce (caixotes soltos, peças).</summary>
             public List<Vector2> clearings = new();
         }
@@ -98,7 +102,12 @@ namespace Pirates.EditorTools
             foreach (var trail in new[] { TrailNorth, TrailEast, TrailWest, TrailSouth })
                 for (int k = 1; k < trail.Length; k++) paths.Add((trail[k - 1], trail[k], 3.5f));
             paths.Add((Vector2.zero, Vector2.zero, 15f));   // chão batido do acampamento
-            var flats = new List<(Vector2, float, float, float)> { (Vector2.zero, 24f, 10f, 1.8f), (RuinsSpot, 9f, 6f, RuinsHeight) };
+            // Atalho até a borda do cemitério (pacote B, passo 3): para antes das covas.
+            paths.Add((TrailWest[1], GraveyardSpot + (TrailWest[1] - GraveyardSpot).normalized * 9.5f, 2.5f));
+            var flats = new List<(Vector2, float, float, float)>
+            {
+                (Vector2.zero, 24f, 10f, 1.8f), (RuinsSpot, 9f, 6f, RuinsHeight), (GraveyardSpot, 11f, 5f, GraveyardHeight),
+            };
             foreach (var o in Outposts) if (o.camp) flats.Add((o.local, 9f, 6f, 1.6f));
             return new IslandSpec
             {
@@ -136,6 +145,7 @@ namespace Pirates.EditorTools
             s.wreck = SkullShore(island, new Vector2(100f, 10f), Vector2.right) + new Vector2(-3f, 0f);
             Shipwreck(island, s.wreck);
             Ruins(island, RuinsSpot);
+            s.graveyard = Graveyard(island, GraveyardSpot);
             foreach (var o in Outposts)
             {
                 var site = OutpostVisual(island, o);
@@ -293,6 +303,7 @@ namespace Pirates.EditorTools
             if (p.magnitude < 27f) return false;
             foreach (var o in Outposts) if ((p - o.local).magnitude < (o.camp ? 11f : 15f)) return false;
             if ((p - s.wreck).magnitude < 13f) return false;
+            if ((p - GraveyardSpot).magnitude < 14f) return false;
             foreach (var c in s.clearings) if ((p - c).magnitude < 2.5f) return false;
             foreach (var trail in new[] { TrailNorth, TrailEast, TrailWest, TrailSouth })
                 for (int k = 1; k < trail.Length; k++)
@@ -319,10 +330,11 @@ namespace Pirates.EditorTools
                 for (int k = 0; k < members.Length; k++)
                 {
                     var g = o.spec.guards[k];
-                    members[k] = CreatePirate(parent, g.name, o.site.TransformPoint(g.local), g.yaw, g.gunner ? pistol : cutlass, player, camp,
-                        iron, wood, brass, g.model);
+                    members[k] = CreatePirate(parent, g.name, o.site.TransformPoint(g.local), g.yaw, PostWeapon(g.name, g.gunner, cutlass, pistol),
+                        player, camp, iron, wood, brass, g.model);
                 }
                 camp.Configure(o.spec.name, o.spec.id, members, leash: 24f, attackersAtOnce: 2);
+                if (o.spec.id == ChiefLairId) camp.SetFame(ChiefFame);
                 camps.Add(camp);
             }
             return camps;

@@ -21,6 +21,14 @@ namespace Pirates.Core
         public int fame;
     }
 
+    /// <summary>Um inimigo com nome caiu (o brutamontes da Caveira, a duelista dos contrabandistas: alvo de missão; a lula gigante).</summary>
+    public struct EnemyDefeatedEvent
+    {
+        public string targetId;
+        /// <summary>Fama do feito (só os monstros do mar dão por este evento; os de terra dão pelo acampamento).</summary>
+        public int fame;
+    }
+
     /// <summary>O jogador desenterrou um tesouro.</summary>
     public struct TreasureFoundEvent
     {

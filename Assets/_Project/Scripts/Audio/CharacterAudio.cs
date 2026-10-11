@@ -21,6 +21,7 @@ namespace Pirates.Audio
         FootCharacter character;
         CharacterCombat combat;
         Health health;
+        Pirates.LandCombat.EnemyFootAI ai;
         float stride;
         bool wasReloading;
 
@@ -36,6 +37,7 @@ namespace Pirates.Audio
             character = GetComponent<FootCharacter>();
             TryGetComponent(out combat);
             TryGetComponent(out health);
+            TryGetComponent(out ai);
         }
 
         void OnEnable()
@@ -49,6 +51,8 @@ namespace Pirates.Audio
                 combat.Fired += OnFired;
                 combat.Hit += OnHit;
                 combat.KickLanded += OnKickLanded;
+                combat.Blocked += OnBlocked;
+                combat.GuardBroken += OnGuardBroken;
                 combat.Drawing += OnDrawing;
                 combat.Holstering += OnDrawing;
             }
@@ -56,6 +60,11 @@ namespace Pirates.Audio
             {
                 health.Damaged += OnDamaged;
                 health.Died += OnDied;
+            }
+            if (ai)
+            {
+                ai.Taunted += OnTaunted;
+                ai.Risen += OnRisen;
             }
         }
 
@@ -70,6 +79,8 @@ namespace Pirates.Audio
                 combat.Fired -= OnFired;
                 combat.Hit -= OnHit;
                 combat.KickLanded -= OnKickLanded;
+                combat.Blocked -= OnBlocked;
+                combat.GuardBroken -= OnGuardBroken;
                 combat.Drawing -= OnDrawing;
                 combat.Holstering -= OnDrawing;
             }
@@ -77,6 +88,11 @@ namespace Pirates.Audio
             {
                 health.Damaged -= OnDamaged;
                 health.Died -= OnDied;
+            }
+            if (ai)
+            {
+                ai.Taunted -= OnTaunted;
+                ai.Risen -= OnRisen;
             }
         }
 
@@ -151,6 +167,18 @@ namespace Pirates.Audio
         void OnDodged() => Play(sounds?.dodge, transform.position);
 
         void OnKickLanded(Vector3 point) => Play(sounds?.kick, point);
+
+        /// <summary>Lâmina na guarda: metal batendo; aparar tem um tinido próprio, mais alto.</summary>
+        void OnBlocked(Vector3 point, bool parried) => Play(parried ? sounds?.parry : sounds?.block, point);
+
+        /// <summary>Guarda quebrada (sem fôlego): o tinido da defesa, mais grave, e o golpe que passou soa por cima.</summary>
+        // Grito de guerra (brutamontes): o grito de morte, bem mais grave e alto.
+        /// <summary>Esqueleto saindo da cova: gemido grave e arrastado (a voz de morte bem lenta).</summary>
+        void OnRisen() => Play(sounds?.death, transform.position + Vector3.up * 0.6f, 1.2f, voicePitch * 0.55f);
+
+        void OnTaunted() => Play(sounds?.death, transform.position + Vector3.up * 1.8f, 1.3f, voicePitch * 0.72f);
+
+        void OnGuardBroken() => Play(sounds?.block, Hand(), 1f, 0.72f);
 
         void OnKnockedDown()
         {

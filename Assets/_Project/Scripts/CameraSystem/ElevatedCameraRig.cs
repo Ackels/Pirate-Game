@@ -165,9 +165,11 @@ namespace Pirates.CameraSystem
             var mouse = Mouse.current;
             if (mouse != null && (mouse.middleButton.isPressed || (!input.FootCameraControls && mouse.rightButton.isPressed)))
             {
-                Vector2 delta = mouse.delta.ReadValue();
+                // Sensibilidade e inversão do menu Opções.
+                var options = GameOptions.Current;
+                Vector2 delta = mouse.delta.ReadValue() * options.cameraSensitivity;
                 targetYaw += delta.x * mouseOrbitSensitivity;
-                targetPitchOffset -= delta.y * mousePitchSensitivity;
+                targetPitchOffset -= delta.y * mousePitchSensitivity * (options.invertCamera ? -1f : 1f);
             }
             targetPitchOffset -= input.CameraPitch.ReadValue<float>() * stickPitchSpeed * dt;
 

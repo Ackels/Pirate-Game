@@ -203,9 +203,35 @@ namespace Pirates.EditorTools
             (KitCharacters.Anne, 1) => new[] { (3, 9, "E8E2D0"), (7, 9, "2F5A3A"), (2, 9, "2E3A5C"), (5, 9, "4A3020") },
             (KitCharacters.Anne, 2) => new[] { (3, 9, "9DB8D8"), (7, 9, "6A2430"), (2, 9, "A08458"), (5, 9, "1E1A18"), (4, 9, "7A5235") },
             (KitCharacters.Anne, 3) => new[] { (3, 9, "D9C9A0"), (7, 9, "4A3060"), (2, 9, "3A3A40"), (5, 9, "A0452A") },
+            // Duelista (inimiga, pacote B; não entra nos civis): camisa vermelho-escura, colete e calça pretos, cabelo preto.
+            (KitCharacters.Anne, 4) => new[] { (3, 9, "8A1E24"), (7, 9, "1E1C22"), (2, 9, "2A2830"), (5, 9, "18141A") },
             (KitCharacters.Henry, 1) => new[] { (2, 11, "2F5DA8"), (6, 11, "6A2A24"), (3, 11, "D8CCB0"), (8, 11, "6A4A2A") },
             (KitCharacters.Henry, 2) => new[] { (2, 11, "3E7A3A"), (9, 11, "D8B840"), (6, 11, "2A3450"), (3, 11, "9A9A9A"), (8, 11, "8A7A50"), (4, 11, "C9A07A") },
             (KitCharacters.Henry, 3) => new[] { (2, 11, "222222"), (9, 11, "A02020"), (6, 11, "B08A30"), (3, 11, "E0DCD0"), (8, 11, "2E4A4A") },
+            // Tobias, o coveiro (NPC de missão; não entra nos civis): bandana e listra pretas, mangas cinza, camisa e calça escuras.
+            (KitCharacters.Henry, 4) => new[] { (2, 11, "1E1C1C"), (9, 11, "3A3636"), (3, 11, "6E6A64"), (6, 11, "2E2A28"), (8, 11, "3A3028") },
+            // NPCs de missão (passo 2; não entram nos civis): Velho Bento (marinheiro desbotado), Almirante Teodoro (azul-marinho e dourado),
+            // Zé Caolho (bandana vermelha, colete de couro), Rato Velho (trapos pardos) e Dona Mercês (colete vinho, cabelo grisalho).
+            (KitCharacters.Henry, 5) => new[] { (2, 11, "D8D4C8"), (9, 11, "2F4F8A"), (3, 11, "D8D4C8"), (6, 11, "3A5A8A"), (8, 11, "4A4038") },
+            (KitCharacters.Henry, 6) => new[] { (2, 11, "1E2A4A"), (9, 11, "C8A040"), (3, 11, "22305A"), (6, 11, "E8E4D8"), (8, 11, "1E2A4A") },
+            (KitCharacters.Henry, 7) => new[] { (2, 11, "A02828"), (9, 11, "E8D8B0"), (3, 11, "C8B890"), (6, 11, "6A3A28"), (8, 11, "3A3A3A") },
+            (KitCharacters.Henry, 8) => new[] { (2, 11, "5A5048"), (9, 11, "3A3430"), (3, 11, "6A6052"), (6, 11, "4A4238"), (8, 11, "3A3028") },
+            (KitCharacters.Anne, 5) => new[] { (3, 9, "E8E2D0"), (7, 9, "6A2430"), (2, 9, "3A3040"), (5, 9, "8A8A88") },
+            // Capitão Barba-Negra (chefe, pacote B, passo 4; linha 7 do capitão): 0 pele, 1 chapéu, 2 bota, 3 calça e faixa do chapéu, 4 camisa,
+            // 5 barba e cabelo, 6 olhos, 7 casaco, 8 base do gancho, 9 gancho, 10 perna de pau, 11 punhos. Pele pálida, chapéu e casaco
+            // pretos, calça e camisa vermelho-sangue, barba negra, olhos vermelhos (brilham: ChiefMaterial), punhos e gancho dourados.
+            (KitCharacters.Captain, 1) => new[]
+            {
+                (0, 7, "C8B4A2"), (1, 7, "141216"), (2, 7, "1A1616"), (3, 7, "6E0E16"), (4, 7, "7A1A1E"), (5, 7, "1C1818"),
+                (6, 7, "E01E14"), (7, 7, "1E1A20"), (8, 7, "3A3A40"), (9, 7, "B8902C"), (10, 7, "3A2A20"), (11, 7, "B8902C"),
+            },
+            // Lázaro Negro (prólogo de "A Coroa de Prata"): casaco roxo quase preto, chapéu preto, camisa clara, barba e cabelo grisalhos,
+            // gancho e punhos de prata (a obsessão dele).
+            (KitCharacters.Captain, 2) => new[]
+            {
+                (0, 7, "D2B49A"), (1, 7, "121014"), (2, 7, "1A1616"), (3, 7, "2A2A30"), (4, 7, "B8B0A8"), (5, 7, "8C8C92"),
+                (6, 7, "202024"), (7, 7, "2A1830"), (8, 7, "3A3A40"), (9, 7, "C8C8D2"), (10, 7, "3A2A20"), (11, 7, "C8C8D2"),
+            },
             _ => null,
         };
 

@@ -16,6 +16,8 @@ namespace Pirates.Core
         public bool ignites;
         /// <summary>Derruba o personagem a pé: <see cref="Knockdown.Stumble"/> (chute: cambaleia e cai sentado) ou <see cref="Knockdown.Blast"/> (explosão: arremessado de costas).</summary>
         public Knockdown knockdown;
+        /// <summary>Golpe que pegou na guarda (cutelo erguido): só o arranhão, sem tranco nem reação de golpe.</summary>
+        public bool blocked;
     }
 
     /// <summary>Como o golpe derruba quem está a pé (pacote A, 09/10).</summary>

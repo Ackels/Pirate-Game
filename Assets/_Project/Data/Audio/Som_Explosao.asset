@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Som_Explosao
   m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
   clips:
-  - {fileID: 8300000, guid: d9e454710aa0f9a4fb6c3de8322992a3, type: 3}
-  - {fileID: 8300000, guid: 046f998cc59e05c40b15ca1b42f2b5ea, type: 3}
-  - {fileID: 8300000, guid: 7133308d5648944418714dcaf3dfacb8, type: 3}
-  - {fileID: 8300000, guid: a7591efccc488d04290be217a6714c20, type: 3}
+  - {fileID: 8300000, guid: 7352d1bdbf23c8f4b854fde222001786, type: 3}
+  - {fileID: 8300000, guid: 4fb3ceb7d1e53b5479117880ef461e72, type: 3}
+  - {fileID: 8300000, guid: fdd150c1371503e4ab84d2de2400e1f4, type: 3}
+  - {fileID: 8300000, guid: 7965f4de01fdf5f47a4b1bc70d6172b4, type: 3}
   channel: 1
-  volume: {x: 0.95, y: 1}
-  pitch: {x: 0.7, y: 0.85}
+  volume: {x: 0.9, y: 1}
+  pitch: {x: 0.8, y: 0.92}
   spatial: 1
   minDistance: 15
-  maxDistance: 220
+  maxDistance: 280
   cooldown: 0

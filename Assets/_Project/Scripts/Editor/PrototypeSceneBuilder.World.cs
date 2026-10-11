@@ -1,3 +1,4 @@
+using System.Linq;
 using Pirates.Base;
 using Pirates.Combat;
 using Pirates.Controls;
@@ -54,9 +55,13 @@ namespace Pirates.EditorTools
                 WorldScenePath);
             var foot = CreateOnFoot(ship, hold, shipLanding, island, materials, "Acampamento da Caveira", CampMissionId);
             island.campSite.gameObject.AddComponent<WorldMarker>().Configure(CampMissionId, "Acampamento da Caveira", 10f);
+            // Missões dos inimigos novos (PrototypeSceneBuilder.Bounties.cs): o brutamontes do pátio e o cemitério.
+            AddBounty(foot.camp, "Brutamontes", BruteSkullId, "Brutamontes (Caveira)");
+            if (island.graveyard) island.graveyard.gameObject.AddComponent<WorldMarker>().Configure(GraveyardMissionId, "Cemitério da Caveira", 5f);
             CreateIsles(materials, deck, hull, island.loot, loot.items, foot.character, ship);
             AddBrig(ship, combat, loot);
             AddBoss(ship, combat, loot);
+            AddGiantSquid(ship, loot);
             AddBountyHunters(ship, combat, loot);
 
             // Porto a pé: F no cais atraca e desce no píer; as casas da vila abrem cada parte do porto.
@@ -72,7 +77,10 @@ namespace Pirates.EditorTools
             if (dock) dock.gameObject.AddComponent<WorldMarker>().Configure(MissionHUD.HarborMarkerId, "Porto da Base", 12f);
             var board = new GameObject("QuadroDeMissoes").AddComponent<MissionBoard>();
             // Warehouse só existe em Play (Awake): no gerador, o Inventory do cais.
-            board.Configure(LoadMissions(loot.items), hold, dock ? dock.GetComponent<Inventory>() : null, loot.items.gold);
+            var missions = LoadMissions(loot.items);
+            board.Configure(missions, hold, dock ? dock.GetComponent<Inventory>() : null, loot.items.gold);
+            // NPCs da vila que dão missões conversando (PrototypeSceneBuilder.Npcs.cs).
+            CreateMissionGivers(missions, foot.character);
 
             // HUDs: os do navio somem em terra (o do porto fica: a pé ele mostra as casas); os de terra e o de missões entram.
             var hud = GameObject.Find("HUD");
@@ -91,7 +99,17 @@ namespace Pirates.EditorTools
             save.SetNewGameKit(new[] { new ItemStack(CartridgeItem(), 20), new ItemStack(RationItem(), 3) });
             foot.character.GetComponent<PistolAmmo>().Configure(CartridgeItem(), foot.switcher, startWith: 0);
             ApplyCampFame();
-            hud.AddComponent<SaveMenuHUD>().Bind(save, "Mundo — Protótipo 07");
+            // Tutorial do jogo novo (11/10): o Velho Bento mostra o porto e o treino a pé.
+            AddTutorial(foot.switcher, hud);
+            // Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo, opções, créditos; o prólogo toca no Novo jogo.
+            var prologue = hud.AddComponent<PrologueHUD>();
+            var frames = Enumerable.Range(1, 9)
+                .Select(n => AssetDatabase.LoadAssetAtPath<Texture2D>($"{PrologueFolder}/Quadro_{n}.png")).Where(t => t).ToArray();
+            if (frames.Length < 9) Debug.LogWarning("[Pirates] Faltam quadros do prólogo: rode Pirates → Prólogo → Gerar quadros.");
+            prologue.Configure(frames);
+            var menu = hud.AddComponent<SaveMenuHUD>();
+            menu.Bind(save, "");
+            menu.Configure(frames.Length > 0 ? frames[^1] : null, AssetDatabase.LoadAssetAtPath<TextAsset>(Root + "/UI/Creditos.txt"), prologue);
         }
 
         /// <summary>Os contratos do quadro do porto (taverna).</summary>
@@ -191,6 +209,8 @@ namespace Pirates.EditorTools
             };
             // M10: contratos para capitães famosos (pedem patente).
             list.AddRange(FamousMissions(i));
+            // Pacote B: brutamontes, duelista e cemitério.
+            list.AddRange(BountyMissions(i));
             return list.ToArray();
         }
 

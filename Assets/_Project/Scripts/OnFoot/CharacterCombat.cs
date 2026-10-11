@@ -53,6 +53,22 @@ namespace Pirates.OnFoot
         [Tooltip("Empurrão (m/s) em quem leva o chute.")]
         [SerializeField] float kickPush = 3.5f;
 
+        [Header("Defesa (segurar mirar com o cutelo)")]
+        [Tooltip("Arco (°) à frente que a guarda cobre: golpe de lado ou de trás passa.")]
+        [SerializeField] float blockAngle = 150f;
+        [Tooltip("Fração do dano que passa pela guarda (arranhão).")]
+        [SerializeField, Range(0f, 1f)] float blockedDamage = 0.2f;
+        [Tooltip("Empurrão (m/s) de quem defende, para trás, a cada golpe na guarda.")]
+        [SerializeField] float blockPush = 2.5f;
+        [Tooltip("Velocidade andando com a guarda erguida (não corre).")]
+        [SerializeField, Range(0.1f, 1f)] float blockMoveSpeed = 0.5f;
+        [Tooltip("Aparar: o golpe chega até estes segundos depois de erguer a guarda = nada de dano e quem atacou fica atordoado.")]
+        [SerializeField] float parryWindow = 0.3f;
+        [Tooltip("Segundos com a guarda baixada antes de erguer valer de novo para aparar (sem isso, apertar sem parar aparava tudo).")]
+        [SerializeField] float parryRearm = 0.5f;
+        [Tooltip("Quem foi aparado: segundos sem atacar (anda devagar) e empurrão (m/s) para trás.")]
+        [SerializeField] float parryStun = 1.4f, parryPush = 4f;
+
         readonly HashSet<IDamageable> hitThisSwing = new();
         FootCharacter character;
         float nextKickTime;
@@ -88,6 +104,8 @@ namespace Pirates.OnFoot
         public WeaponDefinition Current => CurrentIndex >= 0 && CurrentIndex < weapons.Length ? weapons[CurrentIndex] : null;
         public bool IsSwapping => swapping;
         public bool IsAttacking => Time.time < busyUntil;
+        /// <summary>Um ataque agora sairia na hora (sem ficar guardado esperando a arma): a IA do chefe só escolhe o golpe assim.</summary>
+        public bool ReadyToAttack => !swapping && !IsAttacking && !IsBlocking && Time.time >= nextAttackTime;
         public bool IsReloading => Current && Time.time < reloadUntil[CurrentIndex];
         public float ReloadRemaining => Current ? Mathf.Max(0f, reloadUntil[CurrentIndex] - Time.time) : 0f;
         public int ShotsLeft => Current ? shotsLeft[CurrentIndex] : 0;
@@ -125,6 +143,27 @@ namespace Pirates.OnFoot
         /// <summary>Começou a guardar / sacar esta arma (animações).</summary>
         public event Action<WeaponDefinition> Holstering;
         public event Action<WeaponDefinition> Drawing;
+        /// <summary>Um golpe pegou na guarda (ponto; true = aparado): som, faíscas, reação.</summary>
+        public event Action<Vector3, bool> Blocked;
+        /// <summary>O golpe deste personagem foi aparado: fica atordoado (animação).</summary>
+        public event Action Parried;
+
+        /// <summary>Resultado de um golpe contra a guarda.</summary>
+        public enum GuardResult { None, Blocked, Parried, Broken }
+
+        /// <summary>A guarda quebrou (fôlego zerado com ela erguida): som e aviso.</summary>
+        public event Action GuardBroken;
+        /// <summary>Guarda quebrada: não ergue de novo até este instante.</summary>
+        public float GuardLockedUntil { get; private set; } = float.NegativeInfinity;
+        Stamina stamina;
+
+        /// <summary>Guarda erguida (segurando mirar com o cutelo na mão): golpe de frente vira arranhão; na hora certa, apara.</summary>
+        public bool IsBlocking { get; private set; }
+        /// <summary>Erguer agora ainda apara (a guarda ficou baixada tempo bastante).</summary>
+        public bool ParryReady => Time.time - blockEnd >= parryRearm;
+        public float BlockMoveSpeed => blockMoveSpeed;
+        float blockStart = float.NegativeInfinity, blockEnd = float.NegativeInfinity;
+        bool parryArmed;
 
         public void Configure(WeaponDefinition[] definitions, Transform[] visuals, Transform[] hands, Transform[] holsters,
             Transform gunMuzzle, LineRenderer shotTracer)
@@ -143,6 +182,10 @@ namespace Pirates.OnFoot
         public void SetTeam(int value) => team = value;
 
         bool[] locked = Array.Empty<bool>();
+        int queuedVariant = -1;
+
+        /// <summary>O próximo golpe será este (a IA escolhe o golpe rápido quando precisa). Vale para um golpe só.</summary>
+        public void QueueVariant(int variant) => queuedVariant = variant;
 
         /// <summary>
         /// Libera ou tranca uma arma (o bacamarte só depois de comprado: Controls/GearWeapons). Trancada não saca; se estava na mão,
@@ -187,6 +230,7 @@ namespace Pirates.OnFoot
         void Awake()
         {
             character = GetComponent<FootCharacter>();
+            stamina = GetComponent<Stamina>();
             shotsLeft = new int[weapons.Length];
             reloadUntil = new float[weapons.Length];
             reloadPaused = new float[weapons.Length];
@@ -228,6 +272,25 @@ namespace Pirates.OnFoot
             var current = Current;
             IsAimHeld = command.aim && current && current.kind == WeaponKind.Firearm && !swapping;
             HasAimPoint = command.hasAim;
+            // Guarda: mirar com o cutelo na mão (não no meio de um golpe, chute ou troca; caído/rolando o comando vem vazio).
+            bool guard = command.aim && current && current.kind == WeaponKind.Melee && !swapping && !IsAttacking
+                && Time.time >= GuardLockedUntil && (!stamina || stamina.Current > 0f);
+            if (guard != IsBlocking)
+            {
+                if (guard)
+                {
+                    blockStart = Time.time;
+                    parryArmed = ParryReady;
+                }
+                else blockEnd = Time.time;
+                IsBlocking = guard;
+            }
+            // Guarda erguida gasta fôlego (e não deixa recuperar); zerou = quebrou.
+            if (IsBlocking && stamina)
+            {
+                stamina.Spend(stamina.GuardPerSecond * Time.deltaTime);
+                if (stamina.Current <= 0f) BreakGuard();
+            }
             if (current && current.kind == WeaponKind.Firearm)
             {
                 bool onTarget = false;
@@ -454,7 +517,8 @@ namespace Pirates.OnFoot
         bool TryAttack(in FootCommand command)
         {
             var weapon = Current;
-            if (!weapon || swapping || IsAttacking || Time.time < nextAttackTime || IsReloading) return false;
+            // Guarda erguida não ataca: o clique fica guardado e sai ao soltar (contra-ataque depois de aparar).
+            if (!weapon || swapping || IsAttacking || IsBlocking || Time.time < nextAttackTime || IsReloading) return false;
             if (weapon.kind == WeaponKind.Firearm && shotsLeft[CurrentIndex] <= 0) return false;
             if (weapon.kind == WeaponKind.Firearm && ammo != null && ammo.Count(weapon) <= 0)
             {
@@ -474,41 +538,83 @@ namespace Pirates.OnFoot
 
             // Combo: clicar de novo logo depois continua a sequência de golpes.
             int variant = Time.time - lastAttackTime <= weapon.comboWindow ? (lastVariant + 1) % weapon.attackVariants : 0;
+            if (queuedVariant >= 0 && queuedVariant < weapon.attackVariants) variant = queuedVariant;
+            else if (weapon.randomVariants && weapon.attackVariants > 1)
+            {
+                // Sorteado, diferente do anterior (a IA mistura golpe rápido e lento).
+                variant = UnityEngine.Random.Range(0, weapon.attackVariants - 1);
+                if (variant >= lastVariant && lastVariant >= 0) variant++;
+            }
             lastVariant = variant;
+            queuedVariant = -1;
             lastAttackTime = Time.time;
 
             // Braço já erguido (mirando ou logo depois de um tiro): a bala sai na hora, sem animação de tiro.
             bool armRaised = weapon.kind == WeaponKind.Firearm && (IsAiming || Time.time < aimPoseUntil);
-            float delay = armRaised ? weapon.aimedShotDelay : weapon.hitDelay;
-            busyUntil = Time.time + delay + 0.1f;
-            nextAttackTime = Time.time + weapon.cooldown;
+            float delay = armRaised ? weapon.aimedShotDelay : weapon.HitDelayFor(variant);
+            // Sequência (golpe com acertos a mais): ocupado até o último acerto.
+            float last = armRaised ? delay : weapon.LastHitFor(variant);
+            busyUntil = Time.time + last + 0.1f;
+            nextAttackTime = Time.time + weapon.cooldown + (last - delay);
             if (!IsAimHeld)
             {
                 character.FaceDuring(direction, delay + 0.15f);
-                character.SetSpeedMultiplier(weapon.moveSpeedWhileAttacking, delay + 0.15f);
+                character.SetSpeedMultiplier(weapon.moveSpeedWhileAttacking, last + 0.15f);
             }
             if (weapon.kind == WeaponKind.Firearm) aimPoseUntil = Time.time + delay + weapon.aimPoseSeconds;
             if (!armRaised) Attacked?.Invoke(weapon, variant);
 
             Vector3 aim = command.hasAim ? command.aimPoint : transform.position + direction * weapon.range;
-            pendingStrike = StartCoroutine(Strike(weapon, CurrentIndex, direction, aim, delay, armRaised ? weapon.aimedSpread : 1f));
+            pendingStrike = StartCoroutine(Strike(weapon, CurrentIndex, variant, direction, aim, delay, armRaised ? weapon.aimedSpread : 1f));
             return true;
         }
 
-        IEnumerator Strike(WeaponDefinition weapon, int index, Vector3 direction, Vector3 aimPoint, float delay, float spread)
+        IEnumerator Strike(WeaponDefinition weapon, int index, int variant, Vector3 direction, Vector3 aimPoint, float delay, float spread)
         {
             if (delay > 0f) yield return new WaitForSeconds(delay);
+            if (weapon.kind != WeaponKind.Melee)
+            {
+                pendingStrike = null;
+                Shoot(weapon, index, direction, aimPoint, spread);
+                yield break;
+            }
+            var strike = weapon.StrikeFor(variant);
+            var followUps = strike?.followUps;
+            if (followUps == null || followUps.Length == 0)
+            {
+                pendingStrike = null;
+                Swing(weapon, direction, strike);
+                yield break;
+            }
+            // Sequência: cada acerto vai para onde o personagem está virado agora (ele avança e gira entre um e outro).
+            if (!Swing(weapon, direction, strike)) yield break;
+            float done = 0f;
+            foreach (var t in followUps)
+            {
+                if (t > done) yield return new WaitForSeconds(t - done);
+                done = t;
+                if (!Swing(weapon, transform.forward, strike)) yield break;
+            }
             pendingStrike = null;
-            if (weapon.kind == WeaponKind.Melee) Swing(weapon, direction);
-            else Shoot(weapon, index, direction, aimPoint, spread);
         }
 
-        /// <summary>Espada: tudo que é IDamageable num arco à frente, até o alcance. Cada alvo leva um golpe só.</summary>
-        void Swing(WeaponDefinition weapon, Vector3 direction)
+        /// <summary>Dano dos golpes × isto (fase 2 do chefe). Não mexe no asset da arma.</summary>
+        public float DamageMultiplier { get; set; } = 1f;
+
+        /// <summary>
+        /// Espada: tudo que é IDamageable num arco à frente, até o alcance. Cada alvo leva um golpe só. false = aparado (o resto da
+        /// sequência se perde).
+        /// </summary>
+        bool Swing(WeaponDefinition weapon, Vector3 direction, StrikeOverride strike = null)
         {
             hitThisSwing.Clear();
+            float range = strike != null && strike.range > 0f ? strike.range : weapon.range;
+            float angle = strike != null && strike.angle > 0f ? strike.angle : weapon.angle;
+            float damage = (strike != null && strike.damage > 0f ? strike.damage : weapon.damage) * DamageMultiplier;
+            var knockdown = strike != null && strike.customKnockdown ? strike.knockdown : weapon.knockdown;
+            bool unblockable = strike != null && strike.unblockable;
             Vector3 chest = transform.position + Vector3.up * chestHeight;
-            foreach (var col in Physics.OverlapSphere(chest, weapon.range, ~0, QueryTriggerInteraction.Ignore))
+            foreach (var col in Physics.OverlapSphere(chest, range, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (col.transform.IsChildOf(transform) || IsAlly(col)) continue;
                 var target = col.GetComponentInParent<IDamageable>();
@@ -516,10 +622,83 @@ namespace Pirates.OnFoot
                 Vector3 closest = col.ClosestPoint(chest);
                 Vector3 to = closest - chest;
                 to.y = 0f;
-                if (to.sqrMagnitude > 0.0001f && Vector3.Angle(direction, to) > weapon.angle * 0.5f) continue;
-                target.TakeDamage(new DamageInfo { amount = weapon.damage, point = closest, direction = direction, source = gameObject });
-                Hit?.Invoke(weapon, closest);
+                if (angle < 360f && to.sqrMagnitude > 0.0001f && Vector3.Angle(direction, to) > angle * 0.5f) continue;
+                // Guarda do outro (bala, chute e explosão não passam por aqui: a guarda só segura lâmina). Imparável passa direto.
+                var defender = col.GetComponentInParent<CharacterCombat>();
+                var guard = defender && defender != this && !unblockable ? defender.Defend(transform.position, closest, weapon.guardCost) : GuardResult.None;
+                if (guard == GuardResult.Parried)
+                {
+                    GotParried(defender.transform.position);
+                    return false;
+                }
+                bool blocked = guard == GuardResult.Blocked;
+                // Guarda quebrada pelo golpe: passa parte do dano, com a reação normal de levar golpe.
+                float scale = blocked ? defender.blockedDamage : guard == GuardResult.Broken ? defender.GuardBreakDamage : 1f;
+                target.TakeDamage(new DamageInfo
+                {
+                    amount = damage * scale, point = closest, direction = direction, source = gameObject,
+                    blocked = blocked,
+                    // Golpe pesado (machado do brutamontes) derruba; na guarda, não.
+                    knockdown = blocked ? Knockdown.None : knockdown,
+                });
+                if (!blocked) Hit?.Invoke(weapon, closest);
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Golpe de lâmina vindo de <paramref name="attacker"/>: com a guarda erguida e o golpe de frente, segura (arranhão, empurra para
+        /// trás) ou, logo depois de erguer, apara (nada passa). Chamado por quem golpeia, antes do dano.
+        /// </summary>
+        public GuardResult Defend(Vector3 attacker, Vector3 point, float guardCost = 1f)
+        {
+            if (!IsBlocking) return GuardResult.None;
+            Vector3 to = attacker - transform.position;
+            to.y = 0f;
+            if (to.sqrMagnitude > 0.0001f && Vector3.Angle(transform.forward, to) > blockAngle * 0.5f) return GuardResult.None;
+            bool parry = parryArmed && Time.time - blockStart <= parryWindow;
+            if (!parry && to.sqrMagnitude > 0.0001f) character.Push(-to.normalized * blockPush);
+            // Faísca onde as lâminas se encontram: à frente de quem defende, na altura da guarda (a borda do colisor caía em cima do chapéu).
+            Vector3 front = to.sqrMagnitude > 0.0001f ? to.normalized : transform.forward;
+            Blocked?.Invoke(transform.position + front * 0.55f + Vector3.up * chestHeight * 0.75f, parry);
+            if (stamina)
+            {
+                // Aparar devolve fôlego; segurar o golpe gasta (zerou = a guarda quebra e parte do golpe passa).
+                if (parry) stamina.Refund(stamina.ParryRefund);
+                else
+                {
+                    stamina.Spend(stamina.BlockHitCost * guardCost);
+                    if (stamina.Current <= 0f)
+                    {
+                        BreakGuard();
+                        return GuardResult.Broken;
+                    }
+                }
+            }
+            return parry ? GuardResult.Parried : GuardResult.Blocked;
+        }
+
+        /// <summary>Sem fôlego com a guarda erguida: ela cai e só volta depois de guardBreakSeconds (sem atordoar: viraria morte certa).</summary>
+        void BreakGuard()
+        {
+            IsBlocking = false;
+            blockEnd = Time.time;
+            GuardLockedUntil = Time.time + (stamina ? stamina.GuardBreakSeconds : 1f);
+            GuardBroken?.Invoke();
+        }
+
+        float GuardBreakDamage => stamina ? stamina.GuardBreakDamage : 0.5f;
+
+        /// <summary>O golpe foi aparado: o resto do golpe se perde, fica sem atacar nem chutar, lento, e é empurrado para trás.</summary>
+        void GotParried(Vector3 from)
+        {
+            Interrupt(parryStun);
+            nextKickTime = Mathf.Max(nextKickTime, Time.time + parryStun);
+            character.SetSpeedMultiplier(0.25f, parryStun);
+            Vector3 away = transform.position - from;
+            away.y = 0f;
+            if (away.sqrMagnitude > 0.0001f) character.Push(away.normalized * parryPush);
+            Parried?.Invoke();
         }
 
         /// <summary>Pistola: raio da boca até o alvo, com dispersão (menor mirando); a 1ª coisa atingida leva o dano.</summary>
@@ -652,6 +831,7 @@ namespace Pirates.OnFoot
             pelletTracersShown = 0;
             swapping = false;
             IsAimHeld = false;
+            IsBlocking = false;
         }
     }
 }

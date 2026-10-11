@@ -63,12 +63,13 @@ namespace Pirates.OnFoot
         CharacterController controller;
         IFootInput input;
         IOceanSampler ocean;
-        Vector3 planarVelocity, pushVelocity;
+        Vector3 planarVelocity, pushVelocity, lungeVelocity;
         float verticalVelocity;
         float lastGroundedTime = float.NegativeInfinity;
         Vector3 lastSafePosition;
         FootCommand? commandOverride;
         CharacterCombat combat;
+        Stamina stamina;
         CharacterAimRig aimRig;
         bool backpedal;
         Vector3 faceDirection;
@@ -118,6 +119,7 @@ namespace Pirates.OnFoot
             controller = GetComponent<CharacterController>();
             input = GetComponent<IFootInput>();
             combat = GetComponent<CharacterCombat>();
+            stamina = GetComponent<Stamina>();
             aimRig = GetComponentInChildren<CharacterAimRig>(true);
             lastSafePosition = transform.position;
         }
@@ -176,6 +178,9 @@ namespace Pirates.OnFoot
             }
         }
 
+        /// <summary>Investida da IA: soma esta velocidade ao movimento só neste quadro (quem chama repete a cada quadro do avanço).</summary>
+        public void Lunge(Vector3 velocity) => lungeVelocity = new Vector3(velocity.x, 0f, velocity.z);
+
         /// <summary>Coloca o personagem num ponto (desembarque, reaparecer): procura o chão logo abaixo.</summary>
         public void Teleport(Vector3 position, Quaternion rotation)
         {
@@ -195,12 +200,13 @@ namespace Pirates.OnFoot
             if (Incapacitated) return;
             float dt = Time.deltaTime;
             var command = commandOverride ?? (input != null ? input.GetCommand() : default);
-            if (IsDown && rollOutOfKnockdown && command.dodge && Time.time - downSince >= rollOutAfter && IsGrounded)
+            if (IsDown && rollOutOfKnockdown && command.dodge && Time.time - downSince >= rollOutAfter && IsGrounded && (!stamina || stamina.CanDodge))
             {
                 // Levanta rolando (revisão de 09/10: caído no meio da luta, o acampamento matava o capitão no chão).
                 downUntil = Time.time;
                 dodgeReadyAt = 0f;
             }
+            if (IsDown || IsDodging) lungeVelocity = Vector3.zero;
             if (IsDown)
             {
                 if (combat) combat.Tick(default);
@@ -208,7 +214,8 @@ namespace Pirates.OnFoot
                 MoveBody(dt);
                 return;
             }
-            if (command.dodge && CanDodge) BeginDodge(command.move);
+            // Rolar gasta fôlego (sem fôlego: não rola e a barra pisca).
+            if (command.dodge && CanDodge && (!stamina || stamina.TrySpend(stamina.DodgeCost))) BeginDodge(command.move);
             if (IsDodging)
             {
                 // Rolando: só o rolamento (sem atacar, mirar, trocar de arma nem pular).
@@ -222,15 +229,19 @@ namespace Pirates.OnFoot
             // Mirando a pistola: anda devagar e não corre.
             bool aimHeld = combat && combat.IsAimHeld;
             if (aimHeld) speedScale *= combat.Current.aimMoveSpeed;
+            // Guarda erguida (cutelo): anda devagar, não corre e fica de frente para o cursor.
+            bool guard = combat && combat.IsBlocking;
+            if (guard) speedScale *= combat.BlockMoveSpeed;
 
             // Direção pedida no plano (o input do jogador já converteu da câmera).
             Vector3 wish = new(command.move.x, 0f, command.move.y);
-            float targetSpeed = wish.sqrMagnitude > 0.0001f ? (command.run && !aimHeld ? runSpeed : walkSpeed) * Mathf.Clamp01(wish.magnitude) * speedScale : 0f;
+            float targetSpeed = wish.sqrMagnitude > 0.0001f ? (command.run && !aimHeld && !guard ? runSpeed : walkSpeed) * Mathf.Clamp01(wish.magnitude) * speedScale : 0f;
             Vector3 targetVelocity = wish.sqrMagnitude > 0.0001f ? wish.normalized * targetSpeed : Vector3.zero;
             float accel = acceleration * (IsGrounded ? 1f : airControl) * (slowed ? attackBrake : 1f);
             planarVelocity = Vector3.MoveTowards(planarVelocity, targetVelocity, accel * dt);
 
             if (aimHeld && combat.HasAimPoint) FaceAim(dt, combat.AimTarget, aimRig ? aimRig.ArmYawOffset : 0f);
+            else if (guard && command.hasAim) FaceAim(dt, command.aimPoint, 0f);
             else if (command.faceAimPoint && command.hasAim && Time.time >= faceUntil) FaceAim(dt, command.aimPoint, 0f);
             else
             {
@@ -258,7 +269,8 @@ namespace Pirates.OnFoot
 
             Vector3 before = transform.position;
             pushVelocity = Vector3.MoveTowards(pushVelocity, Vector3.zero, pushDrag * dt);
-            controller.Move((planarVelocity + pushVelocity + Vector3.up * verticalVelocity) * dt);
+            controller.Move((planarVelocity + pushVelocity + lungeVelocity + Vector3.up * verticalVelocity) * dt);
+            lungeVelocity = Vector3.zero;
             IsGrounded = controller.isGrounded;
             if (IsGrounded) lastGroundedTime = Time.time;
 

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Aparar
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 62a9cf1beb61bb849a453966a490deb5, type: 3}
+  - {fileID: 8300000, guid: ad19f5d236cd83b47a8b114dd78648bc, type: 3}
+  - {fileID: 8300000, guid: c64e1a55f240d1e4794634b51f466971, type: 3}
+  - {fileID: 8300000, guid: c9c0f2f09eb55e848b846e8ea12d3812, type: 3}
+  channel: 1
+  volume: {x: 0.95, y: 1}
+  pitch: {x: 0.97, y: 1.04}
+  spatial: 1
+  minDistance: 3
+  maxDistance: 45
+  cooldown: 0

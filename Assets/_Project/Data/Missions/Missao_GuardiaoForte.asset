@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_GuardiaoForte
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: brutamontes_forte
+  title: "O guardi\xE3o do forte"
+  giver: Almirante Teodoro
+  description: "Mesmo com as muralhas no ch\xE3o, o forte da Ilha Norte tem um guardi\xE3o: outro brutamontes de machado, no p\xE1tio, com a guarni\xE7\xE3o em volta. Desembarque e derrube-o."
+  type: 4
+  count: 1
+  targetId: brutamontes_forte
+  targetName: Ilha Norte
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 230
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 8
+  objectiveText: derrote o brutamontes do forte da Ilha Norte
+  doneText: "guardi\xE3o do forte derrotado"
+  repeatable: 1
+  cooldownSeconds: 900
+  requiredRank: 2
+  fameReward: 40
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o. Aproxime-se. O almirantado tem um servi\xE7o que n\xE3o pode esperar pela esquadra."
+  - "O forte da Ilha Norte \xE9 o ninho daquela gente. Mesmo com os canh\xF5es calados, h\xE1 uma guarni\xE7\xE3o no p\xE1tio. E um guardi\xE3o."
+  - "Outro brutamontes, maior que o da Caveira, segundo os meus batedores. Os soldados o chamam de \"o guardi\xE3o\". Nenhum voltou para confirmar."
+  - "Desembarque, entre no p\xE1tio e derrube o guardi\xE3o. A guarni\xE7\xE3o vai cair em cima de voc\xEA: leve p\xF3lvora e n\xE3o fique parado."
+  - "O almirantado paga em ouro e em p\xF3lvora. E n\xE3o esquece quem serve bem."
+  acceptLine: "Excelente. Que os ventos estejam a seu favor, capit\xE3o."
+  declineLine: "Compreendo. Nem todo capit\xE3o est\xE1 pronto para isso. Por enquanto."
+  waitingLine: "O guardi\xE3o do forte continua de p\xE9, capit\xE3o. O almirantado aguarda."
+  doneLines:
+  - "O guardi\xE3o caiu? Ent\xE3o o forte da Ilha Norte est\xE1 sem cabe\xE7a. Muito bem."
+  - "O seu pagamento, em nome do almirantado. Ouro e p\xF3lvora, como combinado."
+  restingLine: "A guarni\xE7\xE3o ainda se reorganiza. Quando houver um novo guardi\xE3o, eu mando avisar."

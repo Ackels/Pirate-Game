@@ -48,6 +48,12 @@ namespace Pirates.Ships
         public float SpeedMultiplier { get; set; } = 1f;
 
         /// <summary>
+        /// Navio preso (tentáculos da lula gigante): 0 = solto, 1 = travado. Velocidade × (1 − isto), giro × (1 − metade disto) e o
+        /// casco perde a deriva (dá para virar de lado para os canhões, não para fugir).
+        /// </summary>
+        public float Restraint { get; set; }
+
+        /// <summary>
         /// Vento na vela (M11): velocidade máxima × isto, pelo ângulo entre a proa e o vento (<see cref="IWind"/>); 1 sem vento na cena ou
         /// com as velas recolhidas/de ré. Vale igual para o jogador e a IA.
         /// </summary>
@@ -130,7 +136,8 @@ namespace Pirates.Ships
             if (grip <= 0.01f) return;
 
             // Propulsão: converge para a velocidade-alvo das velas.
-            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier * WindFactor - ForwardSpeed;
+            float held = Mathf.Clamp01(Restraint);
+            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier * WindFactor * (1f - held) - ForwardSpeed;
             float accel = speedError > 0f
                 ? Mathf.Min(speedError * stats.speedResponse, stats.acceleration)
                 : Mathf.Max(speedError * stats.speedResponse, -stats.deceleration);
@@ -139,13 +146,15 @@ namespace Pirates.Ships
             // Quilha: remove a velocidade lateral.
             float lateralSpeed = Vector3.Dot(velocity, right);
             body.AddForce(-right * (lateralSpeed * stats.lateralGrip * grip), ForceMode.Acceleration);
+            // Preso: os tentáculos seguram o casco no lugar (sem deriva para frente nem de lado).
+            if (held > 0f) body.AddForce(-new Vector3(velocity.x, 0f, velocity.z) * (held * 2.5f), ForceMode.Acceleration);
 
             // Leme: gira para o lado do leme, mais eficiente em velocidade de cruzeiro.
             float speed01 = Mathf.Clamp01(Mathf.Abs(ForwardSpeed) / stats.maxSpeed);
             float steerage = stats.steerageBySpeed.Evaluate(speed01);
             float direction = ForwardSpeed < -0.1f ? -1f : 1f;
             float storm = Services.TryGet(out IWeather weather) ? weather.Storm : 0f;
-            float targetYawRate = Rudder * stats.turnRate * Mathf.Deg2Rad * steerage * direction * (1f - stormTurnLoss * storm);
+            float targetYawRate = Rudder * stats.turnRate * Mathf.Deg2Rad * steerage * direction * (1f - stormTurnLoss * storm) * (1f - 0.5f * held);
             float yawError = targetYawRate - body.angularVelocity.y;
             body.AddTorque(Vector3.up * (yawError * stats.turnResponse * grip), ForceMode.Acceleration);
 

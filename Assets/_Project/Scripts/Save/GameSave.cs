@@ -158,10 +158,10 @@ namespace Pirates.Save
         }
 
         /// <summary>
-        /// Começa do zero (o jogo como a cena nasce), com o capitão <paramref name="captainName"/> (vazio = o nome padrão). Um save
-        /// que existir vai para o .bak.
+        /// Começa do zero (o jogo como a cena nasce), com o capitão <paramref name="captainName"/> (vazio = o nome padrão), o navio
+        /// atracado na vaga do porto (11/10; antes nascia no mar) e o tutorial, se pedido. Um save que existir vai para o .bak.
         /// </summary>
-        public void NewGame(string captainName = null)
+        public void NewGame(string captainName = null, bool tutorial = true)
         {
             SaveFile.Archive();
             if (fame) fame.ResetAll(captainName);
@@ -169,6 +169,8 @@ namespace Pirates.Save
             if (hold)
                 foreach (var stack in newGameKit)
                     if (stack.item && stack.amount > 0) hold.Add(stack.item, stack.amount);
+            PlaceShipAtBerth();
+            if (Services.TryGet(out ITutorial guide)) guide.Begin(tutorial);
             LastSaved = null;
             WaitingForChoice = false;
             Started = true;
@@ -262,6 +264,12 @@ namespace Pirates.Save
                 data.hasTime = true;
                 data.day = clock.Day;
                 data.hour = clock.Hour;
+            }
+
+            if (Services.TryGet(out ITutorial tutorial))
+            {
+                data.hasTutorial = true;
+                data.tutorialStep = tutorial.Step;
             }
 
             if (fame)
@@ -478,6 +486,7 @@ namespace Pirates.Save
             }
 
             if (data.hasTime && Services.TryGet(out ITimeOfDay time)) time.SetTime(data.day, data.hour);
+            if (Services.TryGet(out ITutorial tutorial)) tutorial.Restore(data.hasTutorial ? data.tutorialStep : -1);
 
             PlaceShipAtBerth();
             if (missing.Count > 0)

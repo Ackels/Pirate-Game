@@ -89,6 +89,7 @@ namespace Pirates.Progression
             EventBus.Subscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Subscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Subscribe<TreasureFoundEvent>(OnTreasureFound);
+            EventBus.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
             EventBus.Subscribe<MissionTurnedInEvent>(OnMissionTurnedIn);
         }
 
@@ -98,6 +99,7 @@ namespace Pirates.Progression
             EventBus.Unsubscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Unsubscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Unsubscribe<TreasureFoundEvent>(OnTreasureFound);
+            EventBus.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
             EventBus.Unsubscribe<MissionTurnedInEvent>(OnMissionTurnedIn);
         }
 
@@ -219,6 +221,12 @@ namespace Pirates.Progression
             TreasuresFound++;
             if (evt.fame > 0) Add(evt.fame, "tesouro desenterrado");
             else Touch();
+        }
+
+        /// <summary>Monstro do mar derrotado (a lula gigante); os inimigos de terra com nome publicam com fama 0.</summary>
+        void OnEnemyDefeated(EnemyDefeatedEvent evt)
+        {
+            if (evt.fame > 0) Add(evt.fame, "monstro derrotado");
         }
 
         void OnMissionTurnedIn(MissionTurnedInEvent evt)

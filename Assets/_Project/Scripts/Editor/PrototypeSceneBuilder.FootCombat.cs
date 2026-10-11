@@ -34,6 +34,24 @@ namespace Pirates.EditorTools
         // Tempos (revisão de 09/10, para não travar o pirata no chão): chute ~1,5 s no chão (cai sentado 0,8 s + levanta rápido 0,77 s);
         // explosão nos piratas ~2,9 s (arremessado + levantar normal); no capitão ~1,3 s (arremessado rápido 0,47 s + levanta rápido).
         const float KickSpeed = 1.4f, StumbleSpeed = 1.6f, StumbleExit = 0.6f, BlastSpeed = 1.4f, BlastStart = 0.18f, GetUpSpeed = 1.5f;
+        const string ClipThrow = "Throw Object";
+        // Defesa (pacote A, passo 5): a guarda é o "Blocking" do espadão (0,5 s erguendo a lâmina na frente do rosto, segura o fim: a do
+        // machado deixava o cutelo deitado na cintura); impacto = "Blocking 2"; quem é aparado cambaleia para trás ("React Large Gut" do
+        // machado, 1,6 s, tocado no tempo do CharacterCombat.parryStun).
+        const string ClipBlockIdle = "Blocking", ClipBlockHit = "Blocking 2", ClipParried = "Standing React Large Gut";
+        const float BlockRaiseSpeed = 1.4f, BlockHitSpeed = 1.3f, ParriedSpeed = 1.15f;
+        // Brutamontes (pacote B, passo 1): pacote do machado. Impacto (s de clipe, mão mais rápida): para baixo 0,70, horizontal 0,97,
+        // revés 1,03. Golpe começa AxeLead antes do impacto (= hitDelay do machado com AttackSpeed 1).
+        const string ClipAxeIdle = "Standing Idle", ClipAxeRun = "Standing Run Forward", ClipTaunt = "Standing Taunt Battlecry";
+        const float AxeLead = 0.6f, TauntSpeed = 1.2f;
+        // Para baixo e revés começam do início do clipe (impacto 0,7 e 1,0 s depois): golpes lentos que pegam quem rola cedo (09/10, "fácil
+        // rolando"); o horizontal continua com 0,6 s.
+        static readonly (string clip, float impact, float lead)[] AxeAttacks =
+        {
+            ("Standing Melee Attack Downward", 0.70f, 0.70f), ("Standing Melee Attack Horizontal", 0.97f, AxeLead),
+            ("Standing Melee Attack Backhand", 1.03f, 1.0f),
+        };
+        const float ThrowStart = 1.3f, ThrowEnd = 3.4f, ThrowSpeed = 1.8f;
         const float QuickBlastSpeed = 1.8f, QuickBlastExit = 0.48f, QuickGetUpSpeed = 2f, QuickGetUpStart = 0.15f;
         /// <summary>Igual ao padrão do FootCharacter.dodgeSeconds (a animação dura o mesmo que o rolamento).</summary>
         const float DodgeSeconds = 0.8f;
@@ -238,7 +256,7 @@ namespace Pirates.EditorTools
 
         /// <summary>Arma de quem está no posto: "Bacamarteiro_..." leva o bacamarte; os outros, pistola (atirador) ou cutelo.</summary>
         static WeaponDefinition PostWeapon(string name, bool gunner, WeaponDefinition cutlass, WeaponDefinition pistol) =>
-            name.StartsWith("Bacamarteiro") ? EnemyBlunderbuss() : gunner ? pistol : cutlass;
+            name.StartsWith("Bacamarteiro") ? EnemyBlunderbuss() : IsChief(name) ? ChiefSword() : IsBrute(name) ? BruteAxe() : IsDuelist(name) ? DuelistDagger() : gunner ? pistol : cutlass;
 
         /// <summary>Cutelo dos piratas inimigos: mais fraco e com o golpe mais lento (dá para ver vindo e reagir).</summary>
         static WeaponDefinition EnemyCutlass() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Cutelo_Pirata.asset", w =>
@@ -565,6 +583,11 @@ namespace Pirates.EditorTools
             AddParameter(controller, "KnockVariant", AnimatorControllerParameterType.Int);
             AddParameter(controller, "Down", AnimatorControllerParameterType.Bool);
             AddParameter(controller, "Dead", AnimatorControllerParameterType.Bool);
+            AddParameter(controller, "Block", AnimatorControllerParameterType.Bool);
+            AddParameter(controller, "BlockHit", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "Parried", AnimatorControllerParameterType.Trigger);
+            AddParameter(controller, "Taunt", AnimatorControllerParameterType.Trigger);
+
             var parameters = controller.parameters;
             foreach (var p in parameters)
             {
@@ -661,6 +684,11 @@ namespace Pirates.EditorTools
             AddHitAndDeath(sm, empty);
             AddDodge(sm, empty);
             AddKickAndKnockdown(sm, empty);
+            AddBlock(sm, empty, ready, run);
+            AddAxe(sm, empty);
+            AddDagger(sm, ready);
+            AddRise(sm, empty);
+            AddGreatsword(sm, empty);
 
             // Corpo inteiro: mesmos estados e tempos do tronco, sem máscara. Peso 0 até o driver ligar.
             controller.AddLayer(FullBodyLayerName);
@@ -831,6 +859,15 @@ namespace Pirates.EditorTools
                 Any(sm, kick, 0.05f, 0.08f, ("Kick", AnimatorConditionMode.If, 0));
                 Exit(kick, empty, 0.8f, 0.15f);
             }
+            // Bomba (passo 4): "Throw Object" do preparo (1,3 s) até o braço voltar (~3,4 s), 1,8× (solta aos ~0,64 s do aperto).
+            var throwClip = MixamoClip(ClipThrow);
+            if (throwClip)
+            {
+                var toss = State(sm, "Arremessar", ClipThrow, ThrowSpeed, new Vector3(-300f, -280f));
+                toss.tag = MovingFullBodyTag;
+                // Entra pelo CharacterAnimatorDriver.PlayThrow (CrossFade direto, a partir de ThrowStart): sem transição do "Any State".
+                Exit(toss, empty, ThrowEnd / throwClip.length, 0.2f);
+            }
             if (!MixamoClip(ClipStumble) || !MixamoClip(ClipBlast) || !MixamoClip(ClipGetUp)) return;
             var getUp = State(sm, "Levantar", ClipGetUp, GetUpSpeed, new Vector3(-600f, -300f));
             getUp.tag = MovingFullBodyTag;
@@ -860,6 +897,87 @@ namespace Pirates.EditorTools
             toDead.canTransitionToSelf = false;
             toDead.AddCondition(AnimatorConditionMode.If, 0, "Die");
             toDead.AddCondition(AnimatorConditionMode.If, 0, "Down");
+        }
+
+        /// <summary>
+        /// Defesa com o cutelo (pacote A, passo 5): "Defesa" (bool "Block", sai do pronto/correndo) ergue a lâmina e segura o fim do clipe, corpo todo parado e
+        /// só o tronco andando; "DefesaImpacto" (trigger "BlockHit") volta à guarda; "Aparado" (trigger "Parried") é o cambaleio de quem
+        /// teve o golpe aparado, corpo todo.
+        /// </summary>
+        static void AddBlock(AnimatorStateMachine sm, AnimatorState empty, AnimatorState ready, AnimatorState run)
+        {
+            if (MixamoClip(ClipBlockIdle))
+            {
+                var guard = State(sm, "Defesa", ClipBlockIdle, BlockRaiseSpeed, new Vector3(0f, -200f));
+                guard.tag = FullBodyTag;
+                Go(ready, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
+                Go(run, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
+                Go(empty, guard, 0.1f, ("WeaponType", AnimatorConditionMode.Equals, 0), ("Block", AnimatorConditionMode.If, 0));
+                Go(guard, ready, 0.2f, ("Block", AnimatorConditionMode.IfNot, 0));
+                Go(guard, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 0));
+                if (MixamoClip(ClipBlockHit))
+                {
+                    var react = State(sm, "DefesaImpacto", ClipBlockHit, BlockHitSpeed, new Vector3(-300f, -360f));
+                    react.tag = FullBodyTag;
+                    Any(sm, react, 0f, 0.05f, ("BlockHit", AnimatorConditionMode.If, 0));
+                    // Volta à guarda já erguida (fim do "Blocking"), sem erguer de novo.
+                    var back = react.AddTransition(guard);
+                    back.hasExitTime = true;
+                    back.exitTime = 0.85f;
+                    back.duration = 0.15f;
+                    back.offset = 0.95f;
+                }
+            }
+            if (MixamoClip(ClipParried))
+            {
+                var parried = State(sm, "Aparado", ClipParried, ParriedSpeed, new Vector3(-600f, -560f));
+                parried.tag = MovingFullBodyTag;
+                Any(sm, parried, 0f, 0.06f, ("Parried", AnimatorConditionMode.If, 0));
+                Exit(parried, empty, 0.85f, 0.2f);
+            }
+        }
+
+        /// <summary>
+        /// Machado do brutamontes (pacote B, passo 1; WeaponType 3, pacote do machado do Mixamo): "MachadoPronto" (Standing Idle; corpo todo
+        /// parado, só o tronco andando), "MachadoCorrendo" (Standing Run Forward) e três golpes sorteados pelo AttackVariant (para baixo,
+        /// horizontal, de revés). Cada golpe começa <see cref="AxeLead"/> s de clipe antes do impacto medido (mão mais rápida), então o
+        /// impacto cai sempre no mesmo tempo (WeaponDefinition.hitDelay do machado) e o aviso é igual para aparar. "Provocar" (trigger
+        /// "Taunt", Taunt Battlecry) é o grito de guerra ao ver o capitão.
+        /// </summary>
+        static void AddAxe(AnimatorStateMachine sm, AnimatorState empty)
+        {
+            if (!MixamoClip(ClipAxeIdle)) return;
+            var ready = State(sm, "MachadoPronto", ClipAxeIdle, 1f, new Vector3(-900f, 60f));
+            ready.tag = FullBodyTag;
+            Go(empty, ready, 0.25f, ("WeaponType", AnimatorConditionMode.Equals, 3));
+            Go(ready, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 3));
+            if (MixamoClip(ClipAxeRun))
+            {
+                var axeRun = State(sm, "MachadoCorrendo", ClipAxeRun, 1f, new Vector3(-900f, 140f));
+                Go(ready, axeRun, 0.25f, ("Speed", AnimatorConditionMode.Greater, 3f));
+                Go(axeRun, ready, 0.25f, ("Speed", AnimatorConditionMode.Less, 2.6f));
+                Go(axeRun, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 3));
+            }
+            for (int v = 0; v < AxeAttacks.Length; v++)
+            {
+                var (clipName, impact, lead) = AxeAttacks[v];
+                var clip = MixamoClip(clipName);
+                if (!clip) continue;
+                var swing = State(sm, $"Machado_Golpe{v}", clipName, 1f, new Vector3(-1200f, 60f + 80f * v));
+                swing.tag = FullBodyTag;
+                swing.speedParameterActive = true;
+                swing.speedParameter = "AttackSpeed";
+                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, 0.12f,
+                    ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 3), ("AttackVariant", AnimatorConditionMode.Equals, v));
+                Exit(swing, ready, Mathf.Min(0.95f, (impact + 0.75f) / clip.length), 0.3f);
+            }
+            if (MixamoClip(ClipTaunt))
+            {
+                var taunt = State(sm, "Provocar", ClipTaunt, TauntSpeed, new Vector3(-1200f, 320f));
+                taunt.tag = FullBodyTag;
+                Any(sm, taunt, 0f, 0.15f, ("Taunt", AnimatorConditionMode.If, 0));
+                Exit(taunt, empty, 0.92f, 0.25f);
+            }
         }
 
         /// <summary>Saída pelo tempo só se estiver vivo ("Dead" desligado): morto no meio da queda fica deitado no fim do clipe.</summary>
@@ -977,23 +1095,29 @@ namespace Pirates.EditorTools
             for (int k = 0; k < spots.Length; k++)
             {
                 GroundAt(spots[k], out Vector3 ground);
-                var root = new GameObject($"Boneco_{k}");
-                root.transform.SetParent(parent, false);
-                root.transform.SetPositionAndRotation(ground, Quaternion.Euler(0f, 180f + k * 25f, 0f));
-                var col = root.AddComponent<CapsuleCollider>();
-                col.center = new Vector3(0f, 0.95f, 0f);
-                col.height = 1.9f;
-                col.radius = 0.35f;
-                root.AddComponent<Health>().Configure(100f);
-
-                var visual = new GameObject("Visual").transform;
-                visual.SetParent(root.transform, false);
-                Part(PrimitiveType.Cylinder, "Poste", visual, new Vector3(0f, 0.7f, 0f), new Vector3(0.12f, 0.7f, 0.12f), Quaternion.identity, wood);
-                Part(PrimitiveType.Capsule, "Saco", visual, new Vector3(0f, 1.15f, 0f), new Vector3(0.55f, 0.45f, 0.45f), Quaternion.identity, sack);
-                Part(PrimitiveType.Sphere, "Cabeca", visual, new Vector3(0f, 1.75f, 0f), Vector3.one * 0.32f, Quaternion.identity, sack);
-                Part(PrimitiveType.Cube, "Bracos", visual, new Vector3(0f, 1.3f, 0f), new Vector3(1.1f, 0.08f, 0.08f), Quaternion.identity, wood);
-                root.AddComponent<TrainingDummy>().Configure(visual);
+                Dummy(parent, ground, 180f + k * 25f, $"Boneco_{k}", wood, sack);
             }
+        }
+
+        /// <summary>Um boneco de treino (poste, saco, cabeça e braços) com vida, que balança e tomba (TrainingDummy).</summary>
+        static void Dummy(Transform parent, Vector3 ground, float yaw, string name, Material wood, Material sack)
+        {
+            var root = new GameObject(name);
+            root.transform.SetParent(parent, false);
+            root.transform.SetPositionAndRotation(ground, Quaternion.Euler(0f, yaw, 0f));
+            var col = root.AddComponent<CapsuleCollider>();
+            col.center = new Vector3(0f, 0.95f, 0f);
+            col.height = 1.9f;
+            col.radius = 0.35f;
+            root.AddComponent<Health>().Configure(100f);
+
+            var visual = new GameObject("Visual").transform;
+            visual.SetParent(root.transform, false);
+            Part(PrimitiveType.Cylinder, "Poste", visual, new Vector3(0f, 0.7f, 0f), new Vector3(0.12f, 0.7f, 0.12f), Quaternion.identity, wood);
+            Part(PrimitiveType.Capsule, "Saco", visual, new Vector3(0f, 1.15f, 0f), new Vector3(0.55f, 0.45f, 0.45f), Quaternion.identity, sack);
+            Part(PrimitiveType.Sphere, "Cabeca", visual, new Vector3(0f, 1.75f, 0f), Vector3.one * 0.32f, Quaternion.identity, sack);
+            Part(PrimitiveType.Cube, "Bracos", visual, new Vector3(0f, 1.3f, 0f), new Vector3(1.1f, 0.08f, 0.08f), Quaternion.identity, wood);
+            root.AddComponent<TrainingDummy>().Configure(visual);
         }
     }
 }

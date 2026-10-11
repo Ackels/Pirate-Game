@@ -31,6 +31,8 @@ namespace Pirates.Controls
         public InputAction Dodge { get; }
         /// <summary>A pé: chute (derruba o pirata da frente).</summary>
         public InputAction Kick { get; }
+        /// <summary>A pé: lançar bomba no cursor.</summary>
+        public InputAction ThrowBomb { get; }
         public InputAction Attack { get; }
         public InputAction Aim { get; }
         public InputAction Weapon1 { get; }
@@ -131,6 +133,10 @@ namespace Pirates.Controls
             Kick = sailing.AddAction("Kick", InputActionType.Button);
             Kick.AddBinding("<Keyboard>/v");
             Kick.AddBinding("<Gamepad>/leftShoulder");
+
+            ThrowBomb = sailing.AddAction("ThrowBomb", InputActionType.Button);
+            ThrowBomb.AddBinding("<Keyboard>/g");
+            ThrowBomb.AddBinding("<Gamepad>/dpad/right");
 
             // Combate a pé (M4.3): botão esquerdo ataca na direção do cursor; 1/2 trocam espada/pistola.
             Attack = sailing.AddAction("Attack", InputActionType.Button);

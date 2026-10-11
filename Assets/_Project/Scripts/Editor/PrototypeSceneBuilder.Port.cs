@@ -272,6 +272,7 @@ namespace Pirates.EditorTools
             foreach (var p in smoke) Smoke(life, p, 1f);
             SidePier(root, life);
             MooredShips(life);
+            PortTrainingYard(life);
             // NavMesh depois da vila (casas, barracas, árvores viram obstáculo) e antes dos moradores.
             BakePortNavMesh();
             Villagers(life);

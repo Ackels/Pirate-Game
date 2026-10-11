@@ -83,6 +83,7 @@ namespace Pirates.EditorTools
             AddLoot(a.barrel, CartridgeItem(), 0.3f, 3, 6);
             AddLoot(a.chest, CartridgeItem(), 0.5f, 6, 12);
             AddShotLoot(a.barrel, a.chest);
+            AddBombLoot(a.barrel, a.chest);
             return a;
         }
 

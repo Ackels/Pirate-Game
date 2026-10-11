@@ -14,8 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
   clips:
   - {fileID: 8300000, guid: 51128790be5aa494fb262038cc5b8376, type: 3}
+  - {fileID: 8300000, guid: 67559eeaac401394fb17f74470e73ce1, type: 3}
+  - {fileID: 8300000, guid: 3061709a20c733048b82cc10a4f64e95, type: 3}
+  clipVolumes:
+  - 0.24
+  - 0.83
+  - 0.71
   channel: 0
-  volume: {x: 0.8, y: 0.8}
+  volume: {x: 1, y: 1}
   pitch: {x: 1, y: 1}
   spatial: 0
   minDistance: 1

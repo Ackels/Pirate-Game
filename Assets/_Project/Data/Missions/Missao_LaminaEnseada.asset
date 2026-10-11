@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_LaminaEnseada
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: duelista_oeste
+  title: "A l\xE2mina da enseada"
+  giver: "Dona Merc\xEAs"
+  description: "Os contrabandistas da Ilha Oeste arrumaram uma duelista de adaga. Ningu\xE9m encosta nela: apara, rola e volta estocando. Dizem que um bom chute abre a guarda. Acabe com ela e o esconderijo perde a coragem."
+  type: 4
+  count: 1
+  targetId: duelista_oeste
+  targetName: Ilha Oeste
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 160
+  - item: {fileID: 11400000, guid: e8792792983b9b7488b4ef0ed15ac2d7, type: 2}
+    amount: 3
+  objectiveText: derrote a duelista do esconderijo da Ilha Oeste
+  doneText: duelista derrotada
+  repeatable: 1
+  cooldownSeconds: 900
+  requiredRank: 1
+  fameReward: 30
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o! Ainda bem que apareceu. Estou perdendo dinheiro todo santo dia."
+  - "Os contrabandistas da Ilha Oeste roubam a minha carga antes de ela chegar ao porto. Antes eram uns b\xEAbados. Agora contrataram uma duelista."
+  - "Uma mo\xE7a de adaga, r\xE1pida como um peixe-espada. Mandei dois guardas ao esconderijo; os dois voltaram costurados."
+  - Dizem que ela apara qualquer golpe e rola para longe. Mas o meu sobrinho jura que um chute bem dado derruba a guarda dela.
+  - "Tire essa duelista do caminho e eu pago bem. Ainda dou tr\xEAs bombas que confisquei de um contrabandista."
+  acceptLine: "\xD3timo. Traga de volta a minha paz... e, se puder, a minha carga."
+  declineLine: "Hum. Ent\xE3o volte quando tiver mais coragem, ou menos amor \xE0 vida."
+  waitingLine: "A duelista ainda est\xE1 l\xE1? Cada dia \xE9 mais uma carga perdida, capit\xE3o."
+  doneLines:
+  - "A duelista caiu? Finalmente! Os contrabandistas v\xE3o pensar duas vezes antes de mexer comigo."
+  - "Aqui est\xE1, capit\xE3o: o ouro e as bombas, como combinado. Neg\xF3cio \xE9 neg\xF3cio."
+  restingLine: "Por enquanto a enseada est\xE1 quieta. Mas contrabandista \xE9 praga: logo arrumam outra l\xE2mina."

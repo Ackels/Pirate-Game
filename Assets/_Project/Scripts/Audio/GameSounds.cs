@@ -10,7 +10,7 @@ namespace Pirates.Audio
         public SoundCue cannonFire, cannonSplash, cannonImpact, explosion, shipSinking, sails, anchor, shipCreak, harborBell, seaWaves;
         // A pé
         public SoundCue stepSand, stepGrass, stepDirt, stepRock, stepWood, stepWater, jump, dodge;
-        public SoundCue kick, swordSwing, swordHit, pistolShot, pistolReload, drawSword, drawPistol, pain, death, bodyFall;
+        public SoundCue kick, block, parry, swordSwing, swordHit, pistolShot, pistolReload, drawSword, drawPistol, pain, death, bodyFall;
         public SoundCue crateBreak, dummyHit, chestOpen, dig, pickup, backpackFull;
         // Porto e interface
         public SoundCue doorOpen, doorClose, cargoMoved, repair, purchase, buildDone, missionAccepted, missionDone,
@@ -18,6 +18,6 @@ namespace Pirates.Audio
         // Ambiente
         public SoundCue fire, jungleBirds, seagulls, shoreWaves, wind, rain, storm, thunder;
         // Música
-        public SoundCue musicPort, musicSea, musicIsland, musicCombat;
+        public SoundCue musicTitle, musicPort, musicSea, musicIsland, musicCombat;
     }
 }

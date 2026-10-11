@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_NoiteCemiterio
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: cemiterio_caveira
+  title: "Noite no cemit\xE9rio"
+  giver: Tobias
+  description: "Ao lado da trilha das ru\xEDnas da Caveira h\xE1 um cemit\xE9rio de piratas. De noite os mortos saem das covas. Acabe com eles antes do amanhecer, e leve p\xF3lvora: o que cai de tiro ou de bomba n\xE3o levanta mais."
+  type: 1
+  count: 1
+  targetId: cemiterio_caveira
+  targetName: Ilha da Caveira
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 240
+  - item: {fileID: 11400000, guid: c0be865e055b6c04989863b058f7cbd5, type: 2}
+    amount: 20
+  objectiveText: "limpe o cemit\xE9rio da Caveira (os mortos saem \xE0 noite)"
+  doneText: "cemit\xE9rio em paz"
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 1
+  fameReward: 35
+  givenByNpc: 1
+  offerLines:
+  - "Psiu... voc\xEA a\xED, capit\xE3o. Tem um minuto para um velho coveiro? N\xE3o? Pois vai ter."
+  - "Trinta anos eu enterrei pirata naquele cemit\xE9rio ao lado da trilha das ru\xEDnas, na Ilha da Caveira. Gente ruim, gente boa... a terra n\xE3o escolhe."
+  - "M\xEAs passado fui abrir uma cova nova, j\xE1 de noite, com a lanterna acesa. A\xED a terra come\xE7ou a mexer. N\xE3o era bicho, capit\xE3o. Era uma m\xE3o. Verde. S\xF3 osso."
+  - "Um por um eles foram saindo das covas. Os mesmos que eu enterrei! Larguei a p\xE1 ali mesmo e corri para o bote. Nunca remei t\xE3o r\xE1pido na vida."
+  - "Eles s\xF3 saem de noite, e o sol desfaz tudo em p\xF3. Mas escute bem: derrubado, o desgra\xE7ado levanta de novo. S\xF3 a p\xF3lvora acaba com eles de vez: tiro ou bomba."
+  - "Se tiver coragem, v\xE1 l\xE1 depois que o sol se puser e devolva aqueles coitados para a terra. Eu pago o que tenho, e ainda dou uns cartuchos que guardei."
+  acceptLine: "Que os santos te protejam, capit\xE3o. V\xE1 depois que escurecer, e n\xE3o d\xEA as costas para cova nenhuma."
+  declineLine: "Eu entendo. Eu tamb\xE9m n\xE3o voltaria l\xE1... nem b\xEAbado."
+  waitingLine: "Eles ainda est\xE3o de p\xE9, n\xE3o est\xE3o? Eu juro que escuto os gemidos daqui, \xE0 noite. V\xE1 depois que o sol se puser."
+  doneLines:
+  - "Voc\xEA voltou! E inteiro! Ent\xE3o \xE9 verdade... o cemit\xE9rio est\xE1 em paz?"
+  - "Obrigado, capit\xE3o. Hoje eu durmo de lanterna apagada. Tome o combinado, e os cartuchos, como prometi."
+  restingLine: "Por enquanto est\xE1 tudo quieto por l\xE1. Mas maldi\xE7\xE3o de pirata n\xE3o acaba f\xE1cil... volte daqui a uns dias, que eu aviso se a terra mexer de novo."

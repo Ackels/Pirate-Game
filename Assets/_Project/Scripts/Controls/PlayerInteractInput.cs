@@ -23,7 +23,9 @@ namespace Pirates.Controls
             foreach (var i in interactions)
             {
                 if (!i.IsOpen) continue;
-                i.Close();
+                // Conversa com NPC: F passa a fala (a última fecha ou escolhe), Esc fecha.
+                if (interact && i is IPagedInteraction paged) paged.Advance();
+                else i.Close();
                 return;
             }
             if (!interact) return;

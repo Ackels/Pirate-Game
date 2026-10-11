@@ -68,6 +68,55 @@ namespace Pirates.EditorTools
             return cue;
         }
 
+        /// <summary>
+        /// Estampidos mais fortes (09/10, pedido do Jhonata: "mais impacto"): troca os clipes originais pelas versões de
+        /// <c>Efeitos/Forte</c> (os mesmos CC0 com bum grave, eco curto e compressão, feitos por script) e ajusta tom/alcance uma vez.
+        /// Depois disso o som fica como estiver no asset.
+        /// </summary>
+        static SoundCue Strong(SoundCue cue, AudioClip[] clips, Vector2 pitch, float maxDistance)
+        {
+            if (clips.Length == 0 || cue.clips == null) return cue;
+            if (cue.clips.Length > 0 && cue.clips.All(c => c && AssetDatabase.GetAssetPath(c).Contains("/Efeitos/Forte/"))) return cue;
+            cue.clips = clips;
+            cue.volume = new Vector2(0.9f, 1f);
+            cue.pitch = pitch;
+            cue.maxDistance = maxDistance;
+            EditorUtility.SetDirty(cue);
+            return cue;
+        }
+
+        /// <summary>Troca uma vez os clipes do som pelos tinidos sintetizados em <c>_Project/Audio/Espadas/{prefixo}_N.wav</c> (volume e tom juntos).</summary>
+        static SoundCue Blades(SoundCue cue, string prefix, int count, Vector2 volume, Vector2 pitch)
+        {
+            var clips = Enumerable.Range(1, count)
+                .Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"{GeneratedAudioFolder}/Espadas/{prefix}_{i}.wav")).Where(c => c).ToArray();
+            if (clips.Length == 0 || cue.clips == null) return cue;
+            if (cue.clips.Length > 0 && cue.clips.All(c => c && AssetDatabase.GetAssetPath(c).Contains("/Espadas/"))) return cue;
+            cue.clips = clips;
+            cue.volume = volume;
+            cue.pitch = pitch;
+            EditorUtility.SetDirty(cue);
+            return cue;
+        }
+
+        const string PiratePack = "Musica/PirateMusicPack", InnPack = "Musica/FC_PirateMusicLite";
+
+        /// <summary>
+        /// Música com várias faixas (11/10): põe as faixas e o volume de cada uma uma vez só (enquanto o som não tem volumes por
+        /// faixa). Depois o asset é do Jhonata: trocar, tirar ou pôr faixas e volumes no Inspector.
+        /// </summary>
+        static SoundCue Playlist(SoundCue cue, params (string folder, string file, float volume)[] tracks)
+        {
+            if (cue.clipVolumes != null && cue.clipVolumes.Length > 0) return cue;
+            var found = tracks.Select(t => (clip: Clips(t.folder, t.file).FirstOrDefault(), t.volume)).Where(t => t.clip).ToArray();
+            if (found.Length == 0) return cue;
+            cue.clips = found.Select(t => t.clip).ToArray();
+            cue.clipVolumes = found.Select(t => t.volume).ToArray();
+            cue.volume = new Vector2(1f, 1f);
+            EditorUtility.SetDirty(cue);
+            return cue;
+        }
+
         static GameSounds LoadSounds()
         {
             EnsureFolder(DataFolder, "Audio");
@@ -78,14 +127,15 @@ namespace Pirates.EditorTools
             Vector2 V(float a, float b) => new(a, b);
             return new GameSounds
             {
-                cannonFire = Cue("CanhaoTiro", Join(Clips("Efeitos", "cannon_fire.ogg"), Numbered("Efeitos", "cannon_{0:00}.ogg", 1, 5)), fx,
-                    V(0.85f, 1f), V(0.88f, 1.06f), true, 20f, 300f),
+                cannonFire = Strong(Cue("CanhaoTiro", Join(Clips("Efeitos", "cannon_fire.ogg"), Numbered("Efeitos", "cannon_{0:00}.ogg", 1, 5)), fx,
+                    V(0.85f, 1f), V(0.88f, 1.06f), true, 20f, 300f), Numbered("Efeitos/Forte", "Canhao_{0}.wav", 1, 6), V(0.88f, 1.06f), 380f),
                 cannonSplash = Cue("CanhaoAgua", waves, fx, V(0.85f, 1f), V(1.35f, 1.6f), true, 10f, 160f),
                 cannonImpact = Cue("CanhaoImpacto", Join(Numbered(imp, "impactWood_heavy_{0:000}.ogg", 0, 4), Numbered(imp, "impactPlank_medium_{0:000}.ogg", 0, 4)), fx,
                     V(0.85f, 1f), V(0.8f, 1f), true, 10f, 200f),
                 // Barril de pólvora (pacote A, 09/10): os estouros mais graves do pacote CC0 + o canhão, um pouco mais grave.
-                explosion = Cue("Explosao", Join(Clips("Efeitos", "bang_06.ogg", "bang_08.ogg", "bang_10.ogg"), Clips("Efeitos", "cannon_fire.ogg")), fx,
-                    V(0.95f, 1f), V(0.7f, 0.85f), true, 15f, 220f),
+                // Tom menos grave que antes (0,7–0,85): o bum novo já dá o peso, e grave demais some na caixinha do notebook.
+                explosion = Strong(Cue("Explosao", Join(Clips("Efeitos", "bang_06.ogg", "bang_08.ogg", "bang_10.ogg"), Clips("Efeitos", "cannon_fire.ogg")), fx,
+                    V(0.95f, 1f), V(0.7f, 0.85f), true, 15f, 220f), Numbered("Efeitos/Forte", "Explosao_{0}.wav", 1, 4), V(0.8f, 0.92f), 280f),
                 shipSinking = Cue("NavioAfundando", Clips("Efeitos", "bang_06.ogg", "bang_10.ogg", "fw_04.ogg"), fx, V(0.9f, 1f), V(0.75f, 0.9f), true, 25f, 300f),
                 sails = Cue("Velas", Join(Numbered(rpg, "cloth{0}.ogg", 1, 4), Clips(rpg, "clothBelt.ogg", "clothBelt2.ogg")), fx, V(0.55f, 0.7f), V(0.75f, 0.9f), true, 6f, 60f),
                 anchor = Cue("Ancora", Join(Numbered(imp, "impactMetal_heavy_{0:000}.ogg", 0, 4), Clips(rpg, "metalPot1.ogg")), fx, V(0.7f, 0.85f), V(0.7f, 0.85f), true, 6f, 60f),
@@ -105,11 +155,17 @@ namespace Pirates.EditorTools
                 jump = Cue("Pulo", Numbered(rpg, "cloth{0}.ogg", 1, 4), fx, V(0.4f, 0.5f), V(1f, 1.2f), true, 1.5f, 15f),
                 // Chute (pacote A, 09/10): baque forte de soco.
                 kick = Cue("Chute", Numbered(imp, "impactPunch_heavy_{0:000}.ogg", 0, 4), fx, V(0.75f, 0.9f), V(0.8f, 0.95f), true, 2f, 35f),
+                // Defesa (pacote A, passos 5 e 6): tinidos de lâmina sintetizados (Tools/Audio/espadas.py → _Project/Audio/Espadas); sem os
+                // arquivos, o metal do Kenney (pancada surda: "não parece espadas se batendo").
+                block = Blades(Cue("Defesa", Numbered(imp, "impactMetal_medium_{0:000}.ogg", 0, 4), fx, V(0.75f, 0.9f), V(1f, 1.15f), true, 2f, 35f),
+                    "Defesa", 5, V(0.8f, 0.95f), V(0.94f, 1.08f)),
+                parry = Blades(Cue("Aparar", Numbered(imp, "impactMetal_heavy_{0:000}.ogg", 0, 4), fx, V(0.95f, 1f), V(1.25f, 1.4f), true, 3f, 45f),
+                    "Aparar", 4, V(0.95f, 1f), V(0.97f, 1.04f)),
                 swordSwing = Cue("CuteloGolpe", Clips(rpg, "knifeSlice.ogg", "knifeSlice2.ogg"), fx, V(0.65f, 0.8f), V(0.85f, 1.05f), true, 2f, 30f),
                 swordHit = Cue("CuteloAcerto", Join(Numbered(imp, "impactPunch_medium_{0:000}.ogg", 0, 4), Numbered(imp, "impactPunch_heavy_{0:000}.ogg", 0, 4)), fx,
                     V(0.6f, 0.75f), V(0.9f, 1.05f), true, 2f, 35f),
-                pistolShot = Cue("PistolaTiro", Join(Numbered("Efeitos", "shot_{0:00}.ogg", 1, 3), Numbered("Efeitos", "bang_{0:00}.ogg", 1, 3)), fx,
-                    V(0.8f, 0.95f), V(0.95f, 1.12f), true, 6f, 140f),
+                pistolShot = Strong(Cue("PistolaTiro", Join(Numbered("Efeitos", "shot_{0:00}.ogg", 1, 3), Numbered("Efeitos", "bang_{0:00}.ogg", 1, 3)), fx,
+                    V(0.8f, 0.95f), V(0.95f, 1.12f), true, 6f, 140f), Numbered("Efeitos/Forte", "Tiro_{0}.wav", 1, 6), V(0.95f, 1.12f), 160f),
                 pistolReload = Cue("PistolaRecarga", Clips(rpg, "metalClick.ogg", "metalLatch.ogg"), fx, V(0.55f, 0.65f), V(0.95f, 1.05f), true, 1.5f, 18f),
                 drawSword = Cue("SacarCutelo", Numbered(rpg, "drawKnife{0}.ogg", 1, 3), fx, V(0.55f, 0.65f), V(0.85f, 1f), true, 1.5f, 18f),
                 drawPistol = Cue("SacarPistola", Clips(rpg, "beltHandle1.ogg", "beltHandle2.ogg", "handleSmallLeather.ogg"), fx, V(0.55f, 0.65f), V(0.95f, 1.05f), true, 1.5f, 18f),
@@ -151,10 +207,19 @@ namespace Pirates.EditorTools
                 thunder = Recorded(Cue("Trovao", Numbered("Clima", "Trovao_{0}.wav", 1, 5), fx, V(0.85f, 1f), V(0.9f, 1.05f), false, 1f, 2f),
                     Numbered("Clima", "Trovao_{0}.wav", 1, 5)),
 
-                musicPort = Cue("MusicaPorto", Clips("Musica", "TownTheme.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
-                musicSea = Cue("MusicaMar", Clips("Musica", "pirate1uf.ogg"), music, V(0.7f, 0.7f), V(1f, 1f), false, 1f, 2f),
-                musicIsland = Cue("MusicaIlha", Clips("Musica", "Exploration Theme.ogg"), music, V(0.9f, 0.9f), V(1f, 1f), false, 1f, 2f),
-                musicCombat = Cue("MusicaCombate", Clips("Musica", "Battle.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
+                // 11/10: músicas do Jhonata (Asset Store, grátis) somadas às de antes; cada som vira uma lista (MusicDirector) e o
+                // volume de cada faixa iguala o RMS medido (mar −29 dB, porto/ilha/menu −28, combate −26; pirate1uf já fica abaixo).
+                musicTitle = Playlist(Cue("MusicaMenu", Clips(InnPack, "Adventure Inn Full Mix.wav"), music, V(1f, 1f), V(1f, 1f), false, 1f, 2f),
+                    (InnPack, "Adventure Inn Full Mix.wav", 0.92f)),
+                musicPort = Playlist(Cue("MusicaPorto", Clips("Musica", "TownTheme.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
+                    ("Musica", "TownTheme.mp3", 0.24f), (PiratePack, "Pirate 7.wav", 0.83f), (PiratePack, "Pirate 3.wav", 0.71f)),
+                musicSea = Playlist(Cue("MusicaMar", Clips("Musica", "pirate1uf.ogg"), music, V(0.7f, 0.7f), V(1f, 1f), false, 1f, 2f),
+                    ("Musica", "pirate1uf.ogg", 1f), (PiratePack, "Pirate 1.wav", 0.65f), (PiratePack, "Pirate 2.wav", 0.51f),
+                    (PiratePack, "Pirate 6.wav", 0.59f)),
+                musicIsland = Playlist(Cue("MusicaIlha", Clips("Musica", "Exploration Theme.ogg"), music, V(0.9f, 0.9f), V(1f, 1f), false, 1f, 2f),
+                    ("Musica", "Exploration Theme.ogg", 0.9f), (PiratePack, "Pirate 5.wav", 0.84f)),
+                musicCombat = Playlist(Cue("MusicaCombate", Clips("Musica", "Battle.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
+                    ("Musica", "Battle.mp3", 0.29f), (PiratePack, "Pirate 8.wav", 0.75f), (PiratePack, "Pirate 4.wav", 1f)),
             };
         }
 
@@ -169,7 +234,7 @@ namespace Pirates.EditorTools
             root.AddComponent<GameAudio>().Configure(sounds, settings);
             root.AddComponent<WindAudio>().Configure(sounds.wind);
             root.AddComponent<WeatherAudio>().Configure(sounds.rain, sounds.storm, sounds.thunder);
-            root.AddComponent<MusicDirector>().Configure(sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
+            root.AddComponent<MusicDirector>().Configure(sounds.musicTitle, sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
                 Object.FindAnyObjectByType<PlayerModeSwitcher>(), playerShip ? playerShip.transform : null);
 
             // Um ouvido só: sai da câmera e passa a seguir o navio/personagem.

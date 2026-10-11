@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_CarrascoCaveira
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: brutamontes_caveira
+  title: O carrasco da Caveira
+  giver: Velho Bento
+  description: "Um homem-tubar\xE3o do tamanho de uma porta guarda o p\xE1tio do acampamento da Caveira com um machado de duas l\xE2minas. J\xE1 partiu tr\xEAs dos meus ao meio. O machado avisa antes de descer: apare na hora certa, ou role. Derrube-o."
+  type: 4
+  count: 1
+  targetId: brutamontes_caveira
+  targetName: Ilha da Caveira
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 190
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 6
+  objectiveText: derrote o brutamontes do acampamento da Caveira
+  doneText: brutamontes derrotado
+  repeatable: 1
+  cooldownSeconds: 900
+  requiredRank: 1
+  fameReward: 35
+  givenByNpc: 1
+  offerLines:
+  - "Ei, capit\xE3o! Sente aqui um minuto com o velho Bento. J\xE1 fui contramestre, sabe? Hoje s\xF3 conto as minhas cicatrizes."
+  - "M\xEAs passado eu e mais tr\xEAs rapazes desembarcamos na Caveira atr\xE1s de uns barris de rum. Rum! Tr\xEAs homens morreram por causa de rum."
+  - "No p\xE1tio daquele acampamento tem um homem-tubar\xE3o do tamanho de uma porta, com um machado de duas l\xE2minas. Ele partiu o Joaquim ao meio com um golpe s\xF3."
+  - 'Mas eu reparei numa coisa enquanto fugia: antes de descer, ele levanta o machado e fica parado um instante. Quem erguer a guarda na hora certa deixa ele tonto. Ou role para longe.'
+  - "Derrube aquele carrasco, por mim e pelos rapazes. O que eu juntei \xE9 seu, e ainda tenho uns ferros guardados."
+  acceptLine: "Esse \xE9 o esp\xEDrito! Vou acender uma vela por voc\xEA... e outra pelo rum que ficou l\xE1."
+  declineLine: "Tem raz\xE3o de ter medo. Eu tamb\xE9m teria, se ainda tivesse ju\xEDzo."
+  waitingLine: "E ent\xE3o? O carrasco ainda est\xE1 de p\xE9? Lembre: quando ele levantar o machado, guarda ou rolamento."
+  doneLines:
+  - "Voc\xEA derrubou o carrasco? Pelas barbas do meu av\xF4!"
+  - "Hoje eu bebo em nome do Joaquim e dos outros. Tome, capit\xE3o: o ouro e o ferro, como prometi."
+  restingLine: "Dizem que j\xE1 tem outro brutamontes no lugar dele. Esses tubar\xF5es n\xE3o acabam nunca... volte daqui a um tempo."

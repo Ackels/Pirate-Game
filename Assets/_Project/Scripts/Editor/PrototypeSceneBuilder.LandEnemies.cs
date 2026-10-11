@@ -154,7 +154,8 @@ namespace Pirates.EditorTools
                 ("Pirata_PortaoEsq", new Vector3(-2.6f, 0f, CampRadius + 1.6f), -10f, false, KitCharacters.Mako),
                 ("Pirata_PortaoDir", new Vector3(2.6f, 0f, CampRadius + 1.6f), 12f, false, KitCharacters.Sharky),
                 ("Pirata_Fogueira", new Vector3(2.4f, 0f, 2.2f), 15f, false, KitCharacters.Sharky),
-                ("Pirata_Cabanas", new Vector3(-6f, 0f, 3.5f), -25f, false, KitCharacters.Mako),
+                // Duelista (pacote B, passo 2): no lugar do pirata das cabanas.
+                ("Duelista_Cabanas", new Vector3(-6f, 0f, 3.5f), -25f, false, KitCharacters.Anne),
                 ("Pirata_PortaoSul", new Vector3(0.5f, 0f, -CampRadius - 1.4f), 180f, false, KitCharacters.Sharky),
                 ("Atirador_Portao", new Vector3(5f, 0f, CampRadius - 3f), 5f, true, KitCharacters.Skeleton),
                 ("Atirador_Bandeira", new Vector3(-4.5f, 0f, -10f), -5f, true, KitCharacters.HeadlessSkeleton),
@@ -162,6 +163,8 @@ namespace Pirates.EditorTools
                 // Bacamarteiros (passo 3, 09/10): perto da fogueira e do portão sul, onde o capitão entra no corpo a corpo.
                 ("Bacamarteiro_Fogueira", new Vector3(-2.6f, 0f, 1.8f), -30f, true, KitCharacters.Mako),
                 ("Bacamarteiro_PortaoSul", new Vector3(3.2f, 0f, -CampRadius + 1.2f), 170f, true, KitCharacters.Sharky),
+                // Brutamontes (pacote B, passo 1): no meio do pátio, entre a fogueira e o portão sul.
+                ("Brutamontes_Patio", new Vector3(-0.5f, 0f, -3.5f), 175f, false, KitCharacters.Sharky),
             };
             var parent = new GameObject("Piratas").transform;
             var members = new EnemyFootAI[posts.Length];
@@ -224,6 +227,24 @@ namespace Pirates.EditorTools
                 // Linha de mira vermelha: o aviso de que ele vai atirar.
                 AddAimRig(model, combat, muzzle, AimLine(go.transform, new Color(1f, 0.1f, 0.05f, 0.95f), 0.045f));
             }
+            else if (IsDuelist(name))
+            {
+                // Duelista: adaga sempre na mão (não troca de arma).
+                var dagger = DaggerOn(model, iron, wood, out Transform hand);
+                combat.Configure(new[] { weapon }, new[] { dagger }, new[] { hand }, new[] { hand }, null, null);
+            }
+            else if (weapon.animatorWeaponType == 4)
+            {
+                // Chefe: espadão sempre na mão.
+                var sword = GreatswordOn(model, iron, wood, out Transform hand);
+                combat.Configure(new[] { weapon }, new[] { sword }, new[] { hand }, new[] { hand }, null, null);
+            }
+            else if (weapon.animatorWeaponType == 3)
+            {
+                // Brutamontes: machado duplo sempre na mão (não troca de arma).
+                var axe = AxeOn(model, iron, wood, out Transform hand);
+                combat.Configure(new[] { weapon }, new[] { axe }, new[] { hand }, new[] { hand }, null, null);
+            }
             else
             {
                 var sword = CutlassOn(model, iron, wood, brass, out Transform hand, out Transform holster);
@@ -236,6 +257,9 @@ namespace Pirates.EditorTools
             // Chega perto (só mira a 9 m: a 11 m pegavam 3 de 6 chumbos), recua só colado (2,5 m) e segura a mira 1,1–1,5 s (dá para sair
             // do leque correndo de lado).
             if (weapon.twoHanded) ai.ConfigureRanged(6f, 2.5f, 9f, new Vector2(1.1f, 1.5f), 2.5f);
+            if (IsBrute(name)) MakeBrute(go, model, ai);
+            if (IsDuelist(name)) MakeDuelist(go, model, ai);
+            if (IsChief(name)) MakeChief(go, model, ai);
             return ai;
         }
 
@@ -256,12 +280,24 @@ namespace Pirates.EditorTools
         static Material GetEmissiveMaterial(string name, Color color, float intensity)
         {
             var mat = GetMaterial(name, color, 0f);
-            if (mat.IsKeywordEnabled("_EMISSION")) return mat;
-            mat.EnableKeyword("_EMISSION");
-            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
-            if (mat.HasProperty("_EmissionColor")) mat.SetColor("_EmissionColor", color * intensity);
-            EditorUtility.SetDirty(mat);
+            if (mat.IsKeywordEnabled("_EMISSION") && KeepsEmission(mat)) return mat;
+            if (!mat.IsKeywordEnabled("_EMISSION") && mat.HasProperty("_EmissionColor")) mat.SetColor("_EmissionColor", color * intensity);
+            Emissive(mat);
             return mat;
         }
+
+        /// <summary>
+        /// Liga o brilho (emissão) de um material URP Lit de um jeito que a validação da URP não desliga: com o GI em "None" o LitShader
+        /// tira o _EMISSION sempre que valida o material (reimportar, abrir no Inspector), e as lanternas, janelas e os olhos do chefe
+        /// apagavam (achado em 10/10). "Realtime" não muda nada no jogo (o projeto não usa GI em tempo real nem luz assada).
+        /// </summary>
+        static void Emissive(Material mat)
+        {
+            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            mat.EnableKeyword("_EMISSION");
+            EditorUtility.SetDirty(mat);
+        }
+
+        static bool KeepsEmission(Material mat) => (mat.globalIlluminationFlags & MaterialGlobalIlluminationFlags.RealtimeEmissive) != 0;
     }
 }

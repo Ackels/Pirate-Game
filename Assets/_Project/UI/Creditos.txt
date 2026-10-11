@@ -1,0 +1,40 @@
+<size=34><b>A Coroa de Prata</b></size>
+Um jogo de Jhonata Caetano
+
+<size=24><b>Criação, design e direção</b></size>
+Jhonata Caetano
+
+<size=24><b>Programação</b></size>
+Jhonata Caetano, com a ajuda do Claude (Anthropic)
+
+<size=24><b>Modelos 3D</b></size>
+Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit — CC0
+Quaternius (quaternius.com): Pirate Kit — CC0
+
+<size=24><b>Animações</b></size>
+Mixamo (Adobe)
+Unity Starter Assets — Third Person (Unity Technologies)
+
+<size=24><b>Interface e efeitos</b></size>
+Kenney: UI Pack Adventure, UI Pack RPG Expansion, Particle Pack — CC0
+Fonte Pirata One — Rodrigo Fuenzalida e Nicolas Massi (SIL Open Font License)
+Fonte Alegreya — The Alegreya Project Authors, Huerta Tipográfica (SIL Open Font License)
+
+<size=24><b>Música</b></size>
+Pirate Music Pack (Unity Asset Store)
+Adventure Inn, do FC Pirate Music Pack [Lite] — Fabrice, FC Audio (fcaudio.co.uk)
+Town Theme RPG — cynicmusic (OpenGameArt, CC0)
+Pirate Game Tune — Tozan (OpenGameArt, CC0)
+Battle Theme — Wolfgang_ (OpenGameArt, CC0)
+Exploration Theme — Cleyton Kauffman (OpenGameArt, CC0)
+
+<size=24><b>Sons</b></size>
+Kenney: Impact Sounds, RPG Audio, Interface Sounds, Music Jingles — CC0
+OpenGameArt (CC0): jasinski e qubodup (ondas), Rango Mango (gaivotas), AntumDeluge (fogo, madeira rangendo),
+isaiah658 (pássaros), Thimras (canhão), rubberduck (estampidos), qubodup (vozes)
+Freesound (CC0): Snoopy20111 (chuva), felix.blume (tempestade), bajko, Dave Welsh, netaj e Fugeni (trovões)
+
+<size=24><b>Feito com</b></size>
+Unity 6 · Universal Render Pipeline
+
+Obrigado por jogar!

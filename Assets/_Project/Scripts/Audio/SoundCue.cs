@@ -14,6 +14,8 @@ namespace Pirates.Audio
     public class SoundCue : ScriptableObject
     {
         public AudioClip[] clips = System.Array.Empty<AudioClip>();
+        [Tooltip("Volume de cada clipe (mesma ordem; vazio ou faltando = 1). Equilibra faixas de volumes diferentes no mesmo som (músicas).")]
+        public float[] clipVolumes = System.Array.Empty<float>();
         public SoundChannel channel = SoundChannel.Effects;
         [Tooltip("Volume sorteado entre x e y (0–1).")]
         public Vector2 volume = new(0.8f, 1f);
@@ -34,12 +36,22 @@ namespace Pirates.Audio
         /// <summary>Sorteia uma variação (sem repetir a anterior quando há mais de uma).</summary>
         public AudioClip Pick()
         {
-            if (!HasClips) return null;
+            int i = PickIndex();
+            return i < 0 ? null : clips[i];
+        }
+
+        /// <summary>Como <see cref="Pick"/>, devolvendo o índice (−1 sem clipes), para o volume do clipe.</summary>
+        public int PickIndex()
+        {
+            if (!HasClips) return -1;
             int i = Random.Range(0, clips.Length);
             if (clips.Length > 1 && i == lastClip) i = (i + 1) % clips.Length;
             lastClip = i;
-            return clips[i];
+            return i;
         }
+
+        public float ClipVolume(int index) =>
+            clipVolumes != null && index >= 0 && index < clipVolumes.Length ? clipVolumes[index] : 1f;
 
         public float PickVolume() => Random.Range(volume.x, volume.y);
         public float PickPitch() => Random.Range(pitch.x, pitch.y);

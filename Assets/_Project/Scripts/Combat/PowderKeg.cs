@@ -17,27 +17,19 @@ namespace Pirates.Combat
         public static IReadOnlyList<PowderKeg> Active => active;
 
         [SerializeField] GameObject visual;
-        [Tooltip("Raio da explosão (m).")]
-        [SerializeField] float radius = 5f;
-        [Tooltip("Dano no centro e na borda do raio (cai em linha reta). O capitão tem 100 de vida; os piratas, 60.")]
-        [SerializeField] float centerDamage = 80f, edgeDamage = 12f;
-        [Tooltip("Empurrão (m/s) no centro, para fora, e para cima.")]
-        [SerializeField] float push = 9f, lift = 3.5f;
-        [Tooltip("Fração do raio até onde a explosão derruba quem está a pé (arremessado de costas, levanta em ~3 s).")]
-        [SerializeField, Range(0f, 1f)] float knockdownWithin = 0.6f;
+        [Tooltip("Explosão: raio 5 m, 80 → 12 de dano, empurrão 9 + 3,5 para cima, derruba até 60% do raio (~3 m).")]
+        [SerializeField] Explosion.Spec explosion = new()
+        {
+            radius = 5f, centerDamage = 80f, edgeDamage = 12f, push = 9f, lift = 3.5f, knockdownWithin = 0.6f,
+        };
         [Tooltip("Pavio (s) depois de acender: um tiro, e o atraso entre barris de uma cadeia.")]
         [SerializeField] Vector2 fuseSeconds = new(0.1f, 0.25f);
-
-        static readonly Collider[] hits = new Collider[64];
-        static readonly RaycastHit[] cover = new RaycastHit[16];
-        static readonly HashSet<IDamageable> damaged = new();
-        static readonly HashSet<IPushable> pushed = new();
 
         Collider[] colliders;
         float explodeAt = -1f;
 
         public bool IsSpent { get; private set; }
-        public float Radius => radius;
+        public float Radius => explosion.radius;
 
         public void Configure(GameObject whole) => visual = whole;
 
@@ -66,67 +58,7 @@ namespace Pirates.Combat
             if (visual) visual.SetActive(false);
             foreach (var c in colliders) c.enabled = false;
 
-            Vector3 center = transform.position + Vector3.up * 0.5f;
-            if (Services.TryGet(out CombatEffects effects)) effects.Explosion(center, radius);
-
-            damaged.Clear();
-            pushed.Clear();
-            int count = Physics.OverlapSphereNonAlloc(center, radius, hits, ~0, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < count; i++)
-            {
-                var col = hits[i];
-                var target = col.GetComponentInParent<IDamageable>();
-                if ((Object)target == this || (target != null && damaged.Contains(target))) target = null;
-                var pushable = col.GetComponentInParent<IPushable>();
-                if (pushable != null && pushed.Contains(pushable)) pushable = null;
-                // Só gasta a conta (e o raio de cobertura) com quem leva dano ou empurrão: chão, árvores e pedras ficam de fora.
-                if (target == null && pushable == null) continue;
-                // Pela caixa (ClosestPoint não vale em MeshCollider côncavo, como o chão da ilha).
-                Vector3 closest = col.bounds.ClosestPoint(center);
-                Vector3 offset = closest - center;
-                float distance = offset.magnitude;
-                if (distance > radius || Sheltered(col, center)) continue;
-                float t = distance / radius;
-                Vector3 away = offset.sqrMagnitude > 0.0001f ? offset / distance : Vector3.up;
-                away.y = 0f;
-                away = away.sqrMagnitude > 0.0001f ? away.normalized : Vector3.forward;
-
-                if (target != null && damaged.Add(target))
-                    target.TakeDamage(new DamageInfo
-                    {
-                        amount = Mathf.Lerp(centerDamage, edgeDamage, t),
-                        point = closest,
-                        direction = away,
-                        source = gameObject,
-                        ignites = true,
-                        // Perto (até ~3 m): arremessado de costas.
-                        knockdown = t < knockdownWithin ? Knockdown.Blast : Knockdown.None,
-                    });
-                if (pushable != null && pushed.Add(pushable))
-                    pushable.Push(away * (push * (1f - 0.6f * t)) + Vector3.up * (lift * (1f - t)));
-            }
-            damaged.Clear();
-            pushed.Clear();
-        }
-
-        /// <summary>
-        /// Atrás de parede (paliçada, casa, muralha, morro): a explosão não passa. Raio do centro até o meio do colisor do alvo (o ponto mais
-        /// perto da caixa rente ao chão raspava no chão em ladeira). Personagens, caixotes e outros barris não protegem; muralha do forte sim.
-        /// </summary>
-        static bool Sheltered(Collider target, Vector3 center)
-        {
-            Vector3 to = target.bounds.center - center;
-            float length = to.magnitude;
-            if (length < 0.3f) return false;
-            int count = Physics.RaycastNonAlloc(center, to / length, cover, length - 0.1f, ~0, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < count; i++)
-            {
-                var col = cover[i].collider;
-                if (col == target || col is CharacterController) continue;
-                var damageable = col.GetComponentInParent<IDamageable>();
-                if (damageable == null || damageable is EnemyFort) return true;
-            }
-            return false;
+            Explosion.Detonate(transform.position + Vector3.up * 0.5f, explosion, gameObject, this);
         }
 
         /// <summary>Inteiro de novo, no lugar.</summary>

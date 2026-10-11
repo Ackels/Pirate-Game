@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: Som_PistolaTiro
   m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
   clips:
-  - {fileID: 8300000, guid: a1889caf7570ef0478155fe629324930, type: 3}
-  - {fileID: 8300000, guid: 7098ed484c1dc88429837e88883ec70c, type: 3}
-  - {fileID: 8300000, guid: d3da908a8af55de478eed7ad0473fbb4, type: 3}
-  - {fileID: 8300000, guid: 9c85cfb91298d6b4b8ceda16f34d5481, type: 3}
-  - {fileID: 8300000, guid: d76849111843c6a408964de9ed7b31d4, type: 3}
-  - {fileID: 8300000, guid: 1c711b5a294bce74896df84455eb074d, type: 3}
+  - {fileID: 8300000, guid: fc67f11d24315ba4c8cbad091536206c, type: 3}
+  - {fileID: 8300000, guid: 8121e19b2d0fb494c814d6e456bfb3b1, type: 3}
+  - {fileID: 8300000, guid: 3861f8ccd35d3a04994577fc78bddf55, type: 3}
+  - {fileID: 8300000, guid: 62a13abfb456bf342936e1c56c25f460, type: 3}
+  - {fileID: 8300000, guid: 9cd737e1e7ba27b489428dce4ad882ce, type: 3}
+  - {fileID: 8300000, guid: adb102dd7f005e34482390a1e40daae3, type: 3}
   channel: 1
-  volume: {x: 0.8, y: 0.95}
+  volume: {x: 0.9, y: 1}
   pitch: {x: 0.95, y: 1.12}
   spatial: 1
   minDistance: 6
-  maxDistance: 140
+  maxDistance: 160
   cooldown: 0

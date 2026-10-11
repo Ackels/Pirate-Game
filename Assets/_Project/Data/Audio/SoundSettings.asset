@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SoundSettings
   m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundSettings
   master: 1
-  music: 0.45
+  music: 0.3
   effects: 1
-  ambient: 0.8
+  ambient: 0.5
   interfaceVolume: 0.7

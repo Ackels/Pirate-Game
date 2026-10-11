@@ -68,6 +68,7 @@ namespace Pirates.VFX
                     w.combat.PelletLanded -= OnPelletLanded;
                     w.combat.Hit -= OnWeaponHit;
                     w.combat.KickLanded -= OnKickLanded;
+                    w.combat.Blocked -= OnBlocked;
                 }
                 w.trail?.Destroy();
             }
@@ -93,11 +94,12 @@ namespace Pirates.VFX
                         track.trail = new BladeTrail(transform, visual, materials.trail, new Color(1f, 0.97f, 0.9f, 0.9f), bladeTrailSeconds);
                         break;
                     }
-                    combat.Attacked += (weapon, _) => OnSwing(track, weapon);
+                    combat.Attacked += (weapon, variant) => OnSwing(track, weapon, variant);
                     combat.Fired += OnPistolFired;
                     combat.PelletLanded += OnPelletLanded;
                     combat.Hit += OnWeaponHit;
                     combat.KickLanded += OnKickLanded;
+                    combat.Blocked += OnBlocked;
                 }
                 if (track.health) track.health.Died += () => track.bodyFallAt = Time.time + 0.75f;
                 character.KnockedDown += () => track.bodyFallAt = Time.time + 0.6f;
@@ -111,11 +113,11 @@ namespace Pirates.VFX
             }
         }
 
-        void OnSwing(FootTrack track, WeaponDefinition weapon)
+        void OnSwing(FootTrack track, WeaponDefinition weapon, int variant)
         {
             if (!weapon || weapon.kind != WeaponKind.Melee || track.trail == null) return;
             // O golpe acerta em hitDelay; o rastro vale do começo da animação até um pouco depois do acerto.
-            track.trailUntil = Time.time + weapon.hitDelay + 0.25f;
+            track.trailUntil = Time.time + weapon.HitDelayFor(variant) + 0.25f;
         }
 
         void OnPistolFired(WeaponDefinition weapon, Vector3 muzzle, Vector3 end)
@@ -184,6 +186,17 @@ namespace Pirates.VFX
                         new Vector3(Random.Range(0.04f, 0.07f), Random.Range(0.03f, 0.05f), Random.Range(0.12f, 0.22f)),
                         Random.Range(0.8f, 1.2f), new Color(0.6f * shade, 0.42f * shade, 0.24f * shade, 1f), Random.Range(300f, 700f));
                 }
+        }
+
+        /// <summary>Lâmina na guarda: chuva de faíscas de metal; aparar = clarão e mais faíscas, abrindo para cima.</summary>
+        void OnBlocked(Vector3 point, bool parried)
+        {
+            if (Far(point)) return;
+            if (parried) glow.Emit(point, Vector3.zero, 1.3f, 0.12f, new Color(1f, 0.9f, 0.6f, 1f));
+            stars.Emit(point, Vector3.zero, parried ? 1.3f : 0.8f, parried ? 0.2f : 0.12f, new Color(1f, 0.97f, 0.85f, 1f), Random.Range(-30f, 30f));
+            for (int i = 0; i < (parried ? 16 : 9); i++)
+                sparks.Emit(point, (Random.insideUnitSphere + Vector3.up * 0.6f) * Random.Range(4f, parried ? 10f : 7f), Random.Range(0.03f, 0.06f),
+                    Random.Range(0.18f, 0.35f), new Color(1f, 0.9f, 0.6f, 1f));
         }
 
         void OnKickLanded(Vector3 point)

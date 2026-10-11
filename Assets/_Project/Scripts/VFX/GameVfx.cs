@@ -110,6 +110,8 @@ namespace Pirates.VFX
                 effects.Splashed += OnSplashed;
                 effects.Impacted += OnImpacted;
                 effects.Exploded += OnExploded;
+                effects.Unearthed += OnUnearthed;
+                effects.Surged += OnSurged;
             }
             Scan();
         }
@@ -124,6 +126,8 @@ namespace Pirates.VFX
             effects.Splashed -= OnSplashed;
             effects.Impacted -= OnImpacted;
             effects.Exploded -= OnExploded;
+            effects.Unearthed -= OnUnearthed;
+            effects.Surged -= OnSurged;
         }
 
         float WaterHeight(Vector3 p) => ocean != null ? ocean.GetHeight(p) : 0f;
@@ -233,6 +237,62 @@ namespace Pirates.VFX
                 smoke.Emit(center + Random.insideUnitSphere * 0.8f + Vector3.up * Random.Range(0.3f, 2.5f),
                     Random.insideUnitSphere * 1.6f + Vector3.up * Random.Range(1.5f, 4f), Random.Range(1.8f, 2.8f), Random.Range(4.5f, 7f),
                     new Color(grey, grey * 0.95f, grey * 0.9f, 0.85f), Random.Range(-30f, 30f));
+            }
+        }
+
+        /// <summary>
+        /// Esqueleto amaldiçoado: saindo da cova, torrões de terra voando, poeira marrom em anel e um brilho verde subindo; virando pó ao
+        /// amanhecer, poeira clara de osso e o brilho verde se apagando. Só os sistemas que já existem.
+        /// </summary>
+        void OnUnearthed(Vector3 point, bool rising)
+        {
+            if (Far(point)) return;
+            glow.Emit(point + Vector3.up * 0.6f, Vector3.up * 0.4f, rising ? 2.2f : 1.6f, rising ? 0.5f : 0.35f, new Color(0.35f, 1f, 0.5f, 0.8f));
+            for (int i = 0; i < (rising ? 10 : 4); i++)
+            {
+                float shade = Random.Range(0.6f, 1f);
+                splinters.EmitSized(point + Random.insideUnitSphere * 0.4f, (Random.insideUnitSphere + Vector3.up * 1.2f) * Random.Range(2f, 4.5f),
+                    Vector3.one * Random.Range(0.08f, 0.16f), Random.Range(0.8f, 1.3f), new Color(0.36f * shade, 0.26f * shade, 0.16f * shade, 1f),
+                    Random.Range(100f, 400f));
+            }
+            Color dirt = rising ? new Color(0.5f, 0.4f, 0.28f, 0.75f) : new Color(0.85f, 0.85f, 0.78f, 0.75f);
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 ring = Random.insideUnitCircle.normalized;
+                var flat = new Vector3(ring.x, 0f, ring.y);
+                dust?.Emit(point + flat * 0.4f + Vector3.up * 0.1f, flat * Random.Range(1.2f, 2.6f) + Vector3.up * Random.Range(0.3f, 1.2f),
+                    Random.Range(0.6f, 1.1f), Random.Range(0.8f, 1.4f), dirt, Random.Range(-40f, 40f));
+            }
+        }
+
+        /// <summary>
+        /// Água estourando (lula gigante): coluna e gotas maiores e mais altas que as da bala, anel largo e espuma; <paramref name="size"/>
+        /// 1 = um tentáculo rompendo a água, 2,5 = a cabeça, 0,35 = bolhas do aviso.
+        /// </summary>
+        void OnSurged(Vector3 point, float size)
+        {
+            float s = Mathf.Clamp(size, 0.2f, 3f);
+            float y = WaterHeight(point);
+            var at = new Vector3(point.x, y, point.z);
+            int columns = Mathf.RoundToInt(6 + 10 * s);
+            for (int i = 0; i < columns; i++)
+            {
+                Vector2 r = Random.insideUnitCircle * (0.8f + 1.2f * s);
+                water.Emit(at + new Vector3(r.x, 0.2f, r.y), new Vector3(r.x * 1.2f, Random.Range(3f, 8f) * Mathf.Sqrt(s), r.y * 1.2f),
+                    Random.Range(1.4f, 2.4f) * Mathf.Sqrt(s), Random.Range(1.1f, 1.6f), new Color(0.93f, 0.97f, 1f, 0.9f), Random.Range(-40f, 40f));
+            }
+            for (int i = 0; i < columns + 6; i++)
+            {
+                Vector2 r = Random.insideUnitCircle.normalized * Random.Range(1.5f, 4f) * s;
+                drops.Emit(at + Vector3.up * 0.4f, new Vector3(r.x, Random.Range(3f, 8f) * Mathf.Sqrt(s), r.y), Random.Range(0.3f, 0.5f),
+                    Random.Range(1f, 1.5f), new Color(0.9f, 0.96f, 1f, 0.95f));
+            }
+            ring.Emit(at + Vector3.up * 0.3f, Vector3.zero, 2.2f * s, 2.2f, new Color(1f, 1f, 1f, 0.6f));
+            for (int i = 0; i < 3 + 4 * s; i++)
+            {
+                Vector2 r = Random.insideUnitCircle * (1.2f * s);
+                foam.Emit(at + new Vector3(r.x, 0.12f, r.y), new Vector3(r.x, 0f, r.y) * 0.6f, Random.Range(1.6f, 2.6f) * s, Random.Range(3f, 4.5f),
+                    new Color(1f, 1f, 1f, 0.5f), Random.Range(-15f, 15f));
             }
         }
 

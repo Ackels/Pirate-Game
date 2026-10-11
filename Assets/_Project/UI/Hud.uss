@@ -1389,3 +1389,436 @@
     padding: 4px 12px 4px 12px;
     -unity-text-align: middle-center;
 }
+
+
+/* ---------- Conversa com NPC (10/10): pergaminho embaixo, plaquinha de madeira com o nome ---------- */
+
+.hud-dialogue {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 5%;
+    align-items: center;
+}
+
+.hud-dialogue__box {
+    width: 1080px;
+    max-width: 92%;
+    min-height: 196px;
+    padding: 44px 46px 18px 46px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    color: rgb(59, 36, 20);
+}
+
+.hud-dialogue__plate {
+    position: absolute;
+    top: -26px;
+    left: 34px;
+    flex-direction: row;
+    align-items: flex-end;
+    padding: 8px 26px 8px 22px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-background-image-tint-color: rgb(120, 92, 78);
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+}
+
+.hud-dialogue__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 32px;
+    color: rgb(255, 211, 107);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-dialogue__role {
+    font-size: 18px;
+    -unity-font-style: italic;
+    color: rgb(247, 233, 201);
+    margin-left: 12px;
+    margin-bottom: 5px;
+}
+
+.hud-dialogue__text {
+    font-size: 25px;
+    white-space: normal;
+    margin-top: 4px;
+}
+
+.hud-dialogue__reward {
+    font-size: 18px;
+    color: rgb(107, 74, 43);
+    margin-top: 12px;
+    white-space: normal;
+}
+
+.hud-dialogue__footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.hud-dialogue__footer > .hud-button {
+    margin-left: 12px;
+}
+
+.hud-dialogue__hint {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-dialogue__hint-text {
+    font-size: 19px;
+    margin-left: 8px;
+    color: rgb(107, 74, 43);
+}
+
+.hud-quest-icon {
+    position: absolute;
+    width: 26px;
+    height: 52px;
+    translate: -50% -100%;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_exclamation_yellow.png");
+}
+
+.hud-quest-icon--turnin {
+    width: auto;
+    height: auto;
+    background-image: none;
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 54px;
+    color: rgb(255, 211, 80);
+    -unity-text-outline-width: 1.4px;
+    -unity-text-outline-color: rgba(40, 20, 6, 0.95);
+}
+
+
+/* ---------- Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo ---------- */
+
+.hud-title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(8, 6, 10);
+    overflow: hidden;
+}
+
+.hud-title__bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+/* Escurece a imagem para o texto ler bem. */
+.hud-title__shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(10, 6, 4, 0.3);
+}
+
+.hud-title__heading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 48px;
+    align-items: center;
+}
+
+.hud-title__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 132px;
+    color: rgb(246, 226, 178);
+    -unity-text-align: middle-center;
+    text-shadow: 4px 5px 8px rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(60, 30, 10, 0.8);
+}
+
+.hud-title__subtitle {
+    font-size: 22px;
+    -unity-font-style: italic;
+    color: rgb(240, 222, 186);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.85);
+    margin-top: -14px;
+}
+
+/* Painel no meio da tela (confirmar, nome); --side = coluna do menu à esquerda; --wide = opções e créditos. */
+.hud-title__panel {
+    position: absolute;
+    left: 500px;
+    top: 300px;
+    width: 600px;
+    height: auto;
+    padding: 26px 40px 22px 40px;
+}
+
+.hud-title__panel--side {
+    left: 110px;
+    top: 250px;
+    width: 400px;
+    padding: 18px 30px 16px 30px;
+}
+
+.hud-title__panel--wide {
+    left: 370px;
+    top: 215px;
+    width: 860px;
+}
+
+.hud-title__panel--side .hud-menu__content {
+    margin-top: 0;
+}
+
+.hud-title__panel--side .hud-button--big {
+    height: 50px;
+    margin: 4px 0 4px 0;
+}
+
+.hud-title__summary {
+    font-size: 14px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    color: rgb(80, 55, 32);
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.hud-title__note {
+    position: absolute;
+    left: 28px;
+    bottom: 18px;
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(235, 220, 190);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- Opções ---------- */
+
+.hud-options__tabs {
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.hud-options__body {
+    margin-top: 6px;
+    margin-bottom: 8px;
+}
+
+.hud-options__row {
+    flex-direction: row;
+    align-items: center;
+    height: 46px;
+}
+
+.hud-options__label {
+    width: 380px;
+    font-size: 20px;
+}
+
+.hud-options__value {
+    width: 230px;
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.hud .hud-options__arrow {
+    width: 52px;
+    font-size: 20px;
+    -unity-text-align: middle-center;
+}
+
+.hud-options__note {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+    white-space: normal;
+    margin: -4px 0 6px 0;
+}
+
+.hud-options__keys {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+.hud-options__keybox {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 0 8px 0 0;
+    padding: 8px 12px 8px 12px;
+}
+
+.hud-options__keytitle {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(122, 46, 22);
+}
+
+.hud-options__keys-text {
+    font-size: 15px;
+    white-space: normal;
+}
+
+/* ---------- Créditos ---------- */
+
+.hud-credits {
+    height: 360px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.hud-credits__text {
+    font-size: 16px;
+    white-space: normal;
+    -unity-text-align: upper-center;
+    padding: 0 16px 0 16px;
+}
+
+/* ---------- Prólogo: quadros em tela cheia, narração embaixo ---------- */
+
+.hud-prologue {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(0, 0, 0);
+    overflow: hidden;
+}
+
+.hud-prologue__image {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.hud-prologue__band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 190px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0 160px 18px 160px;
+}
+
+.hud-prologue__text {
+    font-size: 32px;
+    -unity-font-style: italic;
+    color: rgb(246, 233, 205);
+    white-space: normal;
+    -unity-text-align: middle-center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.hud-prologue__title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 90px;
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 150px;
+    color: rgb(246, 226, 178);
+    -unity-text-align: middle-center;
+    text-shadow: 4px 5px 10px rgba(0, 0, 0, 0.9);
+}
+
+.hud-prologue__veil {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+.hud-prologue__hint {
+    position: absolute;
+    right: 26px;
+    top: 18px;
+    font-size: 15px;
+    color: rgb(220, 205, 175);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+
+/* ---------- Tutorial (11/10): cartão à esquerda, embaixo do painel do navio/capitão, e marcador amarelo ---------- */
+
+.hud-tutorial {
+    width: 330px;
+    padding: 10px 16px 12px 16px;
+}
+
+.hud-tutorial__header {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgb(140, 100, 60);
+    -unity-text-align: middle-center;
+}
+
+.hud-tutorial__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 25px;
+    color: rgb(122, 46, 22);
+    -unity-text-align: middle-center;
+    margin-top: -2px;
+}
+
+.hud-tutorial__quote {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(90, 60, 35);
+    white-space: normal;
+    -unity-text-align: middle-center;
+    margin-top: 2px;
+    margin-bottom: 6px;
+}
+
+.hud-tutorial__objective {
+    font-size: 16px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    color: rgb(59, 36, 20);
+    padding: 6px 10px 6px 10px;
+    background-color: rgba(255, 244, 214, 0.65);
+    border-radius: 6px;
+}
+
+.hud-marker--tutorial .hud-marker__star {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_exclamation_yellow.png");
+}
+
+.hud-marker--tutorial .hud-marker__text {
+    color: rgb(255, 236, 160);
+}
+
+/* Botão do tutorial na tela do nome (Novo jogo). */
+.hud .hud-menu__tutorial {
+    font-size: 16px;
+    margin: 0 30px 12px 30px;
+}

@@ -658,6 +658,192 @@ muralha e zona segura +45 m.
 `Data/HarborSettings_Base` (preço, patente, receita), `Data/Items/Item_Chumbo`. Cor e espessura do laser: `CharacterAimRig` no `Model` do
 personagem (cores, ponto, anel) e os objetos `LinhaDeMira`/`BrilhoDoLaser` (largura).
 
+## Conversar com os NPCs da vila — cena 07
+
+- Alguns moradores da vila têm serviço para você: **"!"** amarelo sobre a cabeça. Chegue perto e aperte **F** para conversar.
+- **F** passa a fala. Na última, **Aceitar** (F) ou **Agora não** (Esc), com o pagamento e a fama na caixa.
+- Missão de NPC se entrega **com ele** (não na taverna): quando estiver pronta, aparece **"?"** sobre ele e a seta do HUD aponta para ele.
+  Ele conta o fim da história e paga (vai para o armazém).
+- Quem dá missão na vila:
+  - **Tobias, o coveiro** (a oeste da praça, com uma pá): "Noite no cemitério".
+  - **Velho Bento**, contramestre aposentado (começo do píer): "O carrasco da Caveira".
+  - **Dona Mercês**, dona do armazém (ao lado do armazém): "A lâmina da enseada".
+  - **Almirante Teodoro** (no estaleiro): "O guardião do forte" (patente Corsário).
+  - **Zé Caolho** (porta da taverna): "O mapa do Zé Caolho".
+  - **Rato Velho** (canto perto do Mestre de obras): "O mapa do contrabandista".
+- O quadro da taverna continua com os contratos comuns (afundar navios, entregas, acampamentos, forte, Santa Clara, Tormenta).
+
+**Onde ajustar:** as falas ficam na própria missão (`Data/Missions`, cabeçalho "Conversa com o NPC").
+
+## Missões dos inimigos novos — cena 07
+
+Na taverna (quadro de missões), a partir da patente Marujo de Respeito:
+- **O carrasco da Caveira:** derrote o brutamontes do acampamento da Caveira (190 de ouro e 6 de ferro).
+- **A lâmina da enseada:** derrote a duelista do esconderijo da Ilha Oeste (160 de ouro e 3 bombas).
+- **O guardião do forte** (patente Corsário): derrote o brutamontes do forte da Ilha Norte (230 de ouro e 8 de pólvora).
+- **Noite no cemitério:** limpe o cemitério amaldiçoado da Caveira, à noite (240 de ouro e 20 cartuchos).
+
+O destino aparece marcado na tela. Se o alvo já estava morto, ele volta quando você aceita a missão. Dá para repetir depois de um tempo (15 min; o cemitério, 10).
+
+## Tutorial (M17, passo 1) — cena 07
+
+**Novo jogo** começa com o navio **atracado na vaga do porto**. Na tela do nome há o botão **Tutorial: sim/não**. Com tutorial, o
+**Velho Bento** guia o capitão em 15 etapas. Cada etapa avança sozinha quando você faz o que ela pede:
+
+1. Descer do navio (**F** no cais) e conversar com o Bento (**F**; ele tem um **!** na cabeça).
+2. Conhecer a vila, entrando em cada casa: Taverna, Mestre de obras, um morador com **!**, Mercado, Armazém e Estaleiro.
+3. Treinar no **campo de treino** ao lado do estaleiro: 3 golpes de cutelo, um tiro de pistola, chute (**V**), rolar (**Ctrl**) e
+   guarda (botão direito com o cutelo).
+4. Voltar ao navio (**F** no píer) e zarpar (sair do porto).
+
+O cartão do tutorial fica à esquerda (etapa, fala do Bento e o que fazer). Um marcador amarelo aponta o lugar, com seta na borda
+quando está fora da tela. O jogo salvo lembra a etapa. No **F1** há próxima etapa, recomeçar e encerrar.
+
+O **Novo jogo** guarda o jogo antigo em `save_anterior.json`, na pasta do save. Para voltar a ele, renomeie para `save.json`.
+O mar e as ilhas entram nos próximos passos do tutorial.
+
+## Tela de título, prólogo e opções (M16) — cena 07
+
+Ao dar Play na cena 07 abre a tela de título **"A Coroa de Prata"**, com o jogo parado atrás e a música do menu:
+
+- **Continuar** (cinza quando não há jogo salvo; embaixo, o capitão, a fama e o resumo do save), **Novo jogo**, **Prólogo**,
+  **Opções**, **Créditos** e **Sair**.
+- **Novo jogo** pede o nome do capitão e passa o **prólogo**: os 9 quadros com zoom lento, a narração com o nome digitado e o
+  título no fim. **Clique/Espaço** passa o quadro, **Esc** pula tudo. Depois o jogo começa.
+- **Opções** (salvas em `opcoes.json`, ao lado do save; o "Novo jogo" não mexe nelas):
+  - Gráficos: modo de tela e resolução (só no jogo compilado), VSync, limite de FPS (com o VSync desligado), qualidade
+    Baixa/Média/Alta (Alta = como o jogo foi feito).
+  - Áudio: volume geral, música, efeitos, ambiente e interface.
+  - Controles: sensibilidade e inversão da câmera, e a lista de teclas.
+  - **Padrão** volta a aba aberta ao normal; **Voltar** (ou Esc) grava.
+- **Créditos:** o texto fica em `Assets/_Project/UI/Creditos.txt` (pode editar à vontade).
+
+**Músicas:** menu e prólogo tocam o *Adventure Inn*; no jogo, cada momento tem uma lista que emenda uma música na outra
+(porto 3, mar 4, ilha 2, combate 3). Para trocar, tirar ou pôr faixas, ou mudar o volume de uma, use `Data/Audio/Som_Musica*`
+(listas **Clips** e **Clip Volumes**, mesma ordem), com o jogo parado.
+
+## Lula gigante (chefe do mar, passo 1) — cena 07
+
+- Mora nas **Águas Negras**, mar aberto bem a oeste-sudoeste (~550 m do porto e da Ilha Oeste), marcadas por dois cascos afundados e
+  pedras num anel em volta. Entrar com o navio a menos de ~55 m do centro = emboscada.
+- **Emboscada:** a água ferve em volta do navio (~2,4 s: dá para tentar fugir) e dois tentáculos sobem colados no casco e **agarram** o
+  navio (passam por cima da amurada e deitam no convés): com os dois, o navio fica travado (só gira, não anda); com um, anda 25%.
+  Agarrando, apertam o casco (8 a cada 2 s cada um).
+- **Pancadas:** outros tentáculos sobem dos lados e batem no convés (30 de dano, 38 na fase 2; a tripulação morre como num tiro). O aviso é o tentáculo
+  **recuando e tremendo** ~1 s antes de descer.
+- **Cabeça:** emerge de um lado a ~26 m (olhos âmbar; a mira assistida trava nela), fica ~11 s, afunda e volta do outro lado. Só
+  aparece com o navio preso.
+- **Atirar nos tentáculos = à queima-roupa:** Q ou E (qualquer distância) acerta sempre os tentáculos colados naquele bordo: um tiro
+  de cada canhão a até 2,5 m dele (proa-popa), com faíscas e a barra de vida. Metralha dá 1,5× por canhão (a melhor aqui), corrente 0,5×.
+  Cada tentáculo tem 120 de vida e passa 40% do dano para a lula. A cabeça (a 26 m) é com a mira de distância de sempre e leva o dano
+  inteiro. Tentáculo destruído se debate, afunda e volta em 16 s. Sem nenhum agarrando, o navio se solta; se você não fugir para longe do covil, ela agarra de novo em 14 s.
+- **Fase 2** com metade da vida (1400): urra, sobe um terceiro tentáculo de pancada, pancadas mais rápidas (aviso 0,8 s) e mais fortes (38).
+- Dificuldade (medida): o galeão nível 4 vence com folga, a escuna nível 4 apertado, a escuna nível 2 só com metralha, o galeão sem
+  melhorias perde.
+- Solta e longe dela (sem fugir do covil de vez) por 35 s, ela desiste, se cura e volta a esperar.
+- Derrotada: tudo afunda, destroços com baú garantido (esquema que falta ou ouro) onde estava a cabeça, **100 de fama**. Volta 8 min
+  depois com você longe. Fugiu? Ela se cura e volta a esperar.
+- Barra de chefe no topo ("Lula Gigante — o terror das Águas Negras").
+- F1 (sandbox), em Inimigos: estado e vida, **Atacar aqui** (muda o covil para onde o navio está e ataca), **Ir ao covil**, Enfurecer, Matar.
+
+**Onde ajustar:** componente `GiantSquid` no objeto "LulaGigante" (raio, agarrão, pancadas, cabeça, fase 2); vida da lula e dos
+tentáculos e o lugar do covil em `PrototypeSceneBuilder.Squid.cs` (regerar a 07); saque em `Data/LootTable_Lula`.
+
+## Chefe pirata a pé: o Capitão Barba-Negra (pacote B, passo 4) — cenas 06 e 07
+
+- Mora nas **ruínas da Caveira**, no alto do morro oeste (no fim da trilha que sai do portão oeste do acampamento). Os guardas antigos
+  das ruínas saíram; os guarda-costas dele vêm no próximo passo.
+- O rival do Barbarossa: o mesmo tipo de capitão, **40% maior**, de casaco preto, chapéu e calça vermelho-sangue, barba negra e
+  **olhos vermelhos que brilham**, com um **espadão** dourado. Grita ao ver você; a barra dele aparece no topo da tela.
+- **900 de vida.** Nada o derruba (nem barril ou bomba) e golpe nenhum o interrompe: a brecha é depois de cada golpe dele.
+- Golpes: cortes de 28–38 (às vezes dois ou três emendados) e um golpe de cima que derruba. Esses dá para **segurar na guarda** e
+  **aparar** (ele cambaleia e fica aberto).
+- **Imparáveis** (ele brilha em vermelho no preparo; não dá para segurar nem aparar, só rolar ou sair do alcance):
+  - **giro** em volta (30, derruba), quando você está nas costas dele ou bate sem parar;
+  - **chute** (10, derruba), quando você fica atrás da guarda;
+  - **salto** de longe (42, derruba), quando você se afasta 5,5–11 m.
+- **Fase 2** com metade da vida: ele se enfurece (fica invencível uns 2,6 s), solta uma **onda de choque** que derruba quem estiver
+  perto e volta **mais forte e mais rápido**: lâmina em brasa, brasas nos pés, dano +20%, menos tempo entre golpes e uma
+  **sequência de três cortes** avançando.
+- Fugiu dele (saiu das ruínas ou morreu)? Ele volta ao lugar com a vida cheia, na fase 1.
+- Derrotar dá 60 de fama.
+- F1 (sandbox): na linha "Ruínas do Barba-Negra", vida e fase dele e "Enfurecer (fase 2)" durante a luta.
+
+**Onde ajustar:** `Data/Weapons/Weapon_Espadao_Chefe` (dano, alcance e abertura de cada golpe em "Golpes especiais"); quando cada
+golpe sai, as pausas e a fase 2 no componente `LandBoss` do chefe; vida, tamanho e velocidade em `PrototypeSceneBuilder.Chief.cs`
+(regerar as cenas).
+
+## Esqueletos amaldiçoados (pacote B, passo 3) — cenas 06 e 07
+
+- Cemitério na Ilha da Caveira, ao lado da trilha oeste (a caminho das ruínas), com covas, placas tortas e uma lanterna.
+- De dia não tem ninguém. **À noite**, chegando perto, **10 esqueletos** de osso esverdeado **saem das covas** e atacam com cutelos
+  (três de cada vez; alguns avançam no golpe e vão atrás de quem rola). Saindo da terra, não levam golpe.
+- **Amaldiçoados:** derrubado pela primeira vez, o esqueleto levanta de novo da terra com 70% da vida. **Tiro, bacamarte, bomba ou
+  barril** acabam com ele de vez.
+- Ao amanhecer viram pó; na noite seguinte voltam. Limpar o cemitério dá um pouco de fama.
+- F1 (sandbox): "Sair das covas" / "Voltar às covas" no cemitério; mude a hora para a noite no F1.
+
+**Onde ajustar:** raio, horários, tempo e vida ao levantar de novo no objeto `Cemiterio` (componente `CursedGraveyard`); vida e
+velocidade em `PrototypeSceneBuilder.Graveyard.cs` (regerar as cenas).
+
+## Duelista (pacote B, passo 2) — cenas 06 e 07
+
+- Pirata de **adaga**, de roupa escura e mangas vermelhas: uma no acampamento da Caveira e uma no esconderijo dos contrabandistas (Ilha Oeste).
+- Rápida, 100 de vida. Rodeia você a uns 3 m, entra com estocadas de 14 (até três seguidas) e sai. Mistura estocada rápida e lenta:
+  rolar cedo demais não salva (ela vem atrás de quem rola e ataca quando o rolamento acaba).
+- Vê o seu golpe vindo: às vezes **apara** (você cambaleia e ela contra-ataca) e às vezes **rola** para longe.
+- Quando você ataca sem parar ela **ergue a guarda**: o golpe vira arranhão e ela responde na hora (dá para aparar a resposta).
+  **Chute** e **tiro** passam pela guarda: o chute a derruba.
+
+**Onde ajustar:** `Data/Weapons/Weapon_Adaga_Duelista` (dano, alcance, espera); vida, velocidade e as chances de aparar, rolar e erguer a
+guarda em `PrototypeSceneBuilder.Duelist.cs` (regerar as cenas).
+
+## Brutamontes (pacote B, passo 1) — cenas 06 e 07
+
+- Pirata-tubarão **gigante** com **machado duplo**: um no pátio do acampamento da Caveira e um na guarnição do forte (Ilha Norte).
+- 330 de vida, lento (dá para fugir e rodear). Os golpes são avisados, mas tiram 35 (três matam) e **derrubam**; dois dos três são
+  lentos (pegam quem rola cedo) e ele avança no golpe até uns 4,5 m. Role na hora do impacto, não no começo do golpe. Golpe não o interrompe e
+  chute não o derruba; a **explosão** derruba.
+- Na **guarda** o golpe vira um arranhão, mas cansa muito (3× o fôlego). **Aparar** o machado deixa ele cambaleando e aberto.
+- Grita quando vê o capitão.
+
+**Onde ajustar:** `Data/Weapons/Weapon_Machado_Brutamontes` (dano, alcance, espera, quanto cansa a guarda); vida, tamanho e velocidade em
+`PrototypeSceneBuilder.Brute.cs` (regerar as cenas).
+
+## Fôlego (pacote A, passo 6) — cenas 06 e 07
+
+- Barra **Fôlego** embaixo da vida. **Rolar** gasta 25 (sem fôlego não rola: a barra pisca vermelha); **segurar a guarda** gasta aos
+  poucos e mais a cada golpe segurado; **aparar** devolve um pouco. Recupera sozinho logo depois que você para de gastar.
+- Fôlego zerado com a guarda erguida = **guarda quebrada**: ela cai, o golpe passa pela metade e você fica ~1 s sem erguer de novo.
+- Andar, correr, atacar e chutar não gastam. Começa cheio a cada desembarque.
+- A guarda e o aparar soam como lâminas se batendo (tinidos feitos por código: `Tools/Audio/espadas.py`).
+
+**Onde ajustar:** componente `Stamina` do capitão (máximo, recuperação, custos, guarda quebrada).
+
+## Defesa e aparar (pacote A, passo 5) — cenas 06 e 07
+
+- Com o **cutelo** na mão, **segure o botão direito** para erguer a guarda (com a pistola ou o bacamarte o mesmo botão continua sendo a
+  mira). Anda devagar e fica de frente para o cursor; para atacar, solte.
+- Golpe de cutelo **de frente** na guarda vira só um arranhão (20% do dano). De lado ou pelas costas passa inteiro; tiro, chute e
+  explosão não são segurados.
+- **Aparar:** erga a guarda **logo antes** do golpe chegar (até 0,3 s): nada de dano, faísca e tinido, e o pirata cambaleia para trás e
+  fica ~1,4 s sem atacar (hora do contra-ataque). Apertar sem parar não funciona: a guarda precisa ficar meio segundo baixada.
+
+**Onde ajustar:** `CharacterCombat` do capitão, grupo "Defesa" (arco, fração do dano, janela de aparar, atordoamento).
+
+## Bomba de arremesso (pacote A, passo 4) — cenas 06 e 07
+
+- **Segure G** para mirar: aparece o arco do voo e o círculo da explosão no chão, seguindo o mouse (vermelho = você está dentro da
+  explosão, por exemplo jogando contra uma parede perto; cinza = ainda esperando a próxima bomba). **Solte G** para lançar; o botão
+  direito cancela. Um toque rápido no G lança direto no cursor.
+- **G** (gamepad: direcional para a direita) lança uma **bomba de pólvora** da mochila no ponto do cursor (de 4 a 14 m). Ela explode
+  ~1,6 s depois: raio de 3,5 m, até 55 de dano no centro, derruba quem estiver perto e acende os barris de pólvora. Caiu na água, apaga.
+- O capitão leva 3 bombas do porão ao desembarcar. Compre no mercado (15 de ouro), faça na Forja (3 por 1 ferro + 2 pólvora) ou ache em
+  barris e baús. Espera de 2,5 s entre uma e outra; se for derrubado no meio do arremesso, a bomba não é gasta.
+
+**Onde ajustar:** `ThrownBomb` no molde "Bombas/Bomba_Molde" (explosão e pavio), `BombThrower` do capitão (alcance, espera, quantas leva),
+`Data/Items/Item_Bomba`, `HarborSettings_Base` (preço e receita).
+
 ## Chute e quedas (pacote A, passo 3) — cenas 06 e 07
 
 - **V** (gamepad: LB) chuta para a mira: pouco dano (8), mas **derruba** o pirata da frente: ele cambaleia, cai sentado e leva ~1,5 s
@@ -835,7 +1021,8 @@ rodando (para manter, mude com o jogo parado ou no gerador).
 Todas as cenas têm som (pacotes CC0 em `Assets/ThirdParty/Audio/`, créditos em `CREDITOS.txt`):
 
 - **Música** que muda sozinha com fade: **porto** (dentro da zona do porto), **mar** (navegando), **ilha** (a pé fora do
-  porto) e **combate** (pirata de terra te perseguindo por perto ou navio inimigo vindo para cima; segura 8 s depois).
+  porto) e **combate** (pirata de terra te perseguindo por perto ou navio inimigo vindo para cima; segura 8 s depois). Desde o
+  M16 cada um é uma lista de músicas (uma emenda na outra), e o menu e o prólogo têm a sua.
 - **Mar e navio:** ondas no mar aberto, madeira rangendo, velas subindo e descendo, âncora ao desembarcar e embarcar, sino
   ao atracar e ao sair do porto; canhões (disparo, bala caindo na água, bala acertando madeira ou pedra) e o navio afundando.
 - **A pé:** passos pelo tipo de chão (areia, grama, terra, pedra, madeira do píer, água rasa), pulo, golpe e acerto do
@@ -845,6 +1032,9 @@ Todas as cenas têm som (pacotes CC0 em `Assets/ThirdParty/Audio/`, créditos em
   cumprida / paga (vinhetas de steel drum), jogo salvo.
 - **Ambiente:** ondas quebrando nas praias de todas as ilhas, gaivotas, fogo nas fogueiras e na forja, pássaros nas matas
   (Caveira e morros do porto).
+- **Estampidos fortes (09/10):** explosão, tiro de canhão e tiros das armas usam versões mais encorpadas dos mesmos sons
+  (`ThirdParty/Audio/Efeitos/Forte`: grave no início, eco curto, mais volume). Para ajustar só um deles, mexa no volume do
+  `Data/Audio/Som_Explosao`, `Som_CanhaoTiro` ou `Som_PistolaTiro` (fora do Play).
 
 Os sons vêm de onde acontecem (3D): o "ouvido" fica no navio ou no capitão, não na câmera. **Volumes:** no **F1** (sandbox)
 há controles de Geral, Música, Efeitos, Ambiente e Interface, e o nome da música tocando; os volumes iniciais ficam em

@@ -60,12 +60,19 @@ namespace Pirates.Save
             return true;
         }
 
-        /// <summary>Tira o save do caminho (vira o .bak). Depois disso não há jogo para continuar.</summary>
+        /// <summary>Jogo de antes do último "Novo jogo": fica fora da troca do .bak (cada salvamento sobrescreve o .bak).</summary>
+        public static string PreviousGamePath => Path.Combine(Path.GetDirectoryName(FilePath), "save_anterior.json");
+
+        /// <summary>
+        /// Tira o save do caminho (Novo jogo). Vai para <see cref="PreviousGamePath"/> (11/10): antes ia para o .bak, que o segundo
+        /// salvamento do jogo novo já sobrescrevia, e o progresso antigo se perdia. Depois disso não há jogo para continuar.
+        /// </summary>
         public static void Archive()
         {
             if (!Exists) return;
+            if (File.Exists(PreviousGamePath)) File.Delete(PreviousGamePath);
+            File.Move(FilePath, PreviousGamePath);
             if (File.Exists(BackupPath)) File.Delete(BackupPath);
-            File.Move(FilePath, BackupPath);
         }
     }
 }

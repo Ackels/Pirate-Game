@@ -44,7 +44,28 @@ namespace Pirates.Audio
             settings = soundSettings;
         }
 
-        void Awake() => SoundMix.Apply(settings);
+        void Awake()
+        {
+            SoundMix.Apply(settings);
+            SoundMix.Apply(GameOptions.Current);
+        }
+
+        void OnEnable()
+        {
+            GameOptions.Changed += OnOptionsChanged;
+            EventBus.Subscribe<TutorialStepEvent>(OnTutorialStep);
+        }
+
+        void OnDisable()
+        {
+            GameOptions.Changed -= OnOptionsChanged;
+            EventBus.Unsubscribe<TutorialStepEvent>(OnTutorialStep);
+        }
+
+        // Etapa do tutorial cumprida: a vinheta de missão aceita; o fim do tutorial, a de missão cumprida.
+        void OnTutorialStep(TutorialStepEvent e) => SoundPlayer.Ui(e.finished ? sounds.missionDone : sounds.missionAccepted);
+
+        static void OnOptionsChanged() => SoundMix.Apply(GameOptions.Current);
 
         void Start()
         {
@@ -56,6 +77,15 @@ namespace Pirates.Audio
                 effects.Splashed += p => SoundPlayer.At(sounds.cannonSplash, p);
                 effects.Impacted += (p, _) => SoundPlayer.At(sounds.cannonImpact, p);
                 effects.Exploded += (p, _) => SoundPlayer.At(sounds.explosion, p);
+                // Lula gigante: água estourando (respingo grave, mais forte quanto maior) e o urro (voz de morte bem grave + estrondo).
+                effects.Surged += (p, size) => SoundPlayer.At(sounds.cannonSplash, p, Mathf.Clamp(0.6f + size * 0.35f, 0.6f, 1.6f), Mathf.Clamp(0.95f - size * 0.12f, 0.55f, 0.95f));
+                effects.Roared += p =>
+                {
+                    SoundPlayer.At(sounds.death, p, 1.6f, 0.32f);
+                    SoundPlayer.At(sounds.explosion, p, 0.5f, 0.45f);
+                };
+                // Cova abrindo (terra cavada, mais grave) ou ossos virando pó (queda do corpo, mais aguda).
+                effects.Unearthed += (p, rising) => SoundPlayer.At(rising ? sounds.dig : sounds.bodyFall, p, 1.2f, rising ? 0.75f : 1.35f);
             }
             foreach (var visitor in FindObjectsByType<HarborVisitor>(FindObjectsInactive.Include))
             {

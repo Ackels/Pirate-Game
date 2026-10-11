@@ -835,6 +835,7 @@ namespace Pirates.UI
                 // Repetíveis entregues descansando: aparecem apagadas, com quanto falta.
                 foreach (var (mission, _) in board.Cooldowns)
                 {
+                    if (mission.givenByNpc) continue;   // as dos NPCs da vila não são do quadro
                     var card = Win.Section(list);
                     Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label", "hud-window__muted");
                     Win.Text(card, $"<i>já entregue: volta ao quadro em {RestingText(board.CooldownLeft(mission))}</i>", "hud-window__small", "hud-window__muted");
@@ -861,10 +862,12 @@ namespace Pirates.UI
                     bool done = board.IsComplete(active);
                     var card = Win.Section(col);
                     Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label");
-                    Win.Text(card, done ? $"<color={Good}>pronta para entregar</color>" : board.ProgressText(active), "hud-window__small");
+                    Win.Text(card, done ? $"<color={Good}>pronta para entregar{(mission.givenByNpc ? $" a {mission.giver}, na vila" : "")}</color>" : board.ProgressText(active), "hud-window__small");
                     var row = Win.Row(card);
                     var a = active;
-                    row.Add(Win.Button($"Entregar  <size=80%>(+{Win.Stacks(board.Rewards(mission))}, +{mission.fameReward} fama)</size>", () => board.TurnIn(a, warehouse), done, "hud-button--small"));
+                    // Missão de NPC da vila: entrega com ele (ele conta o fim da história e paga), não no quadro.
+                    if (mission.givenByNpc) row.Add(Hud.Text($"<i>entregue a {mission.giver}</i>", "hud-window__small", "hud-window__muted", "hud-grow"));
+                    else row.Add(Win.Button($"Entregar  <size=80%>(+{Win.Stacks(board.Rewards(mission))}, +{mission.fameReward} fama)</size>", () => board.TurnIn(a, warehouse), done, "hud-button--small"));
                     row.Add(Win.Button("Desistir", () => board.Abandon(a), extraClass: "hud-button--small"));
                 }
                 Win.Spacer(col);

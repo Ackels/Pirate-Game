@@ -31,6 +31,10 @@ namespace Pirates.LandCombat
         [SerializeField] float quickBlastSeconds = 1.3f, getUpInvulnerable = 0.5f;
         [Tooltip("Depois de levantar, segundos em que não cai de novo (chute atrás de chute travava o pirata no chão: revisão de 09/10).")]
         [SerializeField] float knockImmunity = 2f;
+        [Tooltip("Pesado (brutamontes): o chute não derruba (vira golpe comum); a explosão derruba.")]
+        [SerializeField] bool ignoreStumble;
+        [Tooltip("Inabalável (chefe): nada derruba, nem a explosão (o dano passa).")]
+        [SerializeField] bool ignoreKnockdown;
 
         [Header("Provisório (sem clipes do Mixamo)")]
         [Tooltip("Graus que o corpo tomba para trás ao levar golpe.")]
@@ -52,6 +56,12 @@ namespace Pirates.LandCombat
 
         /// <summary>Capitão do jogador: levanta rápido da explosão e fica invencível um instante ao levantar.</summary>
         public void SetQuickRecovery(bool value) => quickRecovery = value;
+
+        /// <summary>Pesado (brutamontes): chute não derruba.</summary>
+        public void SetHeavy(bool value) => ignoreStumble = value;
+
+        /// <summary>Inabalável (chefe): nada derruba.</summary>
+        public void SetUnstoppable(bool value) => ignoreKnockdown = value;
 
         public Health Health => health;
         public bool IsDead => health.IsDead;
@@ -102,7 +112,11 @@ namespace Pirates.LandCombat
             if (health.IsDead) return;
             // No chão: leva o dano, mas sem tranco nem queda nova (não fica preso caindo).
             if (character.IsDown) return;
-            if (info.knockdown != Knockdown.None && Time.time >= character.DownUntil + knockImmunity)
+            // Na guarda: só o arranhão (a reação é a da defesa, no CharacterAnimatorDriver).
+            if (info.blocked) return;
+            // Pesado (brutamontes): chute não derruba (vira um golpe comum); explosão derruba.
+            bool knocks = info.knockdown != Knockdown.None && !ignoreKnockdown && !(ignoreStumble && info.knockdown == Knockdown.Stumble);
+            if (knocks && Time.time >= character.DownUntil + knockImmunity)
             {
                 bool blast = info.knockdown == Knockdown.Blast;
                 float seconds = !blast ? stumbleSeconds : quickRecovery ? quickBlastSeconds : blastSeconds;
@@ -125,7 +139,8 @@ namespace Pirates.LandCombat
             }
             // Quem não é interrompido (o jogador) não perde a animação do próprio golpe: o golpe sai igual.
             bool keepsAttacking = staggerSeconds <= 0f && combat && combat.IsAttacking;
-            if (driver && driver.HasHitAnimation && !keepsAttacking) driver.PlayHit();
+            // Inabalável (chefe): nem a animação de levar golpe, só o tranco curto do corpo.
+            if (driver && driver.HasHitAnimation && !keepsAttacking && !ignoreKnockdown) driver.PlayHit();
             else flinch = 1f;
         }
 
@@ -149,6 +164,7 @@ namespace Pirates.LandCombat
             health.Revive();
             character.SetIncapacitated(false);
             if (driver) driver.PlayRevive();
+            if (TryGetComponent(out Stamina stamina)) stamina.Refill();
         }
 
         /// <summary>Rolamento: nada acerta no meio dele (golpe, tiro, explosão).</summary>

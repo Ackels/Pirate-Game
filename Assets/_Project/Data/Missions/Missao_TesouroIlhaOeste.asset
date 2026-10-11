@@ -30,3 +30,16 @@ MonoBehaviour:
   cooldownSeconds: 600
   requiredRank: 0
   fameReward: 15
+  givenByNpc: 1
+  offerLines:
+  - "Psst! Capit\xE3o! Quer ficar rico? Claro que quer. Todo mundo quer."
+  - "Ganhei este mapa no carteado, de um pirata que roubava nas cartas. Eu tamb\xE9m roubava, mas ele roubava pior."
+  - O X fica numa gruta de pedras, no lado sul do morro da Ilha Oeste, depois da pedra grande. Desembarque pelo lado leste e cave.
+  - "Eu iria, mas com um olho s\xF3 eu enxergo metade do mapa. Leve voc\xEA, e depois me traga a minha parte."
+  acceptLine: 'Isso! Quando voltar, a gente divide. Do jeito justo: eu conto.'
+  declineLine: "Pior para voc\xEA. Vou oferecer ao pr\xF3ximo caolho que aparecer."
+  waitingLine: "J\xE1 cavou? Lado sul do morro da Ilha Oeste, a gruta de pedras! N\xE3o v\xE1 cavar no lugar errado, hein."
+  doneLines:
+  - Achou o tesouro! Eu sabia que aquele mapa era bom... pelo menos este.
+  - "Tome a sua recompensa. Digo, a minha parte da sua parte... Enfim, foi um prazer, capit\xE3o."
+  restingLine: "Estou sem mapas agora. Mas o carteado de hoje \xE0 noite promete..."

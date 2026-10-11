@@ -30,3 +30,16 @@ MonoBehaviour:
   cooldownSeconds: 600
   requiredRank: 1
   fameReward: 15
+  givenByNpc: 1
+  offerLines:
+  - "Shh! Fale baixo, capit\xE3o. As paredes deste porto t\xEAm ouvidos, e os ouvidos t\xEAm facas."
+  - "Um contrabandista b\xEAbado deixou cair este mapa no cais. Eu peguei. Ningu\xE9m viu. Certo?"
+  - "O X fica na praia noroeste da Ilha Oeste, junto de um bote virado. O problema: os comparsas dele est\xE3o logo ali, no esconderijo."
+  - "Eu sou r\xE1pido, mas n\xE3o sou valente. Voc\xEA parece as duas coisas. Cave antes que eles percebam."
+  acceptLine: "\xD3timo, \xF3timo. E se perguntarem, voc\xEA nunca me viu."
+  declineLine: "Tudo bem, tudo bem. Esque\xE7a que eu existo. Todo mundo esquece."
+  waitingLine: "E o bote virado? Praia noroeste da Ilha Oeste. R\xE1pido, antes que o dono volte s\xF3brio."
+  doneLines:
+  - "Voc\xEA achou! E ainda est\xE1 vivo. Melhor ainda."
+  - "Aqui, a sua parte. E lembre: n\xE3o fui eu quem te deu aquele mapa."
+  restingLine: "Sem mapas agora. Mas os b\xEAbados do cais sempre perdem alguma coisa..."

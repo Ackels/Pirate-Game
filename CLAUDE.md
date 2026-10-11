@@ -227,8 +227,27 @@ Máquina do Jhonata: i5-1235U + **Intel Iris Xe (vídeo integrado)**: a GPU é o
 | A.1 Barris de pólvora (pacote A, passo 1; cenas 06 e 07): barril do Kenney com faixas vermelhas e tampa preta; tiro, bala de canhão ou outra explosão acendem (golpe de cutelo não), pavio 0,1–0,25 s, explosão de 5 m (80 de dano no centro → 12 na borda, empurra os personagens, quebra caixotes, acende os barris em volta: cadeia), efeito (clarão, bola de fogo, aduelas, fumaça escura) e som; 4 no acampamento da Caveira, 2 nos contrabandistas, 4 no forte (3 juntos no paiol); voltam com o acampamento repovoado | ✅ aprovado (09/10) |
 | A.2 Rolamento / esquiva (pacote A, passo 2; cenas 06 e 07): **Ctrl** (gamepad RB) rola ~4,5 m em 0,8 s para onde você anda (parado: para a frente), com o "Sprinting Forward Roll" do Mixamo no corpo todo, mesmo correndo; do início até 60% do rolamento nada acerta (golpe, tiro, explosão); cancela o golpe/tiro que ia sair; 0,4 s de espera entre rolamentos; som de roupa/baque e poeira; o comando vale para a IA também (duelista, depois); ajuda do H atualizada | ✅ aprovado (09/10, "achei legal") |
 | A.3 Chute e quedas (pacote A, passo 3; cenas 06 e 07): **V** (gamepad LB) = chute frontal ("Mma Kick1"): 8 de dano, empurra 0,6 m e **derruba** (o pirata cambaleia, cai sentado e levanta em ~1,5 s), 3 s entre chutes, e quem levantou fica 2 s sem cair de novo; **explosão derruba** quem está a até ~3 m do barril (arremessado de costas: piratas ~2,9 s no chão; o capitão ~1,3 s, invencível 0,5 s ao levantar, e depois de 0,8 s caído o Ctrl levanta rolando); no chão leva dano mas não cai de novo; quem morre caindo termina a queda e fica deitado (sem levantar para cair de novo); som do chute e da queda, brilho e poeira; ajuda do H | ✅ aprovado (09/10) |
-| Próximos (pedido do Jhonata em 09/10: "só descemos, limpamos o acampamento e saímos", quer mais coisas a fazer, sobretudo a pé) | **Agora: A + B.** A. Combate a pé melhor (barris de pólvora que explodem, rolamento/esquiva, chute, bomba de arremesso); B. Inimigos variados em terra (brutamontes de machado duplo, duelista de adaga, esqueletos amaldiçoados à noite, chefe pirata a pé). Depois: C. Exploração (mapas do tesouro em pedaços, ruínas/caverna com alavancas e armadilhas, prisioneiros que viram tripulação, coletáveis); D. Atividades (pesca, cortar árvores/minerar, 2 marujos lutando junto a pé); F. Kraken (`Characters_Tentacle` do Quaternius, em `_Downloads`) e tubarões (`Characters_Shark`); G. Marinha / nível de procurado; H. Ilha amaldiçoada. Abordagem (E) ficou de fora. Ainda na fila: (4) detalhes do clima (bandeiras e velas com o vento, ondas maiores na tempestade) |
+| A.4 Bomba de arremesso (pacote A, passo 4; cenas 06 e 07): item **Bomba de pólvora** na mochila; a pé, **G** (gamepad: direcional para a direita) lança no cursor, entre 4 e 14 m, por cima do ombro ("Throw Object" do Mixamo; a bomba aparece na mão no preparo e a arma some), voa em arco e explode ~1,6 s depois do lançamento: raio 3,5 m, 55 → 10 de dano, derruba até ~2 m, acende barris; na água o pavio apaga; derrubado no preparo não gasta; 2,5 s entre bombas; o capitão leva 3 do porão ao desembarcar; mercado 15 de ouro, Forja 3 por 1 ferro + 2 pólvora (60 s, Forja 1), barris 15% e baús 35%; linha "G lançar bomba (N na mochila)" no painel a pé e na ajuda do H; ajuste pedido (09/10, "colocar uma mira"): **segurar G** mostra a mira seguindo o mouse (arco do voo saindo da mão, círculo da explosão no chão e ponto no centro, laranja; cinza enquanto espera a próxima bomba; **vermelho se o capitão está dentro da explosão**: a mira para onde a bomba vai parar de verdade, numa parede ou pedra no caminho), o capitão vira para o alvo e anda mais devagar, o clique esquerdo não ataca; **soltar G** lança ali (toque rápido lança direto no cursor); botão direito cancela; som da explosão, do canhão e dos tiros mais forte (clipes `Efeitos/Forte`) e, depois de ouvir ("o problema é a música e o ambiente"), música 0,45 → 0,3 e ambiente 0,8 → 0,5 no `SoundSettings` | ✅ aprovado (09/10) |
+| A.5 Defesa e aparar com o cutelo (pacote A, passo 5; cenas 06 e 07): com o cutelo na mão, **segurar o botão direito** (o mesmo da mira da pistola) ergue a guarda ("Blocking" do Mixamo/espadão: lâmina em pé na frente do rosto); anda devagar, não corre, fica de frente para o cursor e não ataca (o clique sai ao soltar). Golpe de cutelo **de frente** (150°) vira arranhão (20%: 12 → 2,4) e empurra um pouco; de lado ou de costas passa inteiro; bala, chute e explosão passam pela guarda. **Aparar:** golpe que chega até 0,3 s depois de erguer = nada de dano, faísca e tinido, e o pirata cambaleia para trás ~0,8 m, fica 1,4 s sem atacar nem chutar e lento (contra-ataque); para não aparar tudo apertando sem parar, a guarda precisa ficar 0,5 s baixada para valer de novo; aviso "Aparou!" no painel, "em guarda" na linha da arma, ajuda do H | ✅ aprovado (09/10) |
+| A.6 Fôlego e tinido das lâminas (pacote A, passo 6; cenas 06 e 07; pedido do Jhonata pelo chat de otimização, números dele): **fôlego** do capitão (barra fina "Fôlego" embaixo da vida, verde; amarela abaixo do custo de rolar; pisca vermelha quando falta): 100, recupera 18/s depois de 0,6 s sem gastar; **rolar** custa 25 (sem fôlego não rola; levantar rolando também); **guarda** gasta 6/s erguida (não recupera enquanto segura) + 6 por golpe segurado; **aparar** devolve 15; zerado com a guarda erguida = **guarda quebrada** (cai, o golpe que quebrou passa com 50% e a reação normal, 1,2 s sem erguer; sem atordoar; aviso "Guarda quebrada!"); andar, correr, atacar e chutar não gastam; não é salvo (cheio ao desembarcar, carregar e acordar na praia); piratas da IA sem limite. **Som da guarda e do aparar** trocado por tinidos de lâmina sintetizados (estalo + parciais inarmônicos de metal com brilho trêmulo + raspão + baque; defesa curta e mais grave, aparar longo, agudo e mais alto) | ✅ aprovado (09/10, "assim ficou bom") |
+| B.1 Brutamontes (pacote B, passo 1; cenas 06 e 07): homem-tubarão **35% maior** e de pele mais escura com o **machado duplo** do Quaternius e as animações do pacote do machado do Mixamo (parado, correndo, 3 golpes: para baixo, horizontal e de revés, que se alternam, sorteados); **330 de vida** (pirata 60; era 200 → 280), anda 1,9 / corre 4,4 m/s (o capitão corre 6); golpe de **35** (era 30) a 2,5 m num arco de 150°, avisado: horizontal sai em 0,6 s, **para baixo em 0,7 s e revés em 1,0 s** (os lentos pegam quem rola cedo), espera **1,7 s** entre golpes (era 2,1) e emenda o 2º em 30%; **investida**: o golpe sai com o capitão até 4,5 m e ele avança atrás do capitão durante o preparo, e **vai atrás de quem rola** (ataca quando o rolamento acaba); o golpe **derruba** o capitão; **não é interrompido** por golpe e o **chute não derruba** (a explosão sim); na guarda o golpe vira 7 e tira **3× o fôlego** (18), sem derrubar; **aparar** funciona (ele cambaleia e fica 1,4 s aberto); ao ver o capitão dá um **grito de guerra** (Taunt Battlecry + o grito de morte bem grave), parado ~2,2 s; 1 no pátio do acampamento da Caveira (11 piratas agora) e 1 na guarnição do forte (7) | ✅ aprovado (10/10, "gostei da dificuldade agora") |
+| B.2 Duelista (pacote B, passo 2; cenas 06 e 07; pedido "pode fazer o próximo", o B.1 fica para ele analisar depois): a **Anne** do kit de roupa escura com mangas vermelhas e a **adaga** do Quaternius; **100 de vida** (era 70 → 80), anda 2,6 / corre 5,8 m/s; estocadas "Stabbing" (rápida, ~0,3 s) e "Stabbing1" (lenta, ~0,74 s, sorteadas; pressionada ou contra-atacando, só a rápida) do Mixamo (**14** de dano, era 9 → 12; até 3 seguidas; **investida** até 4,2 m avançando atrás do capitão no preparo; **vai atrás de quem rola**; saem ~0,3 s depois de começar, muitas vezes duas seguidas); **rodeia** o capitão a ~3 m, entra, estoca e sai andando de ré; golpe do capitão de frente: às vezes **apara** (40%), às vezes **rola** para longe (30%, no máximo a cada 2,5 s); **pressionada** (o capitão golpeou há pouco) ergue a **guarda** (o golpe vira arranhão) e, quando segura um golpe, **responde na hora** (dá para aparar a resposta); **chute e tiro passam pela guarda** (o chute a derruba); cambaleia pouco ao levar golpe; 1 no acampamento da Caveira (no lugar do pirata das cabanas) e 1 no esconderijo dos contrabandistas (no lugar de um deles) | ✅ aprovado (10/10, "gostei da dificuldade agora") |
+| B.3 Esqueletos amaldiçoados (pacote B, passo 3; cenas 06 e 07): **cemitério** novo na Caveira, ao lado da trilha oeste (a caminho das ruínas), com 12 covas espaçadas (~4 m; monte de terra e placa de madeira torta do Survival Kit), pá fincada, cerca quebrada e uma lanterna; **10 esqueletos** do kit (com e sem cabeça) de cutelo enferrujado (**14** de dano), osso esverdeado com brilho fraco, **60 de vida**, **3 atacando** ao mesmo tempo, 3 deles com **investida** (avançam no golpe e vão atrás de quem rola); **de dia ficam enterrados**; **à noite**, com o capitão a pé a até 16 m, **saem das covas** um a um (terra voando, brilho verde, gemido grave, "Zombie Stand Up" 1–3 do Mixamo, ~1,3–1,9 s, **sem levar golpe** enquanto saem da terra) e lutam como os piratas; **caídos pela 1ª vez levantam de novo** da terra em ~2,5 s com **70%** da vida, a não ser que o golpe final seja de **pólvora** (tiro, bacamarte, bomba, barril); **ao amanhecer viram pó** e na noite seguinte voltam todos; limpar o cemitério dá 8 de fama (uma vez por noite); F1: "Sair das covas" / "Voltar às covas" | ✅ aprovado (10/10, "Boa gostei aprovado!") |
+| M14 Missões dos inimigos novos (cena 07; pedido do Jhonata em 10/10: "montar missões para todos esses inimigos novos"): 4 contratos na taverna. **O carrasco da Caveira** (Velho Bento): derrotar o brutamontes do acampamento da Caveira, patente 1, 190 ouro + 6 ferro, fama 35. **A lâmina da enseada** (Dona Mercês): a duelista do esconderijo da Ilha Oeste, patente 1, 160 ouro + 3 bombas, fama 30. **O guardião do forte** (Almirante Teodoro): o brutamontes do forte da Ilha Norte, patente 2, 230 ouro + 8 pólvora, fama 40. **Noite no cemitério** (Padre Anselmo): limpar o cemitério amaldiçoado (à noite), patente 1, 240 ouro + 20 cartuchos, fama 35. Repetíveis (descanso de 15 min; o cemitério 10); o alvo morto **volta ao posto quando a missão é aceita**; marcador no posto de cada um | ✅ aprovado (10/10, junto com o M15 passo 2) |
+| M15 NPCs com missões, passo 1 (cena 07; pedido do Jhonata em 10/10: missões com NPCs espalhados pela base, com a fala na tela como no Palworld, em estilo pirata; decidido: as missões "com história" vão para NPCs e a entrega é com o próprio NPC): sistema de conversa (F perto do NPC: caixa de pergaminho embaixo da tela com a plaquinha de madeira do nome, F passa a fala; na última, **Aceitar [F]** / **Agora não [Esc]** com o pagamento e a fama, ou **Receber o pagamento [F]**; o NPC vira para o capitão e gesticula; a câmera olha para ele), **"!"** amarelo sobre quem tem missão e **"?"** dourado sobre quem espera a entrega, nome sobre quem está perto, aviso "[F] Conversar com ..."; o HUD de missões aponta para o NPC quando a missão dele está pronta; o quadro da taverna não mostra nem entrega as missões de NPC. Primeiro NPC: **Tobias, o coveiro** (a oeste da praça, com uma pá), que conta a história do cemitério (6 falas), dá "Noite no cemitério" e recebe com o fim da história (2 falas) | ✅ aprovado (10/10) |
+| M15 NPCs com missões, passo 2 (cena 07): mais 5 NPCs, cada um com a sua história (4–5 falas), as falas de aceitar, recusar, esperar, entregar (2 falas) e descansar, e conversa à toa: **Velho Bento**, contramestre aposentado, no começo do píer ("O carrasco da Caveira": perdeu três homens para o brutamontes, dá a dica da guarda); **Dona Mercês**, dona do armazém, ao lado dele ("A lâmina da enseada": a duelista dos contrabandistas, dica do chute); **Almirante Teodoro**, do almirantado, no estaleiro ("O guardião do forte"); **Zé Caolho**, jogador de cartas, na porta da taverna ("O mapa do Zé Caolho"); **Rato Velho**, rato de cais, num canto perto do Mestre de obras ("O mapa do contrabandista"). Cada um com roupa própria. O quadro da taverna ficou com os contratos comuns (afundar navios, entregas, acampamento, contrabandistas, forte, Santa Clara, Tormenta, os de patente) | ✅ aprovado (10/10) |
+| B.4 Chefe pirata a pé, passo 1 (pacote B; cenas 06 e 07; pedido do Jhonata em 10/10: "tem que realmente parecer um chefe", "bem, bem difícil", mais variedade de modelos; decidido: covil nas ruínas da Caveira, modelo = capitão rival): o **Capitão Barba-Negra**, o modelo de capitão do kit **40% maior** (casaco preto, chapéu e calça vermelho-sangue, barba negra, **olhos vermelhos que brilham**, punhos e gancho dourados, sem papagaio) com o espadão-cutelo do kit e o pacote do espadão do Mixamo; **900 de vida**, nada derruba nem interrompe; cortes de 28–38 (combos), golpe de cima que derruba; **imparáveis** com aviso vermelho (giro 360° quando o capitão está atrás ou bate sem parar, chute contra a guarda, salto de 5,5–11 m que derruba); aparar abre a guarda dele; **fase 2** com metade da vida (fúria invencível de 2,6 s, onda de choque que derruba, lâmina em brasa, aura, dano +20%, mais rápido, sequência de 3 cortes); foge = volta ao posto curado; 60 de fama; barra de chefe no topo; F1: enfurecer. Os guardas antigos das ruínas saíram (guarda-costas com modelos novos, arena e missão = passo 2). Corrigido de quebra: a validação da URP apagava o brilho de todos os materiais emissivos (lanternas, janelas, fogo, pavio, esqueletos) | ⏳ **aguardando revisão** |
+| F.1 Lula gigante, passo 1 (chefe do mar; cena 07; pedido do Jhonata em 10/10: "vilão aquático", lula gigante "travando o nosso barco, nos atacando", longe das ilhas; megalodonte depois): covil nas **Águas Negras** (mar aberto a oeste-sudoeste, ~550 m do porto, cascos afundados e pedras em volta); emboscada (água fervendo ~2,4 s) e **dois tentáculos agarram o navio** (travado: só gira) e apertam o casco; outros **batem no convés** com aviso (recua tremendo); a **cabeça** (modelada por código: manto com barbatanas e olhos âmbar) emerge de um lado a ~26 m e troca de lado; tentáculos do kit Quaternius (120 de vida, 40% do dano vai para a lula, voltam em 16 s); **tiro à queima-roupa** nos tentáculos (pedido do Jhonata, 11/10: com a mira de 20 m não dava para acertar os colados no casco): Q/E acerta os do bordo que dispara, um tiro por canhão a até 2,5 m de cada; a cabeça segue com a mira de distância; sem agarradores o navio se solta e ela agarra de novo em 14 s se você não fugir; **fase 2** com metade de 1400 (urro, 3º tentáculo, pancadas mais rápidas e fortes); morta = destroços com baú garantido e 100 de fama, volta em 8 min; barra de chefe; F1: atacar aqui, ir ao covil, enfurecer, matar. Missão dela e o megalodonte = próximos passos | ⏳ **aguardando revisão** |
+| M16 Tela de título, prólogo, opções e músicas novas (cena 07; pedido do Jhonata em 11/10): menu inicial em tela cheia com **"A Coroa de Prata"** sobre o último quadro do prólogo (zoom lento) e a coluna **Continuar** (cinza sem jogo salvo; resumo com o capitão e a fama), **Novo jogo**, **Prólogo** (rever), **Opções**, **Créditos**, **Sair**; **Novo jogo → nome → prólogo** (os 9 quadros com zoom e passeio, narração com o nome do capitão, título no último; clique/Espaço passa, Esc pula) → o jogo começa; **Opções** em 3 abas: Gráficos (modo de tela e resolução, só no jogo compilado; VSync; limite de FPS; qualidade Baixa/Média/Alta), Áudio (geral, música, efeitos, ambiente, interface, de 10 em 10%), Controles (sensibilidade e inversão da câmera + lista de teclas), botão Padrão, salvas em `opcoes.json` ao lado do save; **Créditos** de todos os pacotes (texto em `UI/Creditos.txt`); **músicas novas** (Pirate Music Pack, 8 faixas, e Adventure Inn do FC Pirate Music Pack Lite, da Asset Store): Adventure Inn no menu e no prólogo; cada momento do jogo virou uma lista que emenda uma música na outra (porto 3, mar 4, ilha 2, combate 3), com o volume de cada faixa igualado | ⏳ **aguardando revisão** |
+| M17 Tutorial, passo 1 (cena 07; pedido do Jhonata em 11/10: "começar atracado na nossa base" e "um tutorial bem completo"): **jogo novo começa com o navio atracado na vaga do porto** (antes nascia no meio da água); na tela do nome, botão **"Tutorial: sim/não"**; tutorial guiado pelo **Velho Bento** em 15 etapas que avançam sozinhas quando o jogador faz a coisa: descer do navio (F), conversar com o Bento (3 falas de roteiro, com "!" na cabeça), Taverna, Mestre de obras, falar com um morador, Mercado, Armazém, Estaleiro (entrar em cada casa), **campo de treino novo** a leste da vila (3 bonecos, ao lado do estaleiro): 3 golpes de cutelo, tiro de pistola, chute, rolar, guarda; voltar ao navio e zarpar. Cartão à esquerda (etapa N de 15, título, fala do Bento, o que fazer com as teclas) e marcador amarelo com seta no lugar de cada etapa; vinheta a cada etapa e faixa no fim; o save guarda a etapa (save antigo = sem tutorial); F1: próxima etapa, recomeçar, encerrar. **Novo jogo guarda o jogo antigo em `save_anterior.json`** (antes ia para o `.bak`, que o 2º salvamento do jogo novo apagava). Passo 2 (o mar: canhões, afundar, saquear, atracar) e passo 3 (desembarcar numa ilha, acampamento, baú) = próximos | ⏳ **aguardando revisão** |
+| Próximos (pedido do Jhonata em 09/10: "só descemos, limpamos o acampamento e saímos", quer mais coisas a fazer, sobretudo a pé) | **Agora: A + B.** A. Combate a pé melhor (barris de pólvora que explodem, rolamento/esquiva, chute, bomba de arremesso); B. Inimigos variados em terra (brutamontes de machado duplo, duelista de adaga, esqueletos amaldiçoados à noite, chefe pirata a pé). Depois: C. Exploração (mapas do tesouro em pedaços, ruínas/caverna com alavancas e armadilhas, prisioneiros que viram tripulação, coletáveis); D. Atividades (pesca, cortar árvores/minerar, 2 marujos lutando junto a pé); F. Kraken (`Characters_Tentacle` do Quaternius, em `_Downloads`) e tubarões (`Characters_Shark`); G. Marinha / nível de procurado; H. Ilha amaldiçoada. Abordagem (E) ficou de fora. **Pedido de 10/10: espaçar o mapa** (ilhas e inimigos muito perto uns dos outros; vai ter ilhas novas; a lula já ficou longe). Ainda na fila: (4) detalhes do clima (bandeiras e velas com o vento, ondas maiores na tempestade). O menu de opções com volumes (pedido em 09/10) entrou no M16 |
 | Depois | Progressão (tripulação: salário/moral, papéis como carpinteiro e artilheiro); Conteúdo (missões repetíveis, ilha nova) |
+
+**História do jogo: "A Coroa de Prata"** (nome do jogo para a Steam, aprovado em 11/10): [HISTORIA.md](HISTORIA.md): Mar de Prata,
+Porto Alento, Lázaro Negro (sócio que traiu o capitão) e a Coroa de Prata; prólogo em 9 quadros (imagens aprovadas em 11/10, estilo e todos os 9;
+a tela da abertura com texto, música e título entrou no M16); trilha de capítulos ligada às
+patentes; tom de aventura com humor leve e momentos sombrios. **A história muda junto com o conteúdo novo:** ao criar algo grande,
+veja se ela precisa de ajuste.
 
 **Para o Jhonata testar (lembrete pedido em 03/10):** cavar o baú de uma missão de tesouro de verdade (aceitar na taverna, ir até o X,
 F para cavar, baú sobe, saquear, missão cumprida e paga no armazém). Pela CLI só o efeito de cavar foi visto (`BuriedTreasure.Dig()`).
@@ -617,6 +636,19 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   só ronco de vento): loop = trecho + 4 s misturado no começo (potência constante); volume por RMS (chuva −21, tempestade −18 dBFS; trovões pelo
   segundo mais forte = −15) com limitador suave acima de 0,7 (< 0,01% das amostras nos loops). `Recorded(cue, clipes)` no gerador troca os clipes
   de um som que ainda apontava para os gerados (`_Project/Audio`, apagados); clipe escolhido à mão fica. HUD: `ClockHUD` põe o `Label` depois da parte do dia. F1: `DrawWeather`.
+  **Estampidos mais fortes (09/10, pedido do Jhonata: "mais impacto" na explosão, canhão e tiros):** os OGG originais já batiam 0 dBFS de pico
+  mas tinham pouca energia (RMS da janela de 100 ms mais forte −12 a −23 dB) e o volume do `SoundCue` já estava em 0,85–1 (o Unity não passa
+  de 1). Versões novas em `ThirdParty/Audio/Efeitos/Forte` (`Explosao_1..4`, `Canhao_1..6`, `Tiro_1..6`, mono 48 kHz, ADPCM pela regra de
+  `Efeitos`), feitas pelo `snd_forte.py` do scratchpad (OGG decodificado pelo `UnityWebRequestMultimedia` num eval → WAV → Python sem
+  bibliotecas): "bum" grave (seno descendo ~160→65 Hz + estrondo de ruído grave, decaimento 0,07–0,28 s), eco curto abafado (2–4 repetições
+  até 0,4 s) e compressão suave (tanh, no máximo +12 dB) até um alvo medido **acima de 300 Hz** (o que a caixinha do notebook toca:
+  explosão −8,5, canhão −10, tiro −11,5 dB). Ganho audível +4 a +10 dB (~1,5–2× mais alto ao ouvido), saturação ≤ 2,3% das amostras.
+  `Strong(cue, clipes, tom, alcance)` no gerador troca uma vez (volume 0,9–1; explosão com tom 0,8–0,92, era 0,7–0,85: grave demais some no
+  notebook; alcance canhão 380, explosão 280, tiro 160). Eu não ouço: o equilíbrio é pelos números; se ficar alto ou rachado, baixe o alvo
+  no script e rode de novo (mesmos nomes de arquivo, mesmo GUID).
+  Revisão (chat de otimização, 09/10): 16 clipes = 2,5 MB descomprimidos (irrelevante). Pior pico (galeão, 2 bordadas de 8 + 8 barris em
+  cadeia): 36 fontes tocando (média 14–15) contra 32 vozes reais: ~4 viram virtuais por alguns quadros, e as cortadas são as de menor
+  prioridade (ambiente), não os tiros. Nada a mudar; colchão possível: `numRealVoices` 40.
   **Custo e equilíbrio (chat de otimização, 09/10):** mesmo quadro em RenderTexture 1366×768 no mar com 1333 gotas: gotas visíveis × escondidas
   igual (8,43 × 8,43 ms); tempestade inteira × céu limpo alternando 5 vezes: igual (a 1ª rodada "+3 ms" era o notebook variando); CPU igual
   (7,8–7,9 ms); lixo 0. Na tempestade de dia acendem as ~34 luzes da noite (de propósito: ~1 ms na vila, longe no mar). O balanço de 17° não
@@ -755,6 +787,425 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   imunidade derruba de novo; capitão na explosão 1,28 s no chão, invencível logo depois; Ctrl aos 0,6 s não faz nada, aos 0,9 s rola 4,7 m.
   **Save (09/10 16:27):** o Jhonata jogou (testou o rolamento) e o save andou: `save.json` 6197a6e4 + `.bak` 0d0024bb (Barbarossa, fama 267,
   escuna, dia 2). É o progresso dele, não restaurar o antigo; cópia nova em `savebak26` (scratchpad, `rest26.cs`).
+  **Bomba de arremesso (pacote A, passo 4, 09/10):** explosão separada em `Combat/Explosion` (`Spec` + `Detonate(centro, spec, fonte,
+  self)`, a mesma conta do barril: dano linear, derruba até `knockdownWithin`, empurrão, parede protege, buffers estáticos); o `PowderKeg`
+  agora só guarda o `Spec` (raio 5, 80 → 12). `Combat/ThrownBomb` (cópias de "Bombas/Bomba_Molde", desligado, criado no gerador
+  `PrototypeSceneBuilder.Bombs.cs`: `cannon-ball` do Kenney medido para 28 cm + pavio + ponta emissiva `M_Pavio_Aceso` que pisca):
+  `Hold(mão)` no preparo (**compensa a escala 100 dos ossos do Quaternius**: sem isso a bomba na mão não aparecia), `Launch(alvo, voo)`
+  = arco pela gravidade, `SphereCastNonAlloc` (raio 0,14, ignora quem lançou) para onde bater, explode no fim do `fuseSeconds` (1,6 s do
+  lançamento; `Spec` raio 3,5, 55 → 10, empurrão 7, derruba até 60%); na água = respingo e some. `Controls/BombThrower` no capitão (como o
+  `FoodEater`): `GameInput.ThrowBomb` (G / direcional direita), não lança com janela aberta (`PlayerFootInput.IsWindowOpen`), mira
+  `PlayerFootInput.TryGetCursorPoint` → `TryThrowAt(ponto)` (limita 4–14 m; testes e, depois, inimigos), `releaseDelay` 0,64 s, a bomba sai
+  da mochila só ao soltar, `cooldown` 2,5 s, esconde a arma da mão, `carryAshore` 3, eventos `Thrown`/`Refused`/`Packed` (FootHUD: linha da
+  bomba e avisos). Animação: estado "Arremessar" ("Throw Object" de 1,3 s a 3,4 s, ×1,8, tag "CorpoInteiroAndando") entra pelo
+  `CharacterAnimatorDriver.PlayThrow` com **CrossFadeInFixedTime direto**: pelo trigger + "Any State", no meio de outra transição ele
+  esperava ~0,2 s e o braço atrasava da bomba. Item `Item_Bomba` (0,5 de espaço, `keepAboard` 10), mercado 15 (porão), Forja 3 por 1 ferro
+  + 2 pólvora (60 s, Forja 1), saque barril 15% (1) e baú 35% (1–2). Testado na 06: bomba na mão no preparo e voando com o pavio aceso
+  (fotos de perto), caiu a 0,3 m do alvo e explodiu 2,28 s depois do aperto; dois piratas lado a lado 60 → 10 e 60 → 8, os dois
+  derrubados; capitão a 8 m sem dano. **Nos testes o cursor do mouse dá um ponto qualquer:** use `TryThrowAt`.
+  **Mira (segurar G, 09/10):** `BombThrower.Update`: apertou = `BeginAim` (sem bomba: aviso), segurando = `UpdateAim(cursor)`, soltou =
+  `TryThrowAt`; botão direito, janela, derrubado ou morto = `StopAim`. `Landing()` é o mesmo cálculo da mira e do lançamento (direção,
+  4–14 m, raio de cima para o chão). O arco é o voo da bomba simulado (`releasePoint` (0,3; 0,95; 0,9) = mão direita aos 2,45 s do clipe,
+  mesmo tempo de voo, `SphereCast` com o raio da bomba a cada um dos 28 trechos): parou antes, o círculo vai para lá. Três `LineRenderer`
+  do gerador (`ArcoDaBomba` 0,08, `AreaDaBomba` 0,11, `CentroDaBomba` 0,14; `M_AimLine`); anéis acompanham o chão (raios de cima,
+  personagens não contam). `PlayerFootInput` zera ataque e mira da pistola com `IsAiming`. Testes: `AimAt(alvo)` prende a mira (ignora o
+  teclado), `ReleaseAim()` lança, `AimLanding` = onde a mira diz. Testado na 06: mira a 9 m do pirata (laranja, capitão virado 0°), bomba
+  parou a 0,17 m do previsto; mirando além do poste de uma cabana a 1,6 m, a mira parou nele a 2 m e ficou vermelha.
+  Custo (chat de otimização, 09/10): `UpdateAim` ~0,05–0,06 ms (só com G segurado), quadro inteiro igual com e sem a mira, 0 B de lixo.
+  **Revisão (chat de otimização, 09/10, pelo código e contas):** dano pela distância do centro 0 m 55 · 1 m 41 · 2 m 28 · 3 m 14; derruba
+  até 2,1 m. Duas bombas no mesmo lugar (a 2ª cai com o grupo ainda no chão; a imunidade de queda não protege do dano) matam quem está a
+  até ~1,9 m (4–5 piratas apertados); a ~3 m sobra ~28. Seguram: 3 por desembarque, mínimo de 4 m, acampamento manda 2–3 atacantes por
+  vez. Se ficar forte demais, a alavanca é **2 por desembarque** (não o dano). Preço: Forja = 44 de ouro em material / 3 = 14,7 por bomba
+  ≈ 15 do mercado; sem preço de venda, fabricar para revender não paga. Custo: sem alocação além da corrotina por arremesso. **Fogo
+  amigo:** a bomba atinge o capitão; no aberto não acontece (mínimo 4 m > raio 3,5), mas batendo numa parede/pedra a 1–2 m ele leva
+  ~30–40 e cai (aceito como o preço de lançar contra a parede).
+  **Defesa e aparar (pacote A, passo 5, 09/10):** `CharacterCombat.IsBlocking` = `command.aim` com arma `Melee` na mão (fora de golpe,
+  chute e troca; caído/rolando o comando vem vazio): `TryAttack` recusa (o clique fica no buffer e sai ao soltar), `FootCharacter` anda a
+  `blockMoveSpeed` 0,5, sem correr, `FaceAim` no cursor. Quem golpeia (`Swing`) chama `defensor.Defend(posição, ponto)` antes do dano:
+  `blockAngle` 150° → `Blocked` (dano × `blockedDamage` 0,2 com `DamageInfo.blocked`, sem `Hit` nem reação no `FootHealthReactions`;
+  `blockPush` 2,5 para trás) ou, até `parryWindow` 0,3 s depois de erguer e com a guarda baixada ≥ `parryRearm` 0,5 s antes, `Parried`
+  (sem dano, o resto do golpe se perde; `GotParried`: `Interrupt(parryStun 1,4)`, chute travado, 25% de velocidade, `parryPush` 4).
+  Eventos `Blocked(ponto, aparado)` (ponto à frente do defensor na altura da guarda) e `Parried`. Animator: bool "Block" e triggers
+  "BlockHit"/"Parried"; "Defesa" = "Blocking" do espadão ×1,4 (0,5 s erguendo, segura o fim; tag CorpoInteiro), "DefesaImpacto" =
+  "Blocking 2" ×1,3 volta à guarda já no fim, "Aparado" = "Standing React Large Gut" do machado ×1,15 (CorpoInteiroAndando). A guarda do
+  machado ("Standing Block Idle") ficou de fora: o cutelo ficava deitado na cintura. Som `Som_Defesa` (impactMetal_medium) e `Som_Aparar`
+  (impactMetal_heavy, tom 1,25–1,4); faíscas (`GameVfx.OnBlocked`, aparar com clarão). A IA de terra não usa a guarda (o comando de mira
+  dela só vem com arma de fogo): fica para o duelista. Testado na 06 (pirata de cutelo, 12 de dano, golpe aos 0,43 s): guarda erguida há
+  0,8 s → 100 → 97,6, capitão empurrado 0,29 m, "Defesa > DefesaImpacto > Defesa"; guarda erguida 0,15 s antes do golpe → 100 → 100,
+  pirata "Golpe1 > Aparado", empurrado 0,76 m, não ataca logo depois; de costas → 100 → 88; reerguida 0,1 s depois de baixar → bloqueio
+  (97,6), não aparo. **Testar:** `FootCharacter.SetCommandOverride` no capitão (`aim = true` com o cutelo) e no pirata (`attack = true` um
+  quadro); os dois a 1,6 m (os empurrões afastam: recoloque a cada teste; a 2,6 m o cutelo não alcança).
+  **Revisão (chat de otimização, 09/10):** equilibrado. Capitão no meio da Caveira (10 acordados, 24 s, 2 rodadas): sem guarda ~24,8 de
+  dano/s; guarda segurada ~12,4/s (28 de 42 acertos bloqueados; tiros e golpes de lado passam; morre em ~8 s parado, bem pior que rolar
+  ~0,5/s); guarda em pulsos cegos (0,6 s a cada 1,2 s) ~18,1/s com ~25% dos bloqueios aparados (bate com 0,3/1,2). Aparar = quase a morte
+  do pirata (2 golpes de 25 + chute 8 = 58 de 60 em 1,4 s), mas custa acertar a janela. Alavancas se o Jhonata achar: janela 0,35 s (difícil
+  demais) ou estupor 1,1 s (forte demais). Custo: microssegundos (1 `GetComponentInParent` por alvo, só em golpe), sem lixo.
+  **Fôlego e tinidos (pacote A, passo 6, 09/10):** `OnFoot/Stamina` só no capitão (`AddComponent` no gerador, ao lado do
+  `SetQuickRecovery`): `TrySpend` (avisa `Denied` e grava `LastDenied` para a barra piscar), `Spend` (segura a recuperação por
+  `regenDelay`), `Refund`, `Refill` (no `OnEnable` = desembarcar/carregar, e no `FootHealthReactions.Revive`). `FootCharacter`: rolar =
+  `CanDodge && TrySpend(dodgeCost)`; levantar rolando pede `stamina.CanDodge`. `CharacterCombat`: guarda só com fôlego > 0 e fora de
+  `GuardLockedUntil`; erguida gasta `guardPerSecond × dt` no `Tick`; `Defend` gasta `blockHitCost` por golpe e devolve `parryRefund` ao
+  aparar; zerou = `BreakGuard` (evento `GuardBroken`; no golpe, `GuardResult.Broken` → dano × `guardBreakDamage` sem `blocked`, com
+  `Hit` e reação). Quem não tem `Stamina` (IA) não tem limite. HUD: linha "Fôlego" (`hud-bar--thin`) no `FootHUD`; aviso no
+  `GuardBroken`. Som: `Tools/Audio/espadas.py` (Python sem bibliotecas, no repositório) gera `_Project/Audio/Espadas/Defesa_1..5`
+  (fundamental 820–1160 Hz, decaimento 0,2 s, 0,6 s, RMS −12 dB) e `Aparar_1..4` (1250–1660 Hz, 0,5 s, raspão de 140 ms, 1,3 s,
+  RMS −9,5 dB); `Blades(cue, prefixo, n, volume, tom)` no gerador troca uma vez os clipes de `Som_Defesa`/`Som_Aparar` (eram metal do
+  Kenney); guarda quebrada toca o da defesa a 0,72 de tom. Eu não ouço: se não convencer, o plano B é o Jhonata baixar 3–5 clipes CC0
+  do Freesound ("sword clash", "sword parry", "steel on steel") e emendar como a chuva. Testado na 06: rolando sem parar, 7
+  rolamentos em ~8 s até zerar, depois 1 a cada ~2 s, com os quadros negados piscando a barra; guarda segurada 3 s sem golpes 100 → 82;
+  guarda com 3 de fôlego e golpe de 12 → quebra, 100 → 94, "Golpeado", travada 1,2 s; aparar com 50 → 63 (+15 menos a guarda); barra
+  "Fôlego" visível no painel.
+  **Revisão (chat de otimização, 09/10):** Caveira (10 acordados, 24 s, 2 rodadas): parado ~24 de dano/s; rolando sem parar 0,8–2,6/s
+  com 13–15 rolamentos (antes 20; ~1 a cada 1,8 s; continua fugindo bem, mas rolando não se ataca); guarda segurada 14,8–18/s (antes
+  12,4: quebra em ~8–12 s no meio do acampamento, o intencional); pulsos ~19,5/s com 8–9 aparos. HUD de graça (FootHUD ~14 B/quadro,
+  Stamina e a barra fora dos custos). Alavancas se ficar punitivo: recuperação 18 → 22/s ou rolamento 25 → 20.
+  **Brutamontes (pacote B, passo 1, 09/10):** `PrototypeSceneBuilder.Brute.cs`: posto com nome "Brutamontes_..." (`IsBrute`) →
+  `PostWeapon` dá `BruteAxe()` (`Data/Weapons/Weapon_Machado_Brutamontes`, `animatorWeaponType` 3, preservado se existe) e o
+  `CreatePirate` monta `AxeOn` (mesmo eixo do cutelo; `Weapon_DoubleAxe` × 0,62, pegada a −0,05 no cabo: com 0,85 as cabeças entravam no
+  chão parado) e, no fim, `MakeBrute`: escala 1,35 **na raiz** (colisor e machado juntos), `Health` 200, `ConfigureSpeeds(1,9; 3,9)`,
+  `FootHealthReactions.Configure(model, 0)` (golpe não interrompe) + `SetHeavy(true)` (chute = `Stumble` não derruba), IA
+  `ConfigureMelee(2,4; 4,4; (1,2–2,2); 0,2)` + `ConfigureTaunt(2,2)`, pele `M_Quaternius_Brutamontes` (atlas do kit × (0,78; 0,6; 0,55)) só
+  nos `SkinnedMeshRenderer`. Campos novos: `WeaponDefinition.knockdown` (o `Swing` manda no `DamageInfo`, menos na guarda) e `guardCost`
+  (× `blockHitCost` do fôlego); `EnemyFootAI.ConfigureMelee`, `ConfigureTaunt` (no `BeginAlert`, uma vez por perseguição: soma ao
+  `stateUntil`, `CharacterAnimatorDriver.PlayTaunt`, evento `Taunted` → `CharacterAudio` toca o `Som_Morte` a 0,72 do tom da voz).
+  Animator (`AddAxe`, WeaponType 3): "MachadoPronto" (Standing Idle, CorpoInteiro), "MachadoCorrendo" (Speed > 3), "Machado_Golpe0..2"
+  (Downward/Horizontal/Backhand com impacto medido em 0,70/0,97/1,03 s: cada um começa `AxeLead` 0,6 s antes, então o `hitDelay` 0,6 vale
+  para os três), "Provocar" (Taunt Battlecry ×1,2, trigger "Taunt"). Locomoção das pernas = a dos outros piratas (Starter). Testado na 06:
+  golpe sem guarda 100 → 70 e o capitão "Tropeco > LevantarRapido"; na guarda 100 → 94, fôlego 95 → 72, de pé; aparar 0 de dano, ele
+  "Machado_Golpe0 > Aparado", empurrado 0,76 m; chute 200 → 192 sem cair; capitão golpeia (25) no meio do golpe dele e leva os 30 e cai
+  do mesmo jeito. Fotos: bem maior que o capitão, machado na mão e no golpe horizontal. **Testar:** a mesma receita do bloqueio
+  (`SetCommandOverride` com `attack` um quadro); o machado espera 2,1 s entre golpes (o clique no meio se perde).
+  **Revisão (chat de otimização, 09/10):** Caveira com 11, capitão a 3 m: parado 27,8 de dano/s (era 24,8), rolando 1,1, guarda segurada
+  18,2, pulsos 19,5 com 10 aparos: o brutamontes soma ~+12%, a Caveira continua do mesmo nível. **Sozinho está fácil:** o capitão anda até
+  ele e só bate, sem guarda nem rolamento, e mata em ~9,7 s (com a aproximação e o grito) terminando com 40 de vida (2 machadadas): 200 /
+  (25 a cada 0,6 s) ≈ 5 s de luta contra 1 golpe dele a cada ~3,3 s. Sugestão (decisão do Jhonata): **280 de vida** (~7–8 s de luta,
+  ~3 golpes dele; aparar fica mais valioso) ou espera 1,7 s + combo 0,3. Custo: ~14,2 mil triângulos (1,4× um pirata), +~0,9 ms no
+  editor só com ele na tela; não muda o FPS do build. Forte com 7: só por contas (attackersAtOnce 2 segura o ritmo).
+  **Duelista (pacote B, passo 2, 09/10):** `PrototypeSceneBuilder.Duelist.cs`: posto "Duelista_..." (`IsDuelist`) → `DuelistDagger()`
+  (`Data/Weapons/Weapon_Adaga_Duelista`, preservada) + `DaggerOn` (`Weapon_Dagger` × 0,48, pegada no meio do cabo; sempre na mão) +
+  `MakeDuelist` (vida 70, `ConfigureSpeeds(2,6; 5,6)`, `ConfigureMelee(1,85; 3,4; (0,4–0,9); 0,6)`, `ConfigureDuelist(...)`, cambaleio 0,35 s,
+  roupa `CivilianMaterial(Anne, 4)` só nos `SkinnedMeshRenderer`). A Anne virou humanoide (`Characters_Anne_Humano`, mesmo adaptador). A adaga
+  usa a pose de pronto, a corrida e a guarda do cutelo (WeaponType 0); os golpes são próprios pelo campo novo
+  `WeaponDefinition.animatorVariantOffset` (o driver soma ao AttackVariant: adaga = 2 e 3 → "Adaga_Golpe0/1", `AddDagger`). Impacto medido
+  pela mão direita mais à frente: Stabbing 0,42 s, Stabbing1 0,88 s; começam `DaggerLead` 0,35 s antes e tocam a 1,15 (hitDelay ≈ 0,3).
+  "Stabbing2" ficou de fora (a estocada forte é da mão esquerda). IA (`EnemyFootAI`, cabeçalho "Duelista", `Duel`): ouve `Attacked`/`Kicked`/
+  `Parried` do capitão (`ReadyToReact`: em Chase, perto, o capitão virado para ela até 70°); aparar = guarda marcada para `hitDelay − 0,18 s`
+  (dentro da janela); rolar = `PlanDodge` (para trás ± 35–65°, `NavMesh.Raycast` escolhe o lado com chão, reação 0,06–0,14 s); guarda
+  "pressionada" (`pressGuardChance` a cada 0,5 s com o capitão tendo golpeado há < 1,2 s) e guarda ao começar a esperar (`guardWhileWaiting`);
+  guarda erguida que segura um golpe (`combat.Blocked`, `OnOwnBlocked`) baixa e contra-ataca (`counterUntil`, ataca sem pedir a vez); capitão
+  aparado ou caído também. A guarda da IA é o mesmo `command.aim` com arma de lâmina (sem `Stamina`: sem limite).
+  Testado na 06 (só ela acordada, capitão "trocando golpes", passos de 0,06 s): **só clicando** o capitão a mata em ~14,6 s e termina com 55
+  (3 aparos, 7 defesas, 1 rolamento dela); **chutando quando ela ergue a guarda** mata em ~5,3 s e termina com 91. Antes do contra-ataque
+  na guarda ela só defendia (11 s, capitão 100); antes da guarda pressionada morria em 8,5 s. No acampamento inteiro (11 acordados) estoca
+  normalmente pela vez. Fotos: roupa, estocadas, guarda e rolamento ok.
+  **Testar:** `du_common.txt` no scratchpad (`Place`, `Swing`, `Trace`); desligue os outros piratas (`SetActive(false)`) e devolva com
+  `camp.ResetAll()`; `EnemyFootAI.DuelGuarding` mostra a guarda; poucos `Step()` por chamada (6 × 150 passou dos 5 s).
+  **Revisão (chat de otimização, 09/10):** custo ok (2 renderers, ~10,9 mil triângulos, +0,5 ms no editor com ela na tela, só 2 na ilha). Caveira
+  com ela (24 s): parado 24,3/s, rolando 1,3/s, guarda 16,0/s, pulsos 21,7/s, igual a antes. Sozinha (3 repetições): bot que só ataca a mata
+  em 7,9–11 s e termina com 73–82 (2–3 estocadas); chutando, 3,4–6,7 s e 73–91. O chute abre a guarda metade das vezes: no ponto, não mexer.
+  **Problema: não é perigosa** (o pirata de cutelo tem 60 e dá 12; ela 70 e dá 9 e ainda recua): custa ao capitão 18–27 de vida, quase o
+  mesmo que um pirata comum. Sugestão (decisão do Jhonata): estocada **12** e/ou vida **80** (ele faria os dois); ou manter como "irritante".
+  **Ajuste aplicado (09/10, Jhonata: "pode deixar ela mais perigosa"):** 12 de dano e 80 de vida (`DuelistHealth`, asset da adaga). Medido
+  (3 rodadas): só clicando ela morre em 6,1–11,2 s e o capitão termina com 52–76; chutando a guarda, 5,0–10,9 s e 64–100.
+  **Brutamontes, ajuste aplicado junto (Jhonata: as duas sugestões + "como ele é maior tem que bater mais forte"):** vida 280, golpe 35,
+  espera 1,7 s, combo 0,3 (gerador `BruteHealth`/`MakeBrute` e o asset do machado). Medido (capitão só trocando golpe, 5 rodadas válidas):
+  2 vitórias do capitão em 10,4–12,1 s terminando com 30 (2 machadadas), 3 mortes do capitão (ele ficou com 5, 5 e 80): 3 machadadas
+  (105) matam, então só trocar golpe vira cara ou coroa; precisa rolar, aparar ou guardar. Se ficar duro demais: golpe 32 (3 golpes
+  não matam de vida cheia) ou vida 250.
+  **Mais fortes (09/10, o Jhonata jogou: "ficou bem fácil desviando e rolando, principalmente a Duelista"):** o rolamento é invencível
+  de 0,04 a 0,48 s e anda 4,5 m: a estocada de 0,3 s e o machado de 0,6 s sempre perdiam para quem rola ~0,2 s depois de o golpe começar.
+  Mudanças: `WeaponDefinition.variantHitDelays` (impacto por golpe; `HitDelayFor`) + `randomVariants` (golpe sorteado, diferente do
+  anterior) + `CharacterCombat.QueueVariant` (a IA escolhe o próximo); golpes lentos começam do início do clipe (lead por golpe nas
+  tabelas `DaggerAttacks`/`AxeAttacks`): adaga 0,30/0,74 s, machado 0,7/0,6/1,0 s. Investida (`EnemyFootAI.ConfigureLunge(alcance,
+  velocidade, combo)`): ataca com o capitão até `lungeRange` e, no preparo de todo golpe, `Pursue` → `FootCharacter.Lunge` (velocidade
+  somada só naquele quadro) até o alcance, no tempo do impacto (para se o golpe é interrompido). `OnTargetDodged` (quem tem investida):
+  ataca quando o rolamento perde a invencibilidade, sem esperar a pausa. Duelista: até 3 estocadas (`maxCombo` 2), pausa 0,2–0,6,
+  combo 70%, apara 40%, rola 30%, ângulo 110°; pressionada/contra-ataque = só a rápida (a lenta era interrompida e quem só clicava
+  ganhava mais fácil). Medido na 06 (capitão robô; "rola cedo" = 0,2 s depois do começo do golpe; "na hora" = sabe o impacto e rola
+  0,15 s antes): **duelista** só clicando morre em 8–12 s e o capitão termina com 30–100 (média ~55); rolando cedo, o capitão termina
+  com 44–58 (uma vez ela sobreviveu 36 s); rolando na hora, 24–26 s e 44–58. **Brutamontes** só clicando: o capitão morre (~10 s);
+  rolando cedo: morreu (3 machadadas); rolando na hora: 0 de dano, mas 22 s a mais de 36 s para matá-lo. Antes: duelista custava
+  12–24 de vida, brutamontes perdia para qualquer rolador.
+  **Revisão (chat de otimização, 09/10): no ponto, não mexer.** Caveira (11, 24 s): parado 27,7/s, **rolando sem parar 8,3/s** (era ~1:
+  ~100 de vida em ~12 s), guarda 22,6/s, pulsos 24,5/s; forte (7): 18,1 / 0,3 / 7,2 / 14,3. Brutamontes sozinho: trocando golpe perde 2 de
+  4; rolando na hora morre 2 de 4 (a investida pega quando o rolamento perde a invencibilidade); rolando sem parar 4,4/s; **guarda
+  reativa (aparar) vence 3 de 3** em ~11 s com 51–93 de vida: "chefinho de aparo". Duelista: trocando golpe morre em 7–10 s (capitão
+  58–72); rolando na hora 16–25 s (44–72); rolando sem parar 9–10 de dano/s; aparar vence em 4–11 s (72, 4–7 aparos). Custo: Pursue
+  < ~0,07 ms, lixo ≤ 5 B.
+  **Revisão do ajuste (chat de otimização, 09/10): no ponto, sem alavanca.** Caveira (11, 24 s): parado 22,0/s, rolando 1,0/s, guarda
+  20,1/s, pulsos 20,3/s (igual a antes). Forte (7): parado 18,8/s, rolando 0,8/s, guarda 8,0/s, pulsos 14,0/s. Brutamontes sozinho: só
+  trocando golpe o capitão venceu 1 de 9 (nas outras ele ficou com 4–54: por pouco); batendo e rolando no começo do golpe dele, 6 de 6
+  em 15–20 s sem dano (reflexo perfeito = limite de cima). Duelista sozinha: 6,3–7,7 s, custa 12–24 de vida (numa rodada fugiu 36 s).
+  **Esqueletos amaldiçoados (pacote B, passo 3, 10/10):** `LandCombat/CursedGraveyard` (no objeto "Cemiterio", com um `EnemyCamp`
+  "cemiterio_caveira", fama 8, leash 26, 2 atacando): fases Day → Buried (Night ≥ 0,6) → Risen (jogador a pé a ≤ 16 m) → amanhecer
+  (Night < 0,15) = os de pé somem com poeira na hora, os caídos 0,6 s depois. Enterrado = `SetActive(false)` (nada custa). `Rise()`: mais
+  perto primeiro, 0,25–0,7 s entre um e outro, `ResetToPost` + `EnemyFootAI.Rise(variante, início, segundos)` (parado até levantar, já em
+  Chase, evento `Risen` → gemido = voz de morte a 0,55 no `CharacterAudio`) + `CombatEffects.Unearth(ponto, true)` (evento novo
+  `Unearthed`: `GameVfx.OnUnearthed` = torrões, poeira e brilho verde; `GameAudio` = `dig` grave; ao virar pó, `bodyFall` agudo e poeira de
+  osso). `CharacterAnimatorDriver.PlayRise`: `CrossFadeInFixedTime` direto no "Erguer{v}" já deitado (o trigger Revive do `ResetToPost`
+  é zerado: o Any → Vazio dele cortaria a animação), peso do corpo inteiro em 1. Estados "Erguer0..2" (`AddRise`, tag
+  "CorpoInteiroAndando", ×1,3; início deitado/de pé medidos pela altura do quadril: Up1 0,9/2,6 s, Up2 0,6/3,0, Up3 0,3/2,4).
+  Levantar de novo: o cemitério ouve `Health.Damaged` (guarda `ignites` do último golpe) e `Died`; 1ª queda sem pólvora →
+  `ReviveLater` (`FootHealthReactions.Revive` + `SetCurrent(50%)` + `Rise`, do lugar onde caiu: a morte termina deitada). Fama e missões:
+  `EnemyCamp.HoldClearedEvent` + `PublishCleared()` (sem isso a 1ª queda do último dava a fama). Gerador:
+  `PrototypeSceneBuilder.Graveyard.cs` (`GraveyardSpot` (−36, −27) local, plano a 1,7 m: `flats` e caminho de terra até a borda no
+  `SkullIslandSpec`, mata fora a 11 m em `SkullWild`), esqueletos = `CreatePirate` com o cutelo dos piratas + `MakeCursed` (vida 45,
+  2/4,6 m/s, `M_Quaternius_Amaldicoado` = atlas × verde-osso + emissão verde fraca); `CreateOnFoot` chama `CreateGraveyardSkeletons`
+  depois dos postos. **Cuidado:** a referência ao jogador do `CursedGraveyard` precisa de `[SerializeField]` (sem ela, some ao salvar a cena
+  e ninguém levanta: aconteceu no 1º teste).
+  Testado na 06: meio-dia perto e noite longe = ninguém; noite a 10 m = os 5 saem em ~3 s e ficam em "EspadaPronta"/correndo; 3 mortos +
+  amanhecer = os de pé somem na hora, os caídos em 0,8 s; noite seguinte voltam com 45; golpe comum = levanta de novo em ~2,5 s com 22,5,
+  tiro = fica; segunda queda = fica; fama 8 numa vez só; caminho no NavMesh cemitério → praia norte ok. Capitão parado no meio dos 5:
+  ~10 de dano/s (a Caveira ~28). Fotos: cemitério de dia e esqueletos saindo das covas à noite (terra, brilho verde).
+  **Mais forte (10/10, Jhonata: "as 4 melhorias, mas em vez de 7 esqueletos coloca 10"):** 10 esqueletos em 12 covas espaçadas (3 × 4,
+  ~4 m; plano do cemitério com raio 11, mata fora a 14 m), vida 60, segunda vida 70% (`reviveHealth`), 3 atacando (`attackersAtOnce`),
+  cutelo próprio `Data/Weapons/Weapon_Cutelo_Esqueleto` (cópia do dos piratas com 14), `ConfigureLunge(3,6; 6; 1)` nos de índice 1, 4
+  e 7. Dois erros achados no teste: (1) quem levantava de novo morria ainda deitado (a segunda vida não contava) → `EnemyFootAI.Rise`
+  deixa a `Health` invencível até ficar de pé; (2) o `CursedGraveyard.OnEnable` pegava `EnemyFootAI.Health` antes do Awake dele
+  (null: ninguém levantava de novo, dependendo da ordem de carga) → `GetComponent<Health>()`. Medido na 06: os 10 de pé em ~6 s;
+  capitão parado no meio: **25 de dano/s** (Caveira ~28); robô que anda até o mais perto e só bate: **morre em ~8,6 s** com 7 de pé
+  (antes limpava em ~10 s levando 12). Golpe comum → levanta de novo com 42 (70%) em ~2,5 s.
+  **Revisão (chat de otimização, 10/10): bom, no nível da Caveira.** 24 s: parado 23,9/s, rolando 2,3–4,1/s, guarda 10,4–13/s, pulsos
+  7,7/s (8 aparos). Robô que só bate limpa (com a 2ª vida) em 19–21 s terminando com 16–44 de vida. Pistola parado não funciona (cai em
+  3–4 s); recuando e atirando economiza a 2ª vida (~2 tiros por esqueleto): para o Jhonata sentir. Custo com 10 de pé: Animators
+  0,94 ms (Caveira 0,74), lixo 0,42 KB/quadro, nada a ajustar.
+  **Testar:** `ITimeOfDay.SetTime(1, 23)`, capitão a ~9 m do "Cemiterio" (`gy_common.txt` no scratchpad), `CursedGraveyard.RiseNow/BuryNow`;
+  poucos `Step()` por chamada (5 s do `eval_file`).
+  **Revisão (chat de otimização, 10/10): custo ok, fácil demais.** À noite, 24 s: parado 11,5/s (Caveira 27,7), rolando 0, guarda
+  6,9/s, pulsos 9,4/s (7 aparos). Bot que só bate limpa em ~10 s levando 12: os 5 caem em ~3,3 s (o arco de 150° do cutelo pega 3–5
+  juntos, as covas são próximas), levantam aos ~6 s com 22 e caem de vez aos ~9,4 s. Sugestões (decisão do Jhonata): (a) 7 esqueletos,
+  vida 60, segunda vida 70%; (b) 3 atacando e 14 de dano; (c) covas mais espaçadas; (d) opcional, investida em 2–3 deles. Custo: 5 de pé
+  = Animators 0,73 ms, lixo 0,28 KB/quadro; enterrados não custam.
+  **Missões dos inimigos novos (M14, 10/10):** `PrototypeSceneBuilder.Bounties.cs` (`BountyMissions` no fim do `LoadMissions`).
+  Tipo novo `MissionType.DefeatEnemy` (texto padrão "derrote o inimigo em X" / "derrotado"; as 4 têm texto próprio) + `Core/EnemyDefeatedEvent`
+  (targetId): `EnemyFootAI.bountyId` (`ConfigureBounty`) publica ao morrer e, com `MissionStartedEvent` do mesmo id, levanta no posto se
+  estava morto (`ResetToPost`). `AddBounty(camp, prefixo do posto, id, rótulo)` acha o membro e põe um `WorldMarker` num objeto parado
+  no posto, filho do acampamento (no próprio personagem sumiria quando o acampamento dorme longe da câmera). Cemitério = `ClearCamp` do
+  "cemiterio_caveira" (o `EnemyCamp.OnMissionStarted` repovoa se estava limpo; levantam na noite seguinte com o capitão perto), marcador
+  na raiz "Cemiterio". Ids: `brutamontes_caveira`, `duelista_oeste`, `brutamontes_forte`, `cemiterio_caveira` (missão = alvo).
+  Testado na 07 com o save do Jhonata (cópia `savebak34`, devolvido igual): patente 2 vê as 4 no quadro, marcadores e alvos certos;
+  duelista morta antes → aceitar levanta ela (vida 100) → morta = "duelista derrotada", completa; brutamontes da Caveira morto = completa;
+  cemitério à noite com os 10 de pé, mortos a tiro = "cemitério em paz", completa. **Achado no teste:** a invencibilidade de quem sai da
+  cova acabava no `GetCommand`, que não roda com o acampamento dormindo (câmera longe): ficavam invencíveis. Agora termina por tempo
+  (`EnemyFootAI.EndRiseInvulnerable`, corrotina). O limite de 3 missões ativas vale (o save tinha 2).
+  **Revisão (chat de otimização, 10/10, por contas): fama ok, ouro alto.** Um alvo só paga mais que o acampamento inteiro onde ele mora
+  (carrasco ≈ 325 contra Caveira 230; guardião ≈ 370 contra forte 345); viagem à Caveira com acampamento + carrasco + cemitério ≈ 800 de
+  ouro e ~100 de fama em 6–8 min, repetível a cada 10 min (teto ~4.500–5.000 ouro/h, patente 4 em ~1,3 h). Proposta (decisão do
+  Jhonata): carrasco 190 + 6 ferro, lâmina 160 + 3 bombas, guardião 230 + 8 pólvora, cemitério igual; descanso dos três de alvo único
+  15 min (cemitério 10). Teto cai para ~3.000 ouro/h e ~550 de fama/h.
+  **Ajuste aprovado (10/10, Jhonata confirmou direto):** aplicado no gerador e nos assets (`Missao_CarrascoCaveira` 190 + 6 ferro,
+  `Missao_LaminaEnseada` 160 + 3 bombas, `Missao_GuardiaoForte` 230 + 8 pólvora, os três com `cooldownSeconds` 900; `Missao_NoiteCemiterio`
+  igual), cena 07 regerada.
+  **NPCs com missões (M15, passo 1, 10/10):** `Missions/MissionGiver` no NPC (nome, papel, missões, conversa à toa, alcance 2,6 m;
+  `Status(board)` = "!"/"?"; `BeginTalk` desliga o `Townsperson` (passado como `Behaviour`: Missions não conhece Ambient), vira para o
+  capitão e gesticula pelos estados "Wave"/"Yes"/"No" do Animator dos civis; `WorldMarker` "npc:Nome" achado sem alocar por
+  `MissionGiver.Find(giver)`) e `Missions/NpcTalker` no personagem (`IPagedInteraction`, interface nova no Core: com a conversa aberta o F
+  do `PlayerInteractInput` chama `Advance` em vez de fechar; Esc fecha). Ordem da conversa: entregar o que está pronto → esperar o que está
+  em andamento → oferecer o que dá (`MissionBoard.IsOfferable`) → patente baixa → descansando/feita → conversa à toa. Falas na
+  `MissionDefinition` (cabeçalho "Conversa com o NPC": `givenByNpc`, `offerLines`, `acceptLine`, `declineLine`, `waitingLine`, `doneLines`,
+  `restingLine`); o `giver` da missão é o nome do NPC. `MissionBoard`: `Available`/`Locked` pulam as de NPC, `IsOfferable`, `ActiveFor`,
+  `IsFinished`, `PayTo` (armazém). UI: `UI/DialogueHUD` (no GameHUD, camada de janelas; só remonta a caixa quando `NpcTalker.Version` muda;
+  ícones `.hud-quest-icon` = exclamação amarela do Kenney e "?" em Alegreya Bold: a "!" da Pirata One é fina demais e sumia) + estilos
+  `.hud-dialogue*` no Hud.uss; `HarborWindow` (taverna) esconde as de NPC e troca "Entregar" por "entregue a X"; `MissionHUD` diz "fale com
+  X" e aponta para o NPC. Gerador: `PrototypeSceneBuilder.Npcs.cs` (`CreateMissionGivers` depois do quadro no `World.cs`; `MissionGiverNpc` =
+  morador do kit + `Townsperson` parado + `MissionGiver` + `WorldMarker` a 4,3 m, acima do "!"; `GraveyardDialogue` escreve as falas só
+  na primeira vez: depois o asset é do Jhonata). Tobias = Henry paleta 4 (`CivilianPalette`), em (−20, 22) local do porto (lugar
+  livre conferido: sem casa em cima, 16 m da porta mais perto, 10 m do morador mais perto).
+  Testado na 07 com o save do Jhonata (cópia `savebak34`, devolvido igual; as missões dele foram abandonadas só no teste): a missão do
+  cemitério some do quadro; perto do Tobias "!", aviso, F abre; as 6 falas; F na última = aceita e ele diz a fala de aceitar; F fecha;
+  falar de novo = fala de espera; objetivo cumprido = "?" e a seta do HUD no Tobias; 2 falas de fim; F = recebe (armazém 3.847 → 4.135:
+  240 × 1,2 da patente) e fecha; falar de novo = fala de descanso. Fotos: caixa de fala com nome, pagamento e botões; "!" e "?" na cabeça.
+  **Testar:** `npc_common.txt` no scratchpad (atracar com `HarborVisitor.Dock(false)` + `HarborShoreLeave.Open()`, `NpcTalker.Open/Advance/
+  Accept/Decline/TurnIn`, `MissionGiver.Find("Tobias")`).
+  **Passo 2 (10/10):** `PrototypeSceneBuilder.Npcs.cs` virou uma tabela (`VillageNpcs`: nome, papel, id da missão, lugar local do porto,
+  giro, modelo, paleta, pá, conversa à toa, falas). Na primeira vez a missão vira `givenByNpc`, o `giver` vira o nome do NPC (Dona Mercês
+  era "Dona Mercês, do armazém") e as falas são escritas (`Lines`); depois o asset é do Jhonata. Lugares conferidos livres (sem casa em
+  cima, ≥ 6 m da porta mais perto): Bento (4, 54) no começo do píer, Mercês (14, 53) ao lado do armazém, Teodoro (34, 45) no estaleiro, Zé
+  (−10, 51) perto da taverna, Rato (−28, 44) perto do Mestre de obras, Tobias (−20, 22). Paletas novas: Henry 5–8 e Anne 5 (`CivilianPalette`).
+  Testado na 07 com o save do Jhonata (cópia `savebak35`, 16:00, devolvido igual): as 6 missões fora do quadro, cada NPC com a dele; para
+  os 5 novos: perto → F → 4–5 falas → aceitar → objetivo (evento) → "?" → falas de entrega → receber (Bento +228, Mercês +192, Teodoro
+  +276, Zé +78, Rato +65 de ouro com o bônus da patente) → fecha. Foto das roupas.
+  Custo com os 6 (chat de otimização, 10/10): `DialogueHUD.Update` ~0,005 ms e 0 B por chamada, `Advance` 0 B; fora dos 32 maiores do
+  CPU. O Profiler mostrou ~150 B/quadro de média no `DialogueHUD.Update` com a conversa fechada: alocação eventual (ícone aparecendo ou
+  sumindo, troca do aviso), não por quadro. Nada a ajustar.
+  **Custo (chat de otimização, 10/10):** com o "!" na tela e com a caixa aberta, DialogueHUD/MissionGiver/NpcTalker < ~0,07 ms, lixo
+  igual ao de antes (0,43 KB/quadro, nada do UI/Missions); passar a página 0,1 ms e 0 B. O aviso só aparece dentro dos 2,6 m.
+  **Chefe pirata a pé (pacote B, passo 4, passo 1 de 2, 10/10):** `LandCombat/LandBoss` junto do `EnemyFootAI` (que ganhou o modo
+  chefe: `BossFight`, escolhido quando há `LandBoss`; não espera a vez do acampamento; só escolhe golpe com `CharacterCombat.ReadyToAttack`,
+  senão o golpe ficava guardado no buffer e saía depois, de longe). `LandBoss.Choose(distância, alvo, guarda)`: respostas primeiro
+  (`breaker` = giro se o capitão esteve nas costas há < 1,5 s ou se levou 3 golpes em 2,5 s; `guardBreaker` = chute contra a guarda, 75%),
+  depois sorteio por peso entre os golpes que alcançam (`Move`: variante, distância, peso, fase, espera, brecha `recovery`, `combo`).
+  Arma: `WeaponDefinition.variantStrikes` (`StrikeOverride` por golpe: alcance, abertura (360 = em volta), dano, queda, `unblockable`
+  (pula o `Defend`), `followUps` (acertos a mais no mesmo golpe; o `CharacterCombat.Strike` acerta de novo para onde ele está virado),
+  `lungeSpeed` (o salto avança até 11 m/s; o `Pursue` vai até o último acerto)); `WeaponDefinition.LastHitFor`; `CharacterCombat.DamageMultiplier`
+  (fase 2, sem mexer no asset). Fase 2 (`phaseTwoAt` 0,5): o golpe que passa da marca para nela; `Health.Invulnerable` durante o Power Up
+  (`CharacterAnimatorDriver.PlayPowerUp` = CrossFade direto no "Espadao_Furia"), onda de choque aos 1,25 s só no capitão (15, derruba até
+  3,5 m, empurra; não usa o `Explosion`, que pegaria o próprio chefe), `ApplyPhase`: dano ×1,2, velocidade ×1,12, `EnemyFootAI.SetTempo`
+  (pausa, combo, golpes emendados), brecha ×0,65, aura. Fora da luta (`!IsAlerted`) = `ResetFight` (vida cheia, fase 1). Aviso do
+  imparável: lâmina troca para `M_Espadao_Furia` e olhos mais fortes até o impacto (cópia do material do corpo: `_EmissionColor`);
+  `FootHealthReactions.SetUnstoppable` (nada derruba, sem animação de levar golpe, só o tranco). `BossBarHUD` mostra o `LandBoss` engajado
+  (+ avisos de fúria e vitória); na 06 o gerador põe a barra no HUD (na 07 ela vem com o Tormenta).
+  Gerador `PrototypeSceneBuilder.Chief.cs`: posto "Chefe_..." (`IsChief` → `ChiefSword` = `Data/Weapons/Weapon_Espadao_Chefe`, WeaponType 4,
+  `GreatswordOn`, `MakeChief`); o posto das ruínas da Caveira virou `covil_barbanegra` "Ruínas do Barba-Negra" com só o chefe (fama 60;
+  `CreateOutpostGuards` agora usa `PostWeapon`). Espadão: `Weapon_Sword_2` do kit × 0,85 (× 1,4 ≈ 1,55 m); lâmina e fio no espaço do osso da
+  mão procurados nos clipes (`GreatswordGrip`: lâmina para fora do peito nos impactos e de ponta para cima parado/andando; as duas mãos não
+  ficam juntas no cabo nesse esqueleto). Animator (`AddGreatsword`): "Espadao_Pronto" (Idle), "Espadao_Correndo" (Run 2; o "Run" do pacote
+  corre de ré), "Espadao_Golpe0..7" (Slash 0,57 · Slash 3 0,80 · Slash 4 0,63 + 0,80 · Attack 0,47 · High Spin 1,03 · Jump Attack 1,10 · Kick
+  0,55 (pé direito) · Slash 2 0,73 + 0,90 + 1,84; impacto pela mão mais rápida, começam "lead" antes), "Espadao_Furia" (Power Up em 2,6 s).
+  Clipes por `GreatswordClip` (só a pasta `Espadao`: "Idle"/"Run" repetem nos outros pacotes). Roupa = `CivilianPalette(Captain, 1)` (linha 7 do
+  atlas: 0 pele, 1 chapéu, 2 bota, 3 calça + faixa do chapéu, 4 camisa, 5 barba/cabelo, 6 olhos, 7 casaco, 8 base do gancho, 9 gancho, 10
+  perna de pau, 11 punhos) + máscara de emissão 32 × 32 só no quadradinho dos olhos (`Textures/Civis/Chefe_Olhos.png`). Aura = ParticleSystem
+  "Aura" (`M_FX_Brilho`).
+  Testado na 06 (capitão robô, passos de 0,02 s): cortes 28/32/38 com combo; salto de 9 m (anda 7,6 m, 42 e derruba); chute passa pela
+  guarda (10, derruba); giro com o capitão nas costas e depois de 3 golpes; aparar = 0 de dano e ele "Aparado"; fase 2 (vida trava em 450,
+  invencível na fúria, onda de 15 que derruba, aura e brasa); capitão morto = ele volta ao posto com 900. Robô que só bate morre em ~11 s e
+  tira ~325 (não chega na fase 2). Fotos: tamanho ao lado do capitão, salto, fase 2, barra no topo.
+  **Testar:** `ch_common.txt` no scratchpad (`FindObjectsByType<LandBoss>` com Include: o acampamento dorme longe e desliga o `LandBoss`,
+  que sai do `Active`), `boss.EnrageNow()`, `boss.Moves[i].readyAt = 0` para liberar golpes. Capitão morto no teste: a corrotina do
+  `PlayerFootRespawn` continua e ~3,5 s depois leva o capitão para a praia mesmo depois do `Revive` (`StopAllCoroutines()` nele no começo).
+  **Revisão (chat de otimização, 10/10): muito difícil, só ganha quem apara na hora; custo baixo.** Só, capitão 100 sem ração: trocando
+  golpe morre em 5–7 s (chefe perde 8–19%); rolando "perfeito" morre em 12–28 s e tira 225–275 (o 2º corte do Corte duplo, 0,8 s depois do
+  1º, nunca dá para rolar: rolamento 0,8 + espera 0,4; os combos ~1 s também passam); aparando cada corte e rolando os imparáveis, 0 de 5
+  lutas da fase 1 vencidas (chefe com 125–600; morre nos imparáveis: giro 30/36, salto 42/50, golpe de cima 38/46), começando na fase 2
+  venceu 2 de 4 com 30 de vida; guarda segurada quebra em 7–9 s; rolar sem parar morre em ~11 s; fase 2 trocando golpe 2–6 s; pistola e
+  bacamarte ingênuos ~13 s; sem exploit. Reset ao fugir ok (sair da vista 3,5 s sem estar provocado já reseta). Alavancas se ficar duro
+  demais (decisão do Jhonata): 2º corte do Corte duplo 22 → 16 ou 1,0 s depois do 1º; aparar devolver ~3 de vida; vida 900 → 750. Ração
+  (+40, 3 no começo) não simulada. Custo com ele lutando na tela: CPU +0,8–1,0 ms no editor, GPU +0,4–0,5 ms (aura +0,3), 3 renderers,
+  ~8,8 mil triângulos, lixo igual (nada do LandBoss/IA), `LandBoss`/`Choose` < 0,05 ms.
+  **Brilho dos materiais (achado em 10/10):** com `globalIlluminationFlags = None` o `LitShader.ValidateMaterial` da URP 17 **desliga o
+  `_EMISSION`** sempre que valida o material (reimportar, mostrar no Inspector); no editor as lanternas, janelas, fogo, pavio, esqueletos e
+  os olhos do chefe estavam apagados (o disco ainda tinha o _EMISSION; salvar teria gravado apagado). Agora `Emissive(mat)` (gerador) usa
+  `RealtimeEmissive` (o projeto não usa GI em tempo real nem luz assada: não muda nada no jogo) e o validador mantém. Material emissivo
+  novo: chame `Emissive`. Teste: `MaterialEditor.customShaderGUI.ValidateMaterial` numa cópia.
+  **Lula gigante (F.1, passo 1, 10/10):** `Combat/GiantSquid` (objeto "LulaGigante" = a cabeça, que anda; `Health` 1400, `LootDropper`,
+  `WorldMarker` "lula_gigante") + 6 `Combat/SquidTentacle` filhos (índices 0–1 agarram, 2–5 batem; posicionados no mundo a cada quadro
+  no espaço do navio: lugares em `SlotLayout`, medidas pelo `BoxCollider` da raiz do navio). Fases Lurking → Ambush (bolhas) → Fight →
+  Retreat/Dead. Tentáculo = `Characters_Tentacle` do Quaternius (copiado do `_Downloads`, 15 ossos, ~16 m; × 0,8), **sem Animator**: a forma
+  é uma Bezier cúbica por modo (Rising, Idle, WindUp, Slam, Pinned, Grab, Hurt, Sinking) e cada osso volta à pose de ligação e gira
+  (`FromToRotation`) para o ponto da curva na distância dele (tabela de comprimento de arco; curva mais curta = a ponta segue reta);
+  pontos de controle suavizados por modo. Colisores: cápsulas a cada 2 ossos criadas no Awake (raio dividido pela escala 100 dos ossos);
+  `Physics.IgnoreCollision` com os colisores do navio do jogador na emboscada (senão empurravam o casco); as balas acertam. Dano no
+  tentáculo → `Health` própria; a lula recebe 40% do que **ele perdeu de fato** (o tiro que destrói não repassa o excesso). Navio preso:
+  `ShipController.Restraint` (velocidade × (1 − r), giro × (1 − r/2), deriva freada). **Força num ponto do casco capotava o galeão**
+  (inércia de lado 16.890 com massa 9.000: a pancada como impulso no convés dava ~1,6 rad/s de giro): agora o agarrão aderna por
+  `AddTorque` (aceleração, 0,35 por tentáculo) e a pancada dá um tranco de 0,18 rad/s + 0,8 m/s para baixo (`VelocityChange`): ≤ ~6°.
+  Cabeça: malha `Meshes/Lula_Cabeca` (gerador: torno de 12 lados facetado, barbatanas, olhos = esfera escura com o anel 1 emissivo;
+  triângulos virados para fora de um ponto "dentro"; UV no quadradinho do atlas mais usado pelo tentáculo), materiais `M_Lula` (atlas ×
+  `SquidSkin`), `M_Lula_Olho`, `M_Lula_Iris` (`Emissive`); `Combat/AimTarget` (novo: alvo não-navio da mira assistida, `Exposed` só com
+  a cabeça fora d'água; `CannonBattery.UpdateAssist` olha os dois). Eventos novos no `CombatEffects`: `Surge(ponto, tamanho)` (água
+  estourando: `GameVfx.OnSurged`, respingo grave no `GameAudio`) e `Roar(ponto)` (voz de morte a 0,32 + explosão a 0,45). A morte publica
+  `EnemyDefeatedEvent` (ganhou `fame`; `CaptainFame.OnEnemyDefeated` só soma com fama > 0: os de terra publicam 0). HUD: `BossBarHUD`
+  mostra a lula engajada + avisos (agarrou, furiosa, derrotada). Sandbox: `DrawEnemies`. Gerador `PrototypeSceneBuilder.Squid.cs`
+  (`AddGiantSquid` no `AddWorld` depois do Tormenta; marcos visuais sem colisor em "AguasNegras"; `LootTable_Lula`).
+  Testado na 07 (save do Jhonata copiado e devolvido igual, 3a6cc7c9): entra no covil → emboscada → 2 agarram (Restraint 0,95) →
+  pancadas 14 + aperto (~10 de dano/s no galeão parado) → cabeça a 26 m (bordada de 8 do galeão sem upgrades: 4 balas na cabeça, 1–2 nos
+  tentáculos, 12 cada); matar os agarradores solta, ela agarra de novo 14 s depois a ~90 m; fase 2 (3º tentáculo); morte → destroços a
+  27 m, fama 373 → 473. Robô parado atirando dos dois lados (galeão sem upgrades): em 34 s tirou 23% da lula e perdeu 35% do casco
+  (perde: precisa de upgrades ou de soltar e fugir). Fotos: agarrão, pancada, cabeça, barra no topo.
+  **Testar:** `sq_common.txt` + `sq.sh` no scratchpad (`GameSave.Continue()`, navio a 40 m do covil, `Steps`); `squid.SummonNear()`,
+  `EnrageNow()`, `Tentacles[i].Health.TakeDamage`; baterias `FireAtRange(distância da cabeça)`. Navio afundado em Play fica inativo e o
+  `Continue()` não o reativa (a lula nunca mais embosca): saia do Play e entre de novo; ~250 `Step()` por chamada (mais passa dos 5 s).
+  **Revisão (chat de otimização, 11/10):** ela dá 11–17 de dano/s no navio. Navio afundaria × lula já caída (só trocando tiro):
+  escuna nv2 24–38 s, 18–48% · escuna nv4 29–48 s, 39–55% · galeão nv0 19–31 s, 12–24% · galeão nv2 34–54 s, 37–67% · galeão nv4
+  50–62 s, 81–92%. Galeão nv4 trocando tiro quase ganha (sem folga); escuna nv4 só com metralha e tática (a metralha é o contador:
+  luta 25–40% mais rápida; corrente não ajuda). Tentáculos dão 25–35% da vida dela. Variância entre lutas iguais até 2× (depende de
+  quando os agarradores morrem): para ajustar, 5+ rodadas. Alavancas para "galeão nv4 com folga" (−~25% do dano ao navio; decisão do
+  Jhonata): aperto 3 → 2, pausas 2–3,6 → 2,6–4,2 (fase 2 1,4–2,6 → 1,9–3,2), pancada da fase 2 18 → 15, `tentacleShare` 0,4 → 0,5.
+  Custo: GPU +0,3–0,55 ms (6 tentáculos ~23 mil triângulos com sombra, cabeça 428), CPU `SquidTentacle.LateUpdate` 0,14 ms no total,
+  física +0,2–0,3 ms (42 cápsulas movidas sem Rigidbody), lixo 0; não muda o FPS do build. Achados corrigidos (11/10): (a) solta e
+  entre 160 m (raio de reagarrar = leash × 0,8) e 200 m ela não reagarrava nem desistia nem curava (dava para descansar ali e voltar):
+  agora desiste depois de `giveUpSeconds` 35 s solta (cura e volta a esperar; testado: parado a 175 m, desistiu aos 35 s, 1340 → 1400);
+  (b) tentáculo que sobreviveu voltava na luta seguinte com a vida de antes: `Rise` põe vida cheia (testado: 60 nos 6).
+  **Ajuste depois de jogar (Jhonata, 11/10):** (1) bug: o navio afundava ao girar preso (A/D): as cápsulas dos tentáculos empurravam o
+  casco, porque o `Physics.IgnoreCollision` se desfaz quando o colisor é desligado (o tentáculo some e volta). Agora os tentáculos **não
+  têm colisor** e a cabeça refaz o ignorar toda vez que liga os colisores (`SetHeadColliders`). Testado girando preso 0,35 rad/s para os
+  dois lados por 4,8 s: up.y ≥ 0,99, y ≥ −1,2. (2) Tiro à queima-roupa (escolhido pelo Jhonata entre isso, mudar a mira naval e
+  afastar os tentáculos): `GiantSquid.OnBroadside` ouve o `Fired` de todas as `CannonBattery` do navio (inclusive as dos outros cascos);
+  cada tentáculo vivo daquele lado leva `damagePerBall × munição` por boca a até `pointBlankReach` 2,5 m dele no eixo proa-popa
+  (`CannonBattery.Muzzles`, novo), com `Impact` no ponto. Galeão sem upgrades (8 bocas, 12): agarradores 4–5 tiros (48–60) por bordada,
+  os de pancada 3–4; com 60 de vida morria tudo em uma bordada → vida 120 (2–3 bordadas no nv0, ~2 no nv4). A revisão de equilíbrio acima
+  foi feita antes disso (tentáculos 60 de vida, acerto pela bala): precisa medir de novo.
+  **Revisão com a queima-roupa (chat de otimização, 11/10; a tabela anterior estava inflada: um caçador de recompensas aparecia aos ~7 min
+  e atirava no navio parado; nos testes longos de navio parado desligue o `BountyHunters` e os "Cacador"):** fácil demais (~2,5–6 de
+  dano/s; só o galeão nv0 perdia). Tentáculo mais gordo deixa a lula mais **fraca** (40% do que ele perde vai para ela: vida × share
+  deve ficar ~48 por morte). **Aplicado o pacote V5 (aprovado pelo Jhonata, 11/10):** aperto 3 → 8, pancada 14 → 30 (fase 2 18 → 38),
+  pausas 2–3,6 → 1,3–2,4 (fase 2 1,4–2,6 → 0,9–1,6), tentáculos 120. Medido por ele (5 rodadas, robô perfeito): galeão nv4 vence com
+  35–51% do casco perdido, escuna nv4 48–83% (apertado), galeão nv2 56–87%, escuna nv2 perde (com metralha vence com 75–94%), galeão
+  nv0 perde. Custo: `OnBroadside` ~0,01 ms, tentáculos 0,10 ms, física −0,15 ms sem as cápsulas, GPU +0,15–0,2 ms, lixo 0.
+  **Conferência do V5 já gravado na cena (chat de otimização, 11/10, 5 rodadas, caçador desligado):** galeão nv4 vence 5/5 perdendo
+  39–47% (43–49 s); escuna nv4 5/5, 48–66%; galeão nv2 5/5, 63–84%; escuna nv2 perde 5/5 (afunda aos ~45 s com a lula em 71–76%);
+  galeão nv0 perde 5/5. Com metralha (3 rodadas): galeão nv4 56–61% (106 s: a cabeça leva pouco da metralha); escuna nv4 44–56%;
+  escuna nv2 vence 2 de 3 (75–94%); galeão nv0 perde. Bate com o desenho, nenhuma alavanca nova. Aperto e pancada movem o casco
+  perdido quase em linha (±25% no dano = ±25% no casco).
+  **Prólogo, quadros da abertura (rascunho de 11/10, "A Coroa de Prata"):** `PrototypeSceneBuilder.Prologue.cs` (menu Pirates →
+  Prólogo → Gerar quadros; `BuildPrologueFrame(n)` gera um só, público para o `eval_file`). Cada quadro é uma cena de prévia
+  (`NewPreviewScene`) montada com os nossos modelos (`Character` = personagem do kit numa pose do próprio kit via `SampleAnimation`;
+  `Kenney`, `Tentacle`, `Crown`, `Blob`/`Box`; mar e chão low-poly facetados por `Facets`), fotografada com fundo preto e branco (recorte,
+  como o retrato da fama) sobre um céu pintado em código (`Sky`, `NightSky`, `Underwater`, `Plume` = fumaça pintada: bolas 3D de fumaça
+  pareciam balões) e tratada como pintura em `Paint`: Kuwahara raio 4 por tabelas de soma (pinceladas que mantêm as bordas), contorno de
+  tinta (Sobel), cor da cena (`tint`, contraste, saturação, `haze`), vinheta, papel e borda queimada. Saída `UI/Prologo/Quadro_1..9.png`
+  (1600 × 900, ~3 s cada). Materiais `M_Prologo_*`. Lázaro Negro = `CivilianPalette(Captain, 2)` (casaco roxo-escuro, barba grisalha,
+  gancho e punhos de prata) e sem o papagaio (renderer "Ernest" desligado). Na cena de prévia a luz ambiente é cinza: mar com smoothness
+  0,3 e cores escuras nas cenas de noite. O `eval_file` passa dos 5 s gerando um quadro, mas termina (confira a data do PNG).
+  **Tela de título, prólogo, opções (M16, 11/10):** `UI/SaveMenuHUD` (refeito) mostra o menu em tela cheia (camada `GameHud.Menu`,
+  classes `.hud-title*`; fundo = `Quadro_9` com zoom lento) com telas Main/ConfirmNew/Name/Options/Credits/Prologue (`CurrentView` para os
+  testes); `BeginNewGame(nome)` = prólogo e depois `NewGame` (o `StartNewGame(nome)` antigo pula o prólogo: testes); `PlayPrologue(nome,
+  depois)`. `UI/PrologueHUD` (no objeto do GameHUD; quadros pelo gerador, falas no componente, {nome}; tempo sem escala: o jogo fica parado
+  atrás, com `WaitingForChoice` ainda ligado; `Next`/`Skip`/`Frame`). `Core/TitleScreen.Showing` (menu ou prólogo na frente) → o
+  `MusicDirector` toca a `Som_MusicaMenu`. **Opções:** `Core/GameOptions` (`Current`, `Notify` a cada clique, `Save` ao sair da tela;
+  `opcoes.json` em `persistentDataPath`, **ao lado do save**: não faz parte do progresso). Volumes: `SoundMix.Apply(GameOptions)` no
+  `GameAudio` (sem `hasAudio` as opções só copiam os do SoundSettings). Câmera: `ElevatedCameraRig` × `cameraSensitivity` e `invertCamera`.
+  Tela e gráficos: `UI/GraphicsOptions` (estático, `AfterSceneLoad` + `Changed`): VSync/limite de FPS sempre; qualidade mexe no URP asset
+  em uso partindo dos valores do projeto (Alta = igual; Média = sem MSAA, sombra 80%; Baixa = também renderScale 0,8, sombra 60%, 1
+  cascata) e **volta ao original no `Application.quitting`** (sair do Play no editor; testado: `PC_RPAsset` 2/1/50/2 e não fica sujo);
+  modo de tela e resolução só fora do editor. **Medições do chat de otimização:** sem `opcoes.json` ou com qualidade Alta, nada muda; se
+  existir, confira antes de medir. Asmdef da UI ganhou `Unity.RenderPipelines.Universal.Runtime` e `Core.Runtime`.
+  **Músicas (11/10):** os dois pacotes da Asset Store que o Jhonata importou foram para `ThirdParty/Audio/Musica/PirateMusicPack`
+  (Pirate 1..8.wav) e `Musica/FC_PirateMusicLite` (Adventure Inn Full Mix.wav), movidos pelo `AssetDatabase` (mesmo GUID) e
+  importados pela regra de `Musica/` (streaming, Vorbis 0,6); o resto (MP3 repetidos, seções do Adventure Inn, efeitos, o script
+  `MusicPlayer.cs`, a cena e o prefab de exemplo) ficou em `_Downloads/Musica`. `SoundCue.clipVolumes` (volume por faixa) +
+  `PickIndex`; `MusicDirector`: som com 2+ faixas = lista sem loop, emenda a próxima (sorteada, sem repetir) nos últimos `fadeSeconds`.
+  Faixa que parou antes do fim (`isPlaying` falso: editor pausado com `Step`, som sem saída) só troca depois de `minTrackSeconds` (20 s):
+  antes trocava a cada quadro (achado do chat de otimização, 11/10; testado: 0 trocas em 240 quadros pausados, lista normal em tempo real).
+  Custo (chat de otimização): música ligada × desligada igual (streaming na thread de áudio), `Switch` 0,01 ms e 0 B, menu aberto ~0,7 ms de
+  UI Toolkit (igual ao HUD), lixo 0. **Commit:** `Musica/` soma ~257 MB de WAV (maior 30 MB, abaixo do limite do GitHub): decidir com o
+  Jhonata se entra no git ou vai para o .gitignore (dá para reimportar da Asset Store).
+  Gerador `Playlist(cue, faixas)` põe faixas e volumes **uma vez** (enquanto o som não tem `clipVolumes`; depois o asset é do Jhonata).
+  Volumes pelo RMS medido (Python para os WAV, `UnityWebRequestMultimedia` para os MP3/OGG): mar −29 dB, porto/ilha/menu −28,
+  combate −26 (TownTheme e Battle eram ~−15 e tocavam bem mais alto; pirate1uf é −31 e fica em 1). Distribuição (eu não ouço: pelo
+  volume e pela densidade de ataques): porto TownTheme + Pirate 7 + 3; mar pirate1uf + Pirate 1, 2, 6; ilha Exploration + Pirate 5;
+  combate Battle + Pirate 8 + 4; menu/prólogo Adventure Inn. Licença: padrão da Asset Store (uso em jogo; CREDITOS.txt).
+  **Testar:** `menu_state.cs`/`menu_shot.sh`/`pro_shot.sh`/`flow_test.cs`/`playlist_test.cs` no scratchpad (mudar de tela por reflexão
+  em `view`/`tab`/`dirty`; `BeginNewGame` + `Skip` mexe no save: backup e `rest_menu.cs`, que também apaga arquivos que não estavam no
+  backup, como um `opcoes.json` de teste).
+  **Tutorial (M17, passo 1, 11/10):** módulo novo `Pirates.Tutorial` (→ Core, Ships, Combat, OnFoot, Base, Missions, Controls; a UI, o
+  Editor e ninguém mais o conhecem; o Save fala com ele por `Core/ITutorial` nos Services, e o Audio pelo `TutorialStepEvent` no EventBus).
+  `TutorialGuide` (objeto "Tutorial", `TutorialGuide.Current`): `Stage[]` serializado (goal, título, fala do guia, objetivo com as teclas,
+  contagem; textos nos valores padrão do componente: **regere a cena para pegar texto novo**, ou edite no Inspector) e as condições por
+  `Goal`, ouvindo o que já existe: `PlayerModeSwitcher.IsOnFoot` (descer/embarcar), `HarborBuildingVisitor.Entered` (casa pelo
+  `HarborService`), `MissionGiver.TalkStarted` (estático, novo) e `ScriptedTalkFinished`, `CharacterCombat.Hit` (arma `Melee`)/`Fired`/
+  `Kicked`, `FootCharacter.Dodged`, `CharacterCombat.IsBlocking` por `guardSeconds`, navio fora da zona do `HarborDock` (zarpar).
+  Conversa de roteiro: `MissionGiver.ScriptedLines` (com elas o NPC mostra "!" e a próxima conversa é só isso; o `NpcTalker` chama
+  `FinishScriptedTalk` ao fechar na última página; fechar antes deixa para a próxima). `TryGetTarget` = para onde o marcador aponta
+  (Bento, porta da casa pelo `HarborBuilding.Active`, morador com "!" mais perto, campo de treino, píer); etapa a pé com o capitão no
+  navio = `WaitingOnFoot` (o cartão manda descer, o marcador vai no píer). UI: `TutorialHUD` (cartão em `TopLeft`, embaixo do painel
+  do navio/capitão: no `TopCenter` cobria o caminho à frente; some com o menu, casa aberta ou conversa) e `WorldPointer` (o marcador com
+  seta na borda, tirado do `MissionHUD`, que agora usa o mesmo). Save: `hasTutorial`/`tutorialStep` (Capture/Apply pelo `ITutorial`);
+  `GameSave.NewGame(nome, tutorial)` põe o navio na vaga (`PlaceShipAtBerth`, como o Continuar) e chama `Begin`. `SaveMenuHUD.WithTutorial`
+  (botão na tela do nome; o texto do botão troca sem remontar, para não apagar o nome digitado). Campo de treino: `PortTrainingYard`
+  (gerador, `PrototypeSceneBuilder.Tutorial.cs`) em (40, 18) local do porto, dentro de "VidaDoPorto" (a vila é estática e o boneco
+  balança), antes do NavMesh do porto; `Dummy(...)` saiu do `CreateTrainingDummies` (cena 06) para os dois usarem. Ordem do passeio
+  pela distância medida (Bento → Taverna 20 m → Mestre de obras 14 → morador perto → Mercado → Armazém → Estaleiro → treino 21 m).
+  **Novo jogo × .bak (achado em 11/10):** cada `SaveFile.Write` faz `File.Replace` (o save anterior vira o `.bak`), então o `.bak` do
+  "Novo jogo" sumia no 2º salvamento do jogo novo. Agora `SaveFile.Archive` move para `save_anterior.json` (fora da troca; apaga o
+  `.bak` velho). Em 11/10 ~18h a pasta do Jhonata tinha só um `.bak` acd27aac de 07/10 (fama 0) e nenhum save.json: o progresso dele
+  (3a6cc7c9, fama 373) está nas cópias `savebak_menu` (este chat) e `savebackup/snap` (chat de otimização); origem do acd27aac não
+  achada (nenhum chat restaurou). Restaurar só se o Jhonata pedir.
+  **Testado na 07** (a pasta do save copiada antes e devolvida igual, `rest_tut.cs`): jogo novo com o navio a 0,1 m da vaga; as 15
+  etapas avançam com as ações de verdade (`tut.sh`/`tut_act.cs` no scratchpad: `HarborShoreLeave.Open`, `NpcTalker.Open/Advance`,
+  `HarborBuildingVisitor.Open`, `SetCommandOverride` no capitão, `Embark`, navio fora do porto); salvar na etapa 3 e continuar volta na 3.
+  **Nos testes do chat de otimização:** `GameSave.NewGame()` agora liga o tutorial e põe o navio na vaga (os roteiros que teleportam o
+  navio continuam valendo; o cartão aparece na tela, `TutorialGuide.Current.Stop()` tira).
   **Água funda a pé (bug, 09/10):** o capitão caiu do píer num fundo de 0,9–2,5 m e ficou preso ("Água funda", todo passo desfeito, até o de
   volta). `FootCharacter.KeepOutOfDeepWater`: de pé no fundo a mais de `maxWadeDepth` + 0,15 m (andando não se chega: o limite segura em 0,90)
   = resgate para o `lastSafePosition` (como o afogamento); na água funda só o passo que desce é desfeito, e no chão volta com a altura (antes

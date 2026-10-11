@@ -14,6 +14,8 @@ namespace Pirates.Missions
         Deliver,
         /// <summary>Desenterrar um tesouro (targetId = BuriedTreasure.treasureId).</summary>
         FindTreasure,
+        /// <summary>Derrotar um inimigo com nome (targetId = EnemyFootAI.BountyId: brutamontes, duelista).</summary>
+        DefeatEnemy,
     }
 
     /// <summary>Um contrato do quadro do porto (dados de game design em Data/Missions).</summary>
@@ -49,5 +51,18 @@ namespace Pirates.Missions
         [Min(0)] public int requiredRank;
         [Tooltip("Fama ao entregar (cada vez que entrega uma repetível).")]
         [Min(0)] public int fameReward = 10;
+
+        [Header("Conversa com o NPC (missão dada por alguém na vila)")]
+        [Tooltip("Dada por um NPC (MissionGiver com o nome do 'giver'): não aparece no quadro da taverna e é entregue a ele, que paga.")]
+        public bool givenByNpc;
+        [Tooltip("Falas do NPC antes de oferecer (uma por página; F passa).")]
+        [TextArea(2, 4)] public string[] offerLines = Array.Empty<string>();
+        [TextArea(1, 3)] public string acceptLine, declineLine;
+        [Tooltip("Aceita e ainda não cumprida.")]
+        [TextArea(1, 3)] public string waitingLine;
+        [Tooltip("Cumprida: o fechamento da história, ao entregar (a última página paga).")]
+        [TextArea(2, 4)] public string[] doneLines = Array.Empty<string>();
+        [Tooltip("Entregue e descansando (repetível) ou já feita de vez.")]
+        [TextArea(1, 3)] public string restingLine;
     }
 }

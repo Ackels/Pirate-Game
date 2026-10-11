@@ -42,6 +42,8 @@ namespace Pirates.Missions
         /// <summary>Já entregues pelo menos uma vez (as não repetíveis saem do quadro).</summary>
         public IReadOnlyCollection<MissionDefinition> Finished => finished;
         public int MaxActive => maxActive;
+        /// <summary>Onde vai o pagamento (o armazém do porto; sem ele, o porão).</summary>
+        public Inventory PayTo => warehouse ? warehouse : hold;
         public bool CanAccept => active.Count < maxActive;
         /// <summary>Repetíveis entregues descansando: segundos até voltarem ao quadro (para salvar e para o quadro mostrar).</summary>
         public IReadOnlyDictionary<MissionDefinition, float> Cooldowns => cooldowns;
@@ -94,7 +96,7 @@ namespace Pirates.Missions
         {
             var list = new List<MissionDefinition>();
             foreach (var m in offered)
-                if (m && !IsUnlocked(m) && (m.repeatable || !finished.Contains(m))) list.Add(m);
+                if (m && !m.givenByNpc && !IsUnlocked(m) && (m.repeatable || !finished.Contains(m))) list.Add(m);
             list.Sort((a, b) => a.requiredRank.CompareTo(b.requiredRank));
             return list;
         }
@@ -108,6 +110,7 @@ namespace Pirates.Missions
             EventBus.Subscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Subscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Subscribe<TreasureFoundEvent>(OnTreasureFound);
+            EventBus.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
         }
 
         void OnDisable()
@@ -116,6 +119,7 @@ namespace Pirates.Missions
             EventBus.Unsubscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Unsubscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Unsubscribe<TreasureFoundEvent>(OnTreasureFound);
+            EventBus.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
         }
 
         void Update()
@@ -131,13 +135,25 @@ namespace Pirates.Missions
                 if (mission && cooldowns.TryGetValue(mission, out float left)) cooldowns[mission] = left - dt;
         }
 
-        /// <summary>Contratos no quadro agora (nem aceitos, nem entregues de vez, nem descansando).</summary>
+        /// <summary>Contratos no quadro da taverna agora (nem aceitos, nem entregues de vez, nem descansando; os dos NPCs não).</summary>
         public List<MissionDefinition> Available()
         {
             var list = new List<MissionDefinition>();
             foreach (var m in offered)
-                if (m && IsUnlocked(m) && !IsActive(m) && (m.repeatable || !finished.Contains(m)) && !cooldowns.ContainsKey(m)) list.Add(m);
+                if (m && !m.givenByNpc && IsOfferable(m)) list.Add(m);
             return list;
+        }
+
+        /// <summary>Pode ser oferecido agora (patente, não aceito, não entregue de vez, não descansando). O NPC usa para as dele.</summary>
+        public bool IsOfferable(MissionDefinition m) =>
+            m && IsUnlocked(m) && !IsActive(m) && (m.repeatable || !finished.Contains(m)) && !cooldowns.ContainsKey(m);
+
+        /// <summary>A missão aceita com esta definição (null se não está ativa).</summary>
+        public ActiveMission ActiveFor(MissionDefinition m)
+        {
+            for (int i = 0; i < active.Count; i++)
+                if (active[i].definition == m) return active[i];
+            return null;
         }
 
         /// <summary>
@@ -157,6 +173,9 @@ namespace Pirates.Missions
             mission && cooldowns.TryGetValue(mission, out float left) ? Mathf.Max(0f, left) : 0f;
 
         public bool IsActive(MissionDefinition mission) => active.Exists(a => a.definition == mission);
+
+        /// <summary>Já foi entregue pelo menos uma vez.</summary>
+        public bool IsFinished(MissionDefinition mission) => finished.Contains(mission);
 
         /// <summary>Contrato deste quadro pelo missionId (null se não há).</summary>
         public MissionDefinition Find(string missionId)
@@ -251,6 +270,8 @@ namespace Pirates.Missions
                     return mission.objectiveDone ? "acampamento derrotado" : $"derrote os piratas em {def.targetName}";
                 case MissionType.FindTreasure:
                     return mission.objectiveDone ? "tesouro desenterrado" : $"cave o tesouro em {def.targetName}";
+                case MissionType.DefeatEnemy:
+                    return mission.objectiveDone ? "derrotado" : $"derrote o inimigo em {def.targetName}";
                 default:
                     var parts = new List<string>();
                     foreach (var stack in def.delivery)
@@ -310,6 +331,8 @@ namespace Pirates.Missions
         void OnCampCleared(CampClearedEvent evt) => CompleteTarget(MissionType.ClearCamp, evt.campId);
 
         void OnTreasureFound(TreasureFoundEvent evt) => CompleteTarget(MissionType.FindTreasure, evt.treasureId);
+
+        void OnEnemyDefeated(EnemyDefeatedEvent evt) => CompleteTarget(MissionType.DefeatEnemy, evt.targetId);
 
         void CompleteTarget(MissionType type, string targetId)
         {

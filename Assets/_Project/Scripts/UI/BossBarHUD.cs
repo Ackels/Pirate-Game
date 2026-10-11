@@ -1,4 +1,5 @@
 using Pirates.Combat;
+using Pirates.LandCombat;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,7 +7,8 @@ namespace Pirates.UI
 {
     /// <summary>
     /// Barra do chefe no topo da tela (M7.1): nome do navio e do capitão e a vida do casco, só enquanto um
-    /// <see cref="ShipBoss"/> está lutando. Avisa quando a escolta dele chega. Texto e largura só mudam com a vida
+    /// <see cref="ShipBoss"/> está lutando; a pé, o nome e o título do <see cref="LandBoss"/> (pacote B, passo 4), com o aviso da
+    /// fúria (fase 2) e da vitória. Avisa quando a escolta dele chega. Texto e largura só mudam com a vida
     /// (o resto do quadro não aloca nada).
     /// </summary>
     public class BossBarHUD : MonoBehaviour
@@ -18,6 +20,8 @@ namespace Pirates.UI
         Label title, subtitle;
         HudBar bar;
         ShipBoss shown;
+        LandBoss shownLand;
+        GiantSquid shownSquid;
 
         bool Build()
         {
@@ -41,13 +45,25 @@ namespace Pirates.UI
         {
             ShipBoss.EscortArrived += OnEscortArrived;
             BountyHunters.Arrived += OnHunterArrived;
+            LandBoss.Enraged += OnEnraged;
+            LandBoss.Defeated += OnDefeated;
+            GiantSquid.Ambushed += OnSquidAmbush;
+            GiantSquid.Enraged += OnSquidEnraged;
+            GiantSquid.Defeated += OnSquidDefeated;
         }
 
         void OnDisable()
         {
             ShipBoss.EscortArrived -= OnEscortArrived;
             BountyHunters.Arrived -= OnHunterArrived;
+            LandBoss.Enraged -= OnEnraged;
+            LandBoss.Defeated -= OnDefeated;
+            GiantSquid.Ambushed -= OnSquidAmbush;
+            GiantSquid.Enraged -= OnSquidEnraged;
+            GiantSquid.Defeated -= OnSquidDefeated;
             shown = null;
+            shownLand = null;
+            shownSquid = null;
             if (card != null) Hud.Show(card, false);
         }
 
@@ -59,10 +75,75 @@ namespace Pirates.UI
             for (int i = 0; i < bosses.Count; i++)
                 if (bosses[i].IsEngaged) { engaged = bosses[i]; break; }
 
-            if (engaged != shown) Show(engaged);
-            Hud.Show(card, engaged);
-            if (!engaged) return;
-            bar.Set(engaged.Health.Normalized);
+            LandBoss land = null;
+            if (!engaged)
+            {
+                var walkers = LandBoss.Active;
+                for (int i = 0; i < walkers.Count; i++)
+                    if (walkers[i].IsEngaged) { land = walkers[i]; break; }
+            }
+
+            GiantSquid squid = null;
+            if (!engaged && !land)
+            {
+                var monsters = GiantSquid.Active;
+                for (int i = 0; i < monsters.Count; i++)
+                    if (monsters[i].IsEngaged) { squid = monsters[i]; break; }
+            }
+
+            if (engaged != shown || land != shownLand || squid != shownSquid)
+            {
+                Show(engaged);
+                ShowLand(land);
+                ShowSquid(squid);
+            }
+            Hud.Show(card, engaged || land || squid);
+            if (engaged) bar.Set(engaged.Health.Normalized);
+            else if (land) bar.Set(land.Health.Normalized);
+            else if (squid) bar.Set(squid.Health.Normalized);
+        }
+
+        void ShowLand(LandBoss boss)
+        {
+            shownLand = boss;
+            if (!boss) return;
+            Hud.Set(title, boss.DisplayName);
+            Hud.Set(subtitle, boss.Title);
+            Hud.Show(subtitle, !string.IsNullOrEmpty(boss.Title));
+        }
+
+        void ShowSquid(GiantSquid squid)
+        {
+            shownSquid = squid;
+            if (!squid) return;
+            Hud.Set(title, squid.DisplayName);
+            Hud.Set(subtitle, squid.Title);
+            Hud.Show(subtitle, !string.IsNullOrEmpty(squid.Title));
+        }
+
+        void OnSquidAmbush(GiantSquid squid)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"A {squid.DisplayName} agarrou o navio! Dispare o bordo onde estão os tentáculos!", escortNoticeColor);
+        }
+
+        void OnSquidEnraged(GiantSquid squid)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"A {squid.DisplayName} ficou furiosa!", escortNoticeColor);
+        }
+
+        void OnSquidDefeated(GiantSquid squid)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Você derrotou a {squid.DisplayName}!", HudColors.Good);
+        }
+
+        void OnEnraged(LandBoss boss)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"{boss.DisplayName} ficou furioso!", escortNoticeColor);
+        }
+
+        void OnDefeated(LandBoss boss)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Você derrotou o {boss.DisplayName}!", HudColors.Good);
         }
 
         void Show(ShipBoss boss)

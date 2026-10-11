@@ -1,6 +1,6 @@
 {
     "name": "Pirates.UI",
     "rootNamespace": "Pirates.UI",
-    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy", "Pirates.Loot", "Pirates.Base", "Pirates.Progression", "Pirates.Controls", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Missions", "Pirates.Save", "Unity.InputSystem"],
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy", "Pirates.Loot", "Pirates.Base", "Pirates.Progression", "Pirates.Controls", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Missions", "Pirates.Save", "Pirates.Tutorial", "Unity.InputSystem", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
     "autoReferenced": true
 }

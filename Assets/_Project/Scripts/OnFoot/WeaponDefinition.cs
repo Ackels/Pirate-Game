@@ -36,6 +36,16 @@ namespace Pirates.OnFoot
         [Header("Combo")]
         [Tooltip("Golpes diferentes em sequência (parâmetro AttackVariant). 1 = sempre o mesmo.")]
         [Min(1)] public int attackVariants = 1;
+        [Tooltip("Somado ao AttackVariant no Animator: golpes próprios com a mesma pose (adaga do duelista = cutelo com os golpes 2 e 3).")]
+        [Min(0)] public int animatorVariantOffset;
+        [Tooltip("Golpe sorteado (diferente do anterior) em vez da sequência do combo: a IA mistura golpes rápidos e lentos.")]
+        public bool randomVariants;
+        [Tooltip("Segundos até o impacto de cada golpe (mesma ordem dos golpes; vazio = hitDelay em todos). Golpe lento pega quem rola cedo.")]
+        public float[] variantHitDelays = System.Array.Empty<float>();
+
+        /// <summary>Segundos do começo do golpe <paramref name="variant"/> até o impacto.</summary>
+        public float HitDelayFor(int variant) =>
+            variantHitDelays != null && variant >= 0 && variant < variantHitDelays.Length && variantHitDelays[variant] > 0f ? variantHitDelays[variant] : hitDelay;
         [Tooltip("Segundos depois de um ataque em que o próximo continua o combo (senão volta ao 1º golpe).")]
         public float comboWindow = 1f;
 
@@ -72,5 +82,53 @@ namespace Pirates.OnFoot
         [Header("Movimento")]
         [Tooltip("Fração da velocidade enquanto ataca (1 = normal).")]
         [Range(0f, 1f)] public float moveSpeedWhileAttacking = 0.4f;
+
+        [Header("Golpe pesado (brutamontes)")]
+        [Tooltip("Golpe que acerta derruba (Stumble = cambaleia e cai sentado). Na guarda não derruba.")]
+        public Pirates.Core.Knockdown knockdown;
+        [Tooltip("Fôlego que o golpe tira de quem segura na guarda, × o custo normal (machado pesado cansa mais).")]
+        public float guardCost = 1f;
+
+        [Header("Golpes especiais (chefe)")]
+        [Tooltip("Por golpe (mesma ordem dos golpes; vazio = os valores da arma): alcance, abertura, dano, queda, imparável e acertos a mais.")]
+        public StrikeOverride[] variantStrikes = System.Array.Empty<StrikeOverride>();
+
+        /// <summary>Ajustes do golpe <paramref name="variant"/> (null = os da arma).</summary>
+        public StrikeOverride StrikeFor(int variant) =>
+            variantStrikes != null && variant >= 0 && variant < variantStrikes.Length ? variantStrikes[variant] : null;
+
+        /// <summary>Segundos do começo do golpe até o último acerto (o primeiro + os acertos a mais).</summary>
+        public float LastHitFor(int variant)
+        {
+            var strike = StrikeFor(variant);
+            float last = HitDelayFor(variant);
+            if (strike?.followUps != null)
+                foreach (var t in strike.followUps) last = Mathf.Max(last, HitDelayFor(variant) + t);
+            return last;
+        }
+    }
+
+    /// <summary>
+    /// Golpe com regras próprias dentro de uma arma (espadão do chefe): 0 = o valor da arma. Imparável = passa pela guarda (não dá para
+    /// segurar nem aparar: só rolar ou sair do alcance). Acertos a mais = o mesmo golpe acerta de novo nesses segundos depois do primeiro.
+    /// </summary>
+    [System.Serializable]
+    public class StrikeOverride
+    {
+        [Tooltip("Alcance (m); 0 = o da arma.")]
+        public float range;
+        [Tooltip("Abertura (graus); 360 = em volta. 0 = a da arma.")]
+        public float angle;
+        [Tooltip("Dano; 0 = o da arma.")]
+        public float damage;
+        [Tooltip("Troca a queda da arma pela deste golpe.")]
+        public bool customKnockdown;
+        public Pirates.Core.Knockdown knockdown;
+        [Tooltip("Passa pela guarda (o chefe brilha em vermelho no preparo).")]
+        public bool unblockable;
+        [Tooltip("Segundos depois do primeiro acerto em que o golpe acerta de novo (sequências).")]
+        public float[] followUps = System.Array.Empty<float>();
+        [Tooltip("Investida deste golpe (m/s, 0 = a da IA): o salto vai muito mais longe que um passo.")]
+        public float lungeSpeed;
     }
 }

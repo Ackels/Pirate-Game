@@ -68,6 +68,7 @@ namespace Pirates.EditorTools
             character.AddComponent<BackpackGear>().Configure(BackpackCapacity, Backpacks());
             character.AddComponent<PistolAmmo>().Configure(CartridgeItem(), switcher, startWith: 20);
             AddBlunderbussGear(character);
+            AddBombThrower(character, switcher);
         }
 
         // Garrafa na mão direita (o clipe "Drinking" entra espelhado: o gole da esquerda ficava atrás do papagaio), ~30 cm no mundo,

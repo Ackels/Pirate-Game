@@ -1,3 +1,4 @@
+using Pirates.Core;
 using UnityEngine;
 
 namespace Pirates.Audio
@@ -18,6 +19,29 @@ namespace Pirates.Audio
             Effects = s.effects;
             Ambient = s.ambient;
             Interface = s.interfaceVolume;
+        }
+
+        /// <summary>
+        /// Volumes do menu Opções (<see cref="GameOptions"/>). Sem nada mexido ainda, as opções passam a mostrar os volumes
+        /// do SoundSettings (aplicados antes) e nada muda.
+        /// </summary>
+        public static void Apply(GameOptions o)
+        {
+            if (o == null) return;
+            if (!o.hasAudio)
+            {
+                o.master = Master;
+                o.music = Music;
+                o.effects = Effects;
+                o.ambient = Ambient;
+                o.interfaceVolume = Interface;
+                return;
+            }
+            Master = o.master;
+            Music = o.music;
+            Effects = o.effects;
+            Ambient = o.ambient;
+            Interface = o.interfaceVolume;
         }
 
         public static float Volume(SoundChannel channel) => Master * channel switch
