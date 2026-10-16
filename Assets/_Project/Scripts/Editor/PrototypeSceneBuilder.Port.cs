@@ -508,7 +508,7 @@ namespace Pirates.EditorTools
             land.SetParent(point.transform, false);
             land.SetPositionAndRotation(PierShore + new Vector3(0.8f, 1.3f, PierLength - 2.5f), Quaternion.Euler(0f, 180f, 0f));
             var landing = point.AddComponent<LandingPoint>();
-            landing.Configure("Porto da Base", land, shipDistance: 0f, boardDistance: 5f);
+            landing.Configure("Porto Alento", land, shipDistance: 0f, boardDistance: 5f);
             return landing;
         }
 

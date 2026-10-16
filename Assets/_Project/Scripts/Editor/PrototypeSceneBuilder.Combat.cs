@@ -97,7 +97,7 @@ namespace Pirates.EditorTools
 
         /// <summary>Chalupa inimiga ao norte, logo além do alcance de detecção: aparece patrulhando e logo vem atrás.</summary>
         static ShipController CreateEnemyShip(CombatAssets assets, Transform player, Material deck) =>
-            CreateEnemy("NavioInimigo", new Vector3(-50f, 0.3f, 230f), Quaternion.Euler(0f, 160f, 0f), assets.enemyShip,
+            CreateEnemy("NavioInimigo", EnemySpawnPoints[0], Quaternion.Euler(0f, 160f, 0f), assets.enemyShip,
                 assets.enemyCannons, SloopHull(EnemyShipModel), EnemyHull, assets, player);
 
         /// <summary>Navio inimigo: casco, um bordo de canhões de cada lado, vida com naufrágio e a IA atrás do jogador.</summary>

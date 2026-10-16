@@ -1,6 +1,6 @@
 {
     "name": "Pirates.Tutorial",
     "rootNamespace": "Pirates.Tutorial",
-    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.OnFoot", "Pirates.Base", "Pirates.Missions", "Pirates.Controls"],
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Loot", "Pirates.Economy", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Base", "Pirates.Missions", "Pirates.Controls"],
     "autoReferenced": true
 }

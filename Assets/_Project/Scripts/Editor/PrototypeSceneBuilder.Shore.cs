@@ -16,6 +16,12 @@ namespace Pirates.EditorTools
     {
         const string OceanTexturesFolder = Root + "/Textures/Ocean";
         const int ShoreMapMaxSize = 512;
+        /// <summary>
+        /// Mapa grande (cena 07 espaçada, 16/10: ~1,3 km de ilhas) passaria de ~1,8 m por pixel com 512: até 1024 px para não perder a
+        /// espuma e o raso. As cenas menores ficam com 512 (mesmo mapa de antes).
+        /// </summary>
+        const int ShoreMapLargeSize = 1024;
+        const float ShoreMaxTexel = 1.8f;
         /// <summary>Altura do chão no R (mínima e faixa) e distância máxima no G: o mesmo que o OceanSurface manda ao shader.</summary>
         static readonly Vector3 ShoreEncoding = new(-6f, 8f, 64f);
 
@@ -44,9 +50,10 @@ namespace Pirates.EditorTools
                 max = Vector2.Max(max, c + half);
             }
             var size = max - min;
-            float texel = Mathf.Max(size.x, size.y) / ShoreMapMaxSize;
-            int width = Mathf.Clamp(Mathf.CeilToInt(size.x / texel), 8, ShoreMapMaxSize);
-            int height = Mathf.Clamp(Mathf.CeilToInt(size.y / texel), 8, ShoreMapMaxSize);
+            int maxSize = Mathf.Max(size.x, size.y) / ShoreMapMaxSize > ShoreMaxTexel ? ShoreMapLargeSize : ShoreMapMaxSize;
+            float texel = Mathf.Max(size.x, size.y) / maxSize;
+            int width = Mathf.Clamp(Mathf.CeilToInt(size.x / texel), 8, maxSize);
+            int height = Mathf.Clamp(Mathf.CeilToInt(size.y / texel), 8, maxSize);
             size = new Vector2(width * texel, height * texel);
 
             // Altura do chão (a maior entre as ilhas: longe de todas, o fundo de −6 m). Ponto fora do alcance de uma ilha

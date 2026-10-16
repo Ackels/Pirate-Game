@@ -22,6 +22,7 @@ namespace Pirates.UI
         ShipBoss shown;
         LandBoss shownLand;
         GiantSquid shownSquid;
+        Megalodon shownShark;
 
         bool Build()
         {
@@ -50,6 +51,9 @@ namespace Pirates.UI
             GiantSquid.Ambushed += OnSquidAmbush;
             GiantSquid.Enraged += OnSquidEnraged;
             GiantSquid.Defeated += OnSquidDefeated;
+            Megalodon.Spotted += OnSharkSpotted;
+            Megalodon.Enraged += OnSharkEnraged;
+            Megalodon.Defeated += OnSharkDefeated;
         }
 
         void OnDisable()
@@ -61,9 +65,13 @@ namespace Pirates.UI
             GiantSquid.Ambushed -= OnSquidAmbush;
             GiantSquid.Enraged -= OnSquidEnraged;
             GiantSquid.Defeated -= OnSquidDefeated;
+            Megalodon.Spotted -= OnSharkSpotted;
+            Megalodon.Enraged -= OnSharkEnraged;
+            Megalodon.Defeated -= OnSharkDefeated;
             shown = null;
             shownLand = null;
             shownSquid = null;
+            shownShark = null;
             if (card != null) Hud.Show(card, false);
         }
 
@@ -91,16 +99,50 @@ namespace Pirates.UI
                     if (monsters[i].IsEngaged) { squid = monsters[i]; break; }
             }
 
-            if (engaged != shown || land != shownLand || squid != shownSquid)
+            Megalodon shark = null;
+            if (!engaged && !land && !squid)
+            {
+                var sharks = Megalodon.Active;
+                for (int i = 0; i < sharks.Count; i++)
+                    if (sharks[i].IsEngaged) { shark = sharks[i]; break; }
+            }
+
+            if (engaged != shown || land != shownLand || squid != shownSquid || shark != shownShark)
             {
                 Show(engaged);
                 ShowLand(land);
                 ShowSquid(squid);
+                ShowShark(shark);
             }
-            Hud.Show(card, engaged || land || squid);
+            Hud.Show(card, engaged || land || squid || shark);
             if (engaged) bar.Set(engaged.Health.Normalized);
             else if (land) bar.Set(land.Health.Normalized);
             else if (squid) bar.Set(squid.Health.Normalized);
+            else if (shark) bar.Set(shark.Health.Normalized);
+        }
+
+        void ShowShark(Megalodon shark)
+        {
+            shownShark = shark;
+            if (!shark) return;
+            Hud.Set(title, shark.DisplayName);
+            Hud.Set(subtitle, shark.Title);
+            Hud.Show(subtitle, !string.IsNullOrEmpty(shark.Title));
+        }
+
+        void OnSharkSpotted(Megalodon shark)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Uma barbatana enorme corta a água: o {shark.DisplayName}!", escortNoticeColor);
+        }
+
+        void OnSharkEnraged(Megalodon shark)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"O {shark.DisplayName} ficou furioso! Cuidado com a água estourando!", escortNoticeColor);
+        }
+
+        void OnSharkDefeated(Megalodon shark)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Você derrotou o {shark.DisplayName}!", HudColors.Good);
         }
 
         void ShowLand(LandBoss boss)

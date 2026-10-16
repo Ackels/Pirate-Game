@@ -17,8 +17,8 @@ namespace Pirates.EditorTools
     /// </summary>
     public static partial class PrototypeSceneBuilder
     {
-        /// <summary>Centro do covil: ~550 m do porto e da Ilha Oeste (o mapa ainda vai crescer; ela fica longe de propósito).</summary>
-        static Vector3 SquidLair => new(-560f, 0f, -330f);
+        /// <summary>Centro do covil: ~850 m do cais e ~650 m da Ilha Oeste (mapa espaçado em 16/10; era (−560, −330)).</summary>
+        static Vector3 SquidLair => new(-760f, 0f, -420f);
         const string SquidId = "lula_gigante";
         const float SquidHealth = 1400f, SquidTentacleHealth = 120f, SquidTentacleScale = 0.8f;
         static readonly Color SquidSkin = new(0.86f, 0.52f, 0.62f);

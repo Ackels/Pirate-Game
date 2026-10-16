@@ -35,7 +35,7 @@ namespace Pirates.EditorTools
             Debug.LogWarning($"[Pirates] Missão {id}: ninguém com o posto \"{prefix}...\" em {camp.DisplayName}.");
         }
 
-        /// <summary>Os quatro contratos dos inimigos novos.</summary>
+        /// <summary>Os contratos dos inimigos novos (e o do Barba-Negra, pacote B, passo 4, passo 2).</summary>
         static IEnumerable<MissionDefinition> BountyMissions(LootItems i)
         {
             var bombs = LoadItem("Item_Bomba");
@@ -111,6 +111,63 @@ namespace Pirates.EditorTools
                     : new[] { new ItemStack(i.gold, 260) };
                 m.requiredRank = 1;
                 m.fameReward = 35;
+            });
+            // Capítulo 4 da história ("Os tenentes de Lázaro", patente Capitão Temido): o braço direito de Lázaro nas ruínas da Caveira,
+            // com a Guarda Negra. O ouro vem do almirantado (as ruínas já dão 60 de fama pelo posto).
+            yield return Mission("Missao_CarniceiroRuinas", m =>
+            {
+                m.missionId = ChiefBounty;
+                m.title = "O Carniceiro das Ruínas";
+                m.giver = "Almirante Teodoro";
+                m.description = "O Capitão Barba-Negra, braço direito de Lázaro Negro, fez das ruínas da Caveira o seu covil, com uma guarda " +
+                                "pessoal de preto e vermelho. Derrube a guarda, depois o carniceiro. Ele não perdoa quem fica parado.";
+                m.type = MissionType.DefeatEnemy;
+                m.targetId = ChiefBounty;
+                m.targetName = "Ilha da Caveira";
+                m.objectiveText = "derrote o Capitão Barba-Negra nas ruínas da Caveira";
+                m.doneText = "Barba-Negra derrotado";
+                m.rewards = new[] { new ItemStack(i.gold, 600), new ItemStack(i.iron, 12), new ItemStack(i.powder, 10) };
+                m.cooldownSeconds = 1800f;
+                m.requiredRank = 3;
+                m.fameReward = 100;
+            });
+            // Megalodonte (F.1, passo 2b, 16/10): o segundo contrato da Iara. Patente Capitão Temido (abaixo da lula); o tubarão já dá 120 de
+            // fama ao morrer.
+            yield return Mission("Missao_Megalodonte", m =>
+            {
+                m.missionId = MegalodonId;
+                m.title = "O rei das profundezas";
+                m.giver = "Iara";
+                m.description = "A nordeste, onde o mar fica fundo de repente, uma barbatana maior que uma vela corta a água. Um tubarão do tempo " +
+                                "dos dragões, dizem os velhos. Ele circula os barcos e bate no casco até a madeira ceder. Mate-o.";
+                m.type = MissionType.DefeatEnemy;
+                m.targetId = MegalodonId;
+                m.targetName = "Fossa do Megalodonte";
+                m.objectiveText = "mate o megalodonte da Fossa, a nordeste";
+                m.doneText = "megalodonte morto";
+                m.rewards = new[] { new ItemStack(i.gold, 700), new ItemStack(i.powder, 12), new ItemStack(i.iron, 8) };
+                m.cooldownSeconds = 1800f;
+                m.requiredRank = 3;
+                m.fameReward = 120;
+            });
+            // Capítulo 5 da história ("As Águas Negras", patente Lenda dos Sete Mares): a lula gigante que guarda o túmulo da Frota de Prata
+            // (F.1, passo 2). A própria lula já dá 100 de fama ao morrer.
+            yield return Mission("Missao_AguasNegras", m =>
+            {
+                m.missionId = SquidId;
+                m.title = "O guardião das Águas Negras";
+                m.giver = "Iara";
+                m.description = "A oeste, depois do último farol, ficam as Águas Negras: o túmulo da Frota de Prata. Uma lula gigante guarda o " +
+                                "lugar, agarra os cascos e espreme até a madeira estalar. Ninguém pesca por lá desde então. Mate a fera.";
+                m.type = MissionType.DefeatEnemy;
+                m.targetId = SquidId;
+                m.targetName = "Águas Negras";
+                m.objectiveText = "mate a lula gigante das Águas Negras";
+                m.doneText = "lula gigante morta";
+                m.rewards = new[] { new ItemStack(i.gold, 900), new ItemStack(i.powder, 20), new ItemStack(i.iron, 15) };
+                m.cooldownSeconds = 1800f;
+                m.requiredRank = 4;
+                m.fameReward = 150;
             });
         }
     }

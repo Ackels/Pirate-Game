@@ -1,7 +1,11 @@
 using System;
 using Pirates.Base;
+using Pirates.Combat;
 using Pirates.Controls;
 using Pirates.Core;
+using Pirates.Economy;
+using Pirates.LandCombat;
+using Pirates.Loot;
 using Pirates.Missions;
 using Pirates.OnFoot;
 using UnityEngine;
@@ -12,7 +16,9 @@ namespace Pirates.Tutorial
     /// Tutorial do jogo novo (11/10, pedido do Jhonata), guiado pelo Velho Bento (na história, quem acha o capitão na praia e
     /// ensina o básico). Uma etapa por vez: o que fazer (com as teclas), uma fala do Bento e para onde ir (o HUD aponta). Cada
     /// etapa termina sozinha quando o jogador faz a coisa (desceu do navio, entrou numa casa, golpeou um boneco...), ouvindo os
-    /// eventos que os sistemas já têm. Parte 1 = o porto e o treino a pé, e zarpar; o mar e as ilhas vêm depois.
+    /// eventos que os sistemas já têm. Parte 1 = o porto e o treino a pé, e zarpar; parte 2 = o mar (canhões, afundar a chalupa
+    /// pirata, saquear os destroços, atracar); parte 3 = as ilhas (desembarcar na praia norte da Caveira, derrotar o posto do naufrágio,
+    /// saque a pé, a fama, voltar ao navio). A praia sul ficava a ~185 m do galeão Tormenta, que via o navio e atacava.
     /// O save guarda a etapa (<see cref="ITutorial"/>); save de antes do tutorial = sem tutorial.
     /// </summary>
     public class TutorialGuide : MonoBehaviour, ITutorial
@@ -21,11 +27,15 @@ namespace Pirates.Tutorial
         {
             Disembark, MeetGuide, VisitCargo, VisitShipyard, VisitConstruction, VisitTavern, VisitMarket, TalkToVillager,
             Slash, Shoot, Kick, Roll, Guard, Board, SetSail,
+            FireCannons, SinkShip, Salvage, Dock,
+            LandOnIsland, ClearOutpost, LandLoot, OpenFame,
         }
 
         [Serializable]
         public class Stage
         {
+            [Tooltip("Parte do tutorial (1 = o porto, 2 = o mar): nome em Part Names.")]
+            public int part = 1;
             public Goal goal;
             public string title;
             [Tooltip("O que o Velho Bento diz (vazio = sem fala).")]
@@ -44,8 +54,21 @@ namespace Pirates.Tutorial
         [SerializeField] MissionGiver guide;
         [Tooltip("Campo de treino do porto (bonecos).")]
         [SerializeField] Transform trainingYard;
+        [Tooltip("Praia onde a parte das ilhas desembarca (a praia norte da Caveira: a sul fica perto do galeão Tormenta).")]
+        [SerializeField] LandingPoint islandLanding;
+        [Tooltip("Posto pequeno que a parte das ilhas manda derrotar (o do naufrágio: 2 de cutelo e 1 de pistola).")]
+        [SerializeField] EnemyCamp outpost;
+        [Tooltip("Caixotes e barris até esta distância (m) do posto contam para a etapa do saque a pé.")]
+        [SerializeField] float outpostLootRadius = 25f;
         [Tooltip("Segundos com a guarda erguida para a etapa da guarda.")]
         [SerializeField] float guardSeconds = 1f;
+        [Tooltip("Etapa do saque sem destroços com carga no mar por este tempo (sumiram, ou o navio afundou longe) = cumprida.")]
+        [SerializeField] float noWreckSeconds = 30f;
+        [Tooltip("Na etapa de afundar, a chalupa pirata mais perto vem atrás do navio daqui (m): ela nasce perto da patrulha do " +
+                 "brigue Santa Clara, forte demais para quem está começando.")]
+        [SerializeField] float callPirateRange = 900f;
+        [Tooltip("Nome de cada parte (a 1ª é a parte 1).")]
+        [SerializeField] string[] partNames = { "O porto", "O mar", "As ilhas" };
         [Tooltip("A primeira conversa com o guia.")]
         [SerializeField, TextArea(2, 4)] string[] meetLines =
         {
@@ -100,14 +123,47 @@ namespace Pirates.Tutorial
             new() { goal = Goal.SetSail, title = "Zarpar",
                 guide = "Velas ao vento! E volte inteiro, que o armazém não se enche sozinho.",
                 objective = "<b>W</b> solta as velas (mais uma vez, mais rápido) e <b>A / D</b> mexem o leme. Saia do porto." },
+            new() { part = 2, goal = Goal.FireCannons, title = "Os canhões",
+                guide = "Canhão só atira pelo costado: bombordo é a esquerda, estibordo a direita. Segure, e a mira vai para longe; solte, e fogo!",
+                objective = "Segure <b>Q</b> (bombordo) ou <b>E</b> (estibordo) para mirar e <b>solte</b> para disparar. Pode ser na água, é treino." },
+            new() { part = 2, goal = Goal.SinkShip, title = "Fogo nos piratas!",
+                guide = "Lá vem uma chalupa pirata atrás de você! Fique de lado para ela e mande bala. Casco feio? Volte ao porto: lá ninguém te segue.",
+                objective = "Afunde a <b>chalupa pirata</b> marcada. <b>W / S</b> soltam e recolhem as velas, <b>Q / E</b> disparam." },
+            new() { part = 2, goal = Goal.Salvage, title = "O saque",
+                guide = "Navio no fundo, destroços na água: o que couber no porão é seu. Ouro, madeira, pólvora... às vezes até um baú!",
+                objective = "Pare ao lado dos <b>destroços</b> (<b>S</b> recolhe as velas), aperte <b>F</b> e pegue os itens." },
+            new() { part = 2, goal = Goal.Dock, title = "De volta ao porto",
+                guide = "Porão cheio, rumo a casa! Atracou no cais, a carga vai sozinha para o armazém e o jogo fica salvo.",
+                objective = "Volte a <b>Porto Alento</b>, chegue devagar no seu cais e aperte <b>F</b> para atracar." },
+            new() { part = 3, goal = Goal.LandOnIsland, title = "Terra à vista",
+                guide = "As ilhas guardam o melhor saque, e os piores piratas. Vamos começar pela Ilha da Caveira, pela praia do norte.",
+                objective = "Navegue até a <b>praia norte da Caveira</b> e, perto da areia, aperte <b>F</b> para desembarcar." },
+            new() { part = 3, goal = Goal.ClearOutpost, title = "Os guardas do naufrágio",
+                guide = "Três capangas do Lázaro guardam um naufrágio a leste. O de pistola avisa com uma linha vermelha: saia da frente! Vida baixa? <b>R</b> come uma ração.",
+                objective = "Siga a trilha e derrote os <b>guardas do posto do naufrágio</b>." },
+            new() { part = 3, goal = Goal.LandLoot, title = "Saque a pé",
+                guide = "Caixote e barril de pirata sempre têm alguma coisa. Quebre e passe por cima do saco: vai tudo para a mochila.",
+                objective = "Quebre um <b>caixote</b> ou <b>barril</b> do posto com o cutelo e passe por cima do saco." },
+            new() { part = 3, goal = Goal.OpenFame, title = "A sua fama",
+                guide = "Cada feito espalha o seu nome: navio afundado, posto limpo, contrato entregue. Com fama você sobe de patente e libera contratos, mercadorias e bônus.",
+                objective = "Aperte <b>C</b> para ver a fama do capitão (<b>C</b> ou <b>Esc</b> fecha)." },
+            new() { part = 3, goal = Goal.Board, title = "De volta a bordo",
+                guide = "Aquele acampamento grande no meio da ilha tem onze piratas e um brutamontes: volte com tripulação e melhorias. O contrato dele está na taverna.",
+                objective = "Volte ao navio e aperte <b>F</b> para embarcar: a mochila descarrega no porão." },
         };
 
         int step = -1, progress;
-        float guardHeld;
+        float guardHeld, noWreckFor;
         CharacterCombat combat;
         FootCharacter character;
         HarborBuildingVisitor buildings;
         MissionBoard board;
+        CannonBattery[] batteries = Array.Empty<CannonBattery>();
+        WreckSalvager salvager;
+        HarborVisitor visitor;
+        EnemyShipAI calledPirate;
+        LandLooter looter;
+        NpcTalker talker;
 
         public int Step => step;
         public bool Running => step >= 0 && step < stages.Length;
@@ -118,15 +174,65 @@ namespace Pirates.Tutorial
         /// <summary>Muda a cada etapa ou contagem (o HUD só remonta aí).</summary>
         public int Version { get; private set; }
 
+        public int Parts
+        {
+            get
+            {
+                int max = 0;
+                for (int i = 0; i < stages.Length; i++) max = Mathf.Max(max, stages[i].part);
+                return max;
+            }
+        }
+
+        public int FirstStepOf(int part)
+        {
+            for (int i = 0; i < stages.Length; i++)
+                if (stages[i].part == part) return i;
+            return -1;
+        }
+
+        /// <summary>Parte da etapa (0 = fora do tutorial).</summary>
+        public int PartOf(int index) => index >= 0 && index < stages.Length ? stages[index].part : 0;
+
+        public string PartName(int part) => part >= 1 && part <= partNames.Length ? partNames[part - 1] : $"Parte {part}";
+
+        /// <summary>Etapa atual dentro da parte (1 em diante) e quantas a parte tem.</summary>
+        public (int index, int count) PartProgress
+        {
+            get
+            {
+                if (!Running) return (0, 0);
+                int part = stages[step].part, index = 0, count = 0;
+                for (int i = 0; i < stages.Length; i++)
+                {
+                    if (stages[i].part != part) continue;
+                    count++;
+                    if (i <= step) index++;
+                }
+                return (index, count);
+            }
+        }
+
         /// <summary>A etapa pede o capitão a pé, e ele está no navio (o HUD avisa para descer).</summary>
         public bool WaitingOnFoot => Running && NeedsFoot(stages[step].goal) && switcher && !switcher.IsOnFoot;
 
-        public void Configure(PlayerModeSwitcher modeSwitcher, HarborShoreLeave shore, MissionGiver guideNpc, Transform yard)
+        /// <summary>Onde descer quando a etapa pede o capitão a pé e ele está no navio (o HUD avisa).</summary>
+        public string DisembarkHint => OnIsland
+            ? "Primeiro desça do navio: perto da <b>praia norte da Caveira</b>, aperte <b>F</b>."
+            : "Primeiro volte à terra: no cais do porto, aperte <b>F</b> para descer do navio.";
+
+        /// <summary>A etapa é no mar, e o capitão está a pé (o HUD avisa para embarcar).</summary>
+        public bool WaitingOnShip => Running && NeedsShip(stages[step].goal) && switcher && switcher.IsOnFoot;
+
+        public void Configure(PlayerModeSwitcher modeSwitcher, HarborShoreLeave shore, MissionGiver guideNpc, Transform yard,
+            LandingPoint landing, EnemyCamp islandOutpost)
         {
             switcher = modeSwitcher;
             shoreLeave = shore;
             guide = guideNpc;
             trainingYard = yard;
+            islandLanding = landing;
+            outpost = islandOutpost;
         }
 
         void Awake()
@@ -137,6 +243,15 @@ namespace Pirates.Tutorial
                 character = switcher.Character;
                 combat = character.GetComponent<CharacterCombat>();
                 buildings = character.GetComponent<HarborBuildingVisitor>();
+                looter = character.GetComponent<LandLooter>();
+                talker = character.GetComponent<NpcTalker>();
+            }
+            if (switcher && switcher.Ship)
+            {
+                // Os canhões de todos os cascos (os do casco que não está em uso ficam desligados e não disparam).
+                batteries = switcher.Ship.GetComponentsInChildren<CannonBattery>(true);
+                salvager = switcher.Ship.GetComponent<WreckSalvager>();
+                visitor = switcher.Ship.GetComponent<HarborVisitor>();
             }
         }
 
@@ -151,8 +266,14 @@ namespace Pirates.Tutorial
             }
             if (character) character.Dodged += OnDodged;
             if (buildings) buildings.Entered += OnEntered;
+            if (looter) looter.Transferred += OnLandLooted;
             if (guide) guide.ScriptedTalkFinished += OnGuideTalked;
             MissionGiver.TalkStarted += OnTalkStarted;
+            for (int i = 0; i < batteries.Length; i++) batteries[i].Fired += OnCannonFired;
+            if (salvager) salvager.Transferred += OnSalvaged;
+            if (visitor) visitor.Docked += OnDocked;
+            EventBus.Subscribe<ShipSunkEvent>(OnShipSunk);
+            EventBus.Subscribe<CampClearedEvent>(OnCampCleared);
         }
 
         void OnDisable()
@@ -166,8 +287,14 @@ namespace Pirates.Tutorial
             }
             if (character) character.Dodged -= OnDodged;
             if (buildings) buildings.Entered -= OnEntered;
+            if (looter) looter.Transferred -= OnLandLooted;
             if (guide) guide.ScriptedTalkFinished -= OnGuideTalked;
             MissionGiver.TalkStarted -= OnTalkStarted;
+            for (int i = 0; i < batteries.Length; i++) batteries[i].Fired -= OnCannonFired;
+            if (salvager) salvager.Transferred -= OnSalvaged;
+            if (visitor) visitor.Docked -= OnDocked;
+            EventBus.Unsubscribe<ShipSunkEvent>(OnShipSunk);
+            EventBus.Unsubscribe<CampClearedEvent>(OnCampCleared);
         }
 
         void OnDestroy()
@@ -191,8 +318,10 @@ namespace Pirates.Tutorial
         {
             step = index;
             progress = 0;
-            guardHeld = 0f;
+            guardHeld = noWreckFor = 0f;
             if (guide) guide.ScriptedLines = Running && stages[step].goal == Goal.MeetGuide ? meetLines : null;
+            // Posto já limpo nesta sessão (o jogador passou antes por lá): os guardas voltam para a etapa ter o que fazer.
+            if (Running && stages[step].goal == Goal.ClearOutpost && outpost && outpost.IsCleared) outpost.ResetAll();
             Version++;
         }
 
@@ -201,7 +330,12 @@ namespace Pirates.Tutorial
             if (!Running) return;
             int done = step;
             bool last = done == stages.Length - 1;
-            EventBus.Publish(new TutorialStepEvent { step = done, title = stages[done].title, finished = last });
+            int part = stages[done].part;
+            EventBus.Publish(new TutorialStepEvent
+            {
+                step = done, title = stages[done].title, finished = last,
+                partFinished = last || stages[done + 1].part != part, part = PartName(part),
+            });
             Enter(last ? -1 : done + 1);
         }
 
@@ -222,12 +356,46 @@ namespace Pirates.Tutorial
             {
                 case Goal.Disembark when switcher.IsOnFoot: Complete(); break;
                 case Goal.Board when !switcher.IsOnFoot: Complete(); break;
+                case Goal.LandOnIsland when switcher.IsOnFoot && !AtPier: Complete(); break;
+                // O painel da fama usa o ScreenPanel; a conversa com um NPC também (essa não conta).
+                case Goal.OpenFame when ScreenPanel.Open && !(talker && talker.IsOpen): Complete(); break;
                 case Goal.SetSail when !switcher.IsOnFoot && switcher.Ship && !InPort(switcher.Ship.transform.position): Complete(); break;
                 case Goal.Guard when combat && combat.IsBlocking:
                     guardHeld += Time.deltaTime;
                     if (guardHeld >= guardSeconds) Complete();
                     break;
+                case Goal.SinkShip when NearestPirate(out var pirate) && pirate != calledPirate:
+                    pirate.Hunt(callPirateRange);
+                    calledPirate = pirate;
+                    break;
+                case Goal.Salvage:
+                    // Os destroços aparecem quando o navio termina de afundar (alguns segundos) e somem com o tempo.
+                    noWreckFor = NearestWreck(out _) ? 0f : noWreckFor + Time.deltaTime;
+                    if (noWreckFor >= noWreckSeconds) Complete();
+                    break;
             }
+        }
+
+        void OnCannonFired() => Count(Goal.FireCannons);
+        void OnShipSunk(ShipSunkEvent _) => Count(Goal.SinkShip);
+        void OnDocked(HarborDock _) => Count(Goal.Dock);
+
+        void OnCampCleared(CampClearedEvent e)
+        {
+            if (outpost && e.campId == outpost.CampId) Count(Goal.ClearOutpost);
+        }
+
+        void OnLandLooted(ItemStack _, bool toBackpack)
+        {
+            if (toBackpack) Count(Goal.LandLoot);
+        }
+
+        /// <summary>O capitão está a pé no cais do porto (não numa ilha).</summary>
+        bool AtPier => shoreLeave && shoreLeave.Pier && switcher.Landing == shoreLeave.Pier;
+
+        void OnSalvaged(ItemStack _, bool toHold)
+        {
+            if (toHold) Count(Goal.Salvage);
         }
 
         void OnHit(WeaponDefinition weapon, Vector3 _)
@@ -266,7 +434,12 @@ namespace Pirates.Tutorial
             return false;
         }
 
-        static bool NeedsFoot(Goal goal) => goal is not (Goal.Disembark or Goal.SetSail);
+        static bool NeedsShip(Goal goal) =>
+            goal is Goal.SetSail or Goal.FireCannons or Goal.SinkShip or Goal.Salvage or Goal.Dock or Goal.LandOnIsland;
+        static bool NeedsFoot(Goal goal) => goal is not (Goal.Disembark or Goal.OpenFame) && !NeedsShip(goal);
+
+        /// <summary>A etapa é numa ilha: no navio, o capitão desce na praia, não no cais.</summary>
+        bool OnIsland => Running && stages[step].part >= 3;
 
         // ---------- Para onde ir (o HUD aponta) ----------
 
@@ -276,11 +449,40 @@ namespace Pirates.Tutorial
             position = default;
             label = null;
             if (!Running) return false;
-            if (WaitingOnFoot && stages[step].goal != Goal.Board) return Pier(out position, out label);
+            if (WaitingOnFoot && stages[step].goal != Goal.Board)
+                return OnIsland ? Landing(islandLanding, IslandBeachName, out position, out label) : Pier(out position, out label);
+            // A pé fora do porto, a etapa de desembarcar já se cumpre: aqui o capitão está no cais.
+            if (WaitingOnShip) return Pier(out position, out label);
             switch (stages[step].goal)
             {
                 case Goal.Disembark: return false;
-                case Goal.Board: return Pier(out position, out label);
+                case Goal.Board:
+                    // Numa ilha, o navio ficou ancorado na praia onde o capitão desceu.
+                    if (switcher.IsOnFoot && switcher.Landing && !AtPier) return Landing(switcher.Landing, "Seu navio", out position, out label);
+                    return Pier(out position, out label);
+                case Goal.LandOnIsland:
+                    return Landing(islandLanding, IslandBeachName, out position, out label);
+                case Goal.ClearOutpost:
+                    if (!outpost) return false;
+                    position = outpost.Center + Vector3.up * 4f;
+                    label = outpost.DisplayName;
+                    return true;
+                case Goal.LandLoot: return OutpostLoot(out position, out label);
+                case Goal.SinkShip:
+                    if (!NearestPirate(out var pirate)) return false;
+                    position = pirate.transform.position + Vector3.up * 9f;
+                    label = "Chalupa pirata";
+                    return true;
+                case Goal.Salvage:
+                    if (!NearestWreck(out var wreck)) return false;
+                    position = wreck.transform.position + Vector3.up * 3f;
+                    label = "Destroços";
+                    return true;
+                case Goal.Dock:
+                    if (HarborDock.Active.Count == 0) return false;
+                    position = HarborDock.Active[0].Berth.position + Vector3.up * 4f;
+                    label = "Seu cais";
+                    return true;
                 case Goal.MeetGuide:
                     if (!guide) return false;
                     position = guide.LabelPosition + Vector3.up * 0.6f;
@@ -300,6 +502,88 @@ namespace Pirates.Tutorial
                     return true;
                 default: return false;
             }
+        }
+
+        Vector3 ShipPosition => switcher && switcher.Ship ? switcher.Ship.transform.position : transform.position;
+
+        /// <summary>Navio pirata comum mais perto (sem os chefes, os caçadores e os navios com nome de missão, fortes demais no começo).</summary>
+        bool NearestPirate(out EnemyShipAI best)
+        {
+            best = null;
+            Vector3 me = ShipPosition;
+            float bestDistance = float.MaxValue;
+            var all = EnemyShipAI.Active;
+            for (int i = 0; i < all.Count; i++)
+            {
+                var ai = all[i];
+                if (ai.IsDead || !string.IsNullOrEmpty(ai.TargetId) || ai.TryGetComponent(out ShipBoss _)) continue;
+                float d = (ai.transform.position - me).sqrMagnitude;
+                if (d >= bestDistance) continue;
+                best = ai;
+                bestDistance = d;
+            }
+            return best;
+        }
+
+        /// <summary>Destroços com carga mais perto do navio.</summary>
+        bool NearestWreck(out ShipWreck best)
+        {
+            best = null;
+            Vector3 me = ShipPosition;
+            float bestDistance = float.MaxValue;
+            var all = ShipWreck.Active;
+            for (int i = 0; i < all.Count; i++)
+            {
+                var w = all[i];
+                if (w.IsEmpty) continue;
+                float d = (w.transform.position - me).sqrMagnitude;
+                if (d >= bestDistance) continue;
+                best = w;
+                bestDistance = d;
+            }
+            return best;
+        }
+
+        const string IslandBeachName = "Praia norte da Caveira";
+
+        static bool Landing(LandingPoint point, string name, out Vector3 position, out string label)
+        {
+            position = default;
+            label = name;
+            if (!point) return false;
+            position = point.LandPosition.position + Vector3.up * 3f;
+            return true;
+        }
+
+        /// <summary>Saco de saque no chão perto do posto (primeiro) ou o caixote/barril inteiro mais perto do posto.</summary>
+        bool OutpostLoot(out Vector3 position, out string label)
+        {
+            position = default;
+            label = null;
+            if (!outpost) return false;
+            Vector3 center = outpost.Center;
+            float limit = outpostLootRadius * outpostLootRadius, best = limit;
+            for (int i = 0; i < LootSack.Active.Count; i++)
+            {
+                float d = (LootSack.Active[i].transform.position - center).sqrMagnitude;
+                if (d >= best) continue;
+                best = d;
+                position = LootSack.Active[i].transform.position + Vector3.up * 1.5f;
+                label = "Saco de saque";
+            }
+            if (label != null) return true;
+            best = limit;
+            for (int i = 0; i < BreakableLoot.Active.Count; i++)
+            {
+                var b = BreakableLoot.Active[i];
+                if (b.IsBroken) continue;
+                float d = (b.transform.position - center).sqrMagnitude;
+                if (d >= best) continue;
+                best = d;
+                position = b.transform.position + Vector3.up * 1.8f;
+                label = b.name.StartsWith("Barril") ? "Barril" : "Caixote";
+            }
+            return label != null;
         }
 
         bool Pier(out Vector3 position, out string label)

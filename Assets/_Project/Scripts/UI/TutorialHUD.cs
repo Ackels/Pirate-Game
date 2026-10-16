@@ -25,8 +25,7 @@ namespace Pirates.UI
         Label header, title, quote, objective;
         WorldPointer pointer;
         HudBanner banner;
-        int shownVersion = -1;
-        bool shownWaiting;
+        int shownVersion = -1, shownWaiting;
         float bannerUntil;
         HarborBuildingVisitor buildings;
         NpcTalker talker;
@@ -74,10 +73,14 @@ namespace Pirates.UI
             return true;
         }
 
+        // Fim de cada parte: faixa no meio ("O porto: aprendido!" e o que vem agora, ou o fim do tutorial).
         void OnStep(TutorialStepEvent e)
         {
-            if (!e.finished || banner == null) return;
-            banner.Show("Tutorial do porto concluído!", "Bons ventos, capitão. Tecla H mostra os controles a qualquer hora.");
+            if (!e.partFinished || banner == null) return;
+            string next = e.finished || !tutorial ? null : tutorial.PartName(tutorial.PartOf(e.step + 1));
+            banner.Show($"{e.part}: aprendido!", next == null
+                ? "Fim do tutorial. Bons ventos, capitão!"
+                : $"Agora: {next.ToLowerInvariant()}.");
             bannerUntil = Time.unscaledTime + 5f;
         }
 
@@ -99,25 +102,30 @@ namespace Pirates.UI
                 pointer.Hide();
                 return;
             }
-            bool waiting = tutorial.WaitingOnFoot;
+            int waiting = tutorial.WaitingOnFoot ? 1 : tutorial.WaitingOnShip ? 2 : 0;
             if (tutorial.Version != shownVersion || waiting != shownWaiting) Refresh(waiting);
             UpdatePointer();
         }
 
-        void Refresh(bool waiting)
+        /// <param name="waiting">1 = a etapa é a pé e o capitão está no navio; 2 = é no mar e ele está a pé.</param>
+        void Refresh(int waiting)
         {
             shownVersion = tutorial.Version;
             shownWaiting = waiting;
             var stage = tutorial.CurrentStage;
-            Hud.Set(header, $"TUTORIAL  ·  {tutorial.Step + 1} de {tutorial.StageCount}");
+            var (index, count) = tutorial.PartProgress;
+            Hud.Set(header, $"TUTORIAL  ·  {tutorial.PartName(stage.part).ToUpperInvariant()}  ·  {index} de {count}");
             Hud.Set(title, stage.title);
             bool hasQuote = !string.IsNullOrWhiteSpace(stage.guide);
             Hud.Show(quote, hasQuote);
             if (hasQuote) Hud.Set(quote, $"<b>{tutorial.GuideName}:</b> “{stage.guide}”");
-            string count = stage.count > 1 ? $"  <b>({tutorial.Progress}/{stage.count})</b>" : "";
-            Hud.Set(objective, waiting
-                ? "Primeiro volte à terra: no cais do porto, aperte <b>F</b> para descer do navio."
-                : stage.objective + count);
+            string progress = stage.count > 1 ? $"  <b>({tutorial.Progress}/{stage.count})</b>" : "";
+            Hud.Set(objective, waiting switch
+            {
+                1 => tutorial.DisembarkHint,
+                2 => "Primeiro volte ao navio: no píer, aperte <b>F</b> para embarcar.",
+                _ => stage.objective + progress,
+            });
         }
 
         void UpdatePointer()

@@ -207,7 +207,8 @@ namespace Pirates.EditorTools
             if (weapon.twoHanded)
             {
                 // Bacamarteiro: o bacamarte do jogador (duas mãos, pose de rifle), com a mesma linha vermelha de aviso.
-                var gun = BlunderbussOn(model, iron, wood, out Transform muzzle, out Transform hand, out Transform holster);
+                // A mosqueteira da Guarda Negra usa o mosquete-machadinha do kit; os bacamarteiros, o bacamarte.
+                var gun = BlunderbussOn(model, iron, wood, out Transform muzzle, out Transform hand, out Transform holster, IsMusketeer(name));
                 combat.Configure(new[] { weapon }, new[] { gun }, new[] { hand }, new[] { holster }, muzzle, ShotTracer(go.transform));
                 combat.SetMuzzles(new[] { muzzle });
                 combat.SetAimSnap(0f);
@@ -232,6 +233,12 @@ namespace Pirates.EditorTools
                 // Duelista: adaga sempre na mão (não troca de arma).
                 var dagger = DaggerOn(model, iron, wood, out Transform hand);
                 combat.Configure(new[] { weapon }, new[] { dagger }, new[] { hand }, new[] { hand }, null, null);
+            }
+            else if (IsBlackGuard(name))
+            {
+                // Guarda Negra: sabre sempre na mão.
+                var sabre = SabreOn(model, iron, wood, out Transform hand);
+                combat.Configure(new[] { weapon }, new[] { sabre }, new[] { hand }, new[] { hand }, null, null);
             }
             else if (weapon.animatorWeaponType == 4)
             {
@@ -260,6 +267,7 @@ namespace Pirates.EditorTools
             if (IsBrute(name)) MakeBrute(go, model, ai);
             if (IsDuelist(name)) MakeDuelist(go, model, ai);
             if (IsChief(name)) MakeChief(go, model, ai);
+            if (IsBlackGuard(name)) MakeBlackGuard(go, model, ai, kitModel, IsMusketeer(name));
             return ai;
         }
 

@@ -42,7 +42,7 @@ namespace Pirates.EditorTools
             dockGo.AddComponent<Inventory>().Configure(0f, unlimitedSpace: true);
             dockGo.AddComponent<SafeZone>().Configure(SafeZoneRadius);
             SafeZoneBuoys(root, dockGo.transform.position);
-            dockGo.AddComponent<HarborDock>().Configure("Porto da Base", settings, DockRadius);
+            dockGo.AddComponent<HarborDock>().Configure("Porto Alento", settings, DockRadius);
 
             var buildings = LoadBuildingAssets(items);
             AddLevelFour(buildings, items);

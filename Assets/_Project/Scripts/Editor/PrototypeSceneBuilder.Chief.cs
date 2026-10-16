@@ -17,7 +17,9 @@ namespace Pirates.EditorTools
     /// </summary>
     public static partial class PrototypeSceneBuilder
     {
-        const float ChiefScale = 1.4f, ChiefHealth = 900f;
+        // Vida 900 → 760 e golpes ~15% mais fracos (16/10, pedido do Jhonata: "ainda difícil, mas sem ter que ser tudo perfeito";
+        // com a Guarda Negra antes, só quem aparava quase tudo vencia).
+        const float ChiefScale = 1.4f, ChiefHealth = 760f;
         const int ChiefPalette = 1;
         const string ChiefName = "Capitão Barba-Negra", ChiefTitle = "o Carniceiro das Ruínas", ChiefBounty = "chefe_barbanegra";
         const string GreatswordFolder = "Espadao";
@@ -41,14 +43,14 @@ namespace Pirates.EditorTools
 
         static StrikeOverride[] GreatswordStrikes() => new[]
         {
-            new StrikeOverride { damage = 28f },
-            new StrikeOverride { damage = 32f, angle = 170f },
-            new StrikeOverride { damage = 22f, followUps = new[] { 0.80f } },
-            new StrikeOverride { damage = 38f, angle = 70f, range = 3.3f, customKnockdown = true, knockdown = Knockdown.Stumble },
-            new StrikeOverride { damage = 30f, angle = 360f, range = 3.4f, customKnockdown = true, knockdown = Knockdown.Stumble, unblockable = true },
-            new StrikeOverride { damage = 42f, angle = 360f, range = 3.2f, customKnockdown = true, knockdown = Knockdown.Blast, unblockable = true, lungeSpeed = 11f },
+            new StrikeOverride { damage = 24f },
+            new StrikeOverride { damage = 28f, angle = 170f },
+            new StrikeOverride { damage = 18f, followUps = new[] { 0.80f } },
+            new StrikeOverride { damage = 32f, angle = 70f, range = 3.3f, customKnockdown = true, knockdown = Knockdown.Stumble },
+            new StrikeOverride { damage = 26f, angle = 360f, range = 3.4f, customKnockdown = true, knockdown = Knockdown.Stumble, unblockable = true },
+            new StrikeOverride { damage = 36f, angle = 360f, range = 3.2f, customKnockdown = true, knockdown = Knockdown.Blast, unblockable = true, lungeSpeed = 11f },
             new StrikeOverride { damage = 10f, angle = 100f, range = 2.5f, customKnockdown = true, knockdown = Knockdown.Stumble, unblockable = true },
-            new StrikeOverride { damage = 20f, followUps = new[] { 0.90f, 1.84f }, lungeSpeed = 3.5f },
+            new StrikeOverride { damage = 17f, followUps = new[] { 0.90f, 1.84f }, lungeSpeed = 3.5f },
         };
 
         /// <summary>Quando cada golpe sai (LandBoss.Move): distância, peso, fase, espera, brecha depois.</summary>
@@ -72,7 +74,7 @@ namespace Pirates.EditorTools
             w.displayName = "Espadão";
             w.kind = WeaponKind.Melee;
             w.animatorWeaponType = 4;
-            w.damage = 28f;
+            w.damage = 24f;
             w.range = 3f;
             w.angle = 150f;
             w.attackAnimSpeed = 1f;
@@ -356,6 +358,9 @@ namespace Pirates.EditorTools
             if (sword) blade.AddRange(sword.GetComponentsInChildren<MeshRenderer>(true));
             var boss = go.AddComponent<LandBoss>();
             boss.Configure(ChiefName, ChiefTitle, ChiefMoves(), new[] { 0, 1 }, body.ToArray(), blade.ToArray(), ChiefBladeGlow(), ChiefAura(go.transform));
+            // A Guarda Negra luta primeiro (passo 2): ele entra quando ela cai, quando o capitão chega a 3,5 m ou quando leva um golpe
+            // (com 5 m, quem perseguia a mosqueteira passava perto e o acordava; revisão de 16/10).
+            boss.SetWaitForGuards(true, 3.5f);
         }
     }
 }

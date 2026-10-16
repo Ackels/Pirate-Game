@@ -1,5 +1,7 @@
 using Pirates.Controls;
+using Pirates.LandCombat;
 using Pirates.Missions;
+using Pirates.OnFoot;
 using Pirates.Tutorial;
 using Pirates.UI;
 using UnityEngine;
@@ -42,7 +44,15 @@ namespace Pirates.EditorTools
             var bento = GameObject.Find("NPC_Velho_Bento")?.GetComponent<MissionGiver>();
             if (!bento) Debug.LogWarning("[Pirates] Tutorial sem o Velho Bento (os NPCs precisam do kit do Quaternius).");
             var tutorial = new GameObject("Tutorial").AddComponent<TutorialGuide>();
-            tutorial.Configure(switcher, shore, bento, portTrainingYard);
+            LandingPoint beach = null;
+            foreach (var point in Object.FindObjectsByType<LandingPoint>(FindObjectsInactive.Include))
+                if (point.name == "Praia_Desembarque") beach = point;
+            EnemyCamp post = null;
+            foreach (var camp in Object.FindObjectsByType<EnemyCamp>(FindObjectsInactive.Include))
+                if (camp.CampId == "posto_naufragio") post = camp;
+            // Praia norte e posto do naufrágio: a praia sul fica a ~185 m do galeão Tormenta, que atacava o navio do novato.
+            if (!beach || !post) Debug.LogWarning("[Pirates] Tutorial sem a praia norte ou o posto do naufrágio da Caveira (parte das ilhas).");
+            tutorial.Configure(switcher, shore, bento, portTrainingYard, beach, post);
             hud.AddComponent<TutorialHUD>().Bind(tutorial, switcher);
         }
     }

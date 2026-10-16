@@ -27,15 +27,15 @@ MonoBehaviour:
   deceleration: 1.6
   speedResponse: 0.8
   lateralGrip: 1.5
-  turnRate: 20
-  turnResponse: 2.5
+  turnRate: 25
+  turnResponse: 5
   rudderResponseTime: 0.35
   steerageBySpeed:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.25
+      value: 0.5
       inSlope: 0
       outSlope: 0
       tangentMode: 0

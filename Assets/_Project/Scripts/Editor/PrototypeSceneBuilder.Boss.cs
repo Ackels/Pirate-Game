@@ -22,8 +22,11 @@ namespace Pirates.EditorTools
         const string BossMissionId = "galeao_tormenta";
         const string BossModel = "ship-pirate-large", BossEscortModel = "ship-pirate-medium";
         const float BossHullHealth = 700f;
-        /// <summary>Mar do sudeste: ~150 m ao sul da Caveira e ~200 m a leste do porto, longe das rotas das chalupas.</summary>
-        static readonly Vector3[] BossSpawnPoints = { new(330f, 0.3f, -380f), new(420f, 0.3f, -330f), new(250f, 0.3f, -440f) };
+        /// <summary>
+        /// Mar do sudeste, ~400 m ao sul da costa da Caveira (16/10, pedido do Jhonata: mais longe; a ~180 m ele via o navio na praia
+        /// sul e atacava), longe das rotas das chalupas. Mapa espaçado (16/10): eram (360, −540), (460, −490), (270, −600).
+        /// </summary>
+        static readonly Vector3[] BossSpawnPoints = { new(620f, 0.3f, -600f), new(720f, 0.3f, -550f), new(530f, 0.3f, -660f) };
 
         /// <summary>
         /// Chalupa pirata (ship-pirate-medium, 10,6 m): entre a chalupa e o brigue. Inércia de uma caixa ~3,5 × 1,6 × 11,5 m

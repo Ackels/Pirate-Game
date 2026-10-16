@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_AguasNegras
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: lula_gigante
+  title: "O guardi\xE3o das \xC1guas Negras"
+  giver: Iara
+  description: "A oeste, depois do \xFAltimo farol, ficam as \xC1guas Negras: o t\xFAmulo da Frota de Prata. Uma lula gigante guarda o lugar, agarra os cascos e espreme at\xE9 a madeira estalar. Ningu\xE9m pesca por l\xE1 desde ent\xE3o. Mate a fera."
+  type: 4
+  count: 1
+  targetId: lula_gigante
+  targetName: "\xC1guas Negras"
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 900
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 20
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 15
+  objectiveText: "mate a lula gigante das \xC1guas Negras"
+  doneText: lula gigante morta
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 4
+  fameReward: 150
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o. Senta aqui um minuto. Uma velha pescadora tem uma hist\xF3ria que vale mais que peixe."
+  - "A oeste, depois do \xFAltimo farol, o mar fica preto. S\xE3o as \xC1guas Negras, onde a Frota de Prata afundou inteira."
+  - "Meu marido pescava l\xE1. At\xE9 a noite em que uma coisa subiu do fundo, maior que o barco, e abra\xE7ou o casco at\xE9 estalar."
+  - "Uma lula, capit\xE3o. Ela guarda os cascos afundados como um c\xE3o guarda os ossos. Agarra o navio e n\xE3o solta."
+  - "Leve um navio forte e canh\xF5es carregados. Mire nos bra\xE7os que prendem o casco, e quando ela mostrar a cabe\xE7a, fogo nela."
+  - Mate a fera, e a pescadora velha paga o que juntou a vida inteira. Os pescadores daqui ajudam no resto.
+  acceptLine: "Que o mar devolva o que \xE9 seu, capit\xE3o. E volte inteiro."
+  declineLine: "Eu entendo. Faz quarenta anos que eu n\xE3o chego perto de l\xE1."
+  waitingLine: "As \xC1guas Negras continuam pretas, capit\xE3o. Ela ainda est\xE1 l\xE1 embaixo."
+  doneLines:
+  - "Voc\xEA matou a fera? Ent\xE3o o meu velho pode descansar..."
+  - "Tome, capit\xE3o: ouro, p\xF3lvora e ferro. \xC9 pouco perto do que o senhor tirou do fundo do mar."
+  restingLine: "Dizem que no fundo sempre h\xE1 outra. Por enquanto, as \xE1guas est\xE3o quietas."

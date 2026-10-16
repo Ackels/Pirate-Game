@@ -180,7 +180,8 @@ namespace Pirates.EditorTools
             foreach (var camp in Object.FindObjectsByType<EnemyCamp>(FindObjectsInactive.Include))
             {
                 if (camp.CampId == CampMissionId) camp.SetFame(20);
-                else if (camp.CampId != HideoutCampId && camp.CampId != GarrisonCampId) camp.SetFame(5);
+                // Só os postos de guarda (posto_*): o covil do Barba-Negra (60) e o cemitério (8) têm a fama deles (16/10: antes viravam 5).
+                else if (camp.CampId.StartsWith("posto_")) camp.SetFame(5);
                 EditorUtility.SetDirty(camp);
             }
         }

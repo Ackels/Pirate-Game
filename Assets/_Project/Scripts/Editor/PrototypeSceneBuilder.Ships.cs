@@ -17,6 +17,21 @@ namespace Pirates.EditorTools
     /// </summary>
     public static partial class PrototypeSceneBuilder
     {
+        /// <summary>
+        /// Leme dos navios do jogador (16/10, pedido do Jhonata: "lento para ficar virando e atirando"). Antes (28/2,5, curva 0,25 parado)
+        /// a chalupa girava ~12,5°/s de vela cheia, ~15 de meia vela e ~4 parada (180° em 15 s; 45 s parada): o amortecimento angular do
+        /// Rigidbody (1,5) come ~40% do giro pedido, e o megalodonte circulando dava a volta mais rápido que o navio virava. Agora o leme
+        /// responde com 5 (o amortecimento come ~23%) e parado ainda vira metade. Os navios da IA ficam como estavam (assets próprios).
+        /// </summary>
+        const float SloopTurnRate = 33f;
+
+        static void PlayerShipHandling(ShipStats s, float turnRate)
+        {
+            s.turnRate = turnRate;
+            s.turnResponse = 5f;
+            s.steerageBySpeed = new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(0.35f, 1f), new Keyframe(1f, 0.8f));
+        }
+
         const string ShipsFolder = DataFolder + "/Ships";
         const string SchoonerSchematic = "Esquema_Escuna", SchoonerModel = "ship-pirate-medium";
         const string GalleonSchematic = "Esquema_Galeao";
@@ -49,7 +64,7 @@ namespace Pirates.EditorTools
                 s.maxSpeed = 10.5f;     // chalupa 11: um pouco mais lenta
                 s.acceleration = 1.4f;  // chalupa 1,6
                 s.deceleration = 1.9f;  // chalupa 2,2
-                s.turnRate = 24f;       // chalupa 28: mais pesada para virar
+                s.turnRate = 29f;       // chalupa 33: mais pesada para virar
             });
             var schoonerCannons = LoadOrCreateAsset<CannonStats>(DataFolder + "/CannonStats_Escuna.asset", c =>
             {
@@ -134,7 +149,7 @@ namespace Pirates.EditorTools
                 s.maxSpeed = 10f;       // escuna 10,5, chalupa 11
                 s.acceleration = 1.2f;  // escuna 1,4
                 s.deceleration = 1.6f;  // escuna 1,9
-                s.turnRate = 20f;       // escuna 24, chalupa 28
+                s.turnRate = 25f;       // escuna 29, chalupa 33
             });
             var cannons = LoadOrCreateAsset<CannonStats>(DataFolder + "/CannonStats_GaleaoJogador.asset", c =>
             {

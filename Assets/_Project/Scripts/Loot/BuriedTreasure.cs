@@ -81,6 +81,16 @@ namespace Pirates.Loot
             chest.gameObject.SetActive(false);
         }
 
+        /// <summary>Esconde o X e o baú (mapa do tesouro desfeito: jogo novo, F1).</summary>
+        public void Hide()
+        {
+            StopAllCoroutines();
+            dug = false;
+            revealed = false;
+            if (mark) mark.SetActive(false);
+            if (chest) chest.gameObject.SetActive(false);
+        }
+
         /// <summary>Cava: o X some, o baú sobe do chão e o tesouro conta como achado.</summary>
         public void Dig()
         {

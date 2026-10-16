@@ -217,6 +217,16 @@ namespace Pirates.EditorTools
             (KitCharacters.Henry, 7) => new[] { (2, 11, "A02828"), (9, 11, "E8D8B0"), (3, 11, "C8B890"), (6, 11, "6A3A28"), (8, 11, "3A3A3A") },
             (KitCharacters.Henry, 8) => new[] { (2, 11, "5A5048"), (9, 11, "3A3430"), (3, 11, "6A6052"), (6, 11, "4A4238"), (8, 11, "3A3028") },
             (KitCharacters.Anne, 5) => new[] { (3, 9, "E8E2D0"), (7, 9, "6A2430"), (2, 9, "3A3040"), (5, 9, "8A8A88") },
+            // Guarda Negra (guarda-costas do Barba-Negra; não entram nos civis): as cores do chefe. Espadachim (Henry): bandana e mangas
+            // pretas, listra e camisa vermelho-sangue, calça preta. Mosqueteira (Anne): camisa preta, colete vermelho-sangue, calça preta,
+            // cabelo ruivo escuro.
+            (KitCharacters.Henry, 9) => new[] { (2, 11, "161418"), (9, 11, "7A1A1E"), (3, 11, "1E1A20"), (6, 11, "6E0E16"), (8, 11, "1A1616") },
+            (KitCharacters.Anne, 6) => new[] { (3, 9, "1E1A20"), (7, 9, "6E0E16"), (2, 9, "1A1616"), (5, 9, "5A1E14") },
+            // Iara, a pescadora (NPC da missão da lula; não entra nos civis): camisa azul desbotada, colete de couro, calça cinza, cabelo branco.
+            (KitCharacters.Anne, 7) => new[] { (3, 9, "7A9CB8"), (7, 9, "6A4A2A"), (2, 9, "5A5A5E"), (5, 9, "D8D4CC") },
+            // Megalodonte (tubarão do kit, linha 8: 0 dorso, 1 barriga, 2 boca, 3 olhos, 4 dentes): cinza-ardósia escuro, barriga quase
+            // branca, boca vermelho-escura e dentes amarelados (o azul do tubarão do kit parecia de desenho).
+            ("Characters_Shark", 1) => new[] { (0, 8, "3A4349"), (1, 8, "CBC8BC"), (2, 8, "3E1012"), (3, 8, "0B0B0D"), (4, 8, "E2D6AE") },
             // Capitão Barba-Negra (chefe, pacote B, passo 4; linha 7 do capitão): 0 pele, 1 chapéu, 2 bota, 3 calça e faixa do chapéu, 4 camisa,
             // 5 barba e cabelo, 6 olhos, 7 casaco, 8 base do gancho, 9 gancho, 10 perna de pau, 11 punhos. Pele pálida, chapéu e casaco
             // pretos, calça e camisa vermelho-sangue, barba negra, olhos vermelhos (brilham: ChiefMaterial), punhos e gancho dourados.

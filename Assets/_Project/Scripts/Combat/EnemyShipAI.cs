@@ -60,6 +60,8 @@ namespace Pirates.Combat
         [SerializeField] Vector2 reactionTime = new(0.4f, 1.1f);
         [Tooltip("Foge com vida abaixo desta fração.")]
         [SerializeField, Range(0f, 1f)] float fleeHealth = 0.25f;
+        [Tooltip("Velocidade máxima × isto com o casco abaixo da fuga (avariado demais: o jogador alcança para terminar).")]
+        [SerializeField, Range(0.2f, 1f)] float fleeSpeedMultiplier = 0.55f;
 
         [Header("Patrulha")]
         [SerializeField] float patrolRadius = 80f;
@@ -180,6 +182,9 @@ namespace Pirates.Combat
             float distance = toTarget.magnitude;
 
             UpdateState(hasTarget, distance);
+            // Casco abaixo da fuga: foge, mas devagar (16/10, pedido do Jhonata: a chalupa fugia na mesma velocidade e não dava
+            // para alcançar e terminar). Fica assim até afundar (o inimigo não conserta o casco).
+            ship.DamageSpeedMultiplier = health && health.Normalized < fleeHealth ? fleeSpeedMultiplier : 1f;
 
             Vector3 desired;
             int sail;

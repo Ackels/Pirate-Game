@@ -91,7 +91,7 @@ em 120 s (o tempo para com o saque aberto); vazios afundam logo depois de fechar
 ## Protótipo 05: Porto-base, upgrades e construções (M3.1 a M3.3)
 
 Menu **Pirates → Protótipo → 05 - Criar cena do Porto-base** → **Play**. É o Protótipo 04 (duelo + saque)
-com o **Porto da Base** na costa norte da **Ilha Sul**, ~160 m ao sul do início: píer com bandeira pirata, armazém e casas.
+com o **Porto Alento** (até 16/10 "Porto da Base") na costa norte da **Ilha Sul**, ~160 m ao sul do início: píer com bandeira pirata, armazém e casas.
 
 **Atracar:** chegue perto da ponta do píer (~20 m), **recolha as velas** (abaixo de 3 nós) e aperte **F**.
 A mesma tecla F serve para saquear destroços; com uma janela aberta, F fecha.
@@ -241,7 +241,12 @@ do golpe deles), `Health` de cada um (vida), `PlayerModes → PlayerFootRespawn`
 
 Menu **Pirates → Protótipo → 07 - Criar cena do Mundo (missões)** → **Play**. Tudo junto: o mar e o **porto-base** da
 cena 05 (upgrades, construções, navio inimigo que reaparece), a **Ilha da Caveira** com o acampamento pirata da cena 06
-(a leste, ~360 m do começo) e um **tesouro enterrado** na Ilha Oeste.
+(a leste, ~300 m de costa a costa do porto) e um **tesouro enterrado** na Ilha Oeste.
+
+**Mapa (espaçado em 16/10, ~1,6×):** o porto fica onde estava; a **Ilha Oeste** a ~43 s de chalupa de vela cheia, a **Ilha Norte**
+a ~50 s, a **Caveira** a ~57 s (praia sul) ou ~62 s (praia norte, contornando a ilha). As chalupas piratas patrulham os caminhos
+entre as ilhas; o brigue, o Tormenta, a lula e o megalodonte ficam bem longe (~1 a 1,5 min de viagem). Sobram 4 lugares vazios para
+ilhas novas.
 
 **Missões:** atraque no porto e entre na **taverna** (M6.6, abaixo): contratos dos NPCs com o pagamento. Aceite até **3** de cada
 vez; o progresso aparece no alto da tela, e um **★ com a distância** aponta o destino (uma seta na borda quando está fora
@@ -264,7 +269,7 @@ Todas voltam ao quadro depois de entregues (dá para repetir). Com você em terr
 segura**: os navios inimigos não o atacam. Ajuste dos contratos em `Assets/_Project/Data/Missions/`.
 
 **Brigue Santa Clara (M2.5):** um navio grande de velas brancas, sozinho, patrulhando as águas ao norte da Ilha Norte
-(~500 m do porto). Bem mais forte que a chalupa: **casco 400**, **6 canhões por bordo** (14 de dano, recarga 4,5 s) e
+(~880 m do cais). Bem mais forte que a chalupa: **casco 400**, **6 canhões por bordo** (14 de dano, recarga 4,5 s) e
 tripulação veterana (erra pouco o alcance, dispara logo que alinha, luta até o fim). Mais lento (9 contra os 11 do seu
 navio): dá para fugir dele. Parado no costado dele, seu navio aguenta umas 4 bordadas; manobre e não fique de lado
 para ele. Paga bem mais saque (80–160 ouro, 15–30 madeira, pólvora, ferro, sobreviventes)
@@ -685,7 +690,42 @@ Na taverna (quadro de missões), a partir da patente Marujo de Respeito:
 
 O destino aparece marcado na tela. Se o alvo já estava morto, ele volta quando você aceita a missão. Dá para repetir depois de um tempo (15 min; o cemitério, 10).
 
-## Tutorial (M17, passo 1) — cena 07
+## História: "A Coroa de Prata" (M18, passo 1) — cena 07
+
+A história do jogo (HISTORIA.md) em **capítulos**, cada um aberto por uma patente. O cartão **História** fica à direita, embaixo da fama e
+do relógio: capítulo, título, o que está acontecendo e os objetivos (✓ quando feitos). Capítulo trancado mostra a patente e a fama que faltam
+(contratos, tesouros e saques dão fama). O marcador com a **joia dourada** aponta para o próximo alvo.
+
+1. **Náufrago** (Grumete): falar com o Almirante Teodoro, afundar 2 navios da Âncora Negra, ter 4 tripulantes a bordo e construir o
+   Alojamento.
+2. **O tributo** (Marujo de Respeito): falar com Dona Mercês e limpar o acampamento da Ilha da Caveira.
+3. **Carta de corso** (Corsário): receber a carta de corso do Almirante Teodoro, calar o Forte São Brás (Ilha Norte) e afundar o
+   brigue Santa Clara.
+4. **Os tenentes de Lázaro** (Capitão Temido): conversar com o Velho Bento, derrotar o Barba-Negra nas ruínas e afundar o galeão Tormenta.
+5. **As Águas Negras** (Lenda dos Sete Mares): falar com Iara e vencer a lula gigante.
+6. **A Ilha Amaldiçoada**: falar com Tobias, o coveiro; o resto em breve.
+
+Cada capítulo começa com uma **conversa**: o personagem ganha "!" na cabeça e o marcador da joia aponta para ele (F para conversar).
+
+O mesmo feito conta para a história e para os contratos. Feito antes de o capítulo abrir não conta; quando ele abre, o alvo volta ao lugar
+(acampamento cheio, brigue no mar, chefe de pé). Faixa no meio ao abrir e ao concluir cada capítulo; a fala do fim aparece nos avisos.
+O cartão some durante o tutorial (o progresso conta mesmo assim). O save guarda o capítulo. F1 → **História**: voltar, pular, recomeçar.
+
+## Mapas do tesouro em pedaços (C1) — cena 07
+
+Pedaços de mapa caem de baús de terra, navios grandes e chefes (o Tormenta e a lula sempre dão um). Com **3 pedaços** (na mochila, no porão
+ou no armazém) o mapa se monta sozinho e um **X** aparece numa das ilhas: o cartão "Mapa do tesouro" (à direita) diz onde, e a estrela
+vermelha aponta o caminho. Desembarque, ache o X e aperte **F** para cavar: o baú sobe com ouro, pólvora, ferro e às vezes um esquema.
+Um mapa por vez. F1 → **Mapas do tesouro**: +1 pedaço, montar agora, desfazer.
+
+## Prisioneiros (C2) — cena 07
+
+Três acampamentos têm uma **gaiola** com um prisioneiro: o acampamento da Caveira (Joaquim, o pescador), o esconderijo dos contrabandistas
+(Marta, a marinheira) e as ruínas do Barba-Negra (Tenente Duarte, da Coroa). A gaiola só abre depois de derrotar todo o acampamento; aí
+**F** solta o prisioneiro: ele vira **tripulante** do seu navio (com os beliches cheios, paga em ouro) e cada um traz algo a mais (ouro,
+pedaço de mapa) e fama. Quando o acampamento volta, há outro prisioneiro na gaiola.
+
+## Tutorial (M17, passos 1 a 3) — cena 07
 
 **Novo jogo** começa com o navio **atracado na vaga do porto**. Na tela do nome há o botão **Tutorial: sim/não**. Com tutorial, o
 **Velho Bento** guia o capitão em 15 etapas. Cada etapa avança sozinha quando você faz o que ela pede:
@@ -696,11 +736,26 @@ O destino aparece marcado na tela. Se o alvo já estava morto, ele volta quando 
    guarda (botão direito com o cutelo).
 4. Voltar ao navio (**F** no píer) e zarpar (sair do porto).
 
+Ao sair do porto começa a parte 2, **o mar**:
+
+1. Os canhões: segure **Q** (bombordo) ou **E** (estibordo) para mirar e solte para disparar.
+2. Afundar uma chalupa pirata: a mais perto vem atrás de você. Se o casco ficar ruim, volte ao porto (zona segura).
+3. Saquear os destroços: pare ao lado (**S** recolhe as velas), aperte **F** e pegue algo.
+4. Voltar a Porto Alento e atracar no cais (**F**).
+
+Depois de atracar começa a parte 3, **as ilhas**:
+
+1. Navegar até a praia norte da Ilha da Caveira e desembarcar (**F** perto da areia).
+2. Derrotar os 3 guardas do posto do naufrágio (o de pistola avisa com uma linha vermelha antes de atirar).
+3. Quebrar um caixote ou barril do posto e passar por cima do saco: o saque vai para a mochila.
+4. Abrir o painel da fama (**C**).
+5. Voltar ao navio (**F** na praia): a mochila descarrega no porão.
+
 O cartão do tutorial fica à esquerda (etapa, fala do Bento e o que fazer). Um marcador amarelo aponta o lugar, com seta na borda
-quando está fora da tela. O jogo salvo lembra a etapa. No **F1** há próxima etapa, recomeçar e encerrar.
+quando está fora da tela. O jogo salvo lembra a etapa. No **F1** há próxima etapa, recomeçar, encerrar e ir para a parte 2 ou 3.
 
 O **Novo jogo** guarda o jogo antigo em `save_anterior.json`, na pasta do save. Para voltar a ele, renomeie para `save.json`.
-O mar e as ilhas entram nos próximos passos do tutorial.
+O brigue Santa Clara (ao norte da Ilha Norte) e o galeão Tormenta (ao sul da Caveira) ficam mais longe das ilhas desde 16/10.
 
 ## Tela de título, prólogo e opções (M16) — cena 07
 
@@ -722,9 +777,23 @@ Ao dar Play na cena 07 abre a tela de título **"A Coroa de Prata"**, com o jogo
 (porto 3, mar 4, ilha 2, combate 3). Para trocar, tirar ou pôr faixas, ou mudar o volume de uma, use `Data/Audio/Som_Musica*`
 (listas **Clips** e **Clip Volumes**, mesma ordem), com o jogo parado.
 
+## Megalodonte (chefe do mar) — cena 07
+
+- Um tubarão pré-histórico de ~22 m (maior que o galeão), cinza-escuro, com a bocarra aberta. Mora no fundo da **Fossa do
+  Megalodonte**, mar aberto a **nordeste** (marcador no mapa).
+- Chegando perto, ele sobe e **circula o navio**: só a barbatana enorme corta a água. De tempos em tempos ele para, abre a boca (bolhas
+  na frente) e **investe contra o costado**: dano e um tranco que aderna o navio. Depois mergulha e volta.
+- **Só leva tiro perto da superfície** (circulando, avisando, investindo ou saltando); mergulhado, as balas não pegam.
+- Com metade da vida fica **furioso**: mais rápido, investe mais e **salta para fora d'água** ao lado do navio. A água estoura onde ele
+  vai cair: saia de baixo.
+- Fugir: afaste-se da Fossa (~230 m) e ele desiste. Morto, deixa destroços com saque e volta em 15 min.
+- **Missão "O rei das profundezas"** com a Iara, a pescadora (patente Capitão Temido). A Iara também tem a da lula ("O guardião das
+  Águas Negras", patente Lenda dos Sete Mares).
+- F1 (sandbox): atacar aqui, ir à Fossa, enfurecer, matar.
+
 ## Lula gigante (chefe do mar, passo 1) — cena 07
 
-- Mora nas **Águas Negras**, mar aberto bem a oeste-sudoeste (~550 m do porto e da Ilha Oeste), marcadas por dois cascos afundados e
+- Mora nas **Águas Negras**, mar aberto bem a oeste-sudoeste (~850 m do cais, ~650 m da Ilha Oeste), marcadas por dois cascos afundados e
   pedras num anel em volta. Entrar com o navio a menos de ~55 m do centro = emboscada.
 - **Emboscada:** a água ferve em volta do navio (~2,4 s: dá para tentar fugir) e dois tentáculos sobem colados no casco e **agarram** o
   navio (passam por cima da amurada e deitam no convés): com os dois, o navio fica travado (só gira, não anda); com um, anda 25%.
@@ -751,8 +820,12 @@ tentáculos e o lugar do covil em `PrototypeSceneBuilder.Squid.cs` (regerar a 07
 
 ## Chefe pirata a pé: o Capitão Barba-Negra (pacote B, passo 4) — cenas 06 e 07
 
-- Mora nas **ruínas da Caveira**, no alto do morro oeste (no fim da trilha que sai do portão oeste do acampamento). Os guardas antigos
-  das ruínas saíram; os guarda-costas dele vêm no próximo passo.
+- Mora nas **ruínas da Caveira**, no alto do morro oeste (no fim da trilha que sai do portão oeste do acampamento), com a sua
+  **Guarda Negra** (passo 2): dois **espadachins** de sabre e uma **mosqueteira** (avisa com a linha vermelha antes de atirar, de longe),
+  de preto e vermelho. Um espadachim ataca por vez.
+- **Arena:** enquanto a guarda luta, o Barba-Negra só observa do meio das ruínas. Ele entra quando a guarda cai, quando você chega
+  perto dele (5 m) ou quando você bate nele. Tochas acendem à noite em volta das colunas; bandeiras pretas marcam a entrada.
+- **Missão "O Carniceiro das Ruínas"** com o Almirante Teodoro (patente Capitão Temido): 600 de ouro, ferro e pólvora, e 100 de fama.
 - O rival do Barbarossa: o mesmo tipo de capitão, **40% maior**, de casaco preto, chapéu e calça vermelho-sangue, barba negra e
   **olhos vermelhos que brilham**, com um **espadão** dourado. Grita ao ver você; a barra dele aparece no topo da tela.
 - **900 de vida.** Nada o derruba (nem barril ou bomba) e golpe nenhum o interrompe: a brecha é depois de cada golpe dele.

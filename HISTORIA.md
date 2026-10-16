@@ -26,7 +26,7 @@ procuravam juntos: a **Coroa de Prata**, que dorme no fundo das Águas Negras, g
 
 - **Mar de Prata:** o arquipélago inteiro (todas as ilhas atuais e as que vierem). Ninguém governa de verdade: a Coroa foi embora
   e deixou um almirante sem esquadra e um governador sem soldados.
-- **Porto Alento** (hoje "Porto da Base", na Ilha Sul): a vila que vira a sua base. Antes era porto de pesca e de conserto de navios;
+- **Porto Alento** (na Ilha Sul; no jogo desde 16/10, antes "Porto da Base"): a vila que vira a sua base. Antes era porto de pesca e de conserto de navios;
   hoje está meio em ruínas, pagando tributo à Âncora Negra.
 - **Ilha da Caveira:** antigo forte de piratas. O acampamento é dos cobradores de tributo de Lázaro. O cemitério é dos piratas que
   morreram brigando pela prata. As **ruínas** são o covil do Capitão Barba-Negra, o braço direito de Lázaro.
@@ -107,7 +107,7 @@ patentes seguram o ritmo (o jogador precisa ganhar fama para o próximo capítul
 
 ## Pequenos acertos para ficar coerente (quando implementar)
 
-- "Porto da Base" vira **Porto Alento**; "forte da Ilha Norte" vira **Forte São Brás** (nomes no HUD e nas falas).
+- ✅ "Porto da Base" virou **Porto Alento** (16/10); "forte da Ilha Norte" vira **Forte São Brás** (nomes no HUD e nas falas).
 - Inimigos do mar e da Caveira passam a ser "da Âncora Negra" nas descrições das missões.
 - Há dois Tobias: o **coveiro** e o "Velho Tobias" que dá a missão do Tormenta. Sugiro passar o Tormenta para o Almirante Teodoro
   (ou outro nome).
@@ -118,8 +118,9 @@ patentes seguram o ritmo (o jogador precisa ganhar fama para o próximo capítul
 
 1. ✅ **Prólogo:** os 9 quadros (cenas montadas + foto + tratamento), a tela que mostra quadro, zoom e texto, música, pular, e "Prólogo"
    no menu (11/10, junto com a tela de título, M16; aguardando revisão).
-2. **Trilha da História:** capítulos no HUD e no save, objetivos ligados aos eventos que já existem (navio afundado, acampamento,
-   chefe, patente) e falas de história nos NPCs (Teodoro, Bento).
+2. **Trilha da História:** ✅ capítulos no HUD e no save, objetivos ligados aos eventos que já existem (navio afundado, acampamento,
+   chefe, patente) (16/10, M18 passo 1) e ✅ falas de história nos NPCs: Teodoro (cap. 1 e a carta de corso no 3), Dona Mercês (2),
+   Velho Bento (4), Iara (5) e Tobias (6) (16/10, M18 passo 2; aguardando revisão).
 3. **Capítulos 1–3** com o que já existe (cartas, avisos, títulos).
 4. **Pedaços do mapa** (pacote C) e capítulo 4.
 5. **Águas Negras + naufrágio** (capítulo 5) e **Ilha Amaldiçoada** com o Lázaro (capítulo 6, pacote H).

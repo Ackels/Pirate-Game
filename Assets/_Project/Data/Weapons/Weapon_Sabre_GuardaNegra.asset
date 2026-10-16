@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8002a68d020754940b51b0e2367da93e, type: 3}
+  m_Name: Weapon_Sabre_GuardaNegra
+  m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
+  displayName: Sabre da Guarda Negra
+  kind: 0
+  animatorWeaponType: 0
+  damage: 14
+  range: 2.1
+  angle: 100
+  hitDelay: 0.375
+  attackAnimSpeed: 0.8
+  cooldown: 0.75
+  shotsPerReload: 0
+  reloadTime: 2.5
+  attackVariants: 2
+  animatorVariantOffset: 0
+  randomVariants: 0
+  variantHitDelays: []
+  comboWindow: 1.375
+  animatedDraw: 0
+  drawGrabTime: 0.4615385
+  drawDuration: 0.95
+  holsterReleaseTime: 0.84666663
+  holsterDuration: 1.05
+  aimPoseSeconds: 1.5
+  aimedShotDelay: 0.04
+  aimedSpread: 0.3
+  aimMoveSpeed: 0.75
+  recoilDegrees: 14
+  pellets: 1
+  pelletSpread: 0
+  twoHanded: 0
+  moveSpeedWhileAttacking: 0.15
+  knockdown: 0
+  guardCost: 1
+  variantStrikes: []

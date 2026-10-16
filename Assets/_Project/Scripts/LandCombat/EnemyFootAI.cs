@@ -154,6 +154,7 @@ namespace Pirates.LandCombat
         /// <summary>Viu o jogador e está reagindo, perseguindo ou lutando.</summary>
         public bool IsAlerted => state is State.Alert or State.Chase;
         public bool IsDead => health && health.IsDead;
+        public EnemyCamp Camp => camp;
         public Health Health => health;
         /// <summary>Momento em que percebeu o jogador (para o "!" sobre a cabeça).</summary>
         public float AlertedAt { get; private set; } = float.NegativeInfinity;
@@ -288,6 +289,12 @@ namespace Pirates.LandCombat
                 if (TargetAvailable) LookAt(ref command, target.position);
                 return command;
             }
+            // Chefe esperando os guarda-costas: no posto, encarando o capitão quando o vê.
+            if (boss && boss.HoldingBack)
+            {
+                if (!HoldPost(ref command) && TargetAvailable && CanSee()) LookAt(ref command, target.position);
+                return command;
+            }
             Pursue();
             switch (state)
             {
@@ -347,7 +354,7 @@ namespace Pirates.LandCombat
         /// <summary>Outro pirata do acampamento deu o alarme.</summary>
         public void HearAlarm()
         {
-            if (health.IsDead || IsAlerted || !TargetAvailable) return;
+            if (health.IsDead || IsAlerted || !TargetAvailable || (boss && boss.HoldingBack)) return;
             lastKnown = target.position;
             BeginAlert();
         }

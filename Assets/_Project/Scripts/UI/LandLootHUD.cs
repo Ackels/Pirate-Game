@@ -36,14 +36,28 @@ namespace Pirates.UI
             hold = shipHold;
         }
 
+        PrisonerRescuer rescuer;
+
         void OnEnable()
         {
             if (looter)
             {
                 looter.Transferred += OnTransferred;
                 looter.BackpackFull += OnBackpackFull;
+                // Prisioneiros (C2): o aviso de F e a fala de quem foi solto saem por aqui, como os baús.
+                rescuer = looter.GetComponent<PrisonerRescuer>();
+                if (rescuer) rescuer.Freed += OnPrisonerFreed;
             }
             if (unloader) unloader.Unloaded += OnUnloaded;
+        }
+
+        void OnPrisonerFreed(Pirates.LandCombat.Prisoner p, string line, string got)
+        {
+            var h = GameHud.Current;
+            if (!h) return;
+            // Nome em cima e a fala embaixo, menor (numa linha só a fala passava da tela).
+            string extra = string.IsNullOrEmpty(got) ? "" : $"\n{got}";
+            h.Feed(GameHud.FeedKind.Notice, $"<b>{p.DisplayName} está livre!</b>\n<size=70%><i>“{line}”</i>{extra}</size>", HudColors.Gold);
         }
 
         void OnDisable()
@@ -54,6 +68,7 @@ namespace Pirates.UI
                 looter.BackpackFull -= OnBackpackFull;
             }
             if (unloader) unloader.Unloaded -= OnUnloaded;
+            if (rescuer) rescuer.Freed -= OnPrisonerFreed;
             if (cargo == null) return;
             cargo.Hide();
             prompt.Hide();
@@ -148,6 +163,16 @@ namespace Pirates.UI
             {
                 if (promptText.Stale(looter.NearbyDig)) promptText.Text = $"Cavar: {looter.NearbyDig.DisplayName}";
                 prompt.Show("F", promptText.Text);
+                return;
+            }
+            if (!chest && rescuer && rescuer.Nearby)
+            {
+                var p = rescuer.Nearby;
+                bool cageLocked = p.IsLocked;
+                string why = cageLocked ? p.LockedReason : null;
+                if (promptText.Stale(p, HudDraw.Flag(cageLocked), why == null ? 0 : why.GetHashCode()))
+                    promptText.Text = cageLocked ? $"{p.DisplayName}: gaiola trancada  <size=80%>({why})</size>" : $"Soltar {p.DisplayName}";
+                prompt.Show(cageLocked ? null : "F", promptText.Text);
                 return;
             }
             if (!chest)

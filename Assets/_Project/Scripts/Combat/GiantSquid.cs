@@ -51,35 +51,37 @@ namespace Pirates.Combat
         [Tooltip("Navio a menos disto (m) do covil é atacado.")]
         [SerializeField] float detectRadius = 55f;
         [Tooltip("Solto e mais longe que isto do covil, a lula desiste (cura e volta a esperar).")]
-        [SerializeField] float leash = 200f;
+        [SerializeField] float leash = 160f;
         [Tooltip("Segundos (com o jogador a mais de 300 m) até voltar depois de morta.")]
-        [SerializeField] float respawnSeconds = 480f;
+        [SerializeField] float respawnSeconds = 1800f;
 
         [Header("Emboscada e agarrão")]
         [SerializeField] float ambushSeconds = 2.4f;
         [Tooltip("Navio preso com um / dois tentáculos agarrando (ShipController.Restraint).")]
         [SerializeField] Vector2 restraint = new(0.75f, 0.95f);
         [Tooltip("Dano no casco a cada 2 s por tentáculo agarrando (aperto).")]
-        [SerializeField] float crushDamage = 8f;
+        [SerializeField] float crushDamage = 6f;
         [Tooltip("Adernar (rad/s²) para o lado de cada tentáculo agarrando e afundar um pouco (m/s²). Sem força num ponto: o casco tem " +
                  "pouca inércia de lado e capotava.")]
         [SerializeField] float grabHeel = 0.35f, grabSink = 0.6f;
         [Tooltip("Tranco da pancada no convés: giro (rad/s) para o lado dela e descida (m/s).")]
         [SerializeField] float slamRoll = 0.18f, slamDrop = 0.8f;
         [Tooltip("Segundos sem nenhum agarrando até tentar agarrar de novo (se o navio ainda estiver perto do covil).")]
-        [SerializeField] float regrabSeconds = 14f;
+        [SerializeField] float regrabSeconds = 18f;
+        [Tooltip("Solta, só agarra de novo com o navio a menos disto (m) do covil: mais longe, dá para fugir.")]
+        [SerializeField] float regrabRadius = 90f;
         [Tooltip("Solto há mais que isto (s) sem ela conseguir agarrar de novo (navio entre o raio de reagarrar e o leash): desiste, " +
                  "se cura e volta a esperar. Sem isso dava para descansar ali e voltar.")]
         [SerializeField] float giveUpSeconds = 35f;
 
         [Header("Pancadas")]
-        [SerializeField] float slamDamage = 30f;
+        [SerializeField] float slamDamage = 24f;
         [Tooltip("Segundos do aviso (recua tremendo) e da descida.")]
         [SerializeField] float windUpSeconds = 1.1f, slamSeconds = 0.28f;
         [Tooltip("Segundos deitado no convés depois da pancada (o tentáculo fica exposto).")]
         [SerializeField] float pinnedSeconds = 0.9f;
         [Tooltip("Espera (s) de cada tentáculo entre uma pancada e outra.")]
-        [SerializeField] Vector2 slamPause = new(1.3f, 2.4f);
+        [SerializeField] Vector2 slamPause = new(1.6f, 2.8f);
         [Tooltip("Tentáculos batendo na fase 1 / fase 2.")]
         [SerializeField] Vector2Int slammers = new(2, 3);
         [Tooltip("Navio solto andando mais rápido que isto (m/s): os tentáculos que batem afundam (perderam o navio).")]
@@ -106,8 +108,8 @@ namespace Pirates.Combat
 
         [Header("Fase 2")]
         [SerializeField, Range(0f, 1f)] float phaseTwoAt = 0.5f;
-        [SerializeField] float windUpTwo = 0.8f, slamDamageTwo = 38f;
-        [SerializeField] Vector2 slamPauseTwo = new(0.9f, 1.6f);
+        [SerializeField] float windUpTwo = 0.8f, slamDamageTwo = 30f;
+        [SerializeField] Vector2 slamPauseTwo = new(1.1f, 1.9f);
 
         Health health;
         Rigidbody targetBody;
@@ -180,6 +182,7 @@ namespace Pirates.Combat
             active.Add(this);
             health.Damaged += OnDamaged;
             health.Died += OnDied;
+            EventBus.Subscribe<MissionStartedEvent>(OnMissionStarted);
         }
 
         void OnDisable()
@@ -187,7 +190,14 @@ namespace Pirates.Combat
             active.Remove(this);
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
+            EventBus.Unsubscribe<MissionStartedEvent>(OnMissionStarted);
             if (targetShip) targetShip.Restraint = 0f;
+        }
+
+        /// <summary>Missão contra ela aceita com ela morta: volta ao covil sem esperar o tempo (assim que o jogador estiver longe de lá).</summary>
+        void OnMissionStarted(MissionStartedEvent evt)
+        {
+            if (evt.targetId == targetId && Current == Phase.Dead) deadSince = float.NegativeInfinity;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -397,7 +407,9 @@ namespace Pirates.Combat
             if (!held && freeSince >= 0f && Time.time - freeSince >= regrabSeconds)
             {
                 // Volta a agarrar: bolhas de aviso e os dois sobem de novo (perto do covil).
-                if (Flat(target.position - lair).magnitude < leash * 0.8f)
+                // 16/10 (pedido do Jhonata: "o range que ela te pega se tentar fugir bem alto"): era leash × 0,8 = 160 m em 14 s, quase a
+                // velocidade máxima do navio; agora 90 m em 18 s, e o leash caiu de 200 para 160 m.
+                if (Flat(target.position - lair).magnitude < regrabRadius)
                 {
                     tentacles[0].Hide();
                     tentacles[1].Hide();

@@ -48,6 +48,12 @@ namespace Pirates.Ships
         public float SpeedMultiplier { get; set; } = 1f;
 
         /// <summary>
+        /// Velocidade máxima × isto pelo casco muito avariado (inimigo fugindo: anda devagar e o jogador alcança). À parte do
+        /// <see cref="SpeedMultiplier"/>, que é das velas rasgadas (ShipDebuffs).
+        /// </summary>
+        public float DamageSpeedMultiplier { get; set; } = 1f;
+
+        /// <summary>
         /// Navio preso (tentáculos da lula gigante): 0 = solto, 1 = travado. Velocidade × (1 − isto), giro × (1 − metade disto) e o
         /// casco perde a deriva (dá para virar de lado para os canhões, não para fugir).
         /// </summary>
@@ -137,7 +143,7 @@ namespace Pirates.Ships
 
             // Propulsão: converge para a velocidade-alvo das velas.
             float held = Mathf.Clamp01(Restraint);
-            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier * WindFactor * (1f - held) - ForwardSpeed;
+            float speedError = Throttle * stats.maxSpeed * SpeedMultiplier * DamageSpeedMultiplier * WindFactor * (1f - held) - ForwardSpeed;
             float accel = speedError > 0f
                 ? Mathf.Min(speedError * stats.speedResponse, stats.acceleration)
                 : Mathf.Max(speedError * stats.speedResponse, -stats.deceleration);

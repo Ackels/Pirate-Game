@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_CarniceiroRuinas
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: chefe_barbanegra
+  title: "O Carniceiro das Ru\xEDnas"
+  giver: Almirante Teodoro
+  description: "O Capit\xE3o Barba-Negra, bra\xE7o direito de L\xE1zaro Negro, fez das ru\xEDnas da Caveira o seu covil, com uma guarda pessoal de preto e vermelho. Derrube a guarda, depois o carniceiro. Ele n\xE3o perdoa quem fica parado."
+  type: 4
+  count: 1
+  targetId: chefe_barbanegra
+  targetName: Ilha da Caveira
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 600
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 12
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 10
+  objectiveText: "derrote o Capit\xE3o Barba-Negra nas ru\xEDnas da Caveira"
+  doneText: Barba-Negra derrotado
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 3
+  fameReward: 100
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o. O almirantado confirmou o que eu temia: L\xE1zaro Negro n\xE3o age sozinho."
+  - "O bra\xE7o direito dele \xE9 o Capit\xE3o Barba-Negra, a quem os marujos chamam de Carniceiro das Ru\xEDnas. Fez das ru\xEDnas da Caveira o seu covil."
+  - "Ele tem uma guarda pessoal, de preto e vermelho: dois espadachins e uma mosqueteira. Enquanto eles lutam, ele s\xF3 observa."
+  - "Quando a guarda cai, ele mesmo vem. Golpes que derrubam, um salto que atravessa as ru\xEDnas, e fica pior quando sangra."
+  - "Derrube o Barba-Negra e L\xE1zaro perde a m\xE3o direita. O almirantado paga bem: ouro, ferro e p\xF3lvora."
+  acceptLine: "Que Deus e o vento estejam com voc\xEA, capit\xE3o. E leve ra\xE7\xF5es."
+  declineLine: "S\xE1bio. Quem vai \xE0s ru\xEDnas sem estar pronto n\xE3o volta para contar."
+  waitingLine: "O Barba-Negra ainda manda nas ru\xEDnas, capit\xE3o. O almirantado aguarda."
+  doneLines:
+  - "O Carniceiro caiu? Ent\xE3o \xE9 verdade... L\xE1zaro vai sentir o golpe."
+  - "Em nome do almirantado: o seu pagamento. E a minha gratid\xE3o, que vale menos, mas \xE9 sincera."
+  restingLine: "A \xC2ncora Negra j\xE1 procura outro carniceiro para as ru\xEDnas. Quando ele chegar, eu aviso."

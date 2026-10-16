@@ -549,7 +549,10 @@ namespace Pirates.UI
             content.Add(row);
         }
 
-        /// <summary>"Salvo em 01/10 às 14:32 no Porto da Base", o capitão, o que há no armazém, upgrades, construções e missões.</summary>
+        /// <summary>"Salvo em 01/10 às 14:32 em Porto Alento", o capitão, o que há no armazém, upgrades, construções e missões.</summary>
+        // O porto se chamava "Porto da Base" até 16/10 (a história o chama de Porto Alento); save antigo mostra o nome novo.
+        static string HarborName(string saved) => saved == "Porto da Base" ? "Porto Alento" : saved;
+
         string Describe(SaveData d)
         {
             var lines = new List<string>();
@@ -557,7 +560,7 @@ namespace Pirates.UI
                 ? $"{date:dd/MM} às {date:HH:mm}"
                 : "?";
             if (d.hasFame && !string.IsNullOrWhiteSpace(d.captainName)) lines.Add($"<b>{d.captainName}</b> · fama {d.fame}");
-            lines.Add($"Salvo em {when}{(string.IsNullOrEmpty(d.harborName) ? "" : $" no {d.harborName}")}.");
+            lines.Add($"Salvo em {when}{(string.IsNullOrEmpty(d.harborName) ? "" : $" em {HarborName(d.harborName)}")}.");
 
             var stock = new List<string>();
             foreach (var c in d.warehouse)

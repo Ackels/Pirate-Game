@@ -20,8 +20,12 @@ namespace Pirates.EditorTools
         const string BrigMissionId = "brigue_santa_clara";
         const string BrigModel = "ship-large";
         const float BrigHullHealth = 400f;
-        /// <summary>Ao norte da Ilha Norte (110, 190), longe do porto (~500 m) e da rota das chalupas.</summary>
-        static readonly Vector3[] BrigSpawnPoints = { new(60f, 0.3f, 360f), new(210f, 0.3f, 330f), new(-90f, 0.3f, 390f) };
+        /// <summary>
+        /// Ao norte da Ilha Norte, ~320 m do centro dela e ~880 m do cais (16/10, pedido do Jhonata: mais longe; antes ~130 m da chalupa
+        /// pirata, que o tutorial manda afundar), longe da rota das chalupas. Mapa espaçado (16/10): andou junto com a Ilha Norte
+        /// (+30, +210); eram (60, 510), (210, 480), (−90, 540).
+        /// </summary>
+        static readonly Vector3[] BrigSpawnPoints = { new(90f, 0.3f, 720f), new(240f, 0.3f, 690f), new(-60f, 0.3f, 750f) };
 
         static void AddBrig(ShipController player, CombatAssets combat, LootAssets loot)
         {

@@ -56,12 +56,17 @@ namespace Pirates.EditorTools
             },
             new()
             {
-                // Covil do chefe (pacote B, passo 4): o Capitão Barba-Negra no meio das ruínas, de frente para a trilha (os guardas antigos
-                // saíram; os guarda-costas dele vêm no passo 2).
+                // Covil do chefe (pacote B, passo 4): o Capitão Barba-Negra no meio das ruínas, de frente para a trilha (que chega pelo
+                // arco, a nordeste), e a Guarda Negra (passo 2): dois espadachins entre ele e o arco e a mosqueteira atrás, perto da cabeça
+                // de pedra. Ele espera enquanto eles lutam.
                 name = "Ruínas do Barba-Negra", id = ChiefLairId, local = new(-72f, -38f), camp = false,
                 guards = new[]
                 {
                     ("Chefe_BarbaNegra", new Vector3(0.5f, 0f, 1.5f), 55f, false, KitCharacters.Captain),
+                    ("GuardaNegra_Sabre_A", new Vector3(3.6f, 0f, 3.8f), 50f, false, KitCharacters.Henry),
+                    ("GuardaNegra_Sabre_B", new Vector3(4.6f, 0f, 0.2f), 70f, false, KitCharacters.Henry),
+                    // A ~9,6 m do chefe (era 7,6: quem ia atrás dela passava a ~5 m dele e o acordava com a guarda de pé; revisão de 16/10).
+                    ("GuardaNegra_Mosquete", new Vector3(-4f, 0f, -7f), 45f, true, KitCharacters.Anne),
                 },
             },
             new()
@@ -145,6 +150,7 @@ namespace Pirates.EditorTools
             s.wreck = SkullShore(island, new Vector2(100f, 10f), Vector2.right) + new Vector2(-3f, 0f);
             Shipwreck(island, s.wreck);
             Ruins(island, RuinsSpot);
+            RuinsArena(island, island.Find("Ruinas"), RuinsSpot);
             s.graveyard = Graveyard(island, GraveyardSpot);
             foreach (var o in Outposts)
             {
@@ -333,7 +339,9 @@ namespace Pirates.EditorTools
                     members[k] = CreatePirate(parent, g.name, o.site.TransformPoint(g.local), g.yaw, PostWeapon(g.name, g.gunner, cutlass, pistol),
                         player, camp, iron, wood, brass, g.model);
                 }
-                camp.Configure(o.spec.name, o.spec.id, members, leash: 24f, attackersAtOnce: 2);
+                // Covil do Barba-Negra: um espadachim da Guarda Negra ataca por vez (com os dois juntos e a mosqueteira, o capitão parado
+                // perdia 100 de vida em ~2 s; a Caveira inteira tira ~28/s). A mosqueteira atira independente da vez.
+                camp.Configure(o.spec.name, o.spec.id, members, leash: 24f, attackersAtOnce: o.spec.id == ChiefLairId ? 1 : 2);
                 if (o.spec.id == ChiefLairId) camp.SetFame(ChiefFame);
                 camps.Add(camp);
             }

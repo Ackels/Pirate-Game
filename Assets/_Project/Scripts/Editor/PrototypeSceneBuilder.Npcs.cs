@@ -28,6 +28,9 @@ namespace Pirates.EditorTools
             public bool shovel;
             public string[] smallTalk;
             public System.Action<MissionDefinition> dialogue;
+            /// <summary>Segundo contrato do mesmo NPC (o do Barba-Negra, com o Teodoro), com as falas dele.</summary>
+            public string extraMissionId;
+            public System.Action<MissionDefinition> extraDialogue;
         }
 
         static NpcSpec[] VillageNpcs => new[]
@@ -73,6 +76,7 @@ namespace Pirates.EditorTools
                 // No estaleiro.
                 name = "Almirante Teodoro", role = "do almirantado", missionId = BruteFortId, spot = new(34f, 45f), yaw = 220f,
                 model = KitCharacters.Henry, palette = 6, dialogue = TeodoroDialogue,
+                extraMissionId = ChiefBounty, extraDialogue = ChiefDialogue,
                 smallTalk = new[]
                 {
                     "Ordem e disciplina, capitão. É o que falta nestes mares.",
@@ -90,6 +94,19 @@ namespace Pirates.EditorTools
                     "Perdi o olho numa aposta. Ganhei o tapa-olho em outra.",
                     "Na taverna eu sou rei. Fora dela, nem tanto.",
                     "Uma partida? Não? Melhor para o seu ouro.",
+                },
+            },
+            new NpcSpec
+            {
+                // Na terra, ao lado do cais dos botes (a pescadora do porto).
+                name = "Iara", role = "a pescadora", missionId = SquidId, spot = new(-41f, 40f), yaw = 110f,
+                model = KitCharacters.Anne, palette = 7, dialogue = IaraDialogue,
+                extraMissionId = MegalodonId, extraDialogue = MegalodonDialogue,
+                smallTalk = new[]
+                {
+                    "Peixe bom não se pega com pressa, capitão.",
+                    "Quarenta anos de mar e ainda não vi tudo. Mas vi o bastante.",
+                    "Se o céu ficar verde, recolha a rede e reze.",
                 },
             },
             new NpcSpec
@@ -117,15 +134,22 @@ namespace Pirates.EditorTools
             var life = GameObject.Find("VidaDoPorto")?.transform;
             foreach (var npc in VillageNpcs)
             {
-                var mission = System.Array.Find(missions, m => m && m.missionId == npc.missionId);
-                if (mission && !mission.givenByNpc)
+                var given = new System.Collections.Generic.List<MissionDefinition>();
+                foreach (var (id, dialogue) in new[] { (npc.missionId, npc.dialogue), (npc.extraMissionId, npc.extraDialogue) })
                 {
-                    mission.givenByNpc = true;
-                    mission.giver = npc.name;
-                    npc.dialogue(mission);
-                    EditorUtility.SetDirty(mission);
+                    if (string.IsNullOrEmpty(id)) continue;
+                    var mission = System.Array.Find(missions, m => m && m.missionId == id);
+                    if (!mission) continue;
+                    if (!mission.givenByNpc)
+                    {
+                        mission.givenByNpc = true;
+                        mission.giver = npc.name;
+                        dialogue(mission);
+                        EditorUtility.SetDirty(mission);
+                    }
+                    given.Add(mission);
                 }
-                MissionGiverNpc(life, npc, mission ? new[] { mission } : System.Array.Empty<MissionDefinition>());
+                MissionGiverNpc(life, npc, given.ToArray());
             }
         }
 
@@ -242,6 +266,61 @@ namespace Pirates.EditorTools
                 "O seu pagamento, em nome do almirantado. Ouro e pólvora, como combinado.",
             },
             "A guarnição ainda se reorganiza. Quando houver um novo guardião, eu mando avisar.");
+
+        static void ChiefDialogue(MissionDefinition m) => Lines(m, new[]
+            {
+                "Capitão. O almirantado confirmou o que eu temia: Lázaro Negro não age sozinho.",
+                "O braço direito dele é o Capitão Barba-Negra, a quem os marujos chamam de Carniceiro das Ruínas. Fez das ruínas da Caveira o seu covil.",
+                "Ele tem uma guarda pessoal, de preto e vermelho: dois espadachins e uma mosqueteira. Enquanto eles lutam, ele só observa.",
+                "Quando a guarda cai, ele mesmo vem. Golpes que derrubam, um salto que atravessa as ruínas, e fica pior quando sangra.",
+                "Derrube o Barba-Negra e Lázaro perde a mão direita. O almirantado paga bem: ouro, ferro e pólvora.",
+            },
+            "Que Deus e o vento estejam com você, capitão. E leve rações.",
+            "Sábio. Quem vai às ruínas sem estar pronto não volta para contar.",
+            "O Barba-Negra ainda manda nas ruínas, capitão. O almirantado aguarda.",
+            new[]
+            {
+                "O Carniceiro caiu? Então é verdade... Lázaro vai sentir o golpe.",
+                "Em nome do almirantado: o seu pagamento. E a minha gratidão, que vale menos, mas é sincera.",
+            },
+            "A Âncora Negra já procura outro carniceiro para as ruínas. Quando ele chegar, eu aviso.");
+
+        static void IaraDialogue(MissionDefinition m) => Lines(m, new[]
+            {
+                "Capitão. Senta aqui um minuto. Uma velha pescadora tem uma história que vale mais que peixe.",
+                "A oeste, depois do último farol, o mar fica preto. São as Águas Negras, onde a Frota de Prata afundou inteira.",
+                "Meu marido pescava lá. Até a noite em que uma coisa subiu do fundo, maior que o barco, e abraçou o casco até estalar.",
+                "Uma lula, capitão. Ela guarda os cascos afundados como um cão guarda os ossos. Agarra o navio e não solta.",
+                "Leve um navio forte e canhões carregados. Mire nos braços que prendem o casco, e quando ela mostrar a cabeça, fogo nela.",
+                "Mate a fera, e a pescadora velha paga o que juntou a vida inteira. Os pescadores daqui ajudam no resto.",
+            },
+            "Que o mar devolva o que é seu, capitão. E volte inteiro.",
+            "Eu entendo. Faz quarenta anos que eu não chego perto de lá.",
+            "As Águas Negras continuam pretas, capitão. Ela ainda está lá embaixo.",
+            new[]
+            {
+                "Você matou a fera? Então o meu velho pode descansar...",
+                "Tome, capitão: ouro, pólvora e ferro. É pouco perto do que o senhor tirou do fundo do mar.",
+            },
+            "Dizem que no fundo sempre há outra. Por enquanto, as águas estão quietas.");
+
+        static void MegalodonDialogue(MissionDefinition m) => Lines(m, new[]
+            {
+                "Capitão, tem mais uma coisa no mar que me tira o sono. Essa não é história de velha.",
+                "A nordeste, onde o fundo despenca, os pescadores viram uma barbatana maior que uma vela. Um tubarão do tempo dos dragões.",
+                "Ele não morde a isca: ele circula o barco, cada vez mais perto, e de repente vem de frente, como um aríete.",
+                "Quando ele parar e abrir a boca, se prepare: é o tranco. Fique de lado e mande bala quando ele estiver na superfície.",
+                "E se ele ficar furioso, olhe a água: onde ela estourar, ele vai cair. Saia de baixo.",
+            },
+            "Que o mar te devolva inteiro, capitão.",
+            "Ninguém vai te chamar de covarde por isso. Eu mesma não chego perto.",
+            "A barbatana continua cortando a água a nordeste, capitão.",
+            new[]
+            {
+                "O rei das profundezas, morto? Os pescadores vão fazer festa no cais!",
+                "Tome, capitão: ouro, pólvora e ferro. E um peixe frito, se quiser.",
+            },
+            "Por enquanto, a Fossa está quieta. Mas o mar é fundo, capitão.");
 
         static void ZeDialogue(MissionDefinition m) => Lines(m, new[]
             {

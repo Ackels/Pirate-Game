@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Megalodonte
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: megalodonte
+  title: O rei das profundezas
+  giver: Iara
+  description: "A nordeste, onde o mar fica fundo de repente, uma barbatana maior que uma vela corta a \xE1gua. Um tubar\xE3o do tempo dos drag\xF5es, dizem os velhos. Ele circula os barcos e bate no casco at\xE9 a madeira ceder. Mate-o."
+  type: 4
+  count: 1
+  targetId: megalodonte
+  targetName: Fossa do Megalodonte
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 700
+  - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+    amount: 12
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 8
+  objectiveText: mate o megalodonte da Fossa, a nordeste
+  doneText: megalodonte morto
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 3
+  fameReward: 120
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o, tem mais uma coisa no mar que me tira o sono. Essa n\xE3o \xE9 hist\xF3ria de velha."
+  - "A nordeste, onde o fundo despenca, os pescadores viram uma barbatana maior que uma vela. Um tubar\xE3o do tempo dos drag\xF5es."
+  - "Ele n\xE3o morde a isca: ele circula o barco, cada vez mais perto, e de repente vem de frente, como um ar\xEDete."
+  - "Quando ele parar e abrir a boca, se prepare: \xE9 o tranco. Fique de lado e mande bala quando ele estiver na superf\xEDcie."
+  - "E se ele ficar furioso, olhe a \xE1gua: onde ela estourar, ele vai cair. Saia de baixo."
+  acceptLine: "Que o mar te devolva inteiro, capit\xE3o."
+  declineLine: "Ningu\xE9m vai te chamar de covarde por isso. Eu mesma n\xE3o chego perto."
+  waitingLine: "A barbatana continua cortando a \xE1gua a nordeste, capit\xE3o."
+  doneLines:
+  - "O rei das profundezas, morto? Os pescadores v\xE3o fazer festa no cais!"
+  - "Tome, capit\xE3o: ouro, p\xF3lvora e ferro. E um peixe frito, se quiser."
+  restingLine: "Por enquanto, a Fossa est\xE1 quieta. Mas o mar \xE9 fundo, capit\xE3o."

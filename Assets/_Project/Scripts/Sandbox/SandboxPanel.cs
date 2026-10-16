@@ -130,6 +130,8 @@ namespace Pirates.Sandbox
             DrawFame();
             DrawDayNight();
             DrawTutorial();
+            DrawStory();
+            DrawTreasureMaps();
             DrawWind();
             DrawWeather();
             DrawSave();
@@ -431,6 +433,42 @@ namespace Pirates.Sandbox
             GUILayout.Space(8f);
         }
 
+        /// <summary>Mapas do tesouro (C1, 16/10): pedaços e o X marcado; dar um pedaço, montar o mapa na hora, desfazer.</summary>
+        void DrawTreasureMaps()
+        {
+            var maps = Pirates.Loot.TreasureMaps.Current;
+            if (!maps) return;
+            GUILayout.Label("<b>Mapas do tesouro</b>", small);
+            string state = maps.HasMap ? $"X marcado: {maps.ActiveSpot.place}." : $"Pedaços: {maps.Pieces} de {maps.PiecesPerMap}.";
+            GUILayout.Label($"<size=11>{state}</size>", small);
+            GUILayout.BeginHorizontal();
+            var hold = modes && modes.Ship ? modes.Ship.GetComponent<Inventory>() : null;
+            if (hold && GUILayout.Button("+1 pedaço")) maps.GivePiece(hold);
+            if (!maps.HasMap && hold && GUILayout.Button("Montar agora"))
+            {
+                for (int i = maps.Pieces; i < maps.PiecesPerMap; i++) maps.GivePiece(hold);
+                maps.Assemble();
+            }
+            if (maps.HasMap && GUILayout.Button("Desfazer")) maps.Cancel();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        /// <summary>História (16/10): capítulo atual; pular, voltar ou recomeçar (a patente de cada um: botões de fama acima).</summary>
+        void DrawStory()
+        {
+            if (!Services.TryGet(out IStory story)) return;
+            GUILayout.Label("<b>História</b>", small);
+            string now = story.Chapter < story.ChapterCount ? $"Capítulo {story.Chapter + 1}: {story.ChapterTitle(story.Chapter)}." : "Acabou.";
+            GUILayout.Label($"<size=11>{now}</size>", small);
+            GUILayout.BeginHorizontal();
+            if (story.Chapter > 0 && GUILayout.Button("Voltar")) story.Restore(story.Chapter - 1, null);
+            if (story.Chapter < story.ChapterCount && GUILayout.Button("Pular capítulo")) story.Restore(story.Chapter + 1, null);
+            if (GUILayout.Button("Recomeçar")) story.Begin();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
         /// <summary>Tutorial (11/10): etapa atual; pular a etapa, recomeçar ou encerrar.</summary>
         void DrawTutorial()
         {
@@ -441,6 +479,11 @@ namespace Pirates.Sandbox
             if (tutorial.Running && GUILayout.Button("Próxima etapa")) tutorial.Restore(tutorial.Step + 1);
             if (GUILayout.Button("Recomeçar")) tutorial.Begin(true);
             if (tutorial.Running && GUILayout.Button("Encerrar")) tutorial.Restore(-1);
+            GUILayout.EndHorizontal();
+            // Começar direto numa parte (2 = o mar).
+            GUILayout.BeginHorizontal();
+            for (int part = 2; part <= tutorial.Parts; part++)
+                if (GUILayout.Button($"Ir para a parte {part}")) tutorial.Restore(tutorial.FirstStepOf(part));
             GUILayout.EndHorizontal();
             GUILayout.Space(8f);
         }
@@ -567,6 +610,27 @@ namespace Pirates.Sandbox
                 GUI.enabled = true;
                 GUILayout.EndHorizontal();
             }
+            // Megalodonte (cena 07): sobe aqui; vai para a Fossa; enfurece; mata.
+            for (int i = 0; i < Megalodon.Active.Count; i++)
+            {
+                var shark = Megalodon.Active[i];
+                GUILayout.Label($"<size=11>{shark.DisplayName}: {shark.Health.Current:0} / {shark.Health.Max:0}, {SharkState(shark)}</size>", small);
+                GUILayout.BeginHorizontal();
+                GUI.enabled = !shark.IsEngaged && !shark.Health.IsDead && (modes == null || !modes.IsOnFoot);
+                if (GUILayout.Button("Atacar aqui")) shark.SummonNear();
+                GUI.enabled = modes == null || !modes.IsOnFoot;
+                if (GUILayout.Button("Ir à Fossa")) ShipNear(shark.Lair, 90f);
+                GUI.enabled = shark.IsEngaged && !shark.PhaseTwo;
+                if (GUILayout.Button("Enfurecer")) shark.EnrageNow();
+                GUI.enabled = shark.IsEngaged;
+                if (GUILayout.Button("Matar"))
+                {
+                    shark.Health.Invulnerable = false;
+                    shark.Health.TakeDamage(new Pirates.Core.DamageInfo { amount = shark.Health.Max * 10f, point = shark.transform.position });
+                }
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
             // Caçador de recompensas (cena 07): chama um agora, na força da patente atual (abaixo de Corsário, o mais fraco).
             if (hunters)
             {
@@ -576,6 +640,19 @@ namespace Pirates.Sandbox
             }
             GUILayout.Space(8f);
         }
+
+        static string SharkState(Megalodon shark) => shark.Current switch
+        {
+            Megalodon.Phase.Lurking => "no fundo da Fossa",
+            Megalodon.Phase.Rising => "subindo",
+            Megalodon.Phase.Circle => shark.PhaseTwo ? "circulando (furioso)" : "circulando",
+            Megalodon.Phase.WindUp => "preparando a investida",
+            Megalodon.Phase.Charge => "investindo",
+            Megalodon.Phase.Dive => "mergulhando",
+            Megalodon.Phase.Breach => "saltando",
+            Megalodon.Phase.Retreat => "voltando à Fossa",
+            _ => "morto",
+        };
 
         static string SquidState(GiantSquid squid) => squid.Current switch
         {

@@ -1,6 +1,6 @@
 {
     "name": "Pirates.LandCombat",
     "rootNamespace": "Pirates.LandCombat",
-    "references": ["Pirates.Core", "Pirates.Combat", "Pirates.OnFoot"],
+    "references": ["Pirates.Core", "Pirates.Combat", "Pirates.OnFoot", "Pirates.Economy"],
     "autoReferenced": true
 }

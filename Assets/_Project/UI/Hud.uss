@@ -1817,6 +1817,92 @@
     color: rgb(255, 236, 160);
 }
 
+/* ---------- História (16/10): cartão à direita, embaixo da fama e do relógio, e marcador com a joia dourada ---------- */
+
+.hud-story {
+    width: 340px;
+    padding: 8px 14px 10px 14px;
+}
+
+.hud-story__header {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgb(140, 100, 60);
+    -unity-text-align: middle-center;
+}
+
+.hud-story__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(110, 70, 20);
+    -unity-text-align: middle-center;
+    margin-top: -2px;
+}
+
+.hud-story__intro {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(90, 60, 35);
+    white-space: normal;
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.hud-story__locked {
+    font-size: 15px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    color: rgb(59, 36, 20);
+    padding: 5px 8px 5px 8px;
+    background-color: rgba(255, 244, 214, 0.65);
+    border-radius: 6px;
+}
+
+.hud-story__icon {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_jewel_yellow.png");
+}
+
+.hud-story__icon.hud-mission__icon--done {
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/iconCheck_bronze.png");
+}
+
+.hud-marker--story .hud-marker__star {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_jewel_yellow.png");
+}
+
+.hud-marker--story .hud-marker__text {
+    color: rgb(255, 222, 130);
+}
+
+/* ---------- Mapa do tesouro (C1, 16/10): cartão pequeno embaixo da História e marcador com a estrela vermelha ---------- */
+
+.hud-treasure-map {
+    width: 340px;
+    padding: 6px 14px 8px 14px;
+}
+
+.hud-treasure-map__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 20px;
+    color: rgb(122, 46, 22);
+    -unity-text-align: middle-center;
+}
+
+.hud-treasure-map__line {
+    font-size: 14px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    color: rgb(59, 36, 20);
+}
+
+.hud-marker--map .hud-marker__star {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_red.png");
+}
+
+.hud-marker--map .hud-marker__text {
+    color: rgb(255, 190, 160);
+}
+
 /* Botão do tutorial na tela do nome (Novo jogo). */
 .hud .hud-menu__tutorial {
     font-size: 16px;

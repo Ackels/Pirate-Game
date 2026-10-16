@@ -184,6 +184,13 @@ namespace Pirates.OnFoot
         /// <summary>Coloca o personagem num ponto (desembarque, reaparecer): procura o chão logo abaixo.</summary>
         public void Teleport(Vector3 position, Quaternion rotation)
         {
+            // Ponto inválido (infinito ou NaN, como o de um NavMesh.SamplePosition que falhou): ligar o CharacterController lá derrubava
+            // o Unity inteiro (crash do PhysX em 16/10, num script de teste). Ignora e avisa.
+            if (!float.IsFinite(position.x) || !float.IsFinite(position.y) || !float.IsFinite(position.z))
+            {
+                Debug.LogWarning($"[Pirates] Teleport de {name} para um ponto inválido ({position}): ignorado.");
+                return;
+            }
             // Desliga o colisor antes: senão o raio pode bater no próprio personagem.
             controller.enabled = false;
             if (Physics.Raycast(position + Vector3.up * 20f, Vector3.down, out RaycastHit hit, 60f, ~0, QueryTriggerInteraction.Ignore))

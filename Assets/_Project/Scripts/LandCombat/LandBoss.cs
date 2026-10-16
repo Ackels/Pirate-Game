@@ -81,6 +81,12 @@ namespace Pirates.LandCombat
         [Tooltip("Fração da brecha (recovery) depois de cada golpe na fase 2.")]
         [SerializeField, Range(0.2f, 1f)] float recoveryTwo = 0.65f;
 
+        [Header("Guarda-costas")]
+        [Tooltip("Fica no posto, encarando, enquanto houver outro do acampamento de pé: os guarda-costas lutam primeiro (B.4, passo 2).")]
+        [SerializeField] bool waitForGuards;
+        [Tooltip("Capitão mais perto que isto (m) faz ele entrar na luta mesmo com guarda-costas de pé (e golpe nele também).")]
+        [SerializeField] float engageRadius = 5f;
+
         [Header("Visual")]
         [Tooltip("Corpo (os olhos brilham pela emissão do material).")]
         [SerializeField] Renderer[] body = Array.Empty<Renderer>();
@@ -100,7 +106,7 @@ namespace Pirates.LandCombat
         CharacterAnimatorDriver driver;
         readonly Queue<float> recentHits = new();
         float powerUpStart = float.NegativeInfinity, flareUntil = float.NegativeInfinity, behindAt = float.NegativeInfinity;
-        bool shocked = true, shielded;
+        bool shocked = true, shielded, released;
         int lastCombo = -1;
         float walk, run;
         Material[] bladeNormal = Array.Empty<Material>();
@@ -118,6 +124,32 @@ namespace Pirates.LandCombat
         /// <summary>Fração da pausa/brecha na fase atual.</summary>
         public float RecoveryScale => Phase >= 2 ? recoveryTwo : 1f;
         public IReadOnlyList<Move> Moves => moves;
+        /// <summary>Esperando no posto enquanto os guarda-costas lutam (a IA não sai nem ouve o alarme).</summary>
+        public bool HoldingBack => waitForGuards && !released && GuardsStanding();
+
+        public void SetWaitForGuards(bool wait, float radius)
+        {
+            waitForGuards = wait;
+            engageRadius = radius;
+        }
+
+        /// <summary>Entra na luta (guarda-costas caídos, capitão colado ou golpe nele): o grito de guerra e a barra do chefe.</summary>
+        public void Release()
+        {
+            if (released || !waitForGuards) return;
+            released = true;
+            ai.HearAlarm();
+        }
+
+        bool GuardsStanding()
+        {
+            var camp = ai.Camp;
+            if (!camp) return false;
+            var members = camp.Members;
+            for (int i = 0; i < members.Count; i++)
+                if (members[i] && members[i] != ai && !members[i].IsDead) return true;
+            return false;
+        }
 
         public void Configure(string name, string title, Move[] bossMoves, int[] combos, Renderer[] bodyRenderers, Renderer[] bladeRenderers,
             Material glow, ParticleSystem auraSystem)
@@ -245,6 +277,7 @@ namespace Pirates.LandCombat
 
         void OnDamaged(DamageInfo info)
         {
+            Release();
             if (health.IsDead) return;
             recentHits.Enqueue(Time.time);
             if (Phase == 1 && health.Normalized <= phaseTwoAt) BeginPowerUp();
@@ -292,6 +325,15 @@ namespace Pirates.LandCombat
                 Vector3 to = target.position - transform.position;
                 to.y = 0f;
                 if (to.sqrMagnitude < 4.5f * 4.5f && to.sqrMagnitude > 0.01f && Vector3.Angle(transform.forward, to) > behindAngle) behindAt = Time.time;
+            }
+            if (waitForGuards && !health.IsDead)
+            {
+                bool standing = GuardsStanding();
+                if (!released && (!standing || (target && target.gameObject.activeInHierarchy
+                        && (target.position - transform.position).sqrMagnitude < engageRadius * engageRadius)))
+                    Release();
+                // O capitão fugiu com os guarda-costas de pé (ou eles voltaram): espera de novo.
+                else if (released && standing && !ai.IsAlerted) released = false;
             }
             // Fugiu dele (voltou ao posto) ou levantou de novo: vida cheia e fase 1.
             if (!health.IsDead && !ai.IsAlerted && !IsPoweringUp && (Phase != 1 || health.Current < health.Max)) ResetFight();

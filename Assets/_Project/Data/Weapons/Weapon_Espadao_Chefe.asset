@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "Espad\xE3o"
   kind: 0
   animatorWeaponType: 4
-  damage: 28
+  damage: 24
   range: 3
   angle: 150
   hitDelay: 0.5
@@ -55,7 +55,7 @@ MonoBehaviour:
   variantStrikes:
   - range: 0
     angle: 0
-    damage: 28
+    damage: 24
     customKnockdown: 0
     knockdown: 0
     unblockable: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 0
     angle: 170
-    damage: 32
+    damage: 28
     customKnockdown: 0
     knockdown: 0
     unblockable: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 0
     angle: 0
-    damage: 22
+    damage: 18
     customKnockdown: 0
     knockdown: 0
     unblockable: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 3.3
     angle: 70
-    damage: 38
+    damage: 32
     customKnockdown: 1
     knockdown: 1
     unblockable: 0
@@ -88,7 +88,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 3.4
     angle: 360
-    damage: 30
+    damage: 26
     customKnockdown: 1
     knockdown: 1
     unblockable: 1
@@ -96,7 +96,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 3.2
     angle: 360
-    damage: 42
+    damage: 36
     customKnockdown: 1
     knockdown: 2
     unblockable: 1
@@ -112,7 +112,7 @@ MonoBehaviour:
     lungeSpeed: 0
   - range: 0
     angle: 0
-    damage: 20
+    damage: 17
     customKnockdown: 0
     knockdown: 0
     unblockable: 0

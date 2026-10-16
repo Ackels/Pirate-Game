@@ -256,6 +256,7 @@ namespace Pirates.EditorTools
 
         /// <summary>Arma de quem está no posto: "Bacamarteiro_..." leva o bacamarte; os outros, pistola (atirador) ou cutelo.</summary>
         static WeaponDefinition PostWeapon(string name, bool gunner, WeaponDefinition cutlass, WeaponDefinition pistol) =>
+            IsBlackGuard(name) ? (IsMusketeer(name) ? BlackGuardMusket() : BlackGuardSabre()) :
             name.StartsWith("Bacamarteiro") ? EnemyBlunderbuss() : IsChief(name) ? ChiefSword() : IsBrute(name) ? BruteAxe() : IsDuelist(name) ? DuelistDagger() : gunner ? pistol : cutlass;
 
         /// <summary>Cutelo dos piratas inimigos: mais fraco e com o golpe mais lento (dá para ver vindo e reagir).</summary>

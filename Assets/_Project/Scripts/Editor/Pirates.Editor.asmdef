@@ -15,6 +15,7 @@
         "Pirates.Controls",
         "Pirates.CameraSystem",
         "Pirates.Tutorial",
+        "Pirates.Story",
         "Pirates.UI",
         "Pirates.LandCombat",
         "Unity.AI.Navigation",

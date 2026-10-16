@@ -53,6 +53,15 @@ namespace Pirates.Save
         // Tutorial (11/10). Save de antes não tem (hasTutorial falso): sem tutorial. −1 = terminado ou pulado.
         public bool hasTutorial;
         public int tutorialStep = -1;
+
+        // História (16/10): capítulo atual e o progresso dos objetivos dele. Save de antes não tem (hasStory falso): capítulo 1 do zero
+        // (os objetivos de estado, construção e tripulação, já contam o que o save tem).
+        public bool hasStory;
+        public int storyChapter;
+        public int[] storyProgress;
+
+        // Mapa do tesouro montado (C1, 16/10): id do tesouro com o X marcado (vazio = nenhum; os pedaços são itens comuns).
+        public string treasureMapId;
     }
 
     [Serializable]

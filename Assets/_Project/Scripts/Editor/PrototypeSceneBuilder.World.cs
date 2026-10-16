@@ -3,11 +3,13 @@ using Pirates.Base;
 using Pirates.Combat;
 using Pirates.Controls;
 using Pirates.Economy;
+using Pirates.LandCombat;
 using Pirates.Loot;
 using Pirates.Missions;
 using Pirates.OnFoot;
 using Pirates.Save;
 using Pirates.Ships;
+using Pirates.Story;
 using Pirates.UI;
 using UnityEditor;
 using UnityEngine;
@@ -26,8 +28,9 @@ namespace Pirates.EditorTools
     {
         const string WorldScenePath = ScenesFolder + "/Proto07_Mundo.unity";
         const string MissionsFolder = DataFolder + "/Missions";
-        // Ilha da Caveira: a leste, ~360 m do começo, longe do porto (Ilha Sul) e da rota dos navios inimigos.
-        static readonly Vector3 WorldIslandCenter = new(360f, 0f, -40f);
+        // Ilha da Caveira: a leste do porto (Ilha Sul), ~300 m de costa a costa. Mapa espaçado (16/10, pedido do Jhonata: ilhas e inimigos
+        // perto demais; ~1,6×, sobra lugar para ilhas novas): era (360, −40), ~120 m de costa a costa do porto.
+        static readonly Vector3 WorldIslandCenter = new(580f, 0f, -8f);
         const string CampMissionId = "acampamento_caveira", TreasureMissionId = "tesouro_ilha_oeste";
         // Ilhas Oeste e Norte (M6.9): esconderijo, segundo tesouro, forte e a guarnição dele.
         const string HideoutCampId = "esconderijo_oeste", SmugglerTreasureId = "tesouro_oeste_2", FortMissionId = "forte_norte",
@@ -57,11 +60,14 @@ namespace Pirates.EditorTools
             island.campSite.gameObject.AddComponent<WorldMarker>().Configure(CampMissionId, "Acampamento da Caveira", 10f);
             // Missões dos inimigos novos (PrototypeSceneBuilder.Bounties.cs): o brutamontes do pátio e o cemitério.
             AddBounty(foot.camp, "Brutamontes", BruteSkullId, "Brutamontes (Caveira)");
+            foreach (var lair in Object.FindObjectsByType<EnemyCamp>(FindObjectsInactive.Include))
+                if (lair.CampId == ChiefLairId) AddBounty(lair, "Chefe", ChiefBounty, "Barba-Negra (ruínas)");
             if (island.graveyard) island.graveyard.gameObject.AddComponent<WorldMarker>().Configure(GraveyardMissionId, "Cemitério da Caveira", 5f);
             CreateIsles(materials, deck, hull, island.loot, loot.items, foot.character, ship);
             AddBrig(ship, combat, loot);
             AddBoss(ship, combat, loot);
             AddGiantSquid(ship, loot);
+            AddMegalodon(ship, loot);
             AddBountyHunters(ship, combat, loot);
 
             // Porto a pé: F no cais atraca e desce no píer; as casas da vila abrem cada parte do porto.
@@ -74,7 +80,7 @@ namespace Pirates.EditorTools
             harborHud.Bind(visitor, buildingVisitor);
 
             var dock = Object.FindAnyObjectByType<HarborDock>();
-            if (dock) dock.gameObject.AddComponent<WorldMarker>().Configure(MissionHUD.HarborMarkerId, "Porto da Base", 12f);
+            if (dock) dock.gameObject.AddComponent<WorldMarker>().Configure(MissionHUD.HarborMarkerId, "Porto Alento", 12f);
             var board = new GameObject("QuadroDeMissoes").AddComponent<MissionBoard>();
             // Warehouse só existe em Play (Awake): no gerador, o Inventory do cais.
             var missions = LoadMissions(loot.items);
@@ -101,6 +107,14 @@ namespace Pirates.EditorTools
             ApplyCampFame();
             // Tutorial do jogo novo (11/10): o Velho Bento mostra o porto e o treino a pé.
             AddTutorial(foot.switcher, hud);
+            // História, "A Coroa de Prata" (16/10): capítulos ligados às patentes, com objetivos que usam o que o jogo já tem.
+            var story = new GameObject("Historia").AddComponent<StoryLine>();
+            story.Configure(Object.FindAnyObjectByType<Pirates.Base.BaseBuildings>(), ship.GetComponent<Pirates.Progression.ShipCrew>());
+            hud.AddComponent<StoryHUD>().Bind(story, foot.switcher, board);
+            // Mapas do tesouro em pedaços (C1, 16/10): 3 pedaços montam um mapa e um X aparece numa ilha.
+            AddTreasureMaps(materials, island.loot, loot, foot.switcher, hud);
+            // Prisioneiros em gaiolas nos acampamentos (C2, 16/10): soltos com o acampamento limpo, viram tripulação.
+            AddPrisoners(foot.character, foot.switcher, materials, loot.items);
             // Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo, opções, créditos; o prólogo toca no Novo jogo.
             var prologue = hud.AddComponent<PrologueHUD>();
             var frames = Enumerable.Range(1, 9)

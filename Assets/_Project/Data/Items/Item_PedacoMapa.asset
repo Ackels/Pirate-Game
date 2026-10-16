@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_PedacoMapa
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: "Peda\xE7o de mapa do tesouro"
+  category: 0
+  rarity: 2
+  color: {r: 0.86, g: 0.74, b: 0.5, a: 1}
+  spacePerUnit: 0.1
+  description: "Um canto rasgado de mapa, com tra\xE7os de costa e um peda\xE7o de X. Junte 3 e o mapa se monta sozinho: o X aparece numa ilha."
+  keepAboard: 0
+  backpackCapacity: 0

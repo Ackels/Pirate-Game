@@ -127,8 +127,9 @@ namespace Pirates.EditorTools
         /// apoia o cano) e o alto da arma para cima; sem ele, como a pistola (cano seguindo o antebraço). Guardado: nas costas, cano
         /// para cima sobre o ombro direito (o esquerdo é do papagaio).
         /// </summary>
+        /// <param name="musket">O mosquete-machadinha do kit (Guarda Negra) no lugar do rifle, com a mesma pegada.</param>
         static Transform BlunderbussOn(Transform model, Material iron, Material wood, out Transform muzzle, out Transform handSlot,
-            out Transform holsterSlot)
+            out Transform holsterSlot, bool musket = false)
         {
             Transform hand = Bone(model, HumanBodyBones.RightHand);
             RifleGrip(model, out Vector3 barrel, out Vector3 top);
@@ -139,7 +140,10 @@ namespace Pirates.EditorTools
             var kitRotation = Quaternion.Euler(0f, 180f, 0f);
             muzzle = new GameObject("Boca").transform;
             muzzle.SetParent(root, false);
-            if (KitWeapon(root, "Weapon_Rifle", kitRotation, BlunderbussScale, BlunderbussGrip))
+            if (musket && KitWeapon(root, "Weapon_AxeRifle", kitRotation, MusketScale, MusketGrip))
+                muzzle.SetLocalPositionAndRotation(kitRotation * (MusketMuzzle - MusketGrip) * MusketScale,
+                    Quaternion.LookRotation(Vector3.right, Vector3.up));
+            else if (KitWeapon(root, "Weapon_Rifle", kitRotation, BlunderbussScale, BlunderbussGrip))
                 muzzle.SetLocalPositionAndRotation(kitRotation * (BlunderbussMuzzle - BlunderbussGrip) * BlunderbussScale,
                     Quaternion.LookRotation(Vector3.right, Vector3.up));
             else

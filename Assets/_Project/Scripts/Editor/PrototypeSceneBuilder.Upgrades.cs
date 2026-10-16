@@ -16,10 +16,19 @@ namespace Pirates.EditorTools
     {
         const string UpgradesFolder = DataFolder + "/Upgrades";
 
-        static readonly Vector3[] EnemySpawnPoints =
+        static readonly Vector3[] HarborEnemySpawnPoints =
         {
             new(-50f, 0.3f, 230f), new(230f, 0.3f, 40f), new(-220f, 0.3f, -60f),
         };
+        /// <summary>
+        /// Mundo (cena 07, mapa espaçado em 16/10): as chalupas patrulham os caminhos entre as ilhas (Oeste–Norte, Norte–Caveira e a
+        /// sudoeste da Oeste), a 370–510 m do cais, longe do brigue. As outras cenas ficam com os pontos de antes.
+        /// </summary>
+        static readonly Vector3[] WorldEnemySpawnPoints =
+        {
+            new(-100f, 0.3f, 330f), new(360f, 0.3f, 190f), new(-330f, 0.3f, -120f),
+        };
+        static Vector3[] EnemySpawnPoints => generatingScenePath == WorldScenePath ? WorldEnemySpawnPoints : HarborEnemySpawnPoints;
 
         /// <summary>Upgrades do navio; o último nível de cada um exige <paramref name="topLevelBuilding"/> (Estaleiro) na base.</summary>
         static void AddUpgrades(ShipController player, LootItems items, BuildingDefinition topLevelBuilding)

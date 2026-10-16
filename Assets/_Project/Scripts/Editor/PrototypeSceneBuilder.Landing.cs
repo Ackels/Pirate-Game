@@ -54,7 +54,7 @@ namespace Pirates.EditorTools
             generatingScenePath = LandingScenePath;
 
             var waves = LoadOrCreateAsset<WaveSettings>(DataFolder + "/WaveSettings_Default.asset");
-            var sloop = LoadOrCreateAsset<ShipStats>(DataFolder + "/ShipStats_Chalupa.asset");
+            var sloop = LoadOrCreateAsset<ShipStats>(DataFolder + "/ShipStats_Chalupa.asset", s => PlayerShipHandling(s, SloopTurnRate));
             var water = GetMaterial("M_Water", new Color(0.04f, 0.2f, 0.28f), 0.93f);
             var hull = GetMaterial("M_HullWood", new Color(0.33f, 0.2f, 0.11f), 0.25f);
             var deck = GetMaterial("M_DeckWood", new Color(0.52f, 0.37f, 0.22f), 0.2f);

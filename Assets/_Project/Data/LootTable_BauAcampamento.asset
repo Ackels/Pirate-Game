@@ -45,6 +45,10 @@ MonoBehaviour:
     chance: 0.35
     minAmount: 1
     maxAmount: 2
+  - item: {fileID: 11400000, guid: 384a12bd1c0fa3a4b94f474d3acc8d63, type: 2}
+    chance: 0.35
+    minAmount: 1
+    maxAmount: 1
   chestChance: 0.5
   schematics:
   - item: {fileID: 11400000, guid: c9748e8c38f49614d96277de9a9b8297, type: 2}

@@ -171,6 +171,8 @@ namespace Pirates.Save
                     if (stack.item && stack.amount > 0) hold.Add(stack.item, stack.amount);
             PlaceShipAtBerth();
             if (Services.TryGet(out ITutorial guide)) guide.Begin(tutorial);
+            if (Services.TryGet(out IStory story)) story.Begin();
+            if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(null);
             LastSaved = null;
             WaitingForChoice = false;
             Started = true;
@@ -271,6 +273,15 @@ namespace Pirates.Save
                 data.hasTutorial = true;
                 data.tutorialStep = tutorial.Step;
             }
+
+            if (Services.TryGet(out IStory story))
+            {
+                data.hasStory = true;
+                data.storyChapter = story.Chapter;
+                data.storyProgress = story.Progress;
+            }
+
+            if (Services.TryGet(out ITreasureMaps maps)) data.treasureMapId = maps.ActiveId;
 
             if (fame)
             {
@@ -487,6 +498,8 @@ namespace Pirates.Save
 
             if (data.hasTime && Services.TryGet(out ITimeOfDay time)) time.SetTime(data.day, data.hour);
             if (Services.TryGet(out ITutorial tutorial)) tutorial.Restore(data.hasTutorial ? data.tutorialStep : -1);
+            if (Services.TryGet(out IStory story)) story.Restore(data.hasStory ? data.storyChapter : 0, data.hasStory ? data.storyProgress : null);
+            if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(data.treasureMapId);
 
             PlaceShipAtBerth();
             if (missing.Count > 0)

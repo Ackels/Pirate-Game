@@ -26,8 +26,9 @@ namespace Pirates.EditorTools
     public static partial class PrototypeSceneBuilder
     {
         // Propriedades (não campos): campos estáticos de outro arquivo da classe parcial não têm ordem garantida.
-        static Vector3 WestCenter => new(-170f, 0f, 60f);
-        static Vector3 NorthCenter => new(110f, 0f, 190f);
+        // Mapa espaçado (16/10, ~1,6×): eram (−170, 60) e (110, 190).
+        static Vector3 WestCenter => new(-340f, 0f, 140f);
+        static Vector3 NorthCenter => new(140f, 0f, 400f);
         const float WestRX = 40f, WestRZ = 38f, NorthRX = 52f, NorthRZ = 44f;
 
         // ---------- Oeste ----------

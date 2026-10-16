@@ -27,6 +27,24 @@ namespace Pirates.Economy
             return false;
         }
 
+        /// <summary>Quantos o jogador tem somando todos os lugares dele.</summary>
+        public static int Count(ItemDefinition item)
+        {
+            int n = 0;
+            for (int i = 0; i < stores.Count; i++)
+                if (stores[i]) n += stores[i].Count(item);
+            return n;
+        }
+
+        /// <summary>Tira <paramref name="amount"/> de onde houver (na ordem em que os lugares se registraram); devolve quanto tirou.</summary>
+        public static int Take(ItemDefinition item, int amount)
+        {
+            int taken = 0;
+            for (int i = 0; i < stores.Count && taken < amount; i++)
+                if (stores[i]) taken += stores[i].Remove(item, amount - taken);
+            return taken;
+        }
+
         // Suporte a "Enter Play Mode" sem domain reload.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => stores.Clear();
