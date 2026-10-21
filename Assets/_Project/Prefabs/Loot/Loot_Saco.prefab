@@ -259,3 +259,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Pirates.Loot::Pirates.Loot.LootSack
   visual: {fileID: 1847988450871673375}
+  blinkSeconds: 20

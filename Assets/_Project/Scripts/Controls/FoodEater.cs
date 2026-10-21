@@ -142,7 +142,7 @@ namespace Pirates.Controls
                 HideWeaponInHand();
             }
             if (animatorDriver) animatorDriver.PlayEat();
-            if (combat) combat.Interrupt(eatSeconds);
+            if (combat) combat.Occupy(eatSeconds);
             if (footCharacter) footCharacter.SetSpeedMultiplier(moveWhileEating, eatSeconds);
             Ate?.Invoke(health.Current - before);
             return true;

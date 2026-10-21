@@ -78,7 +78,9 @@ namespace Pirates.UI
                 var item = stack.item;
                 var row = Win.Row(col, "hud-window__item-row");
                 var name = Win.Item(row, item, $"{item.displayName}  <b>×{stack.amount}</b>");
-                name.Add(Hud.Text(HudDraw.SpaceText(item), "hud-item__note"));
+                name.Add(Hud.Text(item.equipSlot != EquipSlot.None || item.rarity >= ItemRarity.Rare && item.IsUnique
+                    ? $"{Rarity.NameOf(item.rarity)} · {(item.equipSlot != EquipSlot.None ? Rarity.SlotName(item.equipSlot).ToLowerInvariant() : "esquema")}"
+                    : HudDraw.SpaceText(item), "hud-item__note"));
                 int fit = target.MaxFit(item);
                 if (fit <= 0)
                 {
@@ -108,7 +110,7 @@ namespace Pirates.UI
                 Win.Item(row, item, $"{item.displayName}  <b>×{count}</b>");
                 if (item.IsUnique)
                 {
-                    row.Add(Hud.Text("esquema guardado", "hud-item__note"));
+                    row.Add(Hud.Text(item.equipSlot != EquipSlot.None ? "equipamento (tecla I)" : "esquema guardado", "hud-item__note"));
                     continue;
                 }
                 row.Add(Win.Button("-1", () => setup.discard(item, 1), extraClass: "hud-button--small"));

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Equip_LaminaSaoTelmo
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: "L\xE2mina de S\xE3o Telmo"
+  category: 3
+  rarity: 4
+  color: {r: 1, g: 0.74, b: 0.22, a: 1}
+  spacePerUnit: 0
+  description: "A espada do capel\xE3o da Frota de Prata, benzida contra os mortos: arde no fogo azul de S\xE3o Telmo. Fere as almas penadas mesmo transparentes, e os mortos que ela derruba n\xE3o levantam mais."
+  icon: {fileID: 2800000, guid: c8e1ac2fb5a05484e96a84ac031005c0, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  equipSlot: 1
+  equipment: {fileID: 11400000, guid: e99ec9c2de7a14c4ba7b6585d22db786, type: 2}

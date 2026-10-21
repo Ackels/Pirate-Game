@@ -85,10 +85,27 @@
     align-items: center;
 }
 
+/* Aviso "Jogo salvo": em cima do medalhão do capitão (embaixo à direita ficam as armas). */
 .hud-bottom-right {
     position: absolute;
+    left: 18px;
+    bottom: 170px;
+    align-items: flex-start;
+}
+
+/* Capitão a pé (21/10): medalhão, vida e fôlego, embaixo à esquerda. */
+.hud-bottom-left {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    align-items: flex-start;
+}
+
+/* Armas e itens a pé (21/10): embaixo à direita, rente à borda. */
+.hud-loadout {
+    position: absolute;
     right: 18px;
-    bottom: 64px;
+    bottom: 18px;
     align-items: flex-end;
 }
 
@@ -1482,6 +1499,32 @@
     color: rgb(107, 74, 43);
 }
 
+/* ---------- Coletáveis (C3, 19/10): a carta da garrafa (pergaminho da conversa) e as coleções no painel C ---------- */
+
+.hud-letter__text {
+    font-size: 23px;
+}
+
+.hud-collection {
+    margin-bottom: 8px;
+}
+
+.hud-collection__count {
+    font-size: 18px;
+    color: rgb(122, 46, 22);
+}
+
+.hud-window .hud-collection__bar {
+    height: 12px;
+    border-radius: 6px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+
+.hud-collection__letter {
+    margin-top: 4px;
+}
+
 .hud-quest-icon {
     position: absolute;
     width: 26px;
@@ -1907,4 +1950,895 @@
 .hud .hud-menu__tutorial {
     font-size: 16px;
     margin: 0 30px 12px 30px;
+}
+
+/* ---------- Equipamento (E1, tecla I; inventário com o capitão, 20/10) ---------- */
+.hud-window--equipment {
+    width: 1200px;
+    height: 720px;
+}
+
+.hud-equip {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+
+/* Esquerda: grades de itens + detalhes */
+.hud-equip__left {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: 16px;
+}
+
+.hud-equip__items {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.hud-equip__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.hud-equip__cell {
+    width: 70px;
+    height: 70px;
+    margin: 0 6px 6px 0;
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: rgba(110, 75, 45, 0.55);
+    background-color: rgba(70, 45, 25, 0.16);
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-equip__cell:hover {
+    background-color: rgba(230, 180, 60, 0.22);
+}
+
+.hud-equip__cell--selected {
+    background-color: rgba(230, 180, 60, 0.32);
+    border-width: 3px;
+}
+
+.hud-equip__cell--in-use {
+    background-color: rgba(120, 160, 70, 0.22);
+}
+
+.hud-equip__cell--empty {
+    border-color: rgba(110, 75, 45, 0.3);
+    background-color: rgba(70, 45, 25, 0.06);
+}
+
+.hud-equip__icon {
+    width: 56px;
+    height: 56px;
+    -unity-background-scale-mode: scale-to-fit;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-equip__icon--swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: rgba(60, 35, 20, 0.6);
+}
+
+.hud-equip__initial {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(60, 35, 20);
+}
+
+.hud-equip__count {
+    position: absolute;
+    right: 4px;
+    bottom: 2px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(255, 245, 220);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(40, 25, 15);
+}
+
+.hud-equip__check {
+    position: absolute;
+    left: 4px;
+    top: 0;
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(47, 122, 36);
+}
+
+.hud-equip__details {
+    flex-shrink: 0;
+    min-height: 150px;
+    background-color: rgba(150, 100, 50, 0.16);
+}
+
+.hud-equip__details-head {
+    margin-left: 10px;
+    justify-content: center;
+}
+
+.hud-equip__rarity {
+    font-size: 13px;
+    -unity-font-style: italic;
+    color: rgb(107, 74, 43);
+}
+
+.hud-equip__in-use {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: rgb(122, 46, 22);
+}
+
+/* Direita: o capitão com os encaixes */
+.hud-equip__doll {
+    width: 520px;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 6px 10px 8px 10px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(110, 75, 45, 0.45);
+    background-color: rgba(60, 38, 22, 0.82);
+}
+
+.hud-equip__name {
+    font-size: 22px;
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    color: rgb(255, 228, 160);
+}
+
+.hud-equip__rank {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(230, 205, 160);
+    margin-bottom: 4px;
+}
+
+.hud-equip__doll-row {
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-equip__slots {
+    width: 92px;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-equip__slot {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hud-equip__cell--slot {
+    margin: 0;
+    width: 74px;
+    height: 74px;
+    border-color: rgba(220, 190, 140, 0.55);
+    background-color: rgba(20, 12, 6, 0.45);
+}
+
+.hud-equip__cell--slot.hud-equip__cell--empty {
+    border-color: rgba(220, 190, 140, 0.25);
+    background-color: rgba(20, 12, 6, 0.25);
+}
+
+.hud-equip__slot-label {
+    font-size: 13px;
+    color: rgb(235, 215, 175);
+    margin-top: 2px;
+}
+
+.hud-equip__empty-text {
+    font-size: 12px;
+    -unity-font-style: italic;
+    color: rgb(200, 180, 145);
+}
+
+/* A vitrine ao vivo: o fundo é a imagem da câmera (fundo transparente). */
+.hud-equip__portrait {
+    width: 300px;
+    height: 450px;
+    margin: 0 6px 0 6px;
+    border-radius: 150px 150px 10px 10px;
+    background-color: rgba(255, 230, 180, 0.08);
+    -unity-background-scale-mode: scale-and-crop;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.hud-equip__spin-hint {
+    font-size: 12px;
+    -unity-font-style: italic;
+    color: rgba(235, 215, 175, 0.7);
+    margin-bottom: 4px;
+}
+
+.hud-equip__stats {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.hud-equip__stat {
+    align-items: center;
+    margin: 0 9px 0 9px;
+}
+
+.hud-equip__stat-value {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(255, 228, 160);
+}
+
+.hud-equip__stat-label {
+    font-size: 12px;
+    color: rgb(225, 200, 155);
+}
+
+/* Tela preta das passagens da ruína (C5: alçapão das catacumbas). */
+.hud-blackout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+/* Aviso de golpe dos monstros das catacumbas (C5): "!" vermelho = preparando; "!!" amarelo maior = erga a guarda. */
+.hud-world-label--alert {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 64px;
+    -unity-text-outline-width: 3px;
+    -unity-text-outline-color: rgba(20, 6, 2, 0.95);
+}
+
+.hud-world-label--alert-now {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 86px;
+    -unity-text-outline-width: 3px;
+    -unity-text-outline-color: rgba(60, 20, 0, 0.95);
+}
+
+/* ---------- HUD a pé de RPG (21/10, pedido do Jhonata com o Free Fire de exemplo) ---------- */
+
+.hud-player {
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+/* Medalhão: retrato do capitão num aro dourado, por cima da ponta da placa. */
+.hud-player__medal {
+    width: 104px;
+    height: 104px;
+    border-radius: 52px;
+    border-width: 5px;
+    border-color: rgb(214, 166, 72);
+    background-color: rgb(52, 32, 20);
+    -unity-background-scale-mode: scale-and-crop;
+    overflow: hidden;
+    margin-right: -22px;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-player__letter {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 54px;
+    color: rgb(255, 211, 107);
+}
+
+.hud-player__plate {
+    padding: 8px 18px 12px 34px;
+    margin-bottom: 0;
+    min-width: 300px;
+}
+
+.hud-player__head {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 4px;
+}
+
+.hud-player__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(255, 211, 107);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-player__rank {
+    font-size: 14px;
+    color: rgb(200, 184, 154);
+    margin-left: 10px;
+    margin-bottom: 4px;
+}
+
+.hud-bar--life {
+    width: 270px;
+    height: 24px;
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: rgb(29, 18, 10);
+}
+
+.hud-bar--life > .hud-bar__fill {
+    border-radius: 9px;
+}
+
+.hud-bar__value {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 15px;
+    color: rgb(255, 245, 225);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(20, 8, 4, 0.9);
+}
+
+.hud-bar--stamina {
+    width: 220px;
+    height: 10px;
+    margin-top: 5px;
+}
+
+.hud-loadout__box {
+    align-items: flex-end;
+}
+
+/* Cartão da arma na mão: munição grande, nome e estado à esquerda, ícone grande à direita. */
+.hud-loadout__current {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 14px 12px 18px;
+    margin-bottom: 6px;
+    min-width: 300px;
+}
+
+.hud-loadout__info {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.hud-loadout__ammo {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 36px;
+    color: rgb(255, 245, 225);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-loadout__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 21px;
+    color: rgb(255, 211, 107);
+}
+
+.hud-loadout__state {
+    font-size: 15px;
+}
+
+.hud-loadout__icon {
+    width: 112px;
+    height: 72px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hud-bar--reload {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 7px;
+    height: 6px;
+    border-width: 1px;
+}
+
+.hud-loadout__slots {
+    flex-direction: row;
+}
+
+/* Encaixe: quadrado escuro com o ícone, a tecla no canto e a quantidade embaixo. */
+.hud-slot {
+    width: 64px;
+    height: 64px;
+    margin-left: 6px;
+    border-radius: 9px;
+    border-width: 2px;
+    border-color: rgb(110, 75, 45);
+    background-color: rgba(34, 21, 12, 0.88);
+}
+
+.hud-slot--on {
+    border-width: 3px;
+    border-color: rgb(255, 211, 107);
+    background-color: rgba(92, 62, 34, 0.92);
+}
+
+.hud-slot--empty {
+    border-color: rgb(200, 70, 50);
+}
+
+.hud-slot--none {
+    opacity: 0.45;
+}
+
+.hud-slot__icon {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 6px;
+    bottom: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-slot__letter {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 28px;
+    color: rgb(247, 233, 201);
+}
+
+.hud-slot__key {
+    position: absolute;
+    left: -6px;
+    top: -8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: rgb(214, 166, 72);
+    color: rgb(40, 24, 12);
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 13px;
+    -unity-text-align: middle-center;
+}
+
+.hud-slot__count {
+    position: absolute;
+    right: 5px;
+    bottom: 1px;
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 15px;
+    color: rgb(255, 245, 225);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(20, 8, 4, 0.95);
+}
+
+/* Aviso de golpe sobre o inimigo (21/10): espadas cruzadas / caveira, desenhados em vetor (StrikeWarningIcon). */
+.hud-strike-icon {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    translate: -50% -100%;
+}
+
+.hud-strike-icon--now {
+    width: 54px;
+    height: 54px;
+}
+
+/* ---------- Tela do capitão com abas (21/10): Inventário (I), Missões (J), Fama (C) ---------- */
+
+.hud-window--book {
+    width: 1200px;
+    height: 720px;
+}
+
+.hud-book-tabs {
+    flex-direction: row;
+    flex-shrink: 0;
+    margin: -6px 0 6px -4px;
+}
+
+.hud .hud-book-tab {
+    font-size: 17px;
+    min-width: 150px;
+    margin: 0 4px 0 0;
+    -unity-background-image-tint-color: rgb(150, 128, 106);
+    color: rgb(222, 205, 180);
+}
+
+.hud .hud-book-tab:hover {
+    -unity-background-image-tint-color: rgb(205, 180, 150);
+}
+
+/* Aba aberta: madeira clara, texto dourado e maior. */
+.hud .hud-book-tab--on {
+    -unity-background-image-tint-color: rgb(255, 222, 160);
+    color: rgb(255, 226, 130);
+    font-size: 19px;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(40, 20, 8, 0.9);
+}
+
+/* Diário (aba Missões): lista à esquerda, a página do escolhido à direita. */
+.hud-journal {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+
+.hud-journal__list {
+    width: 390px;
+    flex-shrink: 0;
+    margin-right: 18px;
+    padding: 6px 8px 6px 8px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(110, 75, 45, 0.45);
+    background-color: rgba(150, 100, 50, 0.08);
+}
+
+.hud-journal__page {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.hud-journal__entry {
+    align-items: flex-start;
+    margin: 3px 0 3px 0;
+    padding: 7px 10px 8px 8px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(110, 75, 45, 0.35);
+    background-color: rgba(150, 100, 50, 0.1);
+}
+
+.hud-journal__entry:hover {
+    background-color: rgba(150, 100, 50, 0.22);
+}
+
+.hud-journal__entry--on {
+    border-width: 2px;
+    border-color: rgb(176, 112, 40);
+    background-color: rgba(214, 166, 72, 0.3);
+}
+
+.hud-journal__entry--on:hover {
+    background-color: rgba(214, 166, 72, 0.36);
+}
+
+.hud-journal__icon {
+    margin-top: 3px;
+}
+
+.hud-journal__entry-title {
+    font-size: 17px;
+}
+
+.hud-journal__kicker {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgb(140, 100, 60);
+    margin-top: 2px;
+}
+
+.hud .hud-journal__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 34px;
+    color: rgb(122, 46, 22);
+    white-space: normal;
+}
+
+.hud-journal__story {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.hud-journal__line {
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.hud-journal__goal {
+    align-items: flex-start;
+    margin-top: 4px;
+}
+
+.hud-journal__past {
+    margin-left: 16px;
+    margin-bottom: 6px;
+}
+
+/* Armazém a pé (21/10): a mochila em cima das colunas porão/armazém, itens em fichas lado a lado. */
+.hud-backpack {
+    flex-shrink: 0;
+    margin-bottom: 6px;
+}
+
+.hud-backpack__head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-backpack__chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.hud-backpack__chip {
+    width: 33%;
+    align-items: center;
+    padding-right: 8px;
+}
+
+.hud-backpack__chip .hud-swatch {
+    flex-shrink: 0;
+}
+
+/* ---------- Mochila / porão na tela (21/10): grade de ícones, como os encaixes da HUD a pé ---------- */
+
+.hud-bag {
+    width: 300px;
+    padding: 8px 12px 10px 12px;
+}
+
+.hud-bag__head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-bag__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 23px;
+    color: rgb(255, 211, 107);
+    flex-grow: 1;
+}
+
+.hud-bag__capacity {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 15px;
+    color: rgb(235, 220, 195);
+    margin-right: 8px;
+}
+
+.hud-bag--full .hud-bag__capacity {
+    color: rgb(255, 120, 95);
+}
+
+.hud-bag__bar {
+    height: 7px;
+    margin-top: 3px;
+    margin-bottom: 6px;
+}
+
+.hud-bag__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.hud-bag__slot {
+    width: 50px;
+    height: 50px;
+    margin: 0 5px 5px 0;
+    border-radius: 7px;
+    border-width: 2px;
+    border-color: rgb(110, 75, 45);
+    background-color: rgba(34, 21, 12, 0.88);
+}
+
+.hud-bag__icon {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+    -unity-background-scale-mode: scale-to-fit;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-bag__icon--swatch {
+    left: 9px;
+    right: 9px;
+    top: 9px;
+    bottom: 9px;
+    border-radius: 6px;
+}
+
+.hud-bag__letter {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 20px;
+    color: rgb(247, 233, 201);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(20, 8, 4, 0.9);
+}
+
+.hud-bag__count {
+    position: absolute;
+    right: 3px;
+    bottom: 0;
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 14px;
+    color: rgb(255, 245, 225);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(20, 8, 4, 0.95);
+}
+
+.hud-bag__empty {
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(215, 200, 175);
+    white-space: normal;
+}
+
+/* ---------- HUD do navio de RPG (21/10): navegação, o navio e a artilharia ---------- */
+
+.hud-ship-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Navegação: rosa dos ventos à esquerda, velocidade, velas e vento à direita. */
+.hud-nav {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 16px 10px 12px;
+}
+
+.hud-nav__dial {
+    width: 92px;
+    height: 92px;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+.hud-nav__arrow {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+}
+
+.hud-nav__info {
+    min-width: 200px;
+}
+
+.hud-nav__speed {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 32px;
+    color: rgb(255, 245, 225);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-nav__sails {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-nav__label {
+    font-size: 15px;
+    color: rgb(215, 200, 175);
+    margin-right: 8px;
+}
+
+.hud-nav__value {
+    font-size: 15px;
+    color: rgb(255, 211, 107);
+    margin-left: 8px;
+}
+
+.hud-nav__wind {
+    font-size: 15px;
+    color: rgb(235, 220, 195);
+    margin-top: 2px;
+}
+
+/* O navio: o medalhão com o timão, a classe, o casco e a tripulação. */
+.hud-ship__medal {
+    background-color: rgb(40, 58, 70);
+}
+
+.hud .hud-ship__wheel {
+    position: relative;
+    left: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 84px;
+    height: 84px;
+}
+
+.hud-ship__crew {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.hud-ship__crew-label {
+    font-size: 13px;
+    color: rgb(215, 200, 175);
+    margin-right: 8px;
+}
+
+.hud-ship__crew-bar {
+    flex-grow: 1;
+    height: 9px;
+}
+
+.hud-ship__crew-value {
+    -unity-font-definition: url("Fonts/Alegreya Bold SDF.asset");
+    font-size: 13px;
+    color: rgb(235, 220, 195);
+    margin-left: 8px;
+}
+
+/* A artilharia: os dois bordos lado a lado, os encaixes embaixo. */
+.hud-guns__row {
+    flex-direction: row;
+    margin-bottom: 6px;
+}
+
+.hud-gun {
+    width: 160px;
+    margin-left: 6px;
+    padding: 6px 12px 12px 12px;
+    align-items: center;
+}
+
+.hud-gun--aiming {
+    -unity-background-image-tint-color: rgb(255, 225, 160);
+}
+
+.hud-gun__top {
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+}
+
+.hud-gun__name {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 21px;
+    color: rgb(255, 211, 107);
+    margin-left: 8px;
+}
+
+.hud .hud-gun__icon {
+    position: relative;
+    left: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 116px;
+    height: 64px;
+    margin-top: 0;
+}
+
+.hud-gun__state {
+    font-size: 15px;
+    color: rgb(235, 220, 195);
+}
+
+.hud-guns__note {
+    font-size: 14px;
+    margin-top: 2px;
+    -unity-text-align: middle-right;
 }

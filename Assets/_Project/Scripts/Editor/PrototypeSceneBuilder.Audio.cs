@@ -206,6 +206,10 @@ namespace Pirates.EditorTools
                 storm = Cue("Tempestade", Clips("Clima", "Tempestade_Loop.wav"), amb, V(0.6f, 0.6f), V(1f, 1f), false, 1f, 2f),
                 thunder = Recorded(Cue("Trovao", Numbered("Clima", "Trovao_{0}.wav", 1, 5), fx, V(0.85f, 1f), V(0.9f, 1.05f), false, 1f, 2f),
                     Numbered("Clima", "Trovao_{0}.wav", 1, 5)),
+                // C5: ar das catacumbas feito pelo gerador (PrototypeSceneBuilder.Catacombs.cs); volume no WeatherAudio.
+                crypt = Cue("Catacumba", new[] { CryptLoopClip() }, amb, V(0.7f, 0.7f), V(1f, 1f), false, 1f, 2f),
+                ghostMoan = Cue("AlmaPenada", new[] { GhostMoanClip() }, fx, V(0.75f, 0.85f), V(0.92f, 1.08f), true, 2f, 26f),
+                batScreech = Cue("Morcego", new[] { BatScreechClip() }, fx, V(0.6f, 0.7f), V(0.9f, 1.12f), true, 1.5f, 20f),
 
                 // 11/10: músicas do Jhonata (Asset Store, grátis) somadas às de antes; cada som vira uma lista (MusicDirector) e o
                 // volume de cada faixa iguala o RMS medido (mar −29 dB, porto/ilha/menu −28, combate −26; pirate1uf já fica abaixo).
@@ -233,7 +237,7 @@ namespace Pirates.EditorTools
             root.AddComponent<SoundPlayer>();
             root.AddComponent<GameAudio>().Configure(sounds, settings);
             root.AddComponent<WindAudio>().Configure(sounds.wind);
-            root.AddComponent<WeatherAudio>().Configure(sounds.rain, sounds.storm, sounds.thunder);
+            root.AddComponent<WeatherAudio>().Configure(sounds.rain, sounds.storm, sounds.thunder, sounds.crypt);
             root.AddComponent<MusicDirector>().Configure(sounds.musicTitle, sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
                 Object.FindAnyObjectByType<PlayerModeSwitcher>(), playerShip ? playerShip.transform : null);
 

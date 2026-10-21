@@ -54,12 +54,102 @@ namespace Pirates.Audio
         {
             GameOptions.Changed += OnOptionsChanged;
             EventBus.Subscribe<TutorialStepEvent>(OnTutorialStep);
+            // Ruína das alavancas (C4, 19/10): eventos estáticos (saem no OnDisable: senão a cena recarregada tocaria dobrado).
+            Pirates.LandCombat.RuinTrap.Triggered += OnTrapTriggered;
+            Pirates.LandCombat.RuinTrap.HitSomeone += OnTrapHit;
+            Pirates.LandCombat.RuinLever.Pulled += OnLeverPulled;
+            Pirates.LandCombat.RuinPassage.Used += OnPassageUsed;
+            Pirates.LandCombat.CryptMonster.Cued += OnCryptCue;
+        }
+
+        void OnTrapTriggered(Pirates.LandCombat.RuinTrap trap, bool warning)
+        {
+            var p = trap.transform.position + Vector3.up * 0.5f;
+            switch (trap.TrapKind)
+            {
+                // Espinhos: estalo de metal no aviso e o "shing" grave ao subir.
+                case Pirates.LandCombat.RuinTrap.Kind.Spikes:
+                    if (warning) SoundPlayer.At(sounds.pistolReload, p, 0.6f, 0.7f);
+                    else SoundPlayer.At(sounds.swordSwing, p, 1f, 0.6f);
+                    break;
+                // Dardo: clique agudo no aviso e o assobio.
+                case Pirates.LandCombat.RuinTrap.Kind.Dart:
+                    if (warning) SoundPlayer.At(sounds.pistolReload, p, 0.55f, 1.35f);
+                    else SoundPlayer.At(sounds.swordSwing, p, 0.9f, 1.45f);
+                    break;
+                // Fogo: o "fuum" (explosão baixinha e aguda) ao acender.
+                case Pirates.LandCombat.RuinTrap.Kind.Fire:
+                    if (!warning) SoundPlayer.At(sounds.explosion, p, 0.3f, 1.7f);
+                    break;
+            }
+        }
+
+        void OnTrapHit(Pirates.LandCombat.RuinTrap trap, Vector3 p) => SoundPlayer.At(sounds.swordHit, p);
+
+        // Alçapão/escada das catacumbas (C5): a porta rangendo, mais grave, na tela que escurece.
+        void OnPassageUsed(Pirates.LandCombat.RuinPassage passage) =>
+            SoundPlayer.At(sounds.doorOpen, passage.transform.position + Vector3.up * 0.5f, 1f, 0.75f);
+
+        // Almas penadas: gemido ao aparecer (agudo ao levar golpe, grave ao morrer) e o sopro da cabeçada; morcegos: guincho no mergulho.
+        void OnCryptCue(Pirates.LandCombat.CryptMonster monster, Pirates.LandCombat.CryptMonster.Cue cue)
+        {
+            var p = monster.transform.position + Vector3.up;
+            if (monster.IsGhost)
+            {
+                // O Capelão (C5, passo 3) usa os mesmos sons, mais graves.
+                float v = monster.VoicePitch;
+                switch (cue)
+                {
+                    case Pirates.LandCombat.CryptMonster.Cue.Appear: SoundPlayer.At(sounds.ghostMoan, p, 0.9f, 1f * v); break;
+                    // Começo do preparo: guincho agudo (o aviso); o sopro sai com o golpe.
+                    case Pirates.LandCombat.CryptMonster.Cue.Attack: SoundPlayer.At(sounds.ghostMoan, p, 0.8f, 1.65f * v); break;
+                    case Pirates.LandCombat.CryptMonster.Cue.Strike: SoundPlayer.At(sounds.swordSwing, p, 0.8f, 0.6f * v); break;
+                    case Pirates.LandCombat.CryptMonster.Cue.Hurt: SoundPlayer.At(sounds.ghostMoan, p, 0.6f, 1.4f * v); break;
+                    case Pirates.LandCombat.CryptMonster.Cue.Die: SoundPlayer.At(sounds.ghostMoan, p, 1f, 0.7f * v); break;
+                    case Pirates.LandCombat.CryptMonster.Cue.Vanish: SoundPlayer.At(sounds.swordSwing, p, 0.35f, 0.45f * v); break;
+                    // As almas estourando do chão: estrondo abafado e o gemido.
+                    case Pirates.LandCombat.CryptMonster.Cue.Burst:
+                        SoundPlayer.At(sounds.explosion, p, 0.45f, 0.6f);
+                        SoundPlayer.At(sounds.ghostMoan, p, 0.9f, 0.85f * v);
+                        break;
+                }
+                return;
+            }
+            switch (cue)
+            {
+                case Pirates.LandCombat.CryptMonster.Cue.Attack: SoundPlayer.At(sounds.batScreech, p, 1f, 1f); break;
+                case Pirates.LandCombat.CryptMonster.Cue.Hurt: SoundPlayer.At(sounds.batScreech, p, 0.7f, 1.25f); break;
+                case Pirates.LandCombat.CryptMonster.Cue.Die:
+                    SoundPlayer.At(sounds.batScreech, p, 0.8f, 0.75f);
+                    SoundPlayer.At(sounds.bodyFall, p, 0.4f, 1.6f);
+                    break;
+            }
+        }
+
+        void OnLeverPulled(Pirates.LandCombat.RuinLever lever)
+        {
+            var p = lever.transform.position + Vector3.up;
+            SoundPlayer.At(sounds.chestOpen, p, 1f, 0.6f);
+            SoundPlayer.At(sounds.block, p, 0.7f, 0.7f);
+        }
+
+        void OnRuinOpened(Pirates.LandCombat.RuinPuzzle puzzle)
+        {
+            var p = puzzle.Gate ? puzzle.Gate.position : puzzle.transform.position;
+            SoundPlayer.At(sounds.dig, p, 1.4f, 0.5f);
+            SoundPlayer.At(sounds.chestOpen, p, 1.2f, 0.45f);
+            SoundPlayer.Ui(sounds.missionDone);
         }
 
         void OnDisable()
         {
             GameOptions.Changed -= OnOptionsChanged;
             EventBus.Unsubscribe<TutorialStepEvent>(OnTutorialStep);
+            Pirates.LandCombat.RuinTrap.Triggered -= OnTrapTriggered;
+            Pirates.LandCombat.RuinTrap.HitSomeone -= OnTrapHit;
+            Pirates.LandCombat.RuinLever.Pulled -= OnLeverPulled;
+            Pirates.LandCombat.RuinPassage.Used -= OnPassageUsed;
+            Pirates.LandCombat.CryptMonster.Cued -= OnCryptCue;
         }
 
         // Etapa do tutorial cumprida: a vinheta de missão aceita; o fim do tutorial, a de missão cumprida.
@@ -125,6 +215,7 @@ namespace Pirates.Audio
             foreach (var save in FindObjectsByType<GameSave>()) save.Saved += _ => SoundPlayer.Ui(sounds.gameSaved);
             // Patente nova (M10): a fanfarra da missão paga.
             if (CaptainFame.Current) CaptainFame.Current.RankUp += _ => SoundPlayer.Ui(sounds.missionPaid);
+            foreach (var puzzle in FindObjectsByType<Pirates.LandCombat.RuinPuzzle>(FindObjectsInactive.Include)) puzzle.Opened += OnRuinOpened;
             foreach (var dummy in FindObjectsByType<TrainingDummy>())
                 if (dummy.TryGetComponent(out Health h)) h.Damaged += info => SoundPlayer.At(sounds.dummyHit, info.point);
             Scan();
@@ -190,7 +281,12 @@ namespace Pirates.Audio
             {
                 var chest = LandChest.Active[i];
                 bool open = chest.IsBeingLooted;
-                if (chestOpen.TryGetValue(chest, out bool was) && open && !was) SoundPlayer.At(sounds.chestOpen, chest.transform.position);
+                if (chestOpen.TryGetValue(chest, out bool was) && open && !was)
+                {
+                    SoundPlayer.At(sounds.chestOpen, chest.transform.position);
+                    // Prêmio raro ou melhor (E1): a fanfarra da missão cumprida por cima.
+                    if (chest.BestRarity >= Pirates.Economy.ItemRarity.Rare) SoundPlayer.Ui(sounds.missionDone);
+                }
                 chestOpen[chest] = open;
             }
             for (int i = 0; i < BuriedTreasure.Active.Count; i++)

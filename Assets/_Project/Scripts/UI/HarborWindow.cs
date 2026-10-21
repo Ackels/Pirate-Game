@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Pirates.Base;
+using Pirates.Controls;
 using Pirates.Core;
 using Pirates.Economy;
 using Pirates.Missions;
@@ -11,7 +12,8 @@ using UnityEngine.UIElements;
 namespace Pirates.UI
 {
     /// <summary>
-    /// Janela do porto (UI Toolkit), com o mouse. A pé (cena 07), cada casa mostra só a parte dela: Armazém = carga;
+    /// Janela do porto (UI Toolkit), com o mouse. A pé (cena 07), cada casa mostra só a parte dela: Armazém = carga (e a mochila do
+    /// capitão, que se guarda direto no armazém);
     /// Estaleiro = conserto + upgrades do navio; Mestre de obras = construções da base; Taverna = contratar marinheiros +
     /// quadro de missões.
     /// No navio atracado (cena 05), tudo em abas. Cada pedaço só se remonta quando o que ele mostra muda (carga, níveis,
@@ -182,11 +184,13 @@ namespace Pirates.UI
                     ? "<size=85%>só o que o mercado não compra (munição, ração, cartuchos) e esquemas repetidos; <b>não devolve nada</b></size>"
                     : "<size=85%>o armazém não tem limite; descarte o que sobrar (munição, ração, cartuchos)</size>", "hud-window__small", "hud-window__muted");
             });
+            var backpack = building && building.IsOpen ? building.GetComponent<Inventory>() : null;
+            if (backpack) AddBackpack(body, backpack, warehouse, dock);
             var columns = Hud.Row("hud-window__columns");
             body.Add(columns);
             long Sig() => Win.Mix(Win.Mix(Win.Of(hold), Win.Of(warehouse)), DiscardSignature());
 
-            window.AddPane(Win.Column(columns), Sig, col =>
+            window.AddPane(ScrollColumn(columns), Sig, col =>
             {
                 Win.Text(col, "No porão   <size=85%>descarregar →</size>", "hud-window__subtitle-strong");
                 Win.Capacity(col, hold);
@@ -206,7 +210,7 @@ namespace Pirates.UI
                     else TransferButtons(row, count, n => visitor.Unload(item, n), "→", after: true);
                 }
             });
-            window.AddPane(Win.Column(columns), Sig, col =>
+            window.AddPane(ScrollColumn(columns), Sig, col =>
             {
                 Win.Text(col, "No armazém da base   <size=85%>← carregar</size>", "hud-window__subtitle-strong");
                 Win.Capacity(col, warehouse);
@@ -227,6 +231,70 @@ namespace Pirates.UI
                     else TransferButtons(row, Mathf.Min(count, hold.MaxFit(item)), n => visitor.Load(item, n), "←", after: false);
                 }
             });
+        }
+
+        /// <summary>Coluna com rolagem (com a mochila em cima, porão e armazém cheios não cabem e as linhas se espremiam).</summary>
+        static VisualElement ScrollColumn(VisualElement parent) => Win.Scroll(Win.Column(parent));
+
+        // ---------- Mochila → armazém (a pé) ----------
+
+        /// <summary>
+        /// A pé no Armazém (21/10, pedido do Jhonata): a mochila passa direto para o armazém (antes só embarcando, e depois do porão).
+        /// "Guardar o saque" deixa na mochila o que o capitão usa a pé (ração, munição, bombas); "Guardar tudo" leva tudo; cada item tem o
+        /// seu botão. No modo de descarte, os itens da mochila também podem ser jogados fora.
+        /// </summary>
+        void AddBackpack(VisualElement body, Inventory backpack, Inventory warehouse, HarborDock dock)
+        {
+            var box = Win.Section(body, "hud-backpack");
+            window.AddPane(box, () => Win.Mix(Win.Mix(Win.Of(backpack), Win.Of(warehouse)), DiscardSignature()), b =>
+            {
+                int loot = 0;
+                for (int i = 0; i < backpack.Items.Count; i++)
+                    if (!CaptainSupplies.IsSupply(building, backpack.Items[i])) loot++;
+                var head = Win.Row(b, "hud-backpack__head");
+                head.Add(Hud.Text("Na mochila", "hud-window__subtitle-strong"));
+                head.Add(Hud.Text(backpack.Unlimited ? "" : $"{backpack.UsedSpace:0.#} / {backpack.Capacity:0}", "hud-cargo__capacity", "hud-grow"));
+                head.Add(Win.Button("Guardar o saque no armazém", () => StoreBackpack(backpack, warehouse, false), loot > 0, "hud-button--small"));
+                head.Add(Win.Button("Guardar tudo", () => StoreBackpack(backpack, warehouse, true), backpack.Items.Count > 0, "hud-button--small"));
+                if (backpack.Items.Count == 0)
+                {
+                    Win.Text(b, "mochila vazia", "hud-window__empty");
+                    return;
+                }
+                var chips = Hud.Box("hud-backpack__chips");
+                b.Add(chips);
+                for (int i = 0; i < backpack.Items.Count; i++)
+                {
+                    var item = backpack.Items[i];
+                    int count = backpack.Count(item);
+                    var chip = Hud.Row("hud-backpack__chip");
+                    chips.Add(chip);
+                    bool supply = CaptainSupplies.IsSupply(building, item);
+                    Win.Item(chip, item, $"{item.displayName}  <b>×{count}</b>" + (supply ? "  <size=80%><i>(usa a pé)</i></size>" : ""))
+                        .AddToClassList("hud-grow");
+                    if (discardMode)
+                    {
+                        if (CanDiscard(item, backpack, dock)) DiscardButtons(chip, backpack, item, count);
+                        continue;
+                    }
+                    chip.Add(Win.Button("Guardar", () => StoreOne(backpack, warehouse, item), extraClass: "hud-button--small"));
+                }
+            });
+        }
+
+        void StoreBackpack(Inventory backpack, Inventory warehouse, bool supplies)
+        {
+            var moved = CaptainSupplies.Store(building, backpack, warehouse, supplies);
+            if (moved.Count == 0) return;
+            var parts = new List<string>();
+            foreach (var s in moved) parts.Add($"{s.amount} {s.item.displayName}");
+            Feed($"Guardado no armazém: {string.Join(", ", parts)}");
+        }
+
+        void StoreOne(Inventory backpack, Inventory warehouse, ItemDefinition item)
+        {
+            int n = CaptainSupplies.Move(backpack, warehouse, item, backpack.Count(item));
+            if (n > 0) Feed($"Guardado no armazém: {n} {item.displayName}");
         }
 
         // ---------- Descartar (armazém) ----------

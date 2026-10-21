@@ -18,6 +18,8 @@ namespace Pirates.Core
         public Knockdown knockdown;
         /// <summary>Golpe que pegou na guarda (cutelo erguido): só o arranhão, sem tranco nem reação de golpe.</summary>
         public bool blocked;
+        /// <summary>Lâmina sagrada (Lâmina de São Telmo, C5): o morto amaldiçoado que ela derruba não levanta de novo.</summary>
+        public bool holy;
     }
 
     /// <summary>Como o golpe derruba quem está a pé (pacote A, 09/10).</summary>
@@ -35,6 +37,9 @@ namespace Pirates.Core
     }
 
     /// <summary>Pode ser empurrado por uma explosão (personagem a pé): velocidade somada à dele, que some aos poucos.</summary>
+    /// <summary>Alvo que não é personagem mas puxa o golpe do capitão (bonecos de treino).</summary>
+    public interface IAssistTarget { }
+
     public interface IPushable
     {
         void Push(Vector3 velocity);

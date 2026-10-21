@@ -58,8 +58,32 @@ namespace Pirates.Ambient
             ResetToStart();
         }
 
-        void OnEnable() => Services.Register<ITimeOfDay>(this);
-        void OnDisable() => Services.Unregister<ITimeOfDay>(this);
+        void OnEnable()
+        {
+            Services.Register<ITimeOfDay>(this);
+            CoveredArea.Changed += OnCoveredChanged;
+        }
+
+        void OnDisable()
+        {
+            Services.Unregister<ITimeOfDay>(this);
+            CoveredArea.Changed -= OnCoveredChanged;
+        }
+
+        void OnCoveredChanged(bool inside)
+        {
+            SetCameraBackground(inside);
+            Apply();
+        }
+
+        /// <summary>Debaixo da terra o fundo da câmera é preto (fora das paredes não há nada); fora, o céu de volta.</summary>
+        static void SetCameraBackground(bool covered)
+        {
+            var cam = Camera.main;
+            if (!cam) return;
+            cam.clearFlags = covered ? CameraClearFlags.SolidColor : CameraClearFlags.Skybox;
+            cam.backgroundColor = Color.black;
+        }
 
         void OnDestroy()
         {
@@ -154,6 +178,25 @@ namespace Pirates.Ambient
 
             float lanterns = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(settings.lanternsFrom, 0.85f, night));
             NightLight.Level = Mathf.Max(lanterns, settings.stormLanterns * storm);
+            if (CoveredArea.Inside) ApplyCovered();
+        }
+
+        /// <summary>Debaixo da terra: luz fraca e fria de cima com sombra, ambiente escuro, sem névoa nem reflexo, tochas acesas.</summary>
+        void ApplyCovered()
+        {
+            if (sun)
+            {
+                sun.transform.rotation = Quaternion.Euler(settings.coveredLightAngles.x, settings.coveredLightAngles.y, 0f);
+                sun.intensity = settings.coveredLightIntensity;
+                sun.color = settings.coveredLightColor;
+                sun.shadowStrength = settings.coveredShadow;
+            }
+            var ambient = new SphericalHarmonicsL2();
+            ambient.AddAmbientLight(settings.coveredAmbient);
+            RenderSettings.ambientProbe = ambient;
+            RenderSettings.fogDensity = 0f;
+            RenderSettings.reflectionIntensity = 0.1f;
+            NightLight.Level = 1f;
         }
 
         /// <summary>De dia o sol anda de leste a oeste; de noite a mesma luz vira a lua. Perto do horizonte a luz some (troca escondida).</summary>

@@ -9,6 +9,8 @@ namespace Pirates.OnFoot
     public class WeaponDefinition : ScriptableObject
     {
         public string displayName = "Arma";
+        [Tooltip("Ícone na tela de equipamento (I), fotografado do modelo pelo gerador.")]
+        public Texture2D icon;
         public WeaponKind kind = WeaponKind.Melee;
         [Tooltip("Índice da arma no Animator (parâmetro WeaponType): 0 = espada, 1 = pistola, 2 = bacamarte.")]
         public int animatorWeaponType;
@@ -38,6 +40,12 @@ namespace Pirates.OnFoot
         [Min(1)] public int attackVariants = 1;
         [Tooltip("Somado ao AttackVariant no Animator: golpes próprios com a mesma pose (adaga do duelista = cutelo com os golpes 2 e 3).")]
         [Min(0)] public int animatorVariantOffset;
+        [Tooltip("AttackVariant do Animator de cada golpe (mesma ordem; vazio = golpe + offset). O 3º golpe do cutelo (finalização) é o 6.")]
+        public int[] animatorVariants = System.Array.Empty<int>();
+
+        /// <summary>AttackVariant do Animator para o golpe <paramref name="variant"/>.</summary>
+        public int AnimatorVariantFor(int variant) =>
+            animatorVariants != null && variant >= 0 && variant < animatorVariants.Length ? animatorVariants[variant] : variant + animatorVariantOffset;
         [Tooltip("Golpe sorteado (diferente do anterior) em vez da sequência do combo: a IA mistura golpes rápidos e lentos.")]
         public bool randomVariants;
         [Tooltip("Segundos até o impacto de cada golpe (mesma ordem dos golpes; vazio = hitDelay em todos). Golpe lento pega quem rola cedo.")]
@@ -88,6 +96,14 @@ namespace Pirates.OnFoot
         public Pirates.Core.Knockdown knockdown;
         [Tooltip("Fôlego que o golpe tira de quem segura na guarda, × o custo normal (machado pesado cansa mais).")]
         public float guardCost = 1f;
+        [Tooltip("Machado (E2): golpe que pega na guarda erguida quebra a guarda (passa parte do dano, quem defendia fica sem guarda um tempo). Aparar continua valendo.")]
+        public bool breaksGuard;
+        [Tooltip("Empurrão (m/s) em quem leva o golpe sem guarda (as lâminas do capitão; 0 = nenhum).")]
+        public float hitPush;
+
+        [Header("Lâmina sagrada (Lâmina de São Telmo)")]
+        [Tooltip("Fere as almas das catacumbas mesmo transparentes, e o morto amaldiçoado que ela derruba não levanta de novo.")]
+        public bool holy;
 
         [Header("Golpes especiais (chefe)")]
         [Tooltip("Por golpe (mesma ordem dos golpes; vazio = os valores da arma): alcance, abertura, dano, queda, imparável e acertos a mais.")]
@@ -130,5 +146,9 @@ namespace Pirates.OnFoot
         public float[] followUps = System.Array.Empty<float>();
         [Tooltip("Investida deste golpe (m/s, 0 = a da IA): o salto vai muito mais longe que um passo.")]
         public float lungeSpeed;
+        [Tooltip("Segundos a mais antes do próximo golpe (a finalização do combo deixa uma brecha).")]
+        public float extraRecovery;
+        [Tooltip("Empurrão (m/s) deste golpe; 0 = o da arma.")]
+        public float push;
     }
 }

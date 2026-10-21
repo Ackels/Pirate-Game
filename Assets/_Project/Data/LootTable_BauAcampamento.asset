@@ -64,5 +64,18 @@ MonoBehaviour:
   chestFallback:
     item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
     amount: 100
+  gearChance: 0.3
+  gear:
+  - item: {fileID: 11400000, guid: 52a58676beb60ed41aa5df77de0d708e, type: 2}
+    weight: 3
+  - item: {fileID: 11400000, guid: 4fac39118803a1340ac685e11e92bc44, type: 2}
+    weight: 3
+  - item: {fileID: 11400000, guid: 3bff31c36a538f94c979b4357c544523, type: 2}
+    weight: 1
+  - item: {fileID: 11400000, guid: bb5278f0d87cee340b14362328e8d17b, type: 2}
+    weight: 2
+  - item: {fileID: 11400000, guid: 39409e1094029974c965715d50423a9d, type: 2}
+    weight: 2
+  guaranteedGear: {fileID: 0}
   wreckPrefab: {fileID: 0}
   lifetime: 120

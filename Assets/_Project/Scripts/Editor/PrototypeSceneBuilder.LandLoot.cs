@@ -109,31 +109,101 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Baú do Kenney (a tampa, "lid", já tem o eixo na borda de trás) com cadeado, facho e o LandChest. O kit é
-        /// quadrado (1,28 m); em 0,8 fica com 1 m de lado.
+        /// Modelo do baú (19/10, pedido do Jhonata: os do Kenney não agradavam mais). <b>Pirate</b>: o do Quaternius Pirate Kit, de uma peça
+        /// só; ao abrir troca pelo aberto e cheio de ouro (acampamentos, contrabandistas, tesouros enterrados). <b>Ruins</b>/<b>RuinsGold</b>:
+        /// os das ruínas do Quaternius, com a tampa separada que gira (o de ouro tem moedas dentro): paiol do forte e a Ermida.
+        /// </summary>
+        enum ChestStyle { Pirate, Ruins, RuinsGold }
+
+        /// <summary>Peça do Quaternius Pirate Kit com o atlas do kit (a raiz do FBX vem girada do Blender: compõe por baixo).</summary>
+        static GameObject QuaterniusKitProp(Transform parent, string model, Vector3 local, float yaw, float scale, string name)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<GameObject>($"{QuaterniusFolder}/{model}.fbx");
+            if (!asset) throw new System.IO.FileNotFoundException($"Modelo do Quaternius não encontrado: {model} (copie do _Downloads).");
+            var go = (GameObject)Object.Instantiate(asset, parent, false);
+            go.name = name;
+            go.transform.SetLocalPositionAndRotation(local, Quaternion.Euler(0f, yaw, 0f) * asset.transform.localRotation);
+            go.transform.localScale = asset.transform.localScale * scale;
+            foreach (var r in go.GetComponentsInChildren<Renderer>())
+            {
+                var slots = r.sharedMaterials;
+                for (int i = 0; i < slots.Length; i++) slots[i] = QuaterniusMaterial;
+                r.sharedMaterials = slots;
+            }
+            return go;
+        }
+
+        /// <summary>Caixa (no espaço de <paramref name="space"/>) das malhas de <paramref name="model"/>.</summary>
+        static Bounds LocalBounds(Transform space, GameObject model)
+        {
+            bool any = false;
+            var b = new Bounds();
+            foreach (var mf in model.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (!mf.sharedMesh) continue;
+                var m = space.worldToLocalMatrix * mf.transform.localToWorldMatrix;
+                var mb = mf.sharedMesh.bounds;
+                for (int k = 0; k < 8; k++)
+                {
+                    var corner = mb.center + Vector3.Scale(mb.extents, new Vector3((k & 1) == 0 ? -1 : 1, (k & 2) == 0 ? -1 : 1, (k & 4) == 0 ? -1 : 1));
+                    var p = m.MultiplyPoint3x4(corner);
+                    if (!any) { b = new Bounds(p, Vector3.zero); any = true; }
+                    else b.Encapsulate(p);
+                }
+            }
+            return b;
+        }
+
+        /// <summary>
+        /// Baú com cadeado, facho e o LandChest, no modelo do <paramref name="style"/> (frente em +Z, ~1,2 m de largura). Nos das ruínas a
+        /// tampa ganha um eixo na borda de trás para girar; o pirata troca de modelo ao abrir.
         /// </summary>
         static LandChest CreateChest(Transform parent, string objectName, string displayName, Vector3 ground, float yaw, LootTable table,
-            LandLootAssets a, bool withPadlock)
+            LandLootAssets a, bool withPadlock, ChestStyle style = ChestStyle.Pirate)
         {
-            const float scale = 0.8f;
             var root = new GameObject(objectName);
             root.transform.SetParent(parent, false);
             root.transform.SetPositionAndRotation(ground, Quaternion.Euler(0f, yaw, 0f));
-            var box = root.AddComponent<BoxCollider>();
-            box.center = new Vector3(0f, 0.46f * scale, 0f);
-            box.size = new Vector3(1.28f, 0.92f, 1.28f) * scale;
-
             var t = root.transform;
-            var model = Kenney("chest", t, Vector3.zero, 0f, scale, "Bau");
-            var hinge = model.transform.Find("lid");
+            Transform hinge = null;
+            GameObject closed, open = null;
+            Bounds size;
+            if (style == ChestStyle.Pirate)
+            {
+                closed = QuaterniusKitProp(t, "Prop_Chest_Closed", Vector3.zero, 0f, 0.75f, "Bau");
+                open = QuaterniusKitProp(t, "Prop_Chest_Gold", Vector3.zero, 0f, 0.75f, "Bau_Aberto");
+                open.SetActive(false);
+                size = LocalBounds(t, closed);
+            }
+            else
+            {
+                closed = Model(Kit.Ruins, style == ChestStyle.RuinsGold ? "Chest_Gold" : "Chest", t, Vector3.zero, 0f, 0.95f, "Bau");
+                size = LocalBounds(t, closed);
+                // A tampa (a peça "_Top") ganha um eixo na borda de trás, embaixo dela.
+                foreach (var r in closed.GetComponentsInChildren<Renderer>())
+                {
+                    if (!r.name.EndsWith("_Top")) continue;
+                    var lb = LocalBounds(t, r.gameObject);
+                    hinge = new GameObject("Tampa").transform;
+                    hinge.SetParent(t, false);
+                    hinge.localPosition = new Vector3(0f, lb.min.y, lb.min.z);
+                    r.transform.SetParent(hinge, true);
+                }
+            }
+            var box = root.AddComponent<BoxCollider>();
+            box.center = size.center;
+            box.size = size.size;
             var padlock = withPadlock
-                ? Part(PrimitiveType.Cube, "Cadeado", t, new Vector3(0f, 0.5f * scale, 0.66f * scale), new Vector3(0.16f, 0.2f, 0.07f), Quaternion.identity, a.iron)
+                ? Part(PrimitiveType.Cube, "Cadeado", t, new Vector3(0f, size.min.y + size.size.y * 0.55f, size.max.z + 0.03f), new Vector3(0.16f, 0.2f, 0.07f),
+                    Quaternion.identity, a.iron)
                 : null;
             var beacon = Part(PrimitiveType.Cylinder, "Facho", t, new Vector3(0f, 3.5f, 0f), new Vector3(0.45f, 3.5f, 0.45f), Quaternion.identity, a.beacon);
             beacon.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
 
             var chest = root.AddComponent<LandChest>();
             chest.Configure(displayName, table, hinge, padlock, beacon);
+            if (open) chest.SetModels(closed, open);
+            chest.SetRarityBeacons(RarityBeacons());
             return chest;
         }
 

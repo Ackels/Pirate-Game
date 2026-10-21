@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Ermida
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: ermida_sao_telmo
+  title: "A ermida de S\xE3o Telmo"
+  giver: Tobias
+  description: "Numa ilhota a sudoeste, a caminho das \xC1guas Negras, os marujos da Frota de Prata ergueram uma ermida ao santo dos marinheiros. Os monges protegeram o santu\xE1rio com armadilhas e tr\xEAs alavancas. Abra o port\xE3o."
+  type: 3
+  count: 1
+  targetId: ermida_sao_telmo
+  targetName: "Ermida de S\xE3o Telmo"
+  delivery: []
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 220
+  - item: {fileID: 11400000, guid: d376daaec721ea04ead799808dd291ce, type: 2}
+    amount: 5
+  objectiveText: "abra o santu\xE1rio da Ermida de S\xE3o Telmo, a sudoeste"
+  doneText: "santu\xE1rio aberto"
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 1
+  fameReward: 30
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o... o senhor que j\xE1 passou pelas covas da Caveira. Tenho outra hist\xF3ria, e essa \xE9 de santo, n\xE3o de defunto."
+  - "Cem anos atr\xE1s, os marujos da Frota de Prata ergueram uma ermida a S\xE3o Telmo numa ilhota a sudoeste, a caminho das \xC1guas Negras."
+  - "Deixavam l\xE1 uma moeda de prata a cada viagem, para o santo trazer o barco de volta. Os monges guardaram tudo num santu\xE1rio."
+  - "E para os ladr\xF5es, armadilhas: espinhos que saem do ch\xE3o, dardos das paredes, fogo das grades. Tr\xEAs alavancas abrem o port\xE3o."
+  - "Puxe as tr\xEAs e o santu\xE1rio \xE9 seu. S\xF3 n\xE3o me pe\xE7a para ir junto: eu j\xE1 enterrei gente demais que foi atr\xE1s de prata."
+  acceptLine: "Que S\xE3o Telmo te ilumine, capit\xE3o. E olhe onde pisa."
+  declineLine: "Faz bem. Prata de santo pesa na consci\xEAncia."
+  waitingLine: "J\xE1 foi \xE0 ermida? Sudoeste, a caminho das \xC1guas Negras. Tr\xEAs alavancas, capit\xE3o."
+  doneLines:
+  - "Abriu o santu\xE1rio? E voltou inteiro! S\xE3o Telmo gosta do senhor."
+  - "Tome, pelo trabalho. E acenda uma vela por mim da pr\xF3xima vez."
+  restingLine: "Os monges, dizem, ainda arrumam as armadilhas de madrugada. D\xEA um tempo e a ermida fecha de novo."

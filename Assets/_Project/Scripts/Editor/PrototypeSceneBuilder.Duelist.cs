@@ -78,6 +78,8 @@ namespace Pirates.EditorTools
             go.GetComponent<FootCharacter>().ConfigureSpeeds(2.6f, 5.8f);
             // Estoca de perto (1,85 m: a guarda empurra para trás), espera mais longe que os outros e emenda até 3 estocadas.
             ai.ConfigureMelee(1.85f, 3.4f, new Vector2(0.2f, 0.6f), 0.7f);
+            // Preparo curto: a estocada rápida (0,3 s) continua rápida, mas o "!" aparece antes.
+            ai.ConfigureIntent(0.2f);
             // Investida: estoca avançando com o capitão até 4,2 m (pega quem sai rolando: ela vai atrás do rolamento).
             ai.ConfigureLunge(4.2f, 8f, 2);
             ai.ConfigureDuelist(parry: 0.4f, dodge: 0.3f, keepAt: 3.2f, guardChance: 0.45f, pressedGuard: 0.6f);

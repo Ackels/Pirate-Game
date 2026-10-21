@@ -139,8 +139,13 @@ namespace Pirates.LandCombat
             }
             // Quem não é interrompido (o jogador) não perde a animação do próprio golpe: o golpe sai igual.
             bool keepsAttacking = staggerSeconds <= 0f && combat && combat.IsAttacking;
+            // Rolando, na guarda (golpe de lado), chutando, arremessando, puxando alavanca, levantando ou cambaleando do aparo: a
+            // animação da ação continua e o golpe é só o tranco (a pancada cortava o rolamento no meio; revisão de 21/10).
+            bool inAction = character.IsDodging || (combat && combat.IsBlocking) || (driver && driver.InAction);
+            // Golpe pelas costas: as reações do Mixamo são todas de frente (o corpo ia para trás, na direção de quem bateu); fica o tranco.
+            if (Vector3.Angle(transform.forward, -push) > 110f) inAction = true;
             // Inabalável (chefe): nem a animação de levar golpe, só o tranco curto do corpo.
-            if (driver && driver.HasHitAnimation && !keepsAttacking && !ignoreKnockdown) driver.PlayHit();
+            if (driver && driver.HasHitAnimation && !keepsAttacking && !inAction && !ignoreKnockdown) driver.PlayHit();
             else flinch = 1f;
         }
 

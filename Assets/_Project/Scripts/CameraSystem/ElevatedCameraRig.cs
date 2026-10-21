@@ -10,7 +10,7 @@ namespace Pirates.CameraSystem
     /// Zoom altera distância e inclinação juntos (perto = mais cinematográfica, longe = mais tática).
     /// Com um ponto de mira ativo, enquadra navio e alvo juntos (se afasta e desliza para o alvo).
     /// </summary>
-    public class ElevatedCameraRig : MonoBehaviour, ICameraAimFocus, ICameraFollow
+    public class ElevatedCameraRig : MonoBehaviour, ICameraAimFocus, ICameraFollow, ICameraShake
     {
         [SerializeField] Transform target;
 
@@ -102,12 +102,34 @@ namespace Pirates.CameraSystem
         {
             Services.Register<ICameraAimFocus>(this);
             Services.Register<ICameraFollow>(this);
+            Services.Register<ICameraShake>(this);
+        }
+
+        float shakeStrength, shakeStart, shakeSeconds;
+
+        /// <summary>Tremida (passo 5 da revisão das animações): ruído que some em <paramref name="seconds"/> de tempo real.</summary>
+        public void Shake(float strength, float seconds)
+        {
+            float now = Time.unscaledTime;
+            float left = ShakeLeft(now);
+            if (strength < left) return;
+            shakeStrength = strength;
+            shakeStart = now;
+            shakeSeconds = Mathf.Max(0.01f, seconds);
+        }
+
+        float ShakeLeft(float now)
+        {
+            if (shakeStrength <= 0f) return 0f;
+            float k = 1f - (now - shakeStart) / shakeSeconds;
+            return k <= 0f ? 0f : shakeStrength * k * k;
         }
 
         void OnDisable()
         {
             Services.Unregister<ICameraAimFocus>(this);
             Services.Unregister<ICameraFollow>(this);
+            Services.Unregister<ICameraShake>(this);
         }
 
         void Start()
@@ -198,7 +220,16 @@ namespace Pirates.CameraSystem
         {
             float pitch = Mathf.Clamp(ZoomPitch(distance) + pitchOffset, pitchLimitMin, pitchLimitMax);
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-            transform.SetPositionAndRotation(focus - rotation * Vector3.forward * distance, rotation);
+            Vector3 position = focus - rotation * Vector3.forward * distance;
+            float now = Time.unscaledTime;
+            float amount = ShakeLeft(now);
+            if (amount > 0f)
+            {
+                // Ruído rápido no plano da tela (não muda para onde a câmera olha: só sacode).
+                float t = now * 38f;
+                position += rotation * new Vector3(Mathf.PerlinNoise(t, 0.3f) * 2f - 1f, Mathf.PerlinNoise(0.7f, t) * 2f - 1f, 0f) * amount;
+            }
+            transform.SetPositionAndRotation(position, rotation);
         }
     }
 }

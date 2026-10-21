@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8002a68d020754940b51b0e2367da93e, type: 3}
+  m_Name: Weapon_LaminaSaoTelmo
+  m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
+  displayName: "L\xE2mina de S\xE3o Telmo"
+  icon: {fileID: 2800000, guid: 099a3a68c01de304599aa5265b0025c1, type: 3}
+  kind: 0
+  animatorWeaponType: 0
+  damage: 32
+  range: 2.4
+  angle: 110
+  hitDelay: 0.25
+  attackAnimSpeed: 1.2
+  cooldown: 0.5
+  shotsPerReload: 0
+  reloadTime: 2.5
+  attackVariants: 3
+  animatorVariantOffset: 0
+  animatorVariants: 000000000100000006000000i
+  randomVariants: 0
+  variantHitDelays:
+  - 0.25
+  - 0.25
+  - 0.35256413
+  comboWindow: 0.9166666
+  animatedDraw: 1
+  drawGrabTime: 0.4615385
+  drawDuration: 0.95
+  holsterReleaseTime: 0.84666663
+  holsterDuration: 1.05
+  aimPoseSeconds: 1.5
+  aimedShotDelay: 0.04
+  aimedSpread: 0.3
+  aimMoveSpeed: 0.75
+  recoilDegrees: 14
+  pellets: 1
+  pelletSpread: 0
+  twoHanded: 0
+  moveSpeedWhileAttacking: 0.15
+  knockdown: 0
+  guardCost: 1
+  breaksGuard: 0
+  hitPush: 2.4
+  holy: 1
+  variantStrikes:
+  - range: 0
+    angle: 0
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
+  - range: 0
+    angle: 0
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
+  - range: 2.6000001
+    angle: 130
+    damage: 45
+    customKnockdown: 1
+    knockdown: 1
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.3
+    push: 4

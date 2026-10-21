@@ -8,7 +8,7 @@ namespace Pirates.UI
     /// <summary>
     /// Barra do chefe no topo da tela (M7.1): nome do navio e do capitão e a vida do casco, só enquanto um
     /// <see cref="ShipBoss"/> está lutando; a pé, o nome e o título do <see cref="LandBoss"/> (pacote B, passo 4), com o aviso da
-    /// fúria (fase 2) e da vitória. Avisa quando a escolta dele chega. Texto e largura só mudam com a vida
+    /// fúria (fase 2) e da vitória; nas catacumbas, o <see cref="ChaplainGhost"/>. Avisa quando a escolta dele chega. Texto e largura só mudam com a vida
     /// (o resto do quadro não aloca nada).
     /// </summary>
     public class BossBarHUD : MonoBehaviour
@@ -23,6 +23,7 @@ namespace Pirates.UI
         LandBoss shownLand;
         GiantSquid shownSquid;
         Megalodon shownShark;
+        ChaplainGhost shownChaplain;
 
         bool Build()
         {
@@ -54,6 +55,8 @@ namespace Pirates.UI
             Megalodon.Spotted += OnSharkSpotted;
             Megalodon.Enraged += OnSharkEnraged;
             Megalodon.Defeated += OnSharkDefeated;
+            ChaplainGhost.Enraged += OnChaplainEnraged;
+            ChaplainGhost.Defeated += OnChaplainDefeated;
         }
 
         void OnDisable()
@@ -68,6 +71,8 @@ namespace Pirates.UI
             Megalodon.Spotted -= OnSharkSpotted;
             Megalodon.Enraged -= OnSharkEnraged;
             Megalodon.Defeated -= OnSharkDefeated;
+            ChaplainGhost.Enraged -= OnChaplainEnraged;
+            ChaplainGhost.Defeated -= OnChaplainDefeated;
             shown = null;
             shownLand = null;
             shownSquid = null;
@@ -107,18 +112,47 @@ namespace Pirates.UI
                     if (sharks[i].IsEngaged) { shark = sharks[i]; break; }
             }
 
-            if (engaged != shown || land != shownLand || squid != shownSquid || shark != shownShark)
+            ChaplainGhost chaplain = null;
+            if (!engaged && !land && !squid && !shark)
+            {
+                var ghosts = ChaplainGhost.Bosses;
+                for (int i = 0; i < ghosts.Count; i++)
+                    if (ghosts[i].IsEngaged) { chaplain = ghosts[i]; break; }
+            }
+
+            if (engaged != shown || land != shownLand || squid != shownSquid || shark != shownShark || chaplain != shownChaplain)
             {
                 Show(engaged);
                 ShowLand(land);
                 ShowSquid(squid);
                 ShowShark(shark);
+                ShowChaplain(chaplain);
             }
-            Hud.Show(card, engaged || land || squid || shark);
+            Hud.Show(card, engaged || land || squid || shark || chaplain);
             if (engaged) bar.Set(engaged.Health.Normalized);
             else if (land) bar.Set(land.Health.Normalized);
             else if (squid) bar.Set(squid.Health.Normalized);
             else if (shark) bar.Set(shark.Health.Normalized);
+            else if (chaplain) bar.Set(chaplain.Health.Normalized);
+        }
+
+        void ShowChaplain(ChaplainGhost chaplain)
+        {
+            shownChaplain = chaplain;
+            if (!chaplain) return;
+            Hud.Set(title, chaplain.DisplayName);
+            Hud.Set(subtitle, chaplain.Title);
+            Hud.Show(subtitle, !string.IsNullOrEmpty(chaplain.Title));
+        }
+
+        void OnChaplainEnraged(ChaplainGhost chaplain)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"O {chaplain.DisplayName} chama as almas do salão!", escortNoticeColor);
+        }
+
+        void OnChaplainDefeated(ChaplainGhost chaplain)
+        {
+            if (hud) hud.Feed(GameHud.FeedKind.Notice, $"Você derrotou o {chaplain.DisplayName}! O tesouro das catacumbas está livre.", HudColors.Good);
         }
 
         void ShowShark(Megalodon shark)

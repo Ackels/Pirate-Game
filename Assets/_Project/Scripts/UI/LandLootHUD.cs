@@ -18,6 +18,8 @@ namespace Pirates.UI
         [SerializeField] BackpackUnloader unloader;
         [SerializeField] Inventory hold;
         [SerializeField] float labelRange = 60f;
+        [Tooltip("Segundos da faixa do prêmio raro ao abrir o baú.")]
+        [SerializeField] float prizeBannerSeconds = 4f;
 
         CachedText promptText;
         readonly Dictionary<UnityEngine.Object, string> worldNames = new();
@@ -27,6 +29,11 @@ namespace Pirates.UI
         HudPrompt prompt;
         WorldLabelPool names;
         LootWindow window;
+        HudBanner prizeBanner;
+        float prizeBannerUntil;
+        LandChest shownChest;
+        // Prêmio já anunciado em cada baú (reabrir não anuncia de novo; baú sorteado de novo, sim).
+        readonly Dictionary<LandChest, ItemDefinition> announced = new();
 
         public void Bind(PlayerModeSwitcher modeSwitcher, LandLooter landLooter, BackpackUnloader backpackUnloader, Inventory shipHold)
         {
@@ -44,6 +51,7 @@ namespace Pirates.UI
             {
                 looter.Transferred += OnTransferred;
                 looter.BackpackFull += OnBackpackFull;
+                looter.Dropped += OnDropped;
                 // Prisioneiros (C2): o aviso de F e a fala de quem foi solto saem por aqui, como os baús.
                 rescuer = looter.GetComponent<PrisonerRescuer>();
                 if (rescuer) rescuer.Freed += OnPrisonerFreed;
@@ -66,6 +74,7 @@ namespace Pirates.UI
             {
                 looter.Transferred -= OnTransferred;
                 looter.BackpackFull -= OnBackpackFull;
+                looter.Dropped -= OnDropped;
             }
             if (unloader) unloader.Unloaded -= OnUnloaded;
             if (rescuer) rescuer.Freed -= OnPrisonerFreed;
@@ -86,11 +95,34 @@ namespace Pirates.UI
         {
             string text = !toBackpack ? $"-{stack.amount} {stack.item.displayName} (de volta ao baú)"
                 : stack.item.category == ItemCategory.Schematic ? $"Esquema obtido: {stack.item.displayName}!"
+                : stack.item.equipSlot != EquipSlot.None ? $"{Rarity.NameOf(stack.item.rarity)}: {stack.item.displayName}!  <size=80%>(I para equipar)</size>"
                 : $"+{stack.amount} {stack.item.displayName}";
             Feed(text, toBackpack ? stack.item.color : new Color(0.75f, 0.75f, 0.75f));
         }
 
         void OnBackpackFull() => Feed("Mochila cheia: o resto ficou no saco", new Color(1f, 0.55f, 0.4f));
+
+        void OnDropped(ItemStack stack, float seconds) =>
+            Feed($"Largou {stack.amount} {stack.item.displayName} no chão  <size=80%>(o saco some em {Clock(seconds)})</size>", new Color(0.85f, 0.8f, 0.7f));
+
+        static string Clock(float seconds)
+        {
+            int s = Mathf.CeilToInt(seconds);
+            return $"{s / 60}:{s % 60:00}";
+        }
+
+        // Prazo sobre os sacos largados: o texto só refaz quando o segundo muda.
+        readonly Dictionary<LootSack, (int second, string text)> sackTimers = new();
+
+        string SackLabel(LootSack sack)
+        {
+            int s = Mathf.CeilToInt(sack.SecondsLeft);
+            if (sackTimers.TryGetValue(sack, out var t) && t.second == s) return t.text;
+            if (sackTimers.Count > 32) sackTimers.Clear();
+            string text = $"Saque largado\n<size=70%>some em {s / 60}:{s % 60:00}</size>";
+            sackTimers[sack] = (s, text);
+            return text;
+        }
 
         void OnUnloaded(List<ItemStack> moved, bool leftovers)
         {
@@ -111,6 +143,8 @@ namespace Pirates.UI
             prompt = new HudPrompt();
             hud.Prompts.Add(prompt);
             names = new WorldLabelPool(hud.World, "hud-world-label--small");
+            prizeBanner = new HudBanner();
+            hud.Banners.Add(prizeBanner);
             window = new LootWindow(hud.Windows, new LootWindow.Setup
             {
                 sourceTitle = "No baú",
@@ -135,6 +169,7 @@ namespace Pirates.UI
             if (cargo == null && !Build()) return;
             bool open = switcher.IsOnFoot && looter.IsOpen;
             window.Update(open, open ? looter.Current.DisplayName : null);
+            AnnouncePrize(open ? looter.Current : null);
 
             if (switcher.IsOnFoot)
             {
@@ -154,6 +189,30 @@ namespace Pirates.UI
                 prompt.Hide();
                 names.HideAll();
             }
+        }
+
+        /// <summary>
+        /// Baú aberto com prêmio raro, épico ou lendário (esquema ou equipamento): faixa com o nome na cor da raridade (E1, 19/10). Uma vez
+        /// por prêmio sorteado em cada baú.
+        /// </summary>
+        void AnnouncePrize(LandChest chest)
+        {
+            if (prizeBannerUntil > 0f && Time.time > prizeBannerUntil)
+            {
+                prizeBannerUntil = 0f;
+                prizeBanner.Hide();
+            }
+            if (chest == shownChest) return;
+            shownChest = chest;
+            if (!chest) return;
+            var prize = chest.BestPrize;
+            if (!prize || prize.rarity < ItemRarity.Rare) return;
+            if (announced.TryGetValue(chest, out var already) && already == prize) return;
+            announced[chest] = prize;
+            string kind = prize.category == ItemCategory.Schematic ? "esquema" : prize.equipSlot != EquipSlot.None ? Rarity.SlotName(prize.equipSlot).ToLowerInvariant() : "prêmio";
+            prizeBanner.Show($"<color={Rarity.Hex(prize.rarity)}>{Rarity.NameOf(prize.rarity)}</color>: {prize.displayName}!",
+                $"{kind} no baú");
+            prizeBannerUntil = Time.time + prizeBannerSeconds;
         }
 
         void UpdatePrompt()
@@ -217,7 +276,8 @@ namespace Pirates.UI
                 var sack = LootSack.Active[i];
                 Vector3 pos = sack.transform.position + Vector3.up * 0.9f;
                 if ((pos - cam.transform.position).sqrMagnitude > range2) continue;
-                names.Place(pos, "Saque", HudColors.Cream);
+                if (sack.Expires) names.Place(pos, SackLabel(sack), sack.SecondsLeft < 20f ? HudColors.Warn : HudColors.Cream);
+                else names.Place(pos, "Saque", HudColors.Cream);
             }
             names.End();
         }

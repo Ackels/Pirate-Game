@@ -341,7 +341,12 @@ namespace Pirates.Controls
             nextThrow = Time.time + cooldown;
             character.FaceDuring(direction, releaseDelay + 0.2f);
             character.SetSpeedMultiplier(moveWhileThrowing, throwSeconds);
-            if (combat) combat.Interrupt(throwSeconds);
+            if (combat)
+            {
+                combat.Interrupt(throwSeconds);
+                // Até a bomba sair da mão: sem rolar, chutar nem erguer a guarda (rolando, a bomba saía da mão no meio do rolamento).
+                combat.Occupy(releaseDelay + 0.1f);
+            }
             if (animatorDriver) animatorDriver.PlayThrow();
             HideWeapon();
             if (hand) bombCopy.Hold(hand, handOffset);

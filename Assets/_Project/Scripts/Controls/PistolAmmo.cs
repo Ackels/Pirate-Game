@@ -37,6 +37,16 @@ namespace Pirates.Controls
         Inventory backpack;
 
         public ItemDefinition Cartridge => cartridge;
+
+        /// <summary>O item é munição de alguma arma do capitão (cartuchos ou a própria de outra arma).</summary>
+        public bool Uses(ItemDefinition item)
+        {
+            if (!item) return false;
+            if (item == cartridge) return true;
+            foreach (var e in extra)
+                if (e != null && e.item == item) return true;
+            return false;
+        }
         /// <summary>Cartuchos na mochila.</summary>
         public int Cartridges => backpack && cartridge ? backpack.Count(cartridge) : 0;
 

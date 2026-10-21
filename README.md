@@ -718,6 +718,64 @@ ou no armazém) o mapa se monta sozinho e um **X** aparece numa das ilhas: o car
 vermelha aponta o caminho. Desembarque, ache o X e aperte **F** para cavar: o baú sobe com ouro, pólvora, ferro e às vezes um esquema.
 Um mapa por vez. F1 → **Mapas do tesouro**: +1 pedaço, montar agora, desfazer.
 
+## Equipamento (E1) — cenas 06 e 07
+
+Os baús agora podem trazer **lâminas** com raridade: **Cutelo de Toledo** (raro, azul: mais dano por golpe), **Sabre de abordagem**
+(raro: golpes mais rápidos e mais longe) e **Sabre do almirante** (épico, roxo: rápido e forte, folheado a ouro). O **facho do baú** sai
+na cor do melhor prêmio que está dentro (esquema ou equipamento): dourado comum, **azul raro**, **roxo épico**, laranja lendário; ao
+abrir, a faixa anuncia o prêmio e toca a fanfarra. A tecla **I** abre a **tela de equipamento** (no navio ou a pé), no jeito de um inventário: à
+direita o **capitão ao vivo** (arraste para girar) com os encaixes em volta (lâmina, pistola, arma pesada, mochila; traje e relíquia ainda
+"em breve") e os atributos embaixo; à esquerda a **grade de ícones** com os equipamentos que você tem em qualquer lugar (mochila, porão
+ou armazém), moldura na cor da raridade, e abaixo a mochila (a pé) ou o porão (no navio). Clique num item para ver os detalhes (dano,
+golpes por segundo, dano por segundo comparado com a que está em uso) e **Equipar**; clique duplo numa lâmina equipa direto. A lâmina equipada vira
+a arma 1 a pé na hora (saca e guarda na bainha como o cutelo). Onde caem: baús de acampamento, contrabandistas, paiol do forte, tesouros
+enterrados e mapas, a Ermida, e os baús dos destroços (brigue, caçador, Tormenta, lula, megalodonte; pouco nas chalupas). Cada uma vem
+uma vez só. Para testar: F1 → Itens → "Ganhar" no Equip_..., depois I.
+
+**Armas pesadas (E2):** **machados** e **espadões**, com as animações do brutamontes e do Barba-Negra. Combo de três golpes lentos e
+fortes; o terceiro **derruba** (o do espadão corta duas vezes). O **machado quebra a guarda** de quem se defende (a duelista fica sem guarda
+um instante); o **espadão** corta num arco largo e pega vários de uma vez. Guardados nas costas; a guarda (botão direito) funciona com
+eles. **Machado de abordagem** e **Montante do corsário** (raros) caem dos baús; o **Machado do carrasco** cai do **brutamontes** e o
+**Espadão do Barba-Negra**, do **Barba-Negra** (épicos, uma vez cada).
+
+## Ilha da Ermida (C4) — cena 07
+
+A sudoeste do porto, a caminho das Águas Negras, fica a **Ilha da Ermida** (desembarque a leste). No alto, a **Ermida de São Telmo**,
+um prédio de pedra sem teto: suba a escadaria e entre pelo **vestíbulo** (os três braseiros). Lá dentro o caminho é um só: a **cripta**
+com **espinhos** que sobem do chão, a primeira sala com a **alavanca**, o **claustro** com **grades de fogo**, a segunda alavanca, a
+**galeria** com **dardos** que saem das janelas gradeadas e a terceira sala, com a última alavanca e o **portão de grade** da capela.
+Puxada, cada alavanca desliga a armadilha que veio antes dela. Toda armadilha avisa
+antes (as pontas aparecem, o buraco brilha vermelho, sai fumaça): passe no ritmo ou role (**Ctrl**) na hora. **F** puxa a alavanca, e
+cada uma acende um braseiro no vestíbulo. Com as três, a grade afunda no chão, o baú da capela abre e um atalho da última sala volta ao vestíbulo. O Tobias, o coveiro, tem a missão
+"A ermida de São Telmo".
+
+## Catacumbas da Ermida (C5) — cena 07
+
+Quando a grade da capela da Ermida abre, o **alçapão** no canto do fundo da capela (à direita de quem entra pela grade) abre junto. Chegue perto e aperte **F** para **descer às catacumbas**,
+onde dormem os marujos da Frota de Prata. Lá embaixo não chove, não venta e não tem céu: só tochas, um brilho verde e o barulho dos
+pingos. O caminho passa pelo **ossuário** (paredes de caveiras), pela **cripta** (sarcófagos) e chega ao **salão do Capelão**, com o
+**Tesouro das Catacumbas** (muito ouro e boa chance de esquema e lâmina). A escada ao lado da chegada (**F**) sobe de volta para a
+capela. No **ossuário** moram **almas penadas**: transparentes, elas atravessam paredes e não levam dano; quando ficam sólidas (brilham e
+gemem) vêm dar uma cabeçada. Bata nessa hora (ou apare a cabeçada com a guarda): levou golpe, a alma some e volta de outro lado. Na
+**cripta** um **bando de morcegos** ronda no alto e mergulha para morder: lá em cima só o tiro alcança, no mergulho o cutelo pega. Quem
+você mata fica morto até a missão da Ermida ser aceita de novo. Um **"!" vermelho** aparece sobre o monstro que vai atacar; quando vira **"!!" amarelo**, erga a guarda (botão direito) para aparar.
+
+No **salão** mora o **Capelão Fantasma**, que tranca o tesouro. Ele sobe do altar quando você entra e anda transparente (invencível) pelo
+salão; quando aparece, faz uma de três coisas: **cabeçada** (fica alaranjado: erga a guarda no "!!" amarelo e apare para deixá-lo tonto),
+**almas do chão** (um **círculo azul** aparece debaixo de você e o aviso fica **azul**: a guarda não segura, **saia do círculo ou role**) ou
+**fogo-fátuo** (de longe, três bolas azuis que perseguem você: a guarda segura). Depois de cada golpe ele fica sólido um instante: é a hora de
+bater. Com metade da vida fica furioso e chama as almas penadas do salão. Derrotado, o baú abre com a **Lâmina de São Telmo** (lendária):
+a melhor lâmina do jogo, em fogo azul, que **fere as almas mesmo transparentes** e faz os **esqueletos amaldiçoados** que ela derruba não
+levantarem mais.
+
+## Coletáveis (C3) — cena 07
+
+**8 garrafas com mensagem** estão nas praias das quatro ilhas (brilham de leve): chegue perto e aperte **F** para ler a carta (F ou Esc
+fecha). São as cartas de Afonso Vaz, piloto da nau Coroa de Prata, contando o fim da Frota de Prata. **12 moedas da Frota de Prata**
+ficam nos morros e cantos das ilhas, girando: é só passar por cima. O painel da fama (**C**) mostra quantas você tem, o prêmio de cada
+coleção e as cartas já achadas. Todas as garrafas = 3 pedaços de mapa (um mapa do tesouro na hora) e 40 de fama; todas as moedas = 750
+de ouro e 60 de fama. O que você pega não volta.
+
 ## Prisioneiros (C2) — cena 07
 
 Três acampamentos têm uma **gaiola** com um prisioneiro: o acampamento da Caveira (Joaquim, o pescador), o esconderijo dos contrabandistas
@@ -928,11 +986,79 @@ guarda em `PrototypeSceneBuilder.Duelist.cs` (regerar as cenas).
 **Onde ajustar:** `CharacterCombat` (Chute: dano, alcance, arco, tempos, empurrão), `FootHealthReactions` (Derrubado: segundos no chão),
 `PowderKeg` (até onde derruba).
 
+## Tela do capitão com abas (21/10) — todas as cenas (Missões só na 07)
+
+- **I** inventário, **J** diário (missões), **C** fama: as três são abas da mesma tela. A tecla de uma aba aberta fecha; a de outra
+  aba troca; dá para trocar clicando nas abas no alto. Esc fecha.
+- **Diário (J):** à esquerda a História (capítulo atual), os contratos ativos (até 3) e o mapa do tesouro; à direita o escolhido:
+  a conversa de quem deu o contrato, o objetivo com o progresso, onde fica, o pagamento e **Desistir** (pede confirmação). Na
+  História, os objetivos do capítulo e "Até aqui" com o fim dos capítulos já vividos.
+- Na tela ficam só os marcadores no mundo (estrela, joia da História, X do mapa) e os avisos. A plaquinha da fama aparece só quando
+  há bônus para escolher.
+
+## HUD do navio (21/10) — todas as cenas com navio
+
+- **Em cima à esquerda:** a rosa dos ventos (o navio de proa para cima e a seta do vento em volta), a velocidade, as velas e quanto
+  o vento ajuda (verde) ou segura (vermelho) nesse rumo.
+- **Embaixo à esquerda:** o timão, que gira com o leme, a classe do navio, o casco (pisca com pouco casco) e a tripulação.
+- **Embaixo à direita:** **Q** bombordo e **E** estibordo (pronto, mirando, recarregando) e os encaixes **1/2/3** da munição e **R**
+  do carpinteiro (com a madeira do porão).
+
+## Mochila (21/10) — cenas 06 e 07 (armazém só na 07)
+
+- Na tela (em cima à direita): espaço usado e uma grade com o ícone e a quantidade de cada item (no navio, o porão). Os nomes e os
+  detalhes ficam na aba Inventário (I).
+- **Armazém do porto, a pé:** a faixa "Na mochila" em cima da janela. **Guardar o saque no armazém** leva tudo menos ração,
+  munição e bombas; **Guardar tudo** esvazia; **Guardar** num item leva só ele. Não precisa mais embarcar para esvaziar.
+- **Largar no chão (aba Inventário, a pé):** escolha um item da mochila e aperte **Largar 1** ou **Largar todos**: ele vai para um saco
+  à sua frente, que **some sozinho em 3 minutos** (pisca no fim; o tempo aparece em cima do saco). Para pegar de volta, afaste-se um
+  pouco e passe por cima. Equipamento não se larga; na água funda também não.
+
+## HUD a pé (21/10) — cenas 06 e 07
+
+- **Embaixo à esquerda:** medalhão com o retrato do capitão, nome, patente, **vida** (barra vermelha grande, pisca com pouca vida) e
+  **fôlego** (verde; amarelo abaixo do custo de rolar; pisca vermelho quando falta).
+- **Embaixo à direita:** o cartão da **arma na mão** (ícone grande, nome, munição "na arma / na mochila" e o estado: pronta, em guarda,
+  contra-ataque, carregada, recarregando com barra, sem munição) e a fileira de **encaixes**: 1/2/3 armas (a da mão com moldura dourada,
+  a vazia com borda vermelha, a munição embaixo), **R ração** e **G bomba** com a quantidade (apagado quando acaba).
+- Em cima à esquerda ficam o lugar e os bandos por perto. O aviso "Jogo salvo" aparece em cima do medalhão.
+
+## Aviso de golpe dos inimigos de terra (revisão das animações, 21/10) — cenas 06 e 07
+
+- Todo inimigo de terra (piratas, esqueletos, duelista, brutamontes, Guarda Negra, Barba-Negra) avisa o golpe como os monstros das
+  catacumbas, com um medalhão sobre a cabeça: **espadas cruzadas vermelhas** no preparo e **douradas, maiores e pulsando** nos últimos
+  ~0,45 s = **erga a guarda agora** (aparar). **Caveira com ossos cruzados azul** = a guarda não segura (giro, salto e chute do
+  Barba-Negra, almas do chão do Capelão): **role**.
+- Antes de um golpe novo, piratas, esqueletos e a Guarda Negra **param e encaram ~0,3 s** (a duelista 0,2 s): o "!" aparece ~0,7 s antes do
+  golpe. Combos e contra-ataques não esperam (o "!!" aparece direto).
+- Depois do golpe ficam **parados ~0,35 s** (a volta do golpe aparece): é a brecha para bater. O Barba-Negra fica parado a brecha inteira.
+- A investida vai **reto** para onde o golpe foi mirado: sair de lado escapa.
+- O atirador avisa o tiro: nos últimos instantes a **linha vermelha engrossa e pisca clara** = role.
+
+## Peso do impacto e contra-ataque (revisão das animações, 21/10) — cenas 06 e 07
+
+- Cada acerto do capitão **quase para o jogo por um instante** (mais na finalização, no golpe que derruba e no contra-ataque), **treme a
+  câmera** e o alvo **pisca claro**. O alvo **recua** um pouco a cada corte e bem mais na finalização (brutamontes e Barba-Negra recuam
+  pouco). Levar golpe, aparar e cair também param e tremem.
+- **Aparar** tem animação própria: um corte rápido para fora que desvia a lâmina.
+- **Contra-ataque:** logo depois de aparar (~1,2 s), o clique ataca **mesmo segurando a guarda**, com **50% a mais** de dano, e a guarda
+  volta em seguida.
+
+## Combo do cutelo (revisão das animações, 21/10) — cenas 06 e 07
+
+- **Três golpes:** os dois cortes e uma **finalização de cima** (+40% de dano, derruba). Um clique por golpe basta: o clique no meio de
+  um golpe fica guardado e sai na hora certa. Depois da finalização há uma brecha um pouco maior.
+- O golpe **vira para o inimigo mais perto** da mira e **dá um passo** (até 0,5 m) até ele.
+- Andando de **guarda**, a lâmina fica virada para o cursor: o golpe que vem de lá é segurado.
+- **Comendo, puxando alavanca ou arremessando a bomba** (até ela sair da mão): sem rolar, chutar nem erguer a guarda.
+- Vale para o cutelo e para as lâminas da tela I (Toledo, sabres, São Telmo); machados e espadões já tinham os 3 golpes.
+
 ## Rolamento / esquiva (pacote A, passo 2) — cenas 06 e 07
 
-- **Ctrl** (gamepad: RB) rola ~4,5 m para onde você está andando (parado: para a frente). No começo e no meio do rolamento nada
-  acerta: golpe, tiro, bala de chumbo ou explosão. Use para atravessar o leque do bacamarteiro ou sair do raio do barril.
-- Cancela o golpe ou tiro que ia sair; espera curta (0,4 s) entre um rolamento e outro.
+- **Ctrl** (gamepad: RB) rola ~4,5 m para onde você está andando (parado: **para longe da mira**, desde 21/10). No começo e no meio
+  do rolamento nada acerta: golpe, tiro, bala de chumbo ou explosão. Use para atravessar o leque do bacamarteiro ou sair do raio do barril.
+- Cancela o golpe ou tiro que ia sair; espera curta (0,4 s) entre um rolamento e outro. Apertado um pouco antes de poder, sai assim que der.
+- **Clique no meio do rolamento:** perto do fim ele termina e o golpe sai (rolar e emendar o golpe).
 
 **Onde ajustar:** `FootCharacter` do capitão (Rolamento: distância, duração, espera, trecho invencível).
 

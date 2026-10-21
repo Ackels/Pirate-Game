@@ -115,6 +115,10 @@ namespace Pirates.EditorTools
             AddTreasureMaps(materials, island.loot, loot, foot.switcher, hud);
             // Prisioneiros em gaiolas nos acampamentos (C2, 16/10): soltos com o acampamento limpo, viram tripulação.
             AddPrisoners(foot.character, foot.switcher, materials, loot.items);
+            // Coletáveis (C3, 19/10): garrafas com mensagem nas praias e moedas da Frota de Prata; contador no painel C.
+            AddCollectibles(foot.character, foot.switcher, hud, loot.items);
+            // Ilha da Ermida (C4, 19/10): ruína com 3 alavancas atrás de armadilhas, no lugar vazio "A" (sudoeste).
+            AddErmida(foot.character, materials, island.loot, loot.items, deck, hull, hud);
             // Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo, opções, créditos; o prólogo toca no Novo jogo.
             var prologue = hud.AddComponent<PrologueHUD>();
             var frames = Enumerable.Range(1, 9)

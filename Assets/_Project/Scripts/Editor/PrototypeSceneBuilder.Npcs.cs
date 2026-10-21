@@ -40,6 +40,7 @@ namespace Pirates.EditorTools
                 // A oeste da praça, com a pá.
                 name = "Tobias", role = "o coveiro", missionId = GraveyardMissionId, spot = new(-20f, 22f), yaw = 61f,
                 model = KitCharacters.Henry, palette = 4, shovel = true, dialogue = GraveyardDialogue,
+                extraMissionId = ErmidaId, extraDialogue = ErmidaDialogue,
                 smallTalk = new[]
                 {
                     "Cova funda, boca fechada: é o que eu sempre digo.",
@@ -303,6 +304,24 @@ namespace Pirates.EditorTools
                 "Tome, capitão: ouro, pólvora e ferro. É pouco perto do que o senhor tirou do fundo do mar.",
             },
             "Dizem que no fundo sempre há outra. Por enquanto, as águas estão quietas.");
+
+        static void ErmidaDialogue(MissionDefinition m) => Lines(m, new[]
+            {
+                "Capitão... o senhor que já passou pelas covas da Caveira. Tenho outra história, e essa é de santo, não de defunto.",
+                "Cem anos atrás, os marujos da Frota de Prata ergueram uma ermida a São Telmo numa ilhota a sudoeste, a caminho das Águas Negras.",
+                "Deixavam lá uma moeda de prata a cada viagem, para o santo trazer o barco de volta. Os monges guardaram tudo num santuário.",
+                "E para os ladrões, armadilhas: espinhos que saem do chão, dardos das paredes, fogo das grades. Três alavancas abrem o portão.",
+                "Puxe as três e o santuário é seu. Só não me peça para ir junto: eu já enterrei gente demais que foi atrás de prata.",
+            },
+            "Que São Telmo te ilumine, capitão. E olhe onde pisa.",
+            "Faz bem. Prata de santo pesa na consciência.",
+            "Já foi à ermida? Sudoeste, a caminho das Águas Negras. Três alavancas, capitão.",
+            new[]
+            {
+                "Abriu o santuário? E voltou inteiro! São Telmo gosta do senhor.",
+                "Tome, pelo trabalho. E acenda uma vela por mim da próxima vez.",
+            },
+            "Os monges, dizem, ainda arrumam as armadilhas de madrugada. Dê um tempo e a ermida fecha de novo.");
 
         static void MegalodonDialogue(MissionDefinition m) => Lines(m, new[]
             {

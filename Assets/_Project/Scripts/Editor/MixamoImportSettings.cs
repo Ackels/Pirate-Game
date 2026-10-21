@@ -52,7 +52,10 @@ namespace Pirates.EditorTools
                 // ataques com salto 3 m). Com a raiz na pose o corpo sairia do lugar e voltaria num pulo; fora da pose, o Animator sem root
                 // motion descarta o deslocamento: a animação fica no lugar e o FootCharacter move o personagem. A altura fica na pose (pulos).
                 bool scriptMoves = assetPath.Replace('\\', '/').Substring(Folder.Length + 1).Contains("/");
-                clip.lockRootRotation = !scriptMoves;
+                // Giros de corpo inteiro (o "High Spin Attack" do chefe): o giro fica na pose, senão o Animator sem root motion o descarta e o
+                // golpe "de 360°" saía sem girar (revisão de 21/10). O deslocamento continua fora da pose.
+                bool spin = lower.Contains("spin") || lower.Contains("360");
+                clip.lockRootRotation = !scriptMoves || spin;
                 clip.lockRootHeightY = true;
                 clip.lockRootPositionXZ = !scriptMoves;
                 clip.keepOriginalOrientation = true;

@@ -501,7 +501,7 @@ namespace Pirates.UI
             keys.Add(ship);
             keys.Add(foot);
             body.Add(keys);
-            body.Add(Hud.Text("<b>H</b> mostra os controles durante o jogo · <b>C</b> fama do capitão · <b>Esc</b> fecha janelas.", "hud-options__note"));
+            body.Add(Hud.Text("<b>H</b> mostra os controles durante o jogo · <b>I</b> inventário · <b>J</b> diário (missões e História) · <b>C</b> fama do capitão · <b>Esc</b> fecha janelas.", "hud-options__note"));
         }
 
         void ResetTab()

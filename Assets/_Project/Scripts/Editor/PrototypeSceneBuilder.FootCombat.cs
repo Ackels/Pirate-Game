@@ -52,6 +52,8 @@ namespace Pirates.EditorTools
             ("Standing Melee Attack Backhand", 1.03f, 1.0f),
         };
         const float ThrowStart = 1.3f, ThrowEnd = 3.4f, ThrowSpeed = 1.8f;
+        const string ClipLever = "Pulling Lever";
+        const float LeverEnd = 4.6f, LeverSpeed = 1.8f;
         const float QuickBlastSpeed = 1.8f, QuickBlastExit = 0.48f, QuickGetUpSpeed = 2f, QuickGetUpStart = 0.15f;
         /// <summary>Igual ao padrão do FootCharacter.dodgeSeconds (a animação dura o mesmo que o rolamento).</summary>
         const float DodgeSeconds = 0.8f;
@@ -66,6 +68,16 @@ namespace Pirates.EditorTools
         const float EatSpeed = 2.15f;
         const float DrawGrabClipTime = 0.60f;
         const float SlashSpeed = 1.5f, DrawSpeed = 1.3f, SheathSpeed = 1.5f, ShootSpeed = 1.2f;
+        /// <summary>
+        /// 3º golpe do cutelo do capitão (revisão das animações, 21/10): o golpe de cima do pacote do machado ("Standing Melee Attack
+        /// Downward", impacto aos 0,70 s do clipe), 1,3× (× a velocidade da lâmina), começando <see cref="FinisherLead"/> s de clipe antes do
+        /// impacto (~0,42 s de preparo, mais que os 0,3 s dos cortes: dá para ver vindo) e voltando ao pronto 0,6 s de clipe depois. AttackVariant 6
+        /// (2 e 3 são a adaga da duelista, que também é WeaponType 0).
+        /// </summary>
+        const float FinisherSpeed = 1.3f, FinisherLead = 0.55f, FinisherFollow = 0.6f;
+        const int CutlassFinisherVariant = 6;
+        /// <summary>Aparar: do corte para fora, de 0,72 s (logo antes da mão mais rápida, 0,87 s) a 1,2 s do clipe, 1,6× (~0,3 s).</summary>
+        const float ParrySwingStart = 0.72f, ParrySwingEnd = 1.2f, ParrySwingSpeed = 1.6f;
 
         // Levar golpe (sorteados): ficam no lugar (quadril anda < 0,2 m) e terminam de pé. (clipe, início em s, velocidade)
         // "Hit On Side Of Head" ficou de fora: o corpo anda 6 m no clipe (cambaleio correndo), deslizaria no lugar.
@@ -103,6 +115,7 @@ namespace Pirates.EditorTools
                 // Quase para no golpe: o corpo inteiro do clipe (postura de luta) não desliza.
                 w.moveSpeedWhileAttacking = 0.15f;
             });
+            CutlassFinisher(cutlass);
             var pistol = LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Pistola.asset", w =>
             {
                 w.displayName = "Pistola de pederneira";
@@ -641,6 +654,18 @@ namespace Pirates.EditorTools
             // (medido: quadril −6°/−17°, peito −96°/−100°), então o combo emenda com uma mistura curta.
             Any(sm, slash1, 0.2f, 0.12f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, 0));
             Any(sm, slash2, 0.4f, 0.12f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, 1));
+            var (finisherName, finisherImpact, _) = AxeAttacks[0];
+            var finisherClip = MixamoClip(finisherName);
+            if (finisherClip)
+            {
+                var slash3 = State(sm, "Golpe3", finisherName, FinisherSpeed, new Vector3(600f, -140f));
+                slash3.tag = FullBodyTag;
+                slash3.speedParameterActive = true;
+                slash3.speedParameter = "AttackSpeed";
+                Any(sm, slash3, Mathf.Max(0f, finisherImpact - FinisherLead) / finisherClip.length, 0.12f, ("Attack", AnimatorConditionMode.If, 0),
+                    ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, CutlassFinisherVariant));
+                Exit(slash3, ready, Mathf.Min(0.95f, (finisherImpact + FinisherFollow) / finisherClip.length), 0.3f);
+            }
             Any(sm, shoot, 0f, 0.1f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 1));
             Any(sm, draw, 0f, 0.15f, ("Equip", AnimatorConditionMode.If, 0));
             Any(sm, sheath, 0f, 0.15f, ("Holster", AnimatorConditionMode.If, 0));
@@ -690,6 +715,8 @@ namespace Pirates.EditorTools
             AddDagger(sm, ready);
             AddRise(sm, empty);
             AddGreatsword(sm, empty);
+            ExitsToWeaponPose(sm, empty);
+            AllowInterruptions(sm);
 
             // Corpo inteiro: mesmos estados e tempos do tronco, sem máscara. Peso 0 até o driver ligar.
             controller.AddLayer(FullBodyLayerName);
@@ -706,6 +733,8 @@ namespace Pirates.EditorTools
             controller.layers = layers;
 
             AddEatLayer(controller);
+            AddStrafeLocomotion(controller);
+            PruneOrphans(controller);
 
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
@@ -869,6 +898,15 @@ namespace Pirates.EditorTools
                 // Entra pelo CharacterAnimatorDriver.PlayThrow (CrossFade direto, a partir de ThrowStart): sem transição do "Any State".
                 Exit(toss, empty, ThrowEnd / throwClip.length, 0.2f);
             }
+            // Alavanca da ruína (C4): "Pulling Lever" de 0,8 s (a mão sai do quadril) até 4,6 s (volta), 1,8× (~2,1 s; puxa aos ~1,5 s).
+            var leverClip = MixamoClip(ClipLever);
+            if (leverClip)
+            {
+                var pull = State(sm, "PuxarAlavanca", ClipLever, LeverSpeed, new Vector3(-300f, -360f));
+                pull.tag = MovingFullBodyTag;
+                // Entra pelo CharacterAnimatorDriver.PlayLever (CrossFade direto a partir de 0,8 s).
+                Exit(pull, empty, LeverEnd / leverClip.length, 0.25f);
+            }
             if (!MixamoClip(ClipStumble) || !MixamoClip(ClipBlast) || !MixamoClip(ClipGetUp)) return;
             var getUp = State(sm, "Levantar", ClipGetUp, GetUpSpeed, new Vector3(-600f, -300f));
             getUp.tag = MovingFullBodyTag;
@@ -914,8 +952,10 @@ namespace Pirates.EditorTools
                 Go(ready, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
                 Go(run, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
                 Go(empty, guard, 0.1f, ("WeaponType", AnimatorConditionMode.Equals, 0), ("Block", AnimatorConditionMode.If, 0));
-                Go(guard, ready, 0.2f, ("Block", AnimatorConditionMode.IfNot, 0));
-                Go(guard, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 0));
+                // A mesma guarda serve ao machado (3) e ao espadão (4) do capitão (E2): os dois entram e saem dela pelo AddAxe/AddGreatsword.
+                Go(guard, ready, 0.2f, ("Block", AnimatorConditionMode.IfNot, 0), ("WeaponType", AnimatorConditionMode.Equals, 0));
+                Go(guard, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 0), ("WeaponType", AnimatorConditionMode.NotEqual, 3),
+                    ("WeaponType", AnimatorConditionMode.NotEqual, 4));
                 if (MixamoClip(ClipBlockHit))
                 {
                     var react = State(sm, "DefesaImpacto", ClipBlockHit, BlockHitSpeed, new Vector3(-300f, -360f));
@@ -927,6 +967,23 @@ namespace Pirates.EditorTools
                     back.exitTime = 0.85f;
                     back.duration = 0.15f;
                     back.offset = 0.95f;
+                    // Soltou a guarda no meio do tranco: baixa já (antes ficava ~0,6 s erguida).
+                    Go(react, empty, 0.15f, ("Block", AnimatorConditionMode.IfNot, 0));
+                }
+                // Aparar (revisão das animações, passo 5): o trecho rápido do corte para fora desvia a lâmina; entra pelo
+                // CharacterAnimatorDriver (CrossFade em ParrySwingStart) e volta à guarda, se segurada, ou à pose da arma.
+                var slashClip = MixamoClip(ClipSlashOut);
+                if (slashClip)
+                {
+                    var deflect = State(sm, "Aparar", ClipSlashOut, ParrySwingSpeed, new Vector3(-300f, -440f));
+                    deflect.tag = FullBodyTag;
+                    var toGuard = deflect.AddTransition(guard);
+                    toGuard.hasExitTime = true;
+                    toGuard.exitTime = ParrySwingEnd / slashClip.length;
+                    toGuard.duration = 0.12f;
+                    toGuard.offset = 0.95f;
+                    toGuard.AddCondition(AnimatorConditionMode.If, 0, "Block");
+                    Exit(deflect, empty, ParrySwingEnd / slashClip.length, 0.2f);
                 }
             }
             if (MixamoClip(ClipParried))
@@ -952,13 +1009,15 @@ namespace Pirates.EditorTools
             ready.tag = FullBodyTag;
             Go(empty, ready, 0.25f, ("WeaponType", AnimatorConditionMode.Equals, 3));
             Go(ready, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 3));
+            AnimatorState axeRun = null;
             if (MixamoClip(ClipAxeRun))
             {
-                var axeRun = State(sm, "MachadoCorrendo", ClipAxeRun, 1f, new Vector3(-900f, 140f));
+                axeRun = State(sm, "MachadoCorrendo", ClipAxeRun, 1f, new Vector3(-900f, 140f));
                 Go(ready, axeRun, 0.25f, ("Speed", AnimatorConditionMode.Greater, 3f));
                 Go(axeRun, ready, 0.25f, ("Speed", AnimatorConditionMode.Less, 2.6f));
                 Go(axeRun, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 3));
             }
+            HeavyGuard(sm, empty, 3, ready, axeRun);
             for (int v = 0; v < AxeAttacks.Length; v++)
             {
                 var (clipName, impact, lead) = AxeAttacks[v];
@@ -968,7 +1027,7 @@ namespace Pirates.EditorTools
                 swing.tag = FullBodyTag;
                 swing.speedParameterActive = true;
                 swing.speedParameter = "AttackSpeed";
-                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, 0.12f,
+                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, HeavyAttackBlend,
                     ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 3), ("AttackVariant", AnimatorConditionMode.Equals, v));
                 Exit(swing, ready, Mathf.Min(0.95f, (impact + 0.75f) / clip.length), 0.3f);
             }
@@ -979,6 +1038,22 @@ namespace Pirates.EditorTools
                 Any(sm, taunt, 0f, 0.15f, ("Taunt", AnimatorConditionMode.If, 0));
                 Exit(taunt, empty, 0.92f, 0.25f);
             }
+        }
+
+        /// <summary>
+        /// Guarda com o machado (3) ou o espadão (4) do capitão (E2): a mesma "Defesa" do cutelo (o "Blocking" do pacote do espadão), entrando
+        /// do pronto, da corrida e do vazio daquela arma, e voltando ao pronto dela.
+        /// </summary>
+        static void HeavyGuard(AnimatorStateMachine sm, AnimatorState empty, int weaponType, AnimatorState ready, AnimatorState run)
+        {
+            AnimatorState guard = null;
+            foreach (var child in sm.states)
+                if (child.state.name == "Defesa") guard = child.state;
+            if (!guard) return;
+            Go(ready, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
+            if (run) Go(run, guard, 0.1f, ("Block", AnimatorConditionMode.If, 0));
+            Go(empty, guard, 0.1f, ("WeaponType", AnimatorConditionMode.Equals, weaponType), ("Block", AnimatorConditionMode.If, 0));
+            Go(guard, ready, 0.2f, ("Block", AnimatorConditionMode.IfNot, 0), ("WeaponType", AnimatorConditionMode.Equals, weaponType));
         }
 
         /// <summary>Saída pelo tempo só se estiver vivo ("Dead" desligado): morto no meio da queda fica deitado no fim do clipe.</summary>
@@ -1006,6 +1081,196 @@ namespace Pirates.EditorTools
             t.hasExitTime = false;
             t.duration = duration;
             foreach (var c in conditions) t.AddCondition(c.mode, c.v, c.p);
+        }
+
+        /// <summary>
+        /// Mistura de entrada dos golpes do machado e do espadão (revisão de 21/10: era 0,12 s; no combo o fim de um golpe pesado e o preparo
+        /// do seguinte são poses bem diferentes e o corpo "pulava").
+        /// </summary>
+        const float HeavyAttackBlend = 0.18f;
+
+        /// <summary>
+        /// Combo de 3 no cutelo do capitão e nas lâminas dele (revisão de 21/10; refeito a cada geração a partir do dano, do impacto e da
+        /// velocidade da lâmina): os dois cortes de sempre e a finalização de cima (+40% de dano, alcance +0,2 m, arco +20°, derruba, e 0,3 s
+        /// a mais de brecha antes do próximo golpe). Os cutelos da IA ficam com os 2 golpes.
+        /// </summary>
+        static void CutlassFinisher(WeaponDefinition w)
+        {
+            if (!w || w.kind != WeaponKind.Melee || w.animatorWeaponType != 0) return;
+            float k = Mathf.Max(0.1f, w.attackAnimSpeed);
+            w.attackVariants = 3;
+            w.randomVariants = false;
+            w.animatorVariantOffset = 0;
+            w.animatorVariants = new[] { 0, 1, CutlassFinisherVariant };
+            w.variantHitDelays = new[] { w.hitDelay, w.hitDelay, FinisherLead / FinisherSpeed / k };
+            // Empurrão (passo 5): o alvo recua um pouco a cada corte e bem mais na finalização.
+            w.hitPush = 2.4f;
+            w.variantStrikes = new[]
+            {
+                new StrikeOverride(), new StrikeOverride(),
+                new StrikeOverride
+                {
+                    damage = Mathf.Round(w.damage * 1.4f), range = w.range + 0.2f, angle = w.angle + 20f,
+                    customKnockdown = true, knockdown = Pirates.Core.Knockdown.Stumble, extraRecovery = 0.3f, push = 4f,
+                },
+            };
+            EditorUtility.SetDirty(w);
+        }
+
+        /// <summary>
+        /// Andar de lado e de ré (revisão das animações, 21/10): clipes do pacote do machado (andar nas 4 direções, correr para a frente e
+        /// para trás) e do espadão (de lado rápido), com a velocidade que cada um anda (m/s, medida no clipe), num blend tree 2D pela
+        /// velocidade no espaço do personagem (MoveX, MoveZ). Estado "Lateral" na camada de base, pelo bool "Strafe" (FootCharacter.IsStrafing).
+        /// </summary>
+        static readonly (string clip, float x, float z)[] StrafeClips =
+        {
+            ("Standing Walk Forward", 0f, 1.05f), ("Standing Walk Back", 0f, -0.88f), ("Standing Walk Left", -0.89f, 0f), ("Standing Walk Right", 1.1f, 0f),
+            ("Standing Run Forward", 0f, 2.47f), ("Standing Run Back", 0f, -1.88f), ("Strafe 3", -2.28f, 0f), ("Strafe 4", 3f, 0f),
+        };
+
+        static void AddStrafeLocomotion(AnimatorController controller)
+        {
+            AddParameter(controller, "MoveX", AnimatorControllerParameterType.Float);
+            AddParameter(controller, "MoveZ", AnimatorControllerParameterType.Float);
+            AddParameter(controller, "Strafe", AnimatorControllerParameterType.Bool);
+            var sm = controller.layers[0].stateMachine;
+            AnimatorState locomotion = null;
+            foreach (var child in sm.states)
+            {
+                if (child.state.name == "Lateral") sm.RemoveState(child.state);
+                else if (child.state.motion is BlendTree && child.state.name == "Idle Walk Run Blend") locomotion = child.state;
+            }
+            if (!locomotion || locomotion.motion is not BlendTree walkTree || walkTree.children.Length == 0) return;
+            var clips = new System.Collections.Generic.List<(AnimationClip clip, Vector2 at)>();
+            foreach (var (name, x, z) in StrafeClips)
+            {
+                var clip = MixamoClip(name);
+                if (clip) clips.Add((clip, new Vector2(x, z)));
+            }
+            if (clips.Count < 4) return;
+            var tree = new BlendTree
+            {
+                name = "Lateral", blendType = BlendTreeType.FreeformDirectional2D, blendParameter = "MoveX", blendParameterY = "MoveZ",
+                hideFlags = HideFlags.HideInHierarchy,
+            };
+            AssetDatabase.AddObjectToAsset(tree, controller);
+            // Parado: o mesmo "Idle" da locomoção.
+            tree.AddChild(walkTree.children[0].motion, Vector2.zero);
+            foreach (var (clip, at) in clips) tree.AddChild(clip, at);
+            var lateral = sm.AddState("Lateral", new Vector3(500f, 250f));
+            lateral.motion = tree;
+            Go(locomotion, lateral, 0.2f, ("Strafe", AnimatorConditionMode.If, 0));
+            Go(lateral, locomotion, 0.2f, ("Strafe", AnimatorConditionMode.IfNot, 0));
+            foreach (var t in lateral.transitions) t.interruptionSource = TransitionInterruptionSource.Destination;
+        }
+
+        /// <summary>Pose de cada arma na mão (WeaponType; nas armas de fogo, parada ou mirando pelo "Aiming").</summary>
+        static readonly (int type, string state, int aiming)[] WeaponPoses =
+        {
+            (0, "EspadaPronta", -1), (1, "PistolaMirando", 1), (1, "PistolaParada", 0), (2, "BacamarteMirando", 1), (2, "BacamarteParado", 0),
+            (3, "MachadoPronto", -1), (4, "Espadao_Pronto", -1),
+        };
+
+        /// <summary>
+        /// Revisão das animações (21/10): a volta de uma ação (levar golpe, rolar, chutar, cambalear, levantar, provocar, sair da cova, guarda
+        /// soltada no tranco) ia para o "Vazio" e só dali para a pose da arma: o braço da espada caía para a pose sem arma por ~0,45 s. Cada
+        /// saída para o "Vazio" sem condição de WeaponType ganha, antes dela, uma igual para a pose de cada arma; a original fica por último
+        /// (mãos vazias, no meio de uma troca). "Guardar" fica de fora (termina sem arma).
+        /// </summary>
+        static void ExitsToWeaponPose(AnimatorStateMachine sm, AnimatorState empty)
+        {
+            var byName = new System.Collections.Generic.Dictionary<string, AnimatorState>();
+            foreach (var child in sm.states) byName[child.state.name] = child.state;
+            foreach (var child in sm.states)
+            {
+                var from = child.state;
+                if (from == empty || from.name == "Guardar") continue;
+                var original = from.transitions;
+                var ordered = new System.Collections.Generic.List<AnimatorStateTransition>();
+                bool changed = false;
+                foreach (var t in original)
+                {
+                    if (t.destinationState == empty && !t.conditions.Any(c => c.parameter == "WeaponType"))
+                    {
+                        foreach (var (type, name, aiming) in WeaponPoses)
+                        {
+                            if (!byName.TryGetValue(name, out var pose) || pose == from) continue;
+                            var copy = from.AddTransition(pose);
+                            copy.hasExitTime = t.hasExitTime;
+                            copy.exitTime = t.exitTime;
+                            copy.hasFixedDuration = t.hasFixedDuration;
+                            copy.duration = t.duration;
+                            foreach (var c in t.conditions) copy.AddCondition(c.mode, c.threshold, c.parameter);
+                            copy.AddCondition(AnimatorConditionMode.Equals, type, "WeaponType");
+                            if (aiming >= 0) copy.AddCondition(aiming == 1 ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, "Aiming");
+                            ordered.Add(copy);
+                        }
+                        changed = true;
+                    }
+                    ordered.Add(t);
+                }
+                if (changed) from.transitions = ordered.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Revisão das animações (21/10): nenhuma transição deixava ser interrompida, então rolar, chutar, levar golpe e o golpe seguinte do
+        /// combo esperavam a mistura que estava rodando acabar (até 0,3 s; medido: rolar apertado aos 0,70 s do golpe aparecia aos 1,00 s),
+        /// enquanto o jogo já contava o tempo da ação. Agora as transições dos estados podem ser cortadas pelas do estado de origem e as do
+        /// destino (e pelas do "Any State"); as do "Any State", pelas do destino.
+        /// </summary>
+        static void AllowInterruptions(AnimatorStateMachine sm)
+        {
+            foreach (var child in sm.states)
+                foreach (var t in child.state.transitions) t.interruptionSource = TransitionInterruptionSource.SourceThenDestination;
+            foreach (var t in sm.anyStateTransitions) t.interruptionSource = TransitionInterruptionSource.Destination;
+        }
+
+        /// <summary>
+        /// Tira do controller as máquinas de estado, estados e transições que nenhuma camada usa mais (sobravam ~280 máquinas
+        /// "CorpoInteiro" vazias das camadas refeitas a cada geração: o arquivo tinha 343 KB).
+        /// </summary>
+        static void PruneOrphans(AnimatorController controller)
+        {
+            var keep = new System.Collections.Generic.HashSet<UnityEngine.Object> { controller };
+            void KeepMotion(Motion motion)
+            {
+                if (motion is BlendTree tree && keep.Add(tree))
+                    foreach (var child in tree.children) KeepMotion(child.motion);
+            }
+            void KeepState(AnimatorState state)
+            {
+                if (!state || !keep.Add(state)) return;
+                foreach (var t in state.transitions) keep.Add(t);
+                foreach (var b in state.behaviours) keep.Add(b);
+                KeepMotion(state.motion);
+            }
+            void KeepMachine(AnimatorStateMachine machine)
+            {
+                if (!machine || !keep.Add(machine)) return;
+                foreach (var child in machine.states) KeepState(child.state);
+                foreach (var t in machine.anyStateTransitions) keep.Add(t);
+                foreach (var t in machine.entryTransitions) keep.Add(t);
+                foreach (var b in machine.behaviours) keep.Add(b);
+                foreach (var sub in machine.stateMachines)
+                {
+                    KeepMachine(sub.stateMachine);
+                    foreach (var t in machine.GetStateMachineTransitions(sub.stateMachine)) keep.Add(t);
+                }
+            }
+            foreach (var layer in controller.layers) KeepMachine(layer.stateMachine);
+            int removed = 0;
+            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller)))
+            {
+                if (!o || keep.Contains(o)) continue;
+                if (o is AnimatorStateMachine or AnimatorState or AnimatorTransitionBase or BlendTree or StateMachineBehaviour)
+                {
+                    AssetDatabase.RemoveObjectFromAsset(o);
+                    UnityEngine.Object.DestroyImmediate(o, true);
+                    removed++;
+                }
+            }
+            if (removed > 0) Debug.Log($"[Pirates] Animator: {removed} peças sem uso tiradas do controller.");
         }
 
         /// <summary>

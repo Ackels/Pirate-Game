@@ -132,6 +132,8 @@ namespace Pirates.Sandbox
             DrawTutorial();
             DrawStory();
             DrawTreasureMaps();
+            DrawCollections();
+            DrawRuins();
             DrawWind();
             DrawWeather();
             DrawSave();
@@ -450,6 +452,105 @@ namespace Pirates.Sandbox
                 maps.Assemble();
             }
             if (maps.HasMap && GUILayout.Button("Desfazer")) maps.Cancel();
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        /// <summary>Ruína das alavancas (C4, 19/10): quantas alavancas; abrir o portão na hora ou recomeçar.</summary>
+        void DrawRuins()
+        {
+            var puzzles = FindObjectsByType<Pirates.LandCombat.RuinPuzzle>(FindObjectsInactive.Exclude);
+            if (puzzles.Length == 0) return;
+            GUILayout.Label("<b>Ruínas</b>", small);
+            foreach (var p in puzzles)
+            {
+                GUILayout.Label($"<size=11>{p.DisplayName}: {(p.IsOpen ? "aberta" : $"{p.Pulled} de {p.LeverCount} alavancas")}.</size>", small);
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Ir até lá")) GoToRuin(p);
+                if (!p.IsOpen && GUILayout.Button("Abrir")) p.Open();
+                if (GUILayout.Button("Recomeçar")) p.ResetAll();
+                GUILayout.EndHorizontal();
+            }
+            // Passagens (C5: alçapão da Ermida e escada das catacumbas): a pé, leva direto para o outro lado.
+            if (modes && modes.IsOnFoot)
+            {
+                GUILayout.BeginHorizontal();
+                foreach (var passage in Pirates.LandCombat.RuinPassage.Active)
+                {
+                    if (!passage.Destination || !GUILayout.Button(passage.ActionText)) continue;
+                    modes.Character.Teleport(passage.Destination.position, passage.Destination.rotation);
+                    if (Services.TryGet(out ICameraFollow follow)) follow.SnapToTarget();
+                }
+                GUILayout.EndHorizontal();
+                // Monstros das catacumbas (C5, passo 2): todos vivos de novo, no lugar.
+                var encounters = FindObjectsByType<Pirates.LandCombat.CryptEncounter>(FindObjectsInactive.Exclude);
+                if (encounters.Length > 0 && GUILayout.Button("Monstros das catacumbas de volta"))
+                    foreach (var e in encounters) e.ResetAll();
+                // Capelão Fantasma (C5, passo 3): fúria na hora (lutando com ele).
+                var chaplains = Pirates.LandCombat.ChaplainGhost.Bosses;
+                if (chaplains.Count > 0 && chaplains[0].IsEngaged && !chaplains[0].IsEnraged && GUILayout.Button("Enfurecer o Capelão"))
+                    chaplains[0].EnrageNow();
+            }
+            GUILayout.Space(8f);
+        }
+
+        /// <summary>
+        /// A pé: o capitão na entrada da ruína, virado para dentro (sem entrada marcada: na praça do portão, virado para ele) (como o "Ir até lá" dos acampamentos). No navio: parado a ~25 m da praia de
+        /// desembarque mais perto da ruína, de proa para ela (é só apertar F).
+        /// </summary>
+        void GoToRuin(Pirates.LandCombat.RuinPuzzle ruin)
+        {
+            if (modes && modes.IsOnFoot)
+            {
+                if (ruin.Entrance)
+                {
+                    var e = ruin.Entrance;
+                    modes.Character.Teleport(e.position + Vector3.up * 0.2f, Quaternion.LookRotation(e.forward));
+                    return;
+                }
+                var gate = ruin.Gate ? ruin.Gate.position : ruin.transform.position;
+                Vector3 outward = ruin.transform.right;
+                modes.Character.Teleport(gate + outward * 4.5f + Vector3.up * 0.2f, Quaternion.LookRotation(-outward));
+                return;
+            }
+            Pirates.OnFoot.LandingPoint best = null;
+            float bestDistance = float.MaxValue;
+            foreach (var l in FindObjectsByType<Pirates.OnFoot.LandingPoint>(FindObjectsInactive.Exclude))
+            {
+                float d = Vector3.Distance(l.transform.position, ruin.transform.position);
+                if (d < bestDistance)
+                {
+                    bestDistance = d;
+                    best = l;
+                }
+            }
+            if (!best || !player) return;
+            Vector3 seaward = best.transform.position - ruin.transform.position;
+            seaward.y = 0f;
+            seaward.Normalize();
+            var pos = best.transform.position + seaward * 25f;
+            player.Teleport(new Vector3(pos.x, player.transform.position.y, pos.z), Quaternion.LookRotation(-seaward));
+        }
+
+        /// <summary>Coletáveis (C3, 19/10): quantos de cada coleção; pegar o próximo de uma (conta e paga como no jogo), zerar.</summary>
+        void DrawCollections()
+        {
+            var all = Pirates.Loot.Collections.Current;
+            if (!all) return;
+            GUILayout.Label("<b>Coleções</b>", small);
+            GUILayout.BeginHorizontal();
+            foreach (var spec in all.All)
+            {
+                int have = all.Count(spec.kind), total = all.Total(spec.kind);
+                if (have < total && GUILayout.Button($"+1 {spec.name} ({have}/{total})"))
+                    foreach (var c in all.Items)
+                        if (c && c.Kind == spec.kind && !all.IsFound(c))
+                        {
+                            all.Collect(c);
+                            break;
+                        }
+            }
+            if (GUILayout.Button("Zerar")) all.Restore(null);
             GUILayout.EndHorizontal();
             GUILayout.Space(8f);
         }

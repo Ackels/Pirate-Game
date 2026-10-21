@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Bacamarte
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Bacamarte
+  icon: {fileID: 2800000, guid: a0f837fbc02c9994e961099f597e77b6, type: 3}
   kind: 1
   animatorWeaponType: 2
   damage: 14
@@ -24,6 +25,9 @@ MonoBehaviour:
   shotsPerReload: 1
   reloadTime: 3.5
   attackVariants: 1
+  animatorVariantOffset: 0
+  randomVariants: 0
+  variantHitDelays: []
   comboWindow: 1
   animatedDraw: 0
   drawGrabTime: 0.45
@@ -39,3 +43,6 @@ MonoBehaviour:
   pelletSpread: 16
   twoHanded: 1
   moveSpeedWhileAttacking: 0.25
+  knockdown: 0
+  guardCost: 1
+  variantStrikes: []

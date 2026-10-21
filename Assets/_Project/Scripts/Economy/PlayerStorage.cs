@@ -45,6 +45,33 @@ namespace Pirates.Economy
             return taken;
         }
 
+        /// <summary>Muda quando algo entra ou sai de qualquer lugar do jogador (a tela I remonta por isto).</summary>
+        public static long Version
+        {
+            get
+            {
+                long v = stores.Count;
+                for (int i = 0; i < stores.Count; i++)
+                    if (stores[i]) v = unchecked(v * 31 + stores[i].Version);
+                return v;
+            }
+        }
+
+        /// <summary>Junta em <paramref name="into"/> (sem repetir) os itens do jogador que passam no filtro (equipamentos da tela I).</summary>
+        public static void CollectOwned(List<ItemDefinition> into, System.Predicate<ItemDefinition> match)
+        {
+            for (int i = 0; i < stores.Count; i++)
+            {
+                var store = stores[i];
+                if (!store) continue;
+                for (int k = 0; k < store.Items.Count; k++)
+                {
+                    var item = store.Items[k];
+                    if (item && (match == null || match(item)) && !into.Contains(item)) into.Add(item);
+                }
+            }
+        }
+
         // Suporte a "Enter Play Mode" sem domain reload.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => stores.Clear();

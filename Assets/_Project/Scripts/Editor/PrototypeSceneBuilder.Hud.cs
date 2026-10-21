@@ -43,6 +43,10 @@ namespace Pirates.EditorTools
             hud.Configure(style);
             // Relógio do dia (M11): some sozinho na cena sem ciclo.
             go.AddComponent<ClockHUD>();
+            // Aviso de golpe ("!"/"!!") dos inimigos de terra e das catacumbas (revisão das animações, 21/10).
+            go.AddComponent<CryptWarningHUD>();
+            // Tela de equipamento (E1): se o capitão já foi montado (cena 06; na 07 ele vem depois e põe ela).
+            AttachEquipmentHud();
             return hud;
         }
 

@@ -62,6 +62,11 @@ namespace Pirates.LandCombat
         [SerializeField] float lungeRange;
         [Tooltip("Velocidade máxima (m/s) do avanço: durante o preparo de cada golpe vai atrás do jogador (pega quem rolou cedo demais).")]
         [SerializeField] float lungeSpeed = 7f;
+        [Tooltip("Preparo antes de um golpe novo (s): para, encara e o \"!\" aparece (revisão de 21/10: os golpes de 0,3–0,4 s não davam para " +
+                 "ler). Combo, contra-ataque e o chefe não esperam. 0 = sem preparo (brutamontes: os golpes já são lentos).")]
+        [SerializeField] float intentSeconds = 0.3f;
+        [Tooltip("Segundos parado depois do último acerto do golpe (a volta do golpe aparece; antes já saía andando e girando).")]
+        [SerializeField] float recoverSeconds = 0.35f;
 
         [Header("Pistola (atirador)")]
         [Tooltip("Distância (m) que o atirador tenta manter do jogador.")]
@@ -113,6 +118,7 @@ namespace Pirates.LandCombat
         bool comboPending;
         int comboCount;
         float lungeUntil = float.NegativeInfinity, currentLungeSpeed;
+        float intentUntil = float.NegativeInfinity, recoverUntil = float.NegativeInfinity;
         LandBoss boss;
         Vector3 lastKnown;
         NavMeshPath path;
@@ -158,6 +164,28 @@ namespace Pirates.LandCombat
         public Health Health => health;
         /// <summary>Momento em que percebeu o jogador (para o "!" sobre a cabeça).</summary>
         public float AlertedAt { get; private set; } = float.NegativeInfinity;
+        /// <summary>
+        /// Segundos até o golpe dele acertar (o preparo + o golpe); −1 = não está golpeando. O aviso "!"/"!!" sobre a cabeça
+        /// (CryptWarningHUD).
+        /// </summary>
+        public float ImpactIn
+        {
+            get
+            {
+                if (health.IsDead) return -1f;
+                float strike = combat.ImpactIn;
+                if (strike >= 0f) return strike;
+                if (Time.time < intentUntil && combat.Current) return intentUntil - Time.time + combat.Current.hitDelay;
+                return -1f;
+            }
+        }
+        /// <summary>O golpe que vem passa pela guarda (imparáveis do chefe): aviso azul.</summary>
+        public bool ImpactUnblockable => combat.ImpactUnblockable;
+        bool InIntent => Time.time < intentUntil;
+
+        /// <summary>Preparo antes de cada golpe novo (0 = nenhum).</summary>
+        public void ConfigureIntent(float seconds) => intentSeconds = Mathf.Max(0f, seconds);
+
         /// <summary>Atirador (arma de fogo na mão): luta de longe.</summary>
         public bool IsGunner => combat && combat.Current && combat.Current.kind == WeaponKind.Firearm;
 
@@ -283,6 +311,14 @@ namespace Pirates.LandCombat
             if (!enabled || health.IsDead) return command;
             // Saindo da cova: parado (e sem levar golpe, ver EndRiseInvulnerable) até a animação terminar.
             if (Time.time < riseUntil) return command;
+            // Caído: não pensa em atacar (antes "atacava" do chão: perdia a vez do acampamento e ficava parado depois de levantar).
+            if (character.IsDown)
+            {
+                intentUntil = float.NegativeInfinity;
+                comboPending = false;
+                if (camp) camp.ReleaseAttackSlot(this);
+                return command;
+            }
             // Chefe se enfurecendo (fase 2): parado, encarando.
             if (boss && boss.IsPoweringUp)
             {
@@ -377,6 +413,7 @@ namespace Pirates.LandCombat
             dodgeAt = float.PositiveInfinity;
             waiting = false;
             taunted = false;
+            intentUntil = recoverUntil = float.NegativeInfinity;
             if (camp) camp.ReleaseAttackSlot(this);
         }
 
@@ -393,6 +430,8 @@ namespace Pirates.LandCombat
                 AlertedAt = Time.time;
                 BeginChase();
             }
+            // Golpe no meio do grito de guerra: parte para cima na hora (ficava ~2 s parado esperando o grito acabar).
+            else if (state == State.Alert) BeginChase();
             if (camp) camp.Provoke(this);
         }
 
@@ -467,8 +506,18 @@ namespace Pirates.LandCombat
                 Shoot(ref command);
                 return;
             }
+            combat.ShotWarning = 0f;
 
             float distance = Flat(lastKnown - transform.position).magnitude;
+            // Volta do golpe: parado, ainda virado para onde golpeou (a animação termina antes de andar ou girar de novo).
+            if (Time.time < recoverUntil && !comboPending && !(duelist && Time.time >= dodgeAt))
+            {
+                command.hasAim = true;
+                command.aimPoint = lastKnown;
+                return;
+            }
+            // O jogador saiu do alcance no meio do preparo: desiste e vai atrás.
+            if (InIntent && distance > Mathf.Max(attackRange, lungeRange) + 1f) intentUntil = float.NegativeInfinity;
             command.hasAim = true;
             command.aimPoint = lastKnown;
             // Só disputa a vez de atacar quando já está perto.
@@ -491,7 +540,7 @@ namespace Pirates.LandCombat
             {
                 command.faceAimPoint = true;
                 TryAttack(ref command, chaseRoll, distance);
-                if (!command.attack && distance > attackRange) Move(ref command, Steer(lastKnown), false);
+                if (!command.attack && !InIntent && distance > attackRange) Move(ref command, Steer(lastKnown), false);
             }
             else if (!myTurn && distance <= waitRange)
             {
@@ -520,6 +569,7 @@ namespace Pirates.LandCombat
             trackedAim = Vector3.Lerp(trackedAim, lastKnown, 1f - Mathf.Exp(-aimTracking * Time.deltaTime));
             command.hasAim = true;
             command.aimPoint = trackedAim;
+            combat.ShotWarning = aimStart > 0f ? Mathf.Clamp01(1f - (aimStart + aimDuration - Time.time) / 0.35f) : 0f;
 
             if (!sees || distance > shootRange)
             {
@@ -627,7 +677,7 @@ namespace Pirates.LandCombat
                 // Jogador rolando (sem levar golpe): corre atrás e estoca quando ele terminar.
                 bool rolling = targetCharacter && targetCharacter.DodgeInvulnerable;
                 if (!rolling && (distance <= attackRange || CanLunge(distance))) TryAttack(ref command, counter, distance);
-                if (!command.attack && distance > attackRange) Move(ref command, Steer(lastKnown), distance > attackRange + 1.5f);
+                if (!command.attack && !InIntent && distance > attackRange) Move(ref command, Steer(lastKnown), distance > attackRange + 1.5f);
                 return;
             }
 
@@ -729,6 +779,8 @@ namespace Pirates.LandCombat
                         counterUntil = float.NegativeInfinity;
                         nextAttack = Time.time + weapon.LastHitFor(move.variant) + move.recovery * boss.RecoveryScale
                                      + Random.Range(attackPause.x, attackPause.y) + (comboPending ? weapon.cooldown : 0f);
+                        // A brecha do chefe é parada (antes vinha andando para cima do capitão durante ela).
+                        recoverUntil = Time.time + weapon.LastHitFor(move.variant) + move.recovery * boss.RecoveryScale;
                         return;
                     }
                 }
@@ -745,7 +797,8 @@ namespace Pirates.LandCombat
                 nextCircleFlip = Time.time + Random.Range(1.5f, 3f);
             }
             Vector3 toward = distance > 0.01f ? Flat(lastKnown - transform.position) / distance : transform.forward;
-            Move(ref command, Vector3.Cross(Vector3.up, toward) * circleSign * 0.35f, false);
+            // Rápido o bastante para as pernas andarem de lado (a 0,35 ficava na postura parada e deslizava).
+            Move(ref command, Vector3.Cross(Vector3.up, toward) * circleSign * 0.5f, false);
         }
 
         bool CanLunge(float distance) => lungeRange > 0f && distance > attackRange && distance <= lungeRange && !combat.IsAttacking && !comboPending;
@@ -753,7 +806,9 @@ namespace Pirates.LandCombat
         /// <summary>O golpe começou: com investida, avança atrás do jogador até o impacto (Pursue).</summary>
         void OnOwnAttacked(WeaponDefinition weapon, int variant)
         {
-            if (lungeRange <= 0f || !weapon || weapon.kind != WeaponKind.Melee) return;
+            if (!weapon || weapon.kind != WeaponKind.Melee) return;
+            recoverUntil = Mathf.Max(recoverUntil, Time.time + weapon.LastHitFor(variant) + recoverSeconds);
+            if (lungeRange <= 0f) return;
             // Sequência (chefe): avança até o último acerto. Golpe com investida própria (salto) vai mais rápido.
             lungeUntil = Time.time + weapon.LastHitFor(variant);
             var strike = weapon.StrikeFor(variant);
@@ -772,11 +827,14 @@ namespace Pirates.LandCombat
                 lungeUntil = float.NegativeInfinity;
                 return;
             }
+            // Avança para a frente do golpe (a direção travou no começo), não atrás de onde o jogador está agora: antes deslizava de lado
+            // atrás de quem saía de lado, com o corpo virado para outro lado (revisão de 21/10). Sair de lado escapa.
             Vector3 to = Flat(target.position - transform.position);
-            float gap = to.magnitude - attackRange * 0.6f;
+            Vector3 forward = Flat(transform.forward).normalized;
+            float gap = Vector3.Dot(to, forward) - attackRange * 0.6f;
             if (gap <= 0f) return;
             float left = Mathf.Max(0.05f, lungeUntil - Time.time);
-            character.Lunge(to / to.magnitude * Mathf.Min(currentLungeSpeed > 0f ? currentLungeSpeed : lungeSpeed, gap / left * 1.2f));
+            character.Lunge(forward * Mathf.Min(currentLungeSpeed > 0f ? currentLungeSpeed : lungeSpeed, gap / left * 1.2f));
         }
 
         /// <summary>O duelista aparou o jogador: contra-ataca na hora.</summary>
@@ -805,7 +863,8 @@ namespace Pirates.LandCombat
             float side = Random.value < 0.5f ? -1f : 1f;
             for (int i = 0; i < 3; i++)
             {
-                float angle = i == 0 ? side * Random.Range(35f, 65f) : i == 1 ? -side * Random.Range(35f, 65f) : 0f;
+                // Para o lado (70–100° de "para trás"): rolando para trás ela dava meia-volta no ar e virava de novo (revisão de 21/10).
+                float angle = i == 0 ? side * Random.Range(70f, 100f) : i == 1 ? -side * Random.Range(70f, 100f) : 0f;
                 Vector3 dir = Quaternion.Euler(0f, angle, 0f) * away;
                 if (NavMesh.Raycast(transform.position, transform.position + dir * 4.5f, out navHit, NavMesh.AllAreas)) continue;
                 dodgeDirection = dir;
@@ -835,8 +894,20 @@ namespace Pirates.LandCombat
                 }
                 return;
             }
-            if ((!force && Time.time < nextAttack) || combat.IsAttacking) return;
-            if (!force && camp && !camp.TryStrike()) return;
+            if ((!force && Time.time < nextAttack) || combat.IsAttacking || !combat.ReadyToAttack) return;
+            if (!force && intentSeconds > 0f)
+            {
+                // Preparo: para e encara com o "!" na cabeça; o golpe sai quando ele acaba (passou muito tempo = começa de novo).
+                if (float.IsNegativeInfinity(intentUntil) || Time.time > intentUntil + 0.5f)
+                {
+                    if (camp && !camp.TryStrike()) return;
+                    intentUntil = Time.time + intentSeconds;
+                    return;
+                }
+                if (InIntent) return;
+            }
+            else if (!force && camp && !camp.TryStrike()) return;
+            intentUntil = float.NegativeInfinity;
             command.attack = true;
             comboCount = 0;
             // Às vezes emenda o 2º golpe (clicando de novo um pouco antes de o 1º terminar).

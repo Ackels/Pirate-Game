@@ -24,12 +24,16 @@ namespace Pirates.OnFoot
         [Tooltip("Controle no ar (fração da aceleração).")]
         [SerializeField, Range(0f, 1f)] float airControl = 0.35f;
         [SerializeField] float turnSharpness = 12f;
+        [Tooltip("Giro máximo (°/s; 0 = sem limite). Os grandes (brutamontes, chefe) viram mais devagar: davam meia-volta em 0,16 s.")]
+        [SerializeField] float maxTurnSpeed;
         [Tooltip("Atacando: o freio fica estas vezes mais forte (o golpe não sai deslizando).")]
         [SerializeField] float attackBrake = 3f;
 
         [Header("Mira (pistola)")]
         [Tooltip("Graus que o tronco gira em relação às pernas. Andando de lado, as pernas seguem o movimento até aqui.")]
         [SerializeField] float maxAimTwist = 60f;
+        [Tooltip("Guarda erguida: o mesmo, menor (a lâmina fica virada para o cursor; o golpe de frente é o que vem de lá).")]
+        [SerializeField] float guardTwist = 30f;
         [SerializeField] float aimTurnSharpness = 14f;
 
         [Header("Pulo e gravidade")]
@@ -51,6 +55,10 @@ namespace Pirates.OnFoot
         [SerializeField] float dodgeCooldown = 0.4f;
         [Tooltip("Trecho do rolamento (fração 0–1) em que nada acerta o personagem.")]
         [SerializeField] Vector2 dodgeInvulnerable = new(0.05f, 0.6f);
+        [Tooltip("Rolar apertado até estes segundos antes de poder fica guardado (sai assim que der).")]
+        [SerializeField] float dodgeBuffer = 0.2f;
+        [Tooltip("Clique de ataque no meio do rolamento: a partir desta fração o rolamento termina e o golpe sai.")]
+        [SerializeField, Range(0.5f, 1f)] float rollAttackFrom = 0.8f;
 
         [Tooltip("Derrubado: depois destes segundos no chão, o rolamento levanta rolando (jogador; a IA fica até levantar).")]
         [SerializeField] bool rollOutOfKnockdown;
@@ -59,11 +67,14 @@ namespace Pirates.OnFoot
         [Header("Empurrão (explosão)")]
         [Tooltip("m/s² com que o empurrão some (o personagem desliza e recupera o controle).")]
         [SerializeField] float pushDrag = 10f;
+        [Tooltip("Fração do empurrão que pega (brutamontes e chefe são pesados: recuam bem menos).")]
+        [SerializeField, Range(0f, 1f)] float pushScale = 1f;
 
         CharacterController controller;
         IFootInput input;
         IOceanSampler ocean;
-        Vector3 planarVelocity, pushVelocity, lungeVelocity;
+        Vector3 planarVelocity, pushVelocity, lungeVelocity, stepVelocity, animatedExtra;
+        float stepUntil, dodgeBufferedUntil = float.NegativeInfinity;
         float verticalVelocity;
         float lastGroundedTime = float.NegativeInfinity;
         Vector3 lastSafePosition;
@@ -79,6 +90,16 @@ namespace Pirates.OnFoot
 
         public float PlanarSpeed => planarVelocity.magnitude;
         public Vector3 PlanarVelocity => planarVelocity;
+        /// <summary>
+        /// Velocidade que a animação das pernas mostra: o andar mais a investida da IA (antes a investida não entrava e o pirata deslizava
+        /// parado na pose do golpe). O passo curto do golpe do capitão não conta (golpe com o tronco só, andando, fica torto).
+        /// </summary>
+        public Vector3 AnimatedVelocity => planarVelocity + animatedExtra;
+        /// <summary>
+        /// Andando de lado ou de ré virado para um ponto (guarda, mira, IA encarando): o corpo fica de frente para o ponto e as pernas usam
+        /// as animações de andar de lado/de ré (estado "Lateral" do Animator). Antes o corpo virava até 60° para onde andava.
+        /// </summary>
+        public bool IsStrafing { get; private set; }
         public float WalkSpeed => walkSpeed;
         public float RunSpeed => runSpeed;
         public bool IsGrounded { get; private set; }
@@ -123,6 +144,12 @@ namespace Pirates.OnFoot
             aimRig = GetComponentInChildren<CharacterAimRig>(true);
             lastSafePosition = transform.position;
         }
+
+        /// <summary>Fração do empurrão que pega (os pesados recuam menos).</summary>
+        public void ConfigurePushScale(float scale) => pushScale = Mathf.Clamp01(scale);
+
+        /// <summary>Giro máximo em °/s (0 = sem limite): os grandes viram mais devagar.</summary>
+        public void ConfigureTurnRate(float degreesPerSecond) => maxTurnSpeed = Mathf.Max(0f, degreesPerSecond);
 
         /// <summary>Velocidades de andar e correr (piratas inimigos correm um pouco menos que o jogador).</summary>
         public void ConfigureSpeeds(float walk, float run)
@@ -170,6 +197,7 @@ namespace Pirates.OnFoot
         public void Push(Vector3 velocity)
         {
             if (Incapacitated) return;
+            velocity *= pushScale;
             pushVelocity += new Vector3(velocity.x, 0f, velocity.z);
             if (velocity.y > 0f)
             {
@@ -180,6 +208,13 @@ namespace Pirates.OnFoot
 
         /// <summary>Investida da IA: soma esta velocidade ao movimento só neste quadro (quem chama repete a cada quadro do avanço).</summary>
         public void Lunge(Vector3 velocity) => lungeVelocity = new Vector3(velocity.x, 0f, velocity.z);
+
+        /// <summary>Passo do golpe do capitão até o inimigo: soma esta velocidade ao movimento por <paramref name="seconds"/>.</summary>
+        public void StepFor(Vector3 velocity, float seconds)
+        {
+            stepVelocity = new Vector3(velocity.x, 0f, velocity.z);
+            stepUntil = Time.time + seconds;
+        }
 
         /// <summary>Coloca o personagem num ponto (desembarque, reaparecer): procura o chão logo abaixo.</summary>
         public void Teleport(Vector3 position, Quaternion rotation)
@@ -207,13 +242,21 @@ namespace Pirates.OnFoot
             if (Incapacitated) return;
             float dt = Time.deltaTime;
             var command = commandOverride ?? (input != null ? input.GetCommand() : default);
-            if (IsDown && rollOutOfKnockdown && command.dodge && Time.time - downSince >= rollOutAfter && IsGrounded && (!stamina || stamina.CanDodge))
+            // Rolar guardado um instante: apertado no fim do golpe, da espera ou da queda, sai assim que puder.
+            if (command.dodge) dodgeBufferedUntil = Time.time + dodgeBuffer;
+            bool wantsDodge = Time.time <= dodgeBufferedUntil;
+            if (IsDown && rollOutOfKnockdown && wantsDodge && Time.time - downSince >= rollOutAfter && IsGrounded && (!stamina || stamina.CanDodge))
             {
                 // Levanta rolando (revisão de 09/10: caído no meio da luta, o acampamento matava o capitão no chão).
                 downUntil = Time.time;
                 dodgeReadyAt = 0f;
             }
             if (IsDown || IsDodging) lungeVelocity = Vector3.zero;
+            if (IsDown || IsDodging)
+            {
+                IsStrafing = false;
+                animatedExtra = Vector3.zero;
+            }
             if (IsDown)
             {
                 if (combat) combat.Tick(default);
@@ -222,7 +265,17 @@ namespace Pirates.OnFoot
                 return;
             }
             // Rolar gasta fôlego (sem fôlego: não rola e a barra pisca).
-            if (command.dodge && CanDodge && (!stamina || stamina.TrySpend(stamina.DodgeCost))) BeginDodge(command.move);
+            if (wantsDodge && CanDodge)
+            {
+                dodgeBufferedUntil = float.NegativeInfinity;
+                if (!stamina || stamina.TrySpend(stamina.DodgeCost)) BeginDodge(command);
+            }
+            if (IsDodging)
+            {
+                // Clique no meio do rolamento fica guardado; perto do fim, o rolamento termina e o golpe sai (rolar e emendar o golpe).
+                if (command.attack && combat) combat.BufferAttack(dodgeStart + dodgeSeconds + 0.2f);
+                if (combat && combat.HasBufferedAttack && (Time.time - dodgeStart) / dodgeSeconds >= rollAttackFrom) dodgeStart = Time.time - dodgeSeconds;
+            }
             if (IsDodging)
             {
                 // Rolando: só o rolamento (sem atacar, mirar, trocar de arma nem pular).
@@ -248,11 +301,12 @@ namespace Pirates.OnFoot
             planarVelocity = Vector3.MoveTowards(planarVelocity, targetVelocity, accel * dt);
 
             if (aimHeld && combat.HasAimPoint) FaceAim(dt, combat.AimTarget, aimRig ? aimRig.ArmYawOffset : 0f);
-            else if (guard && command.hasAim) FaceAim(dt, command.aimPoint, 0f);
+            else if (guard && command.hasAim) FaceAim(dt, command.aimPoint, 0f, guardTwist);
             else if (command.faceAimPoint && command.hasAim && Time.time >= faceUntil) FaceAim(dt, command.aimPoint, 0f);
             else
             {
                 WalkingBackward = backpedal = false;
+                IsStrafing = false;
                 // Atacando: olha para a mira; senão, para onde anda.
                 bool facing = Time.time < faceUntil;
                 if (facing || planarVelocity.sqrMagnitude > 0.01f)
@@ -260,7 +314,7 @@ namespace Pirates.OnFoot
                     var look = Quaternion.LookRotation(facing ? faceDirection : planarVelocity.normalized, Vector3.up);
                     // Atacando gira mais rápido: o golpe sai virado para o cursor.
                     float sharpness = facing ? turnSharpness * 2f : turnSharpness;
-                    transform.rotation = Quaternion.Slerp(transform.rotation, look, 1f - Mathf.Exp(-sharpness * dt));
+                    Turn(look, sharpness, dt);
                 }
             }
 
@@ -276,7 +330,9 @@ namespace Pirates.OnFoot
 
             Vector3 before = transform.position;
             pushVelocity = Vector3.MoveTowards(pushVelocity, Vector3.zero, pushDrag * dt);
-            controller.Move((planarVelocity + pushVelocity + lungeVelocity + Vector3.up * verticalVelocity) * dt);
+            Vector3 step = Time.time < stepUntil ? stepVelocity : Vector3.zero;
+            controller.Move((planarVelocity + pushVelocity + lungeVelocity + step + Vector3.up * verticalVelocity) * dt);
+            animatedExtra = lungeVelocity;
             lungeVelocity = Vector3.zero;
             IsGrounded = controller.isGrounded;
             if (IsGrounded) lastGroundedTime = Time.time;
@@ -296,15 +352,22 @@ namespace Pirates.OnFoot
             KnockedDown?.Invoke();
         }
 
-        bool CanDodge => IsGrounded && !IsDodging && Time.time >= dodgeReadyAt && !InDeepWater;
+        bool CanDodge => IsGrounded && !IsDodging && Time.time >= dodgeReadyAt && !InDeepWater && !(combat && combat.ActionLocked);
 
-        /// <summary>Rola para onde está andando (parado: para a frente); o golpe ou tiro que ia sair é cancelado.</summary>
-        void BeginDodge(Vector2 move)
+        /// <summary>
+        /// Rola para onde está andando; parado, para longe da mira (revisão de 21/10: rolava para a frente, para dentro do inimigo). Vira de
+        /// uma vez para o lado do rolamento (antes girava no começo e o rolamento de ré saía de costas). O golpe ou tiro que ia sair é cancelado.
+        /// </summary>
+        void BeginDodge(in FootCommand command)
         {
-            var wish = new Vector3(move.x, 0f, move.y);
-            dodgeDirection = wish.sqrMagnitude > 0.01f ? wish : transform.forward;
+            var wish = new Vector3(command.move.x, 0f, command.move.y);
+            Vector3 away = transform.position - command.aimPoint;
+            away.y = 0f;
+            dodgeDirection = wish.sqrMagnitude > 0.01f ? wish : command.hasAim && away.sqrMagnitude > 0.25f ? away : transform.forward;
             dodgeDirection.y = 0f;
             dodgeDirection.Normalize();
+            transform.rotation = Quaternion.LookRotation(dodgeDirection, Vector3.up);
+            stepUntil = 0f;
             dodgeStart = Time.time;
             dodgeReadyAt = Time.time + dodgeSeconds + dodgeCooldown;
             faceUntil = 0f;
@@ -342,8 +405,9 @@ namespace Pirates.OnFoot
         /// pernas seguem o movimento, para a frente ou de ré, até maxAimTwist do neutro; o CharacterAimRig gira o tronco
         /// o que faltar.
         /// </summary>
-        void FaceAim(float dt, Vector3 point, float armYawOffset)
+        void FaceAim(float dt, Vector3 point, float armYawOffset, float twist = -1f)
         {
+            if (twist < 0f) twist = maxAimTwist;
             Vector3 toAim = point - transform.position;
             toAim.y = 0f;
             if (toAim.sqrMagnitude < 0.25f) return;   // ponto em cima do personagem: mantém o giro
@@ -351,6 +415,15 @@ namespace Pirates.OnFoot
             float bodyYaw = neutral;
             float speed = planarVelocity.magnitude;
             bool moving = speed > 0.3f;
+            // De lado ou de ré (com folga entre 25° e 40° para não ficar trocando): o corpo fica no neutro e as pernas andam de lado.
+            float sideways = moving ? Mathf.Abs(Mathf.DeltaAngle(neutral, Yaw(planarVelocity))) : 0f;
+            IsStrafing = moving && sideways > (IsStrafing ? 25f : 40f);
+            if (IsStrafing)
+            {
+                WalkingBackward = backpedal = false;
+                Turn(Quaternion.Euler(0f, bodyYaw, 0f), aimTurnSharpness, dt);
+                return;
+            }
             if (moving)
             {
                 float moveYaw = Yaw(planarVelocity);
@@ -365,10 +438,18 @@ namespace Pirates.OnFoot
                 float legs = backpedal ? moveYaw + 180f : moveYaw;
                 // Devagar, as pernas ficam no neutro; andando, seguem o movimento (sem pulo no giro).
                 float follow = Mathf.InverseLerp(0.3f, 1.2f, speed);
-                bodyYaw = neutral + Mathf.Clamp(Mathf.DeltaAngle(neutral, legs), -maxAimTwist, maxAimTwist) * follow;
+                bodyYaw = neutral + Mathf.Clamp(Mathf.DeltaAngle(neutral, legs), -twist, twist) * follow;
             }
             WalkingBackward = moving && backpedal;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, bodyYaw, 0f), 1f - Mathf.Exp(-aimTurnSharpness * dt));
+            Turn(Quaternion.Euler(0f, bodyYaw, 0f), aimTurnSharpness, dt);
+        }
+
+        /// <summary>Gira para <paramref name="look"/> (amortecido), sem passar de <see cref="maxTurnSpeed"/>.</summary>
+        void Turn(Quaternion look, float sharpness, float dt)
+        {
+            var next = Quaternion.Slerp(transform.rotation, look, 1f - Mathf.Exp(-sharpness * dt));
+            if (maxTurnSpeed > 0f) next = Quaternion.RotateTowards(transform.rotation, next, maxTurnSpeed * dt);
+            transform.rotation = next;
         }
 
         static float Yaw(Vector3 v) => Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;

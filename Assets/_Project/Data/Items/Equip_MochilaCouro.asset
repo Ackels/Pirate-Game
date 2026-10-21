@@ -18,5 +18,8 @@ MonoBehaviour:
   color: {r: 0.62, g: 0.42, b: 0.25, a: 1}
   spacePerUnit: 0
   description: "Couro curtido com fivelas de lat\xE3o: 25 de espa\xE7o para o saque em terra (a de lona tem 15)."
+  icon: {fileID: 2800000, guid: d20d14a3858030e4ea59d1fcd332f242, type: 3}
   keepAboard: 0
   backpackCapacity: 25
+  equipSlot: 0
+  equipment: {fileID: 0}

@@ -38,6 +38,14 @@ namespace Pirates.Loot
         [Tooltip("Se o jogador já tem todos os esquemas, o baú vem com isto.")]
         public ItemStack chestFallback;
 
+        [Header("Equipamento (E1)")]
+        [Tooltip("Chance de vir uma peça de equipamento (lâmina...) no baú (em terra: o baú; no mar: o baú dos destroços).")]
+        [Range(0f, 1f)] public float gearChance;
+        [Tooltip("Equipamentos possíveis; peso maior = mais comum. Só sorteia os que o jogador ainda não tem.")]
+        public WeightedItem[] gear = Array.Empty<WeightedItem>();
+        [Tooltip("Vem sempre enquanto o jogador não tem (no lugar do sorteio acima): a Lâmina de São Telmo no baú do Capelão.")]
+        public ItemDefinition guaranteedGear;
+
         [Header("Na água")]
         [Tooltip("Destroços que boiam onde o navio afundou (prefab gerado pelo menu de protótipo).")]
         public ShipWreck wreckPrefab;
@@ -77,6 +85,28 @@ namespace Pirates.Loot
                 if (roll <= 0f) return new ItemStack(s.item, 1);
             }
             return chestFallback;
+        }
+
+        /// <summary>
+        /// A peça garantida, se o jogador ainda não tem; senão sorteia (na chance do baú) uma peça de equipamento que ele ainda não tem;
+        /// nenhuma = item vazio.
+        /// </summary>
+        public ItemStack RollGear(Inventory owner)
+        {
+            if (guaranteedGear && !(owner && owner.Has(guaranteedGear)) && !PlayerStorage.Has(guaranteedGear)) return new ItemStack(guaranteedGear, 1);
+            if (gear == null || gear.Length == 0 || Random.value >= gearChance) return default;
+            float total = 0f;
+            foreach (var g in gear)
+                if (IsAvailable(g, owner)) total += g.weight;
+            if (total <= 0f) return default;
+            float roll = Random.value * total;
+            foreach (var g in gear)
+            {
+                if (!IsAvailable(g, owner)) continue;
+                roll -= g.weight;
+                if (roll <= 0f) return new ItemStack(g.item, 1);
+            }
+            return default;
         }
 
         static bool IsAvailable(WeightedItem s, Inventory owner) =>

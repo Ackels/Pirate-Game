@@ -283,7 +283,8 @@ namespace Pirates.EditorTools
 
         static GameObject Chest(Transform g, LootMaterials m)
         {
-            Kenney("chest", g, new Vector3(0f, -0.3f, 0f), 0f, 0.75f, "Bau");
+            // O baú pirata do Quaternius (19/10, o mesmo dos baús em terra).
+            QuaterniusKitProp(g, "Prop_Chest_Closed", new Vector3(0f, -0.3f, 0f), 0f, 0.6f, "Bau");
             return g.gameObject;
         }
     }

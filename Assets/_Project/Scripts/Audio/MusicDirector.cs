@@ -16,7 +16,7 @@ namespace Pirates.Audio
     /// </summary>
     public class MusicDirector : MonoBehaviour
     {
-        public enum Mood { Title, Port, Sea, Island, Combat }
+        public enum Mood { Title, Port, Sea, Island, Combat, Covered }
 
         [SerializeField] SoundCue title, port, sea, island, combat;
         [SerializeField] PlayerModeSwitcher switcher;
@@ -77,10 +77,11 @@ namespace Pirates.Audio
 
             bool onFoot = switcher && switcher.IsOnFoot;
             Current = TitleScreen.Showing && title ? Mood.Title
-                : Time.time < combatUntil ? Mood.Combat : InPort(me) ? Mood.Port : onFoot ? Mood.Island : Mood.Sea;
+                : Time.time < combatUntil ? Mood.Combat : CoveredArea.Inside ? Mood.Covered : InPort(me) ? Mood.Port : onFoot ? Mood.Island : Mood.Sea;
             var want = Current switch
             {
-                Mood.Title => title, Mood.Combat => combat, Mood.Port => port, Mood.Island => island, _ => sea,
+                // Debaixo da terra, sem música: só o ar das catacumbas (WeatherAudio).
+                Mood.Title => title, Mood.Combat => combat, Mood.Port => port, Mood.Island => island, Mood.Covered => null, _ => sea,
             };
             if (want != playing || Ending()) Switch(want);
 

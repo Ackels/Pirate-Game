@@ -89,6 +89,9 @@ namespace Pirates.Loot
             chestOpened = true;
             var prize = chestSource.RollSchematic(forPlayer);
             if (prize.item) Add(prize.item, prize.amount);
+            // Equipamento (E1): o baú dos destroços também pode trazer uma lâmina.
+            var gear = chestSource.RollGear(forPlayer);
+            if (gear.item) Add(gear.item, gear.amount);
         }
 
         public void Add(ItemDefinition item, int amount)

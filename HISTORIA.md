@@ -37,6 +37,9 @@ procuravam juntos: a **Coroa de Prata**, que dorme no fundo das Águas Negras, g
 - **Mar do sudeste:** onde o galeão **Tormenta**, o navio de Lázaro, caça.
 - **Águas Negras:** mar fundo e escuro bem a oeste, cheio de cascos afundados: o túmulo da Frota de Prata. A lula gigante guarda
   o naufrágio da nau capitânia, a **Coroa de Prata**.
+- **Ilha da Ermida** (C4, 19/10): ilhota a sudoeste, a caminho das Águas Negras. Os marujos da Frota de Prata ergueram ali a **Ermida
+  de São Telmo** (o santo dos marinheiros) e deixavam uma moeda de prata a cada viagem; os monges guardaram tudo num santuário com
+  armadilhas e três alavancas. O Tobias conta a história (missão "A ermida de São Telmo").
 - **Ilha Amaldiçoada** (a criar, pacote H): só aparece no mapa depois das Águas Negras, envolta em névoa. É onde Lázaro vai parar no fim.
 
 ## Facções

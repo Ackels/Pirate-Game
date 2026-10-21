@@ -106,8 +106,9 @@ namespace Pirates.Ambient
                 strikeAge += dt;
                 // Dois clarões: um curto, um respiro e um maior (o raio "pisca").
                 bool lit = strikeAge < 0.07f || (strikeAge > 0.13f && strikeAge < 0.26f);
-                if (flash) flash.enabled = lit;
-                if (bolt) bolt.enabled = strikeAge < 0.28f;
+                // Debaixo da terra o raio não aparece (o trovão continua, abafado).
+                if (flash) flash.enabled = lit && !CoveredArea.Inside;
+                if (bolt) bolt.enabled = strikeAge < 0.28f && !CoveredArea.Inside;
             }
             if (Storm < 0.5f || !settings)
             {
@@ -150,7 +151,7 @@ namespace Pirates.Ambient
                 bolt.SetPositions(boltPoints);
                 float width = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(settings.boltDistance.x, settings.boltDistance.y, distance));
                 bolt.widthMultiplier = width;
-                bolt.enabled = true;
+                bolt.enabled = !CoveredArea.Inside;
             }
             if (flash)
             {

@@ -62,6 +62,13 @@ namespace Pirates.Save
 
         // Mapa do tesouro montado (C1, 16/10): id do tesouro com o X marcado (vazio = nenhum; os pedaços são itens comuns).
         public string treasureMapId;
+
+        // Coletáveis já pegos (C3, 19/10): ids das garrafas com mensagem e das moedas da Frota de Prata (somem do mundo para sempre).
+        public string[] collectibles;
+
+        // Equipamento do capitão (E1, 19/10): ids (nome do asset) dos itens equipados, um por lugar (lâmina...). Save de antes não tem
+        // (null): nada equipado, o cutelo de começo.
+        public string[] equipped;
     }
 
     [Serializable]

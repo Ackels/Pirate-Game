@@ -11,7 +11,7 @@ namespace Pirates.EditorTools
     public static partial class PrototypeSceneBuilder
     {
         /// <summary>Modelos de vegetação do Nature Kit (nome da malha): capim, flores, arbustos, cogumelos, roça.</summary>
-        static readonly string[] NoShadowMeshes = { "grass", "flower_", "plant_", "mushroom_", "crop", "corn" };
+        static readonly string[] NoShadowMeshes = { "grass", "flower_", "plant_", "mushroom_", "crop", "corn", "Grass", "Bush_" };
 
         /// <summary>Objetos menores que isto (maior lado, em m) não fazem sombra: ninguém a vê na nossa câmera.</summary>
         const float NoShadowSize = 0.6f;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Pirates.Combat;
+using Pirates.Economy;
 using Pirates.Loot;
 using Pirates.OnFoot;
 using UnityEngine;
@@ -45,6 +46,8 @@ namespace Pirates.VFX
             public CharacterCombat combat;
             public Health health;
             public BladeTrail trail;
+            // Versão das armas quando o rastro foi medido: a lâmina equipada (E1) troca o visual da arma 1.
+            public int trailVersion;
             public float stride, fallSpeed, trailUntil, bodyFallAt;
             public bool wasGrounded = true, trailing, wasInWater;
             public Vector3 lastTipLocal;
@@ -87,13 +90,7 @@ namespace Pirates.VFX
                 if (character.TryGetComponent(out track.combat))
                 {
                     var combat = track.combat;
-                    for (int i = 0; i < combat.Weapons.Count; i++)
-                    {
-                        var visual = combat.WeaponVisual(i);
-                        if (!combat.Weapons[i] || combat.Weapons[i].kind != WeaponKind.Melee || !visual) continue;
-                        track.trail = new BladeTrail(transform, visual, materials.trail, new Color(1f, 0.97f, 0.9f, 0.9f), bladeTrailSeconds);
-                        break;
-                    }
+                    MeasureTrail(track);
                     combat.Attacked += (weapon, variant) => OnSwing(track, weapon, variant);
                     combat.Fired += OnPistolFired;
                     combat.PelletLanded += OnPelletLanded;
@@ -113,8 +110,25 @@ namespace Pirates.VFX
             }
         }
 
+        /// <summary>Rastro da primeira lâmina do personagem (medida pelo visual dela).</summary>
+        void MeasureTrail(FootTrack track)
+        {
+            var combat = track.combat;
+            track.trail?.Destroy();
+            track.trail = null;
+            track.trailVersion = combat.WeaponsVersion;
+            for (int i = 0; i < combat.Weapons.Count; i++)
+            {
+                var visual = combat.WeaponVisual(i);
+                if (!combat.Weapons[i] || combat.Weapons[i].kind != WeaponKind.Melee || !visual) continue;
+                track.trail = new BladeTrail(transform, visual, materials.trail, new Color(1f, 0.97f, 0.9f, 0.9f), bladeTrailSeconds);
+                break;
+            }
+        }
+
         void OnSwing(FootTrack track, WeaponDefinition weapon, int variant)
         {
+            if (track.combat && track.combat.WeaponsVersion != track.trailVersion) MeasureTrail(track);
             if (!weapon || weapon.kind != WeaponKind.Melee || track.trail == null) return;
             // O golpe acerta em hitDelay; o rastro vale do começo da animação até um pouco depois do acerto.
             track.trailUntil = Time.time + weapon.HitDelayFor(variant) + 0.25f;
@@ -401,12 +415,16 @@ namespace Pirates.VFX
                 var chest = LandChest.Active[i];
                 var p = chest.transform.position;
                 bool open = chest.IsBeingLooted;
-                if (chestOpened.TryGetValue(chest, out bool was) && open && !was && !Far(p)) GoldBurst(p + Vector3.up * 0.6f, 14);
+                // Cor do melhor prêmio dentro (E1): dourado comum, azul raro, roxo épico, laranja-ouro lendário.
+                var rarity = chest.BestRarity;
+                var color = rarity >= ItemRarity.Rare ? Rarity.ColorOf(rarity) : new Color(1f, 0.85f, 0.4f, 1f);
+                if (chestOpened.TryGetValue(chest, out bool was) && open && !was && !Far(p))
+                    GoldBurst(p + Vector3.up * 0.6f, rarity >= ItemRarity.Rare ? 26 : 14, color);
                 chestOpened[chest] = open;
                 // Mesmo critério do facho dourado do baú: destrancado e com coisa dentro.
                 if (sparkle && !chest.IsLocked && !chest.IsEmpty && !Far(p))
                     stars.Emit(p + new Vector3(Random.Range(-0.6f, 0.6f), Random.Range(0.4f, 1.1f), Random.Range(-0.45f, 0.45f)),
-                        Vector3.up * 0.2f, Random.Range(0.45f, 0.75f), Random.Range(0.5f, 0.8f), new Color(1f, 0.85f, 0.4f, 1f), Random.Range(-60f, 60f));
+                        Vector3.up * 0.2f, Random.Range(0.45f, 0.75f), Random.Range(0.5f, 0.8f), color, Random.Range(-60f, 60f));
             }
             for (int i = 0; i < BuriedTreasure.Active.Count; i++)
             {
@@ -433,12 +451,18 @@ namespace Pirates.VFX
             GoldBurst(p + Vector3.up * 0.4f, 12);
         }
 
-        void GoldBurst(Vector3 p, int n)
+        void GoldBurst(Vector3 p, int n) => GoldBurst(p, n, new Color(1f, 0.82f, 0.4f, 1f));
+
+        /// <summary>Brilho e estrelas subindo; <paramref name="tint"/> = a cor do prêmio (dourado no baú comum).</summary>
+        void GoldBurst(Vector3 p, int n, Color tint)
         {
-            glow.Emit(p, Vector3.zero, 1.6f, 0.25f, new Color(1f, 0.82f, 0.4f, 0.8f));
+            glow.Emit(p, Vector3.zero, 1.6f, 0.25f, new Color(tint.r, tint.g, tint.b, 0.8f));
             for (int i = 0; i < n; i++)
+            {
+                float k = Random.Range(0.9f, 1.05f);
                 stars.Emit(p + Random.insideUnitSphere * 0.3f, Random.insideUnitSphere * 1.5f + Vector3.up * Random.Range(1.5f, 3f),
-                    Random.Range(0.35f, 0.65f), Random.Range(0.6f, 1.1f), new Color(1f, Random.Range(0.78f, 0.9f), 0.35f, 1f), Random.Range(-90f, 90f));
+                    Random.Range(0.35f, 0.65f), Random.Range(0.6f, 1.1f), new Color(tint.r * k, tint.g * k, tint.b * k, 1f), Random.Range(-90f, 90f));
+            }
         }
     }
 }

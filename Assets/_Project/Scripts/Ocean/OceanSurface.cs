@@ -122,7 +122,12 @@ namespace Pirates.Ocean
         {
             Services.Register<IOceanSampler>(this);
             SendShore();
+            CoveredArea.Changed += OnCovered;
+            OnCovered(CoveredArea.Inside);
         }
+
+        /// <summary>Debaixo da terra o mar não aparece (a malha anda com a câmera e cobriria o fundo preto).</summary>
+        void OnCovered(bool inside) => GetComponent<MeshRenderer>().enabled = !inside;
 
         void OnValidate()
         {
@@ -171,7 +176,11 @@ namespace Pirates.Ocean
             windStrength = strength;
             SendCrest();
         }
-        void OnDisable() => Services.Unregister<IOceanSampler>(this);
+        void OnDisable()
+        {
+            Services.Unregister<IOceanSampler>(this);
+            CoveredArea.Changed -= OnCovered;
+        }
 
         void Awake()
         {

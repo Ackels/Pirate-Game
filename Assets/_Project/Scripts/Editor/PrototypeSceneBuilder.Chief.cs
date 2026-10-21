@@ -211,13 +211,15 @@ namespace Pirates.EditorTools
             ready.tag = FullBodyTag;
             Go(empty, ready, 0.25f, ("WeaponType", AnimatorConditionMode.Equals, 4));
             Go(ready, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 4));
+            AnimatorState run = null;
             if (GreatswordClip("Run 2"))
             {
-                var run = GreatswordState(sm, "Espadao_Correndo", "Run 2", 1f, new Vector3(-1500f, 140f));
+                run = GreatswordState(sm, "Espadao_Correndo", "Run 2", 1f, new Vector3(-1500f, 140f));
                 Go(ready, run, 0.25f, ("Speed", AnimatorConditionMode.Greater, 3.2f));
                 Go(run, ready, 0.25f, ("Speed", AnimatorConditionMode.Less, 2.8f));
                 Go(run, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 4));
             }
+            HeavyGuard(sm, empty, 4, ready, run);
             var strikes = GreatswordStrikes();
             for (int v = 0; v < GreatswordAttacks.Length; v++)
             {
@@ -228,7 +230,7 @@ namespace Pirates.EditorTools
                 swing.tag = moving ? MovingFullBodyTag : FullBodyTag;
                 swing.speedParameterActive = true;
                 swing.speedParameter = "AttackSpeed";
-                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, 0.12f,
+                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, HeavyAttackBlend,
                     ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 4), ("AttackVariant", AnimatorConditionMode.Equals, v));
                 float last = impact;
                 foreach (var t in strikes[v].followUps) last = Mathf.Max(last, impact + t);
@@ -329,6 +331,8 @@ namespace Pirates.EditorTools
             go.GetComponent<Health>().Configure(ChiefHealth);
             // Anda devagar e corre abaixo do capitão (6): dá para fugir, e o salto pega quem foge para perto.
             go.GetComponent<FootCharacter>().ConfigureSpeeds(2f, 4.6f);
+            go.GetComponent<FootCharacter>().ConfigureTurnRate(300f);
+            go.GetComponent<FootCharacter>().ConfigurePushScale(0.2f);
             var reactions = go.GetComponent<FootHealthReactions>();
             reactions.Configure(model, 0f);
             reactions.SetHeavy(true);
@@ -337,6 +341,8 @@ namespace Pirates.EditorTools
             ai.ConfigureLunge(11f, 5f, 2);
             ai.ConfigureTaunt(2.4f);
             ai.ConfigureBounty(ChiefBounty);
+            // E2: derrotado, deixa o espadão dele (épico), uma vez.
+            DropsBlade(go, "EspadaoBarbaNegra");
 
             var body = new List<Renderer>();
             if (model)

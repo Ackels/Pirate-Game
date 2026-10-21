@@ -196,11 +196,17 @@ namespace Pirates.EditorTools
             // Derrubado (revisão de 09/10): levanta rápido da explosão, invencível um instante, e pode levantar rolando (Ctrl).
             reactions.SetQuickRecovery(true);
             character.AllowRollOutOfKnockdown(true);
+            // Revisão das animações (21/10): o golpe de lâmina vira para o inimigo mais perto da mira e dá um passo até ele.
+            character.GetComponent<CharacterCombat>().SetMeleeAssist(true);
             // Fôlego (pacote A, passo 6): limita rolar e segurar a guarda. Só o capitão (a IA não tem limite).
             character.gameObject.AddComponent<Stamina>();
+            // Peso do impacto (passo 5 da revisão das animações): parada e tremida nos golpes do capitão, no aparar e ao levar golpe.
+            character.gameObject.AddComponent<ImpactFeel>();
             character.gameObject.AddComponent<Inventory>().Configure(BackpackCapacity);
             var looter = character.gameObject.AddComponent<LandLooter>();
             looter.Configure(hold);
+            // Largar itens da mochila (21/10): o mesmo saco dos caixotes, que some sozinho em 3 min.
+            looter.ConfigureDrop(AssetDatabase.LoadAssetAtPath<LootSack>($"{LootPrefabsFolder}/Loot_Saco.prefab"));
             var camp = CreatePirates(island.campSite, character, m.iron, m.wood, m.brass, campName, campId);
             island.treasure.SetLock(camp);
             var outposts = CreateOutpostGuards(island.outposts, character, m.iron, m.wood, m.brass);

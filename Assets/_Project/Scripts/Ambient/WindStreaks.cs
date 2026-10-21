@@ -75,7 +75,7 @@ namespace Pirates.Ambient
             float strength = hasWind ? wind.Strength : 0f;
 
             // Novos riscos pela força do vento (com vento fraco, um de vez em quando).
-            if (hasWind && cam)
+            if (hasWind && cam && !CoveredArea.Inside)
             {
                 spawnDebt += Mathf.Lerp(rateCalm, rateStrong, strength * strength) * dt;
                 while (spawnDebt >= 1f)

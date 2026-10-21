@@ -19,6 +19,9 @@ namespace Pirates.OnFoot
     public class CharacterAnimatorDriver : MonoBehaviour
     {
         static readonly int Speed = Animator.StringToHash("Speed");
+        static readonly int MoveX = Animator.StringToHash("MoveX");
+        static readonly int MoveZ = Animator.StringToHash("MoveZ");
+        static readonly int StrafeBool = Animator.StringToHash("Strafe");
         static readonly int MotionSpeed = Animator.StringToHash("MotionSpeed");
         static readonly int Grounded = Animator.StringToHash("Grounded");
         static readonly int Jump = Animator.StringToHash("Jump");
@@ -42,6 +45,9 @@ namespace Pirates.OnFoot
         static readonly int ThrowState = Animator.StringToHash("Arremessar");
         /// <summary>Segundo do clipe "Throw Object" em que começa o preparo (o mesmo ThrowStart do gerador).</summary>
         const float ThrowClipStart = 1.3f;
+        static readonly int LeverState = Animator.StringToHash("PuxarAlavanca");
+        /// <summary>"Pulling Lever" do Mixamo: a mão sai do quadril aos 0,8 s (o começo é parado).</summary>
+        const float LeverClipStart = 0.8f;
         static readonly int Knock = Animator.StringToHash("Knock");
         static readonly int KnockVariant = Animator.StringToHash("KnockVariant");
         static readonly int Down = Animator.StringToHash("Down");
@@ -59,6 +65,11 @@ namespace Pirates.OnFoot
         static readonly int AimTag = Animator.StringToHash("Mira");
         /// <summary>Corpo inteiro mesmo andando (rolamento: o personagem se move durante a ação).</summary>
         static readonly int MovingFullBodyTag = Animator.StringToHash("CorpoInteiroAndando");
+        static readonly int GuardState = Animator.StringToHash("Defesa");
+        static readonly int GuardHitState = Animator.StringToHash("DefesaImpacto");
+        static readonly int ParryState = Animator.StringToHash("Aparar");
+        /// <summary>Segundo do corte para fora ("Stable Sword Outward Slash") em que o aparar começa (o mesmo ParrySwingStart do gerador).</summary>
+        const float ParryClipStart = 0.72f;
 
         [SerializeField] FootCharacter character;
         [Tooltip("Suavização do Speed (s) para o blend tree não pular de um clipe para outro.")]
@@ -69,12 +80,15 @@ namespace Pirates.OnFoot
         [Header("Corpo inteiro")]
         [SerializeField] string upperLayer = "Tronco";
         [SerializeField] string fullBodyLayer = "CorpoInteiro";
-        [Tooltip("Até esta velocidade (m/s) a ação usa o corpo inteiro do clipe.")]
-        [SerializeField] float fullBodyUntilSpeed = 0.6f;
-        [Tooltip("Desta velocidade para cima, só o tronco (as pernas andam).")]
-        [SerializeField] float upperBodyFromSpeed = 1.5f;
+        [Tooltip("Abaixo desta velocidade (m/s, no tamanho de um personagem comum) a ação passa a usar o corpo inteiro do clipe.")]
+        [SerializeField] float fullBodyUntilSpeed = 0.3f;
+        [Tooltip("Acima desta velocidade, só o tronco (as pernas andam). Entre as duas fica como estava (sem meio-termo: misturar a " +
+                 "postura parada com as pernas andando fazia o pé escorregar).")]
+        [SerializeField] float upperBodyFromSpeed = 0.7f;
         [Tooltip("Segundos para passar de um para o outro.")]
         [SerializeField] float fullBodyBlendTime = 0.12f;
+        [Tooltip("Segundos para o corpo todo entrar nas ações em movimento (rolar, chutar): o mesmo tempo da transição delas.")]
+        [SerializeField] float movingFullBodyBlend = 0.06f;
 
         Animator animator;
         CharacterCombat combat;
@@ -82,6 +96,9 @@ namespace Pirates.OnFoot
         float airTime;
         int upperIndex = -1, fullIndex = -1;
         float fullWeight, fullWeightVelocity;
+        bool stillPose = true;
+        /// <summary>Escala do personagem (brutamontes 1,35, chefe 1,4): o passo da animação cresce junto, então o Speed vai dividido por ela.</summary>
+        float strideScale = 1f;
         bool dead;
         int hitVariants, deathVariants, lastHit = -1, lastDeath = -1;
         float knockedAt = float.NegativeInfinity, knockFall;
@@ -90,6 +107,24 @@ namespace Pirates.OnFoot
         public bool HasHitAnimation => hitVariants > 0;
         public bool HasDeathAnimation => deathVariants > 0;
 
+        /// <summary>
+        /// No meio de uma ação de corpo inteiro em movimento (rolar, chutar, arremessar, alavanca, cair, levantar, cambalear do aparo) ou na
+        /// guarda: levar golpe não troca a animação (só o tranco do corpo), senão a pancada cortava o rolamento e a guarda no meio.
+        /// </summary>
+        public bool InAction
+        {
+            get
+            {
+                if (upperIndex < 0) return false;
+                var state = TargetState();
+                return state.tagHash == MovingFullBodyTag || state.shortNameHash == GuardState || state.shortNameHash == GuardHitState
+                       || state.shortNameHash == ParryState;
+            }
+        }
+
+        AnimatorStateInfo TargetState() =>
+            animator.IsInTransition(upperIndex) ? animator.GetNextAnimatorStateInfo(upperIndex) : animator.GetCurrentAnimatorStateInfo(upperIndex);
+
         public void Configure(FootCharacter footCharacter) => character = footCharacter;
 
         void Awake()
@@ -97,6 +132,7 @@ namespace Pirates.OnFoot
             animator = GetComponent<Animator>();
             if (!character) character = GetComponentInParent<FootCharacter>();
             if (character) combat = character.GetComponent<CharacterCombat>();
+            if (character) strideScale = Mathf.Max(0.1f, character.transform.lossyScale.y);
             foreach (var p in animator.parameters) parameters.Add(p.nameHash);
             upperIndex = animator.GetLayerIndex(upperLayer);
             fullIndex = animator.GetLayerIndex(fullBodyLayer);
@@ -171,6 +207,8 @@ namespace Pirates.OnFoot
         public void PlayHit()
         {
             if (dead || !HasHitAnimation) return;
+            // O golpe que ia sair foi cancelado pela pancada: o trigger guardado não pode disparar o golpe depois.
+            ResetTrigger(Attack);
             if (parameters.Contains(HitVariant)) animator.SetInteger(HitVariant, Pick(hitVariants, ref lastHit));
             SetTrigger(Hit);
         }
@@ -225,7 +263,7 @@ namespace Pirates.OnFoot
         void OnAttacked(WeaponDefinition weapon, int variant)
         {
             if (parameters.Contains(WeaponType)) animator.SetInteger(WeaponType, weapon.animatorWeaponType);
-            if (parameters.Contains(AttackVariant)) animator.SetInteger(AttackVariant, variant + weapon.animatorVariantOffset);
+            if (parameters.Contains(AttackVariant)) animator.SetInteger(AttackVariant, weapon.AnimatorVariantFor(variant));
             if (parameters.Contains(AttackSpeed)) animator.SetFloat(AttackSpeed, weapon.attackAnimSpeed);
             SetTrigger(Attack);
         }
@@ -259,10 +297,27 @@ namespace Pirates.OnFoot
             animator.CrossFadeInFixedTime(ThrowState, 0.12f, upperIndex, ThrowClipStart);
         }
 
+        /// <summary>Puxar a alavanca da ruína (corpo todo, direto como o arremesso). Sem o clipe, nada acontece.</summary>
+        public void PlayLever()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, LeverState)) return;
+            ResetTrigger(Attack);
+            animator.CrossFadeInFixedTime(LeverState, 0.15f, upperIndex, LeverClipStart);
+        }
+
         /// <summary>Golpe na guarda: o tranco da defesa (aparar também).</summary>
         void OnBlocked(Vector3 point, bool parried)
         {
-            if (!dead) SetTrigger(BlockHit);
+            if (dead) return;
+            // Aparou (revisão de 21/10): um golpe rápido para fora que desvia a lâmina (antes era o mesmo tranco da defesa e não parecia
+            // aparar); volta à guarda se ela continua erguida.
+            if (parried && upperIndex >= 0 && animator.HasState(upperIndex, ParryState))
+            {
+                ResetTrigger(BlockHit);
+                animator.CrossFadeInFixedTime(ParryState, 0.05f, upperIndex, ParryClipStart);
+                return;
+            }
+            SetTrigger(BlockHit);
         }
 
         /// <summary>O golpe deste personagem foi aparado: cambaleia para trás.</summary>
@@ -338,8 +393,17 @@ namespace Pirates.OnFoot
             bool grounded = character.IsGrounded;
             airTime = grounded ? 0f : airTime + dt;
 
-            if (parameters.Contains(Speed)) animator.SetFloat(Speed, character.PlanarSpeed, speedDamp, dt);
+            Vector3 velocity = character.AnimatedVelocity;
+            if (parameters.Contains(Speed)) animator.SetFloat(Speed, velocity.magnitude / strideScale, speedDamp, dt);
             if (parameters.Contains(MotionSpeed)) animator.SetFloat(MotionSpeed, character.WalkingBackward ? -1f : 1f);
+            // Andar de lado/de ré (estado "Lateral" da camada de base): velocidade no espaço do personagem.
+            if (parameters.Contains(MoveX))
+            {
+                Vector3 local = character.transform.InverseTransformDirection(velocity) / strideScale;
+                animator.SetFloat(MoveX, local.x, speedDamp, dt);
+                animator.SetFloat(MoveZ, local.z, speedDamp, dt);
+                animator.SetBool(StrafeBool, character.IsStrafing && grounded && !dead);
+            }
             if (parameters.Contains(Grounded)) animator.SetBool(Grounded, grounded || dead);
             if (parameters.Contains(Down)) animator.SetBool(Down, character.IsDown);
             if (parameters.Contains(FreeFall)) animator.SetBool(FreeFall, !dead && !grounded && airTime > freeFallDelay && character.VerticalVelocity < 0f);
@@ -349,8 +413,22 @@ namespace Pirates.OnFoot
                 if (parameters.Contains(Reloading)) animator.SetBool(Reloading, combat.ReloadAnimating);
                 if (parameters.Contains(Aiming)) animator.SetBool(Aiming, combat.IsAimingPose);
                 if (parameters.Contains(BlockBool)) animator.SetBool(BlockBool, combat.IsBlocking && !dead);
+                RaiseGuard();
             }
             UpdateFullBody(grounded, dt);
+        }
+
+        /// <summary>
+        /// Guarda erguida no jogo e a animação em outro estado (fim de um golpe, levando golpe, voltando de um chute): sobe a guarda direto.
+        /// Pelo bool "Block" ela só entrava do pronto/correndo, então erguer a guarda logo depois de golpear não mostrava guarda nenhuma
+        /// (medido: guarda aos 0,50 s do golpe aparecia aos 1,00 s), e o aparar ficava invisível.
+        /// </summary>
+        void RaiseGuard()
+        {
+            if (dead || !combat.IsBlocking || upperIndex < 0 || !animator.HasState(upperIndex, GuardState)) return;
+            int target = TargetState().shortNameHash;
+            if (target == GuardState || target == GuardHitState || target == ParryState) return;
+            animator.CrossFadeInFixedTime(GuardState, 0.1f, upperIndex, 0f);
         }
 
         /// <summary>
@@ -360,14 +438,18 @@ namespace Pirates.OnFoot
         void UpdateFullBody(bool grounded, float dt)
         {
             if (fullIndex < 0 || upperIndex < 0) return;
-            var state = animator.IsInTransition(upperIndex) ? animator.GetNextAnimatorStateInfo(upperIndex) : animator.GetCurrentAnimatorStateInfo(upperIndex);
+            var state = TargetState();
             bool action = state.tagHash == FullBodyTag || state.tagHash == AimTag;
-            float still = 1f - Mathf.InverseLerp(fullBodyUntilSpeed, upperBodyFromSpeed, character.PlanarSpeed);
-            float target = dead && HasDeathAnimation ? 1f : state.tagHash == MovingFullBodyTag ? 1f : action && grounded ? still : 0f;
-            // Rolamento: corpo todo na hora (com a mistura, os primeiros 0,1 s saíam meio corrida, meio rolamento).
+            // Parado ou andando, com folga entre os dois limites (sem tremer na fronteira).
+            float speed = character.AnimatedVelocity.magnitude / strideScale;
+            if (speed < fullBodyUntilSpeed) stillPose = true;
+            else if (speed > upperBodyFromSpeed) stillPose = false;
+            float target = dead && HasDeathAnimation ? 1f : state.tagHash == MovingFullBodyTag ? 1f : action && grounded && stillPose ? 1f : 0f;
+            // Rolamento e chute: corpo todo junto com a transição (antes pulava de 0 a 1 num quadro e as pernas estalavam;
+            // com a mistura lenta, os primeiros 0,1 s saíam meio corrida, meio rolamento).
             if (state.tagHash == MovingFullBodyTag && !dead)
             {
-                fullWeight = 1f;
+                fullWeight = Mathf.MoveTowards(fullWeight, 1f, dt / Mathf.Max(0.01f, movingFullBodyBlend));
                 fullWeightVelocity = 0f;
             }
             else fullWeight = Mathf.SmoothDamp(fullWeight, target, ref fullWeightVelocity, fullBodyBlendTime, Mathf.Infinity, dt);

@@ -63,6 +63,10 @@ namespace Pirates.UI
         public VisualElement Prompts { get; private set; }
         public VisualElement Banners { get; private set; }
         public VisualElement BottomRight { get; private set; }
+        /// <summary>Canto de baixo à esquerda: o capitão a pé (retrato, vida, fôlego).</summary>
+        public VisualElement BottomLeft { get; private set; }
+        /// <summary>Canto de baixo à direita, rente à borda: as armas e os itens a pé.</summary>
+        public VisualElement Loadout { get; private set; }
         /// <summary>Janelas com o mouse (porto, baú, destroços), no meio da tela.</summary>
         public VisualElement Windows { get; private set; }
         /// <summary>Menu inicial: tela inteira, por cima de tudo.</summary>
@@ -116,6 +120,8 @@ namespace Pirates.UI
             Banners = Region("hud-banners");
             pickupArea = Region("hud-pickups");
             Prompts = Region("hud-prompts");
+            BottomLeft = Region("hud-bottom-left");
+            Loadout = Region("hud-loadout");
             BottomRight = Region("hud-bottom-right");
             overlay = Region("hud-hurt");
             overlay.style.opacity = 0f;

@@ -18,3 +18,8 @@ MonoBehaviour:
   color: {r: 0.82, g: 0.52, b: 1, a: 1}
   spacePerUnit: 0
   description: "Constru\xE7\xE3o da base: canh\xF5es fixos que defendem o porto."
+  icon: {fileID: 2800000, guid: 894e4b1f036b43f428386dd81d864139, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  equipSlot: 0
+  equipment: {fileID: 0}

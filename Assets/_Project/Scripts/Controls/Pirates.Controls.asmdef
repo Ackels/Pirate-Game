@@ -1,6 +1,6 @@
 {
     "name": "Pirates.Controls",
     "rootNamespace": "Pirates.Controls",
-    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Base", "Pirates.Progression", "Unity.InputSystem"],
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.Economy", "Pirates.OnFoot", "Pirates.LandCombat", "Pirates.Base", "Pirates.Progression", "Pirates.Loot", "Unity.InputSystem"],
     "autoReferenced": true
 }

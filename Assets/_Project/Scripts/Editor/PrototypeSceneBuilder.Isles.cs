@@ -172,7 +172,7 @@ namespace Pirates.EditorTools
                 t.chestFallback = new ItemStack(items.gold, 200);
             });
             var magazineChest = CreateChest(fort.transform, "Bau_Paiol", "Paiol do forte", Ground(north, NorthFort + new Vector2(-2f, 3.3f)), 180f,
-                magazineLoot, landLoot, withPadlock: true);
+                magazineLoot, landLoot, withPadlock: true, ChestStyle.Ruins);
             IslandBreakablesAt(north, landLoot, "Norte", new[]
             {
                 (NorthFort + new Vector2(-6f, 6f), true), (NorthFort + new Vector2(-7f, 4.5f), true), (NorthFort + new Vector2(5f, 7f), false),

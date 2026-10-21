@@ -7,8 +7,8 @@ namespace Pirates.EditorTools
     /// <summary>
     /// Configura sozinho os modelos de pacotes grátis em Assets/ThirdParty (Kenney, Quaternius; CC0): sem câmeras, luzes
     /// nem colisores (a física é a dos protótipos) e animação só se o FBX tiver. A maioria dos kits pinta tudo com uma
-    /// textura de paleta (colormap): entram sem materiais (o gerador põe os nossos, URP). O Nature Kit pinta com uma cor
-    /// por material: esses entram com materiais URP Lit da cor do FBX (o gerador troca por cópias compartilhadas).
+    /// textura de paleta (colormap): entram sem materiais (o gerador põe os nossos, URP). O Nature Kit e as ruínas do
+    /// Quaternius pintam com uma cor por material: esses entram com materiais URP Lit da cor do FBX (o gerador troca por cópias compartilhadas).
     /// A paleta (colormap) entra sem filtro, sem mipmap e sem compressão: cada cor é um quadradinho, e misturar vizinhos
     /// (de longe ou comprimindo) mudaria a cor dos modelos. As peças de interface (UI/) entram com filtro bilinear; as
     /// texturas de partícula (VFX/) com filtro, mipmap e 256 px.
@@ -21,6 +21,10 @@ namespace Pirates.EditorTools
         public const string Folder = "Assets/ThirdParty";
         /// <summary>Kits com cor por material (sem textura).</summary>
         public const string ColorMaterialFolder = Folder + "/Kenney_NatureKit";
+        /// <summary>Ultimate Modular Ruins do Quaternius (19/10): também uma cor por material.</summary>
+        public const string RuinsFolder = Folder + "/Quaternius_ModularRuins";
+        /// <summary>Animated Monster Pack do Quaternius (19/10): também uma cor por material.</summary>
+        public const string AnimatedMonstersFolder = Folder + "/Quaternius_AnimatedMonsters";
         /// <summary>Peças de interface (Kenney UI Pack): filtro bilinear, não a paleta sem filtro dos modelos.</summary>
         public const string UiFolder = Folder + "/UI";
         /// <summary>Texturas de partícula (Kenney Particle Pack): filtro, mipmap e 256 px comprimido.</summary>
@@ -28,7 +32,8 @@ namespace Pirates.EditorTools
 
         string NormalizedPath => assetPath.Replace('\\', '/');
         bool InFolder => NormalizedPath.StartsWith(Folder + "/");
-        bool UsesColorMaterials => NormalizedPath.StartsWith(ColorMaterialFolder + "/");
+        bool UsesColorMaterials => NormalizedPath.StartsWith(ColorMaterialFolder + "/") || NormalizedPath.StartsWith(RuinsFolder + "/")
+            || NormalizedPath.StartsWith(AnimatedMonstersFolder + "/");
 
         void OnPreprocessModel()
         {

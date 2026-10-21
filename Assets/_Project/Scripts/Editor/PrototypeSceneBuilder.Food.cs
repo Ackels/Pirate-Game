@@ -68,6 +68,7 @@ namespace Pirates.EditorTools
             character.AddComponent<BackpackGear>().Configure(BackpackCapacity, Backpacks());
             character.AddComponent<PistolAmmo>().Configure(CartridgeItem(), switcher, startWith: 20);
             AddBlunderbussGear(character);
+            AddBladeGear(character);
             AddBombThrower(character, switcher);
         }
 

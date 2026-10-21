@@ -89,13 +89,20 @@ namespace Pirates.EditorTools
             go.GetComponent<Health>().Configure(BruteHealth);
             // Anda mais devagar que os piratas (2,2/5,2) e bem mais que o capitão (6): dá para fugir e para rodear.
             go.GetComponent<FootCharacter>().ConfigureSpeeds(1.9f, 4.4f);
+            // Grande: vira mais devagar (dava meia-volta em 0,16 s).
+            go.GetComponent<FootCharacter>().ConfigureTurnRate(260f);
+            go.GetComponent<FootCharacter>().ConfigurePushScale(0.35f);
             var reactions = go.GetComponent<FootHealthReactions>();
             reactions.Configure(model, 0f);
             reactions.SetHeavy(true);
             ai.ConfigureMelee(2.4f, 4.4f, new Vector2(1.2f, 2.2f), 0.3f);
+            // Sem preparo a mais: os golpes do machado já levam 0,6–1,0 s até o impacto (o "!" aparece neles).
+            ai.ConfigureIntent(0f);
             ai.ConfigureTaunt(2.2f);
             // Investida: o machado sai avançando com o capitão até 4,5 m (quem rolou para longe ainda leva).
             ai.ConfigureLunge(4.5f, 6.5f, 1);
+            // E2: derrotado, deixa o machado dele (o "Machado do carrasco", épico), uma vez.
+            DropsBlade(go, "MachadoCarrasco");
             if (!model) return;
             var skin = BruteMaterial();
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))

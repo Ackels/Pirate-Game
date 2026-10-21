@@ -11,7 +11,7 @@ namespace Pirates.LandCombat
     /// sem custo) de dia. De noite, quando o jogador a pé chega perto, saem das covas um a um (terra revolvida, gemido, "Zombie Stand Up" do
     /// Mixamo) e lutam como os piratas do acampamento. Ao amanhecer, os que estão de pé viram pó e os caídos somem; na noite seguinte
     /// levantam de novo, com a vida cheia. Amaldiçoados: caído pela primeira vez, levanta de novo da terra depois de reviveSeconds com
-    /// parte da vida, a não ser que o golpe final seja de pólvora (tiro, bacamarte, bomba, barril: DamageInfo.ignites). Nada é salvo.
+    /// parte da vida, a não ser que o golpe final seja de pólvora (tiro, bacamarte, bomba, barril: DamageInfo.ignites) ou da Lâmina de São Telmo (DamageInfo.holy). Nada é salvo.
     /// </summary>
     [RequireComponent(typeof(EnemyCamp))]
     public class CursedGraveyard : MonoBehaviour
@@ -79,7 +79,8 @@ namespace Pirates.LandCombat
             for (int i = 0; i < n; i++)
             {
                 int index = i;
-                onDamaged[i] = info => lastIgnited[index] = info.ignites;
+                // Pólvora ou a Lâmina de São Telmo: fica no chão.
+                onDamaged[i] = info => lastIgnited[index] = info.ignites || info.holy;
                 onDied[i] = () => OnMemberDied(index);
             }
         }

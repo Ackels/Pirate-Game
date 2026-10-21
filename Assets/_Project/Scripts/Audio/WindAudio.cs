@@ -53,6 +53,7 @@ namespace Pirates.Audio
                 target = Mathf.Lerp(calmVolume, strongVolume, Mathf.Pow(s, 1.3f)) * (1f + gust);
                 pitch = Mathf.Lerp(calmPitch, strongPitch, s) + gust * 0.12f;
                 if (switcher && switcher.IsOnFoot) target *= onFootVolume;
+                if (CoveredArea.Inside) target = 0f;
                 target *= sound.volume.y * SoundMix.Volume(sound.channel);
             }
             volume = Mathf.MoveTowards(volume, target, Time.unscaledDeltaTime * 0.5f);

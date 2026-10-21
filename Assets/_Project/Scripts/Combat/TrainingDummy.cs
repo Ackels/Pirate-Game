@@ -9,7 +9,7 @@ namespace Pirates.Combat
     /// com a vida cheia depois de alguns segundos. O visual balança; o colisor fica parado.
     /// </summary>
     [RequireComponent(typeof(Health))]
-    public class TrainingDummy : MonoBehaviour
+    public class TrainingDummy : MonoBehaviour, Pirates.Core.IAssistTarget
     {
         [SerializeField] Transform visual;
         [Tooltip("Graus de balanço por ponto de dano.")]

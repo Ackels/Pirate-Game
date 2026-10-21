@@ -133,6 +133,24 @@ namespace Pirates.EditorTools
             });
             // Megalodonte (F.1, passo 2b, 16/10): o segundo contrato da Iara. Patente Capitão Temido (abaixo da lula); o tubarão já dá 120 de
             // fama ao morrer.
+            // Ermida de São Telmo (C4, 19/10): o segundo contrato do Tobias. Abrir o santuário (as 3 alavancas) conta como achar o tesouro.
+            yield return Mission("Missao_Ermida", m =>
+            {
+                m.missionId = ErmidaId;
+                m.title = "A ermida de São Telmo";
+                m.giver = "Tobias";
+                m.description = "Numa ilhota a sudoeste, a caminho das Águas Negras, os marujos da Frota de Prata ergueram uma ermida ao santo dos " +
+                                "marinheiros. Os monges protegeram o santuário com armadilhas e três alavancas. Abra o portão.";
+                m.type = MissionType.FindTreasure;
+                m.targetId = ErmidaId;
+                m.targetName = ErmidaName;
+                m.objectiveText = "abra o santuário da Ermida de São Telmo, a sudoeste";
+                m.doneText = "santuário aberto";
+                m.rewards = new[] { new ItemStack(i.gold, 220), new ItemStack(i.iron, 5) };
+                m.cooldownSeconds = 1800f;
+                m.requiredRank = 1;
+                m.fameReward = 30;
+            });
             yield return Mission("Missao_Megalodonte", m =>
             {
                 m.missionId = MegalodonId;

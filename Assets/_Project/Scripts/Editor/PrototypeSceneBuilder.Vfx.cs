@@ -36,6 +36,7 @@ namespace Pirates.EditorTools
             };
             var go = new GameObject("VFX");
             go.AddComponent<GameVfx>().Configure(materials);
+            go.AddComponent<HitFlash>();
         }
 
         static Material FxMaterial(string name, string texture, bool additive)

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Catacumba
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: e8a851d3b60146541a1aa05d1e94a22c, type: 3}
+  clipVolumes: []
+  channel: 2
+  volume: {x: 0.7, y: 0.7}
+  pitch: {x: 1, y: 1}
+  spatial: 0
+  minDistance: 1
+  maxDistance: 2
+  cooldown: 0

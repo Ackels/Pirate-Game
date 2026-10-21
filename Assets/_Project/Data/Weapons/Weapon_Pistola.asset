@@ -13,16 +13,21 @@ MonoBehaviour:
   m_Name: Weapon_Pistola
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Pistola de pederneira
+  icon: {fileID: 2800000, guid: 7f7680510f3f56d46a3181c83d71582a, type: 3}
   kind: 1
   animatorWeaponType: 1
   damage: 45
   range: 35
   angle: 3
   hitDelay: 0.30833334
+  attackAnimSpeed: 1
   cooldown: 0.5
   shotsPerReload: 1
   reloadTime: 2.5
   attackVariants: 1
+  animatorVariantOffset: 0
+  randomVariants: 0
+  variantHitDelays: []
   comboWindow: 1
   animatedDraw: 0
   drawGrabTime: 0.45
@@ -34,4 +39,10 @@ MonoBehaviour:
   aimedSpread: 0.3
   aimMoveSpeed: 0.75
   recoilDegrees: 14
+  pellets: 1
+  pelletSpread: 0
+  twoHanded: 0
   moveSpeedWhileAttacking: 0.3
+  knockdown: 0
+  guardCost: 1
+  variantStrikes: []

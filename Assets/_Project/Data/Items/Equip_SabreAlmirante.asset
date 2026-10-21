@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Equip_SabreAlmirante
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Sabre do almirante
+  category: 3
+  rarity: 3
+  color: {r: 0.82, g: 0.52, b: 1, a: 1}
+  spacePerUnit: 0
+  description: "Folheado a ouro, tirado de um almirante que n\xE3o precisava mais dele. R\xE1pido e certeiro: o melhor sabre dos mares."
+  icon: {fileID: 2800000, guid: bbad8f7080221c14fbaeb7b43444e0b9, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  equipSlot: 1
+  equipment: {fileID: 11400000, guid: 3eb2ce2bd250f4146b1ae6323fb8de4f, type: 2}

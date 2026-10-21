@@ -173,6 +173,8 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial guide)) guide.Begin(tutorial);
             if (Services.TryGet(out IStory story)) story.Begin();
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(null);
+            if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(null);
+            PlayerLoadout.Restore(null, null);
             LastSaved = null;
             WaitingForChoice = false;
             Started = true;
@@ -282,6 +284,8 @@ namespace Pirates.Save
             }
 
             if (Services.TryGet(out ITreasureMaps maps)) data.treasureMapId = maps.ActiveId;
+            if (Services.TryGet(out ICollectibles collectibles)) data.collectibles = collectibles.Found;
+            data.equipped = PlayerLoadout.Capture();
 
             if (fame)
             {
@@ -500,6 +504,8 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial tutorial)) tutorial.Restore(data.hasTutorial ? data.tutorialStep : -1);
             if (Services.TryGet(out IStory story)) story.Restore(data.hasStory ? data.storyChapter : 0, data.hasStory ? data.storyProgress : null);
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(data.treasureMapId);
+            if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(data.collectibles);
+            PlayerLoadout.Restore(data.equipped, FindItem);
 
             PlaceShipAtBerth();
             if (missing.Count > 0)

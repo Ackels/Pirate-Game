@@ -3,6 +3,7 @@ using Pirates.Base;
 using Pirates.Controls;
 using Pirates.Core;
 using Pirates.Economy;
+using Pirates.Loot;
 using Pirates.Missions;
 using Pirates.Progression;
 using UnityEngine;
@@ -11,8 +12,8 @@ using UnityEngine.UIElements;
 namespace Pirates.UI
 {
     /// <summary>
-    /// Fama do capitão no HUD (M10, UI Toolkit): plaquinha no canto de cima à direita (patente, barra até a próxima, tecla C;
-    /// avisa quando há bônus para escolher), "+N fama" nos ganhos, faixa de patente nova e o painel da tecla C (pergaminho com
+    /// Fama do capitão no HUD (M10, UI Toolkit): plaquinha no canto de cima à direita só quando há bônus para escolher (21/10; antes
+    /// ficava sempre: patente, barra até a próxima, tecla C), "+N fama" nos ganhos, faixa de patente nova e o painel da tecla C (pergaminho com
     /// o retrato do capitão, nome, patente, estrelas, feitos, barra de fama, o que cada patente libera e os bônus: escolher um
     /// quando há patente nova). O painel não pausa; com ele aberto, os cliques são dele (ScreenPanel).
     /// </summary>
@@ -43,6 +44,8 @@ namespace Pirates.UI
 
         /// <summary>Painel aberto (teste pela CLI: Toggle sem teclado).</summary>
         public bool IsOpen => open;
+        /// <summary>Retrato do capitão (o medalhão da HUD a pé usa o mesmo).</summary>
+        public Texture2D Portrait => portrait;
 
         void OnEnable()
         {
@@ -91,13 +94,18 @@ namespace Pirates.UI
             }
         }
 
-        public void Toggle() => SetOpen(!open);
+        /// <summary>C: a aba Fama da tela do capitão (abre, fecha ou troca de aba).</summary>
+        public void Toggle() => CaptainBook.Toggle(CaptainBook.Tab.Fame);
+
+        void OnDestroy() => CaptainBook.Unregister(CaptainBook.Tab.Fame);
 
         void SetOpen(bool value)
         {
             if (value && window == null) return;
+            if (open == value) return;
             open = value;
             ScreenPanel.Open = value;
+            if (value) CaptainBook.RefreshTabs(window);
             window?.Show(value);
             // Os avisos de ação ("[F] atracar") ficam por cima das janelas: somem com o painel aberto.
             if (hud != null && hud.Prompts != null) Hud.Show(hud.Prompts, !value);
@@ -127,7 +135,9 @@ namespace Pirates.UI
 
             window = new HudWindow(hud.Windows, "hud-window--fame");
             window.SetTitle("Fama do capitão", "C ou Esc fecha");
-            window.AddPane(window.Body, () => Win.Mix(fame.Version, MissionBoardKey()), BuildBody);
+            CaptainBook.AddTabs(window, CaptainBook.Tab.Fame);
+            CaptainBook.Register(CaptainBook.Tab.Fame, () => open, SetOpen);
+            window.AddPane(window.Body, () => Win.Mix(Win.Mix(fame.Version, MissionBoardKey()), Collections.Current ? Collections.Current.Version : 0), BuildBody);
             Win.Spacer(window.Footer);
             window.Footer.Add(Win.Button("Fechar  <b>[C]</b>", () => SetOpen(false)));
             return true;
@@ -143,6 +153,8 @@ namespace Pirates.UI
             chipBar.Set(fame.RankProgress);
             bool pending = fame.PendingPerks > 0;
             chip.EnableInClassList("hud-fame-chip--pending", pending);
+            // 21/10 (pedido do Jhonata): a fama mora na aba Fama (C); a plaquinha só aparece para lembrar do bônus a escolher.
+            Hud.Show(chip, pending);
             string note = pending ? "bônus para escolher!"
                 : fame.IsMaxRank ? $"{fame.Fame} de fama · patente máxima"
                 : $"{fame.Fame} / {fame.RankFame(fame.Rank + 1)} de fama";
@@ -176,6 +188,7 @@ namespace Pirates.UI
             right.AddToClassList("hud-fame__right");
             BuildProgress(right);
             if (fame.PendingPerks > 0) BuildPerkChoice(right);
+            BuildCollections(right);
             BuildRanks(right);
             BuildPerks(right);
             Win.Text(right, "<i>Fama vem de afundar navios, derrotar acampamentos, calar fortes, desenterrar tesouros e entregar missões " +
@@ -210,14 +223,60 @@ namespace Pirates.UI
             Deed(deeds, "Acampamentos e fortes", fame.CampsCleared);
             Deed(deeds, "Tesouros desenterrados", fame.TreasuresFound);
             Deed(deeds, "Missões entregues", fame.MissionsDone);
+            var all = Collections.Current;
+            if (all)
+                foreach (var spec in all.All)
+                    Deed(deeds, spec.name, all.Count(spec.kind), all.Total(spec.kind));
         }
 
-        static void Deed(VisualElement parent, string label, int value)
+        static void Deed(VisualElement parent, string label, int value, int total = -1)
         {
             var row = Hud.Row("hud-fame__deed");
             row.Add(Hud.Text(label, "hud-window__small", "hud-grow"));
-            row.Add(Hud.Text($"<b>{value}</b>", "hud-fame__deed-value"));
+            row.Add(Hud.Text(total < 0 ? $"<b>{value}</b>" : $"<b>{value}</b>/{total}", "hud-fame__deed-value"));
             parent.Add(row);
+        }
+
+        /// <summary>
+        /// Coleções (C3, 19/10): quantos de cada, o prêmio (ou "completa") e as cartas das garrafas já achadas, na ordem; as que faltam
+        /// aparecem como perdidas.
+        /// </summary>
+        void BuildCollections(VisualElement parent)
+        {
+            var all = Collections.Current;
+            if (!all || all.All.Count == 0) return;
+            Win.Text(parent, "Coleções", "hud-window__subtitle-strong");
+            foreach (var spec in all.All)
+            {
+                int have = all.Count(spec.kind), total = all.Total(spec.kind);
+                if (total == 0) continue;
+                bool done = have >= total;
+                var box = Win.Section(parent, "hud-collection");
+                var top = Win.Row(box);
+                top.Add(Hud.Text($"<b>{spec.name}</b>", "hud-window__label", "hud-window__text", "hud-grow"));
+                top.Add(Hud.Text(done ? "completa!" : $"<b>{have}</b> de {total}", "hud-collection__count"));
+                var bar = new HudBar("hud-collection__bar");
+                bar.Set(total > 0 ? (float)have / total : 0f);
+                bar.SetColor(spec.kind == CollectibleKind.Coin ? CollectiblesHUD.Silver : new Color(0.55f, 0.78f, 0.62f));
+                box.Add(bar);
+                Win.Text(box, done ? $"<b>Prêmio recebido:</b> {spec.rewardText}" : $"<b>Prêmio da coleção completa:</b> {spec.rewardText}",
+                    "hud-window__small");
+                if (spec.kind == CollectibleKind.Bottle) BuildLetters(box, all);
+            }
+        }
+
+        static void BuildLetters(VisualElement parent, Collections all)
+        {
+            var letters = new List<Collectible>();
+            foreach (var c in all.Items)
+                if (c && c.Kind == CollectibleKind.Bottle) letters.Add(c);
+            letters.Sort((a, b) => a.Number.CompareTo(b.Number));
+            foreach (var c in letters)
+            {
+                bool found = all.IsFound(c);
+                Win.Text(parent, found ? $"<b>Carta {c.Number}.</b> <i>{c.Message}</i>" : $"<b>Carta {c.Number}.</b> <i>ainda perdida em alguma praia...</i>",
+                    "hud-window__small", found ? "hud-collection__letter" : "hud-window__muted");
+            }
         }
 
         void BuildProgress(VisualElement parent)

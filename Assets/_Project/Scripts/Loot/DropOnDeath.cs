@@ -31,8 +31,13 @@ namespace Pirates.Loot
         void Drop()
         {
             if (!sackPrefab || items.Length == 0) return;
+            // Equipamento (E2: o machado do brutamontes, o espadão do Barba-Negra) só cai uma vez: quem já tem não ganha outro.
+            var drop = new List<ItemStack>(items.Length);
+            foreach (var stack in items)
+                if (stack.item && !(stack.item.category == ItemCategory.Gear && PlayerStorage.Has(stack.item))) drop.Add(stack);
+            if (drop.Count == 0) return;
             var sack = Instantiate(sackPrefab, transform.position + Vector3.up * 0.05f, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
-            sack.Setup(new List<ItemStack>(items));
+            sack.Setup(drop);
         }
     }
 }

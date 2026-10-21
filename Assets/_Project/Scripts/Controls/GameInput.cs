@@ -45,6 +45,10 @@ namespace Pirates.Controls
         public InputAction Cancel { get; }
         /// <summary>Abre/fecha o painel da fama do capitão (M10), no navio e a pé.</summary>
         public InputAction Fame { get; }
+        /// <summary>Tela de equipamento (E1, 19/10): I.</summary>
+        public InputAction Equipment { get; }
+        /// <summary>Diário de missões (21/10): J (aba Missões da tela do capitão).</summary>
+        public InputAction Journal { get; }
 
         public InputAction CameraOrbitKeys { get; }
 
@@ -163,6 +167,8 @@ namespace Pirates.Controls
 
             Fame = sailing.AddAction("Fame", InputActionType.Button, binding: "<Keyboard>/c");
             Fame.AddBinding("<Gamepad>/select");
+            Equipment = sailing.AddAction("Equipment", InputActionType.Button, binding: "<Keyboard>/i");
+            Journal = sailing.AddAction("Journal", InputActionType.Button, binding: "<Keyboard>/j");
 
             sailing.Enable();
         }

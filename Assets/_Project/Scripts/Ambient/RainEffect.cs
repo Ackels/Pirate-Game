@@ -149,6 +149,14 @@ namespace Pirates.Ambient
         {
             if (!cam) cam = Camera.main;
             if (!cam || !Services.TryGet(out IWeather weather)) return;
+            if (CoveredArea.Inside)
+            {
+                // Debaixo da terra não chove (as gotas que estavam no ar ficaram lá fora).
+                emission.rateOverTime = 0f;
+                splashDebt = 0f;
+                if (drops.particleCount > 0) drops.Clear();
+                return;
+            }
             float rain = weather.Rain;
             emission.rateOverTime = rain <= 0.01f ? 0f : rainRate * rain + stormExtra * weather.Storm;
             if (rain <= 0.01f)

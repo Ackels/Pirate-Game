@@ -236,6 +236,8 @@ namespace Pirates.OnFoot
         }
 
         static readonly RaycastHit[] laserHits = new RaycastHit[16];
+        float enemyLineWidth = -1f;
+        Color enemyLineColor;
 
         void UpdateAimLine(Transform gun, WeaponDefinition weapon)
         {
@@ -248,11 +250,22 @@ namespace Pirates.OnFoot
             Vector3 from = gun.position;
             if (!reticle)
             {
-                // Inimigo: linha seguindo o cano (o aviso de que vai atirar), na cor do gerador.
+                // Inimigo: linha seguindo o cano (o aviso de que vai atirar), na cor do gerador. Nos últimos instantes antes do tiro
+                // (revisão de 21/10) ela engrossa e pisca clara: é a hora de rolar.
                 float length = Mathf.Max(1f, Vector3.Distance(from, aimPoint));
                 aimLine.positionCount = 2;
                 aimLine.SetPosition(0, from);
                 aimLine.SetPosition(1, from + gun.forward * length);
+                if (enemyLineWidth < 0f)
+                {
+                    enemyLineWidth = aimLine.widthMultiplier;
+                    enemyLineColor = aimLine.startColor;
+                }
+                float warn = combat.ShotWarning;
+                aimLine.widthMultiplier = enemyLineWidth * (1f + 1.6f * warn);
+                var flash = warn > 0f && Mathf.Repeat(Time.time * 14f, 1f) < 0.5f ? Color.Lerp(enemyLineColor, new Color(1f, 0.95f, 0.6f, 1f), warn) : enemyLineColor;
+                aimLine.startColor = flash;
+                aimLine.endColor = new Color(flash.r, flash.g, flash.b, flash.a * 0.8f);
                 return;
             }
 

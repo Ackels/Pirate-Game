@@ -1,6 +1,6 @@
 {
     "name": "Pirates.VFX",
     "rootNamespace": "Pirates.VFX",
-    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.OnFoot", "Pirates.Loot"],
+    "references": ["Pirates.Core", "Pirates.Ships", "Pirates.Combat", "Pirates.OnFoot", "Pirates.Loot", "Pirates.Economy"],
     "autoReferenced": true
 }

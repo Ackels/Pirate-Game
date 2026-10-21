@@ -74,6 +74,16 @@ namespace Pirates.Ambient
         [Tooltip("Lanternas acesas (0–1) com a tempestade cheia, mesmo de dia.")]
         [Range(0f, 1f)] public float stormLanterns = 0.7f;
 
+        [Header("Zona coberta (catacumbas, cavernas)")]
+        [Tooltip("Debaixo da terra a hora não aparece: a luz do sol vira uma luz fraca e fria de cima (as frestas), com sombra, e o fundo fica preto.")]
+        public float coveredLightIntensity = 0.42f;
+        public Color coveredLightColor = new(0.62f, 0.72f, 0.9f);
+        [Tooltip("Giro da luz de cima (graus: inclinação, direção).")]
+        public Vector2 coveredLightAngles = new(72f, 35f);
+        [Range(0f, 1f)] public float coveredShadow = 0.8f;
+        [Tooltip("Luz ambiente debaixo da terra (bem escura: quem ilumina são as tochas).")]
+        public Color coveredAmbient = new(0.14f, 0.14f, 0.17f);
+
         static Gradient DefaultSunColor()
         {
             var g = new Gradient();

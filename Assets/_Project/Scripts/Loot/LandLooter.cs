@@ -22,9 +22,18 @@ namespace Pirates.Loot
         [SerializeField] float sackRange = 1.4f;
         [Tooltip("Onde ficam os esquemas que o jogador já tem (porão do navio): o baú não sorteia repetido.")]
         [SerializeField] Inventory knownItems;
+        [Header("Largar itens (21/10)")]
+        [Tooltip("Saco que aparece no chão quando o capitão larga itens da mochila (o mesmo dos caixotes).")]
+        [SerializeField] LootSack dropSack;
+        [Tooltip("Segundos até o saco largado sumir (sem prazo, dava para estocar saque pelo mapa).")]
+        [SerializeField, Min(10f)] float dropLifetime = 180f;
+        [Tooltip("Largar de novo a menos disto do último saco largado junta no mesmo saco (o prazo não renova).")]
+        [SerializeField] float dropMergeRange = 1.6f;
 
         Inventory backpack;
         Health health;
+        LootSack lastDropped;
+        static readonly RaycastHit[] groundHits = new RaycastHit[8];
         float fullWarningAt = float.NegativeInfinity;
 
         public Inventory Backpack => backpack;
@@ -42,8 +51,80 @@ namespace Pirates.Loot
         public event Action<ItemStack, bool> Transferred;
         /// <summary>Passou por um saque e não coube tudo.</summary>
         public event Action BackpackFull;
+        /// <summary>Largou itens da mochila num saco no chão (o que largou e os segundos até o saco sumir).</summary>
+        public event Action<ItemStack, float> Dropped;
+
+        public float DropLifetime => dropLifetime;
 
         public void Configure(Inventory knownSchematics) => knownItems = knownSchematics;
+
+        public void ConfigureDrop(LootSack sack, float lifetime = 180f)
+        {
+            dropSack = sack;
+            dropLifetime = lifetime;
+        }
+
+        /// <summary>Por que não dá para largar este item agora (null = dá). Equipamento nunca: sumiria para sempre com o saco.</summary>
+        public string DropBlockReason(ItemDefinition item)
+        {
+            if (!dropSack) return "não dá para largar itens aqui";
+            if (!item || backpack.Count(item) <= 0) return "não está na mochila";
+            if (item.category == ItemCategory.Gear) return "equipamento não se larga: guarde no armazém do porto";
+            if (IsDead) return "o capitão caiu";
+            if (Current) return "feche o baú primeiro";
+            return TryDropPoint(out _) ? null : "aqui não dá: largue em terra firme";
+        }
+
+        /// <summary>
+        /// Larga até <paramref name="amount"/> de um item da mochila num saco no chão, à frente do capitão (ou no último saco largado, se
+        /// estiver perto). Devolve quantos saíram.
+        /// </summary>
+        public int Drop(ItemDefinition item, int amount)
+        {
+            if (DropBlockReason(item) != null || amount <= 0 || !TryDropPoint(out var point)) return 0;
+            int n = backpack.Remove(item, Mathf.Min(amount, backpack.Count(item)));
+            if (n <= 0) return 0;
+            var stack = new ItemStack(item, n);
+            if (lastDropped && (lastDropped.transform.position - point).sqrMagnitude < dropMergeRange * dropMergeRange)
+            {
+                lastDropped.Add(stack);
+                lastDropped.Hold(transform);
+            }
+            else
+            {
+                lastDropped = Instantiate(dropSack, point, Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
+                lastDropped.Setup(new List<ItemStack> { stack }, dropLifetime, transform);
+            }
+            Dropped?.Invoke(stack, lastDropped.SecondsLeft);
+            return n;
+        }
+
+        /// <summary>Chão firme um passo à frente do capitão (fora da água funda); senão aos pés dele.</summary>
+        bool TryDropPoint(out Vector3 point)
+        {
+            var forward = transform.forward;
+            forward.y = 0f;
+            forward = forward.sqrMagnitude > 0.01f ? forward.normalized : Vector3.forward;
+            if (Ground(transform.position + forward * 0.8f, out point) || Ground(transform.position, out point)) return true;
+            return false;
+        }
+
+        bool Ground(Vector3 at, out Vector3 point)
+        {
+            point = at;
+            int hits = Physics.RaycastNonAlloc(at + Vector3.up * 1.5f, Vector3.down, groundHits, 4f, ~0, QueryTriggerInteraction.Ignore);
+            float best = float.PositiveInfinity;
+            for (int i = 0; i < hits; i++)
+            {
+                var h = groundHits[i];
+                if (h.collider.transform.IsChildOf(transform) || h.normal.y < 0.6f || h.distance >= best) continue;
+                best = h.distance;
+                point = h.point + Vector3.up * 0.05f;
+            }
+            if (float.IsPositiveInfinity(best)) return false;
+            // Na água funda o saco sumiria debaixo d'água.
+            return !Services.TryGet(out IOceanSampler ocean) || point.y > ocean.GetHeight(point) - 0.25f;
+        }
 
         void Awake()
         {
@@ -79,7 +160,7 @@ namespace Pirates.Loot
                 return true;
             }
             Current = Nearby;
-            Current.Roll(knownItems);
+            Current.Open(knownItems);
             Current.IsBeingLooted = true;
             return true;
         }
@@ -129,7 +210,14 @@ namespace Pirates.Loot
             for (int i = LootSack.Active.Count - 1; i >= 0; i--)
             {
                 var sack = LootSack.Active[i];
-                if (Distance(sack.transform) > sackRange) continue;
+                float d = Distance(sack.transform);
+                // Saco que este capitão acabou de largar: só volta a pegar depois de se afastar.
+                if (sack.HeldFrom == transform)
+                {
+                    if (d > sackRange + 0.6f) sack.Release();
+                    continue;
+                }
+                if (d > sackRange) continue;
                 var moved = sack.TakeInto(backpack, out bool leftovers);
                 foreach (var stack in moved) Transferred?.Invoke(stack, true);
                 // Mochila cheia: avisa de vez em quando (o saco continua ali).
