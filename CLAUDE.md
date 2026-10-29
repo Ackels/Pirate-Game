@@ -442,6 +442,10 @@ explodem e voltam como antes (testado) | ✅ aprovado (29/10) |
 baú, destroços, conversa, painel I/J/C, menu inicial ou pausa aberta, a roda do mouse só rola a janela e o zoom fica igual
 (`ElevatedCameraRig.PointerBusy`: `ScreenPanel.Open`, `TitleScreen.Showing` ou alguma `IInteraction` aberta no alvo da câmera, navio ou
 capitão; pescar e cortar/minerar não travam, a pedido) | ✅ aprovado (29/10) |
+| Build 0.3 (29/10, pedido do Jhonata antes de os créditos acabarem): `Builds/ACoroaDePrata_0.3/` e `Builds/A_Coroa_de_Prata_0.3.zip`
+(116 MB, sem a pasta BackUpThisFolder), versão 0.3.0, com tudo até as mochilas 25/37/50; aberto 50 s: menu, 0 exceções no `Player.log`.
+Commit 0512dbc enviado ao GitHub. **Próximos combinados (29/10): D2 passo 2 (rede do navio parado), D3 (dois marujos lutando junto a
+pé) e G (Esquadra Real + mercantes, procurado), nessa ordem** | ⏳ **para o Jhonata e os amigos testarem** |
 | Build 0.2 (29/10): `Builds/ACoroaDePrata_0.2/` e `Builds/A_Coroa_de_Prata_0.2.zip` (115 MB), versão 0.2.0, com o menu de pausa, a taverna e o
 ferreiro, o barril novo e a luz corrigida | ⏳ **para o Jhonata e os amigos testarem** |
 | R1 Revisão das animações do combate a pé, passo 1 de 5: base fluida do Animator (cenas 06 e 07; pedido do Jhonata em 21/10: "deixar extremamente polidas as animações, tanto dos inimigos quanto do nosso personagem"; revisão completa com 5 passos: 1 base, 2 controles do capitão, 3 leitura dos inimigos, 4 movimento dos inimigos, 5 peso do impacto): **as ações entram na hora** (nenhuma transição deixava ser cortada: rolar apertado aos 0,70 s do golpe aparecia aos 1,00 s; agora 0,70 s; chute e levar golpe iguais); **a guarda sobe na hora** de qualquer estado (erguida aos 0,50 s do golpe só aparecia aos 1,00 s; agora 0,52 s) e baixa ao soltar no meio do tranco; **a volta de cada ação vai direto à pose da arma** (levar golpe, rolar, chutar, cambalear, cair, levantar, grito do brutamontes, sair da cova: antes o braço da espada caía para a pose sem arma por ~0,45 s); **pancada não corta** o rolamento, a guarda, o chute, o arremesso, a alavanca nem o cambaleio do aparo (vira só o tranco do corpo); **brutamontes e Barba-Negra sem patinar** (o ritmo das pernas pelo tamanho: o brutamontes correndo a 4,4 m/s anima como 3,3 de um pirata comum, antes 4,4); corpo inteiro × só o tronco sem meio-termo (as pernas paradas misturadas com as andando escorregavam) e entrando junto com a transição no rolamento e no chute (antes estalava num quadro); combos do machado e do espadão emendando com mistura de 0,18 s (era 0,12); Animator limpo (300 peças sem uso, 343 → 244 KB) | ✅ aprovado (23/10) |
@@ -2084,6 +2088,9 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   `lootact.cs` + `lootact.txt` (`cell coluna índice cliques`, `button texto`, `dump`, `pause`; deixa o capitão invencível), `wreck.cs`
   (`sink` afunda a chalupa mais perto, `go` leva o navio aos destroços e abre, `chest` põe esquema e sabre); para fotos use o baú da Ermida
   (no do tesouro da Ilha Oeste os piratas atiram e o baú fecha).
+  **Build pelo terminal do Claude:** o `.exe` aberto pelo shell grava no `AppData/LocalLow` virtual do sandbox: leia o `Player.log`
+  pelo shell (`$USERPROFILE/AppData/LocalLow/...`), não pelo eval do Unity; o save real não é tocado. Feche com `CloseMainWindow`
+  (matando à força o log fica cortado). O erro que o relatório do build conta é o tempo esgotado da CLI, não do jogo.
   **Cuidado com `sed -i` no Git Bash:** num arquivo CRLF ele grava LF no arquivo inteiro (aconteceu com o `Hud.uss` em 29/10; voltei com Python).
   **HUD do navio (H3, 21/10):** `ShipDebugHUD` refeito em três peças: `nav` (TopLeft, `hud-nav`), `plate` (BottomLeft, reaproveita as
   classes `hud-player*` da HUD a pé + `hud-ship*`) e `artillery` (Loadout, `hud-guns`/`hud-gun` + os `hud-slot` da HUD a pé). Ícones em
