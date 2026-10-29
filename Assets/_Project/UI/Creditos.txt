@@ -8,12 +8,18 @@ Jhonata Caetano
 Jhonata Caetano, com a ajuda do Claude (Anthropic)
 
 <size=24><b>Modelos 3D</b></size>
-Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit — CC0
-Quaternius (quaternius.com): Pirate Kit — CC0
+Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Castle Kit, Graveyard Kit — CC0
+Quaternius (quaternius.com): Pirate Kit, Ultimate Modular Ruins, Ultimate Monsters, Animated Monster Pack — CC0
+Pixit3D - Fish Free Pack — Pixit Games (Unity Asset Store)
+Quirky Series - FREE Animals Pack — Omabuarts Studio (Unity Asset Store)
 
 <size=24><b>Animações</b></size>
 Mixamo (Adobe)
 Unity Starter Assets — Third Person (Unity Technologies)
+RPG Character Mecanim Animation Pack FREE — Explosive (Unity Asset Store)
+Human Basic Motions FREE, Human Melee Animations FREE e Human Crafting Animations FREE — Kevin Iglesias (Unity Asset Store)
+Skeleton Animations FREE e IK Helper Tool — Kevin Iglesias (Unity Asset Store)
+Dwarf Melee Animations FREE e Dwarf Basic Motions FREE — Kevin Iglesias (Unity Asset Store)
 
 <size=24><b>Interface e efeitos</b></size>
 Kenney: UI Pack Adventure, UI Pack RPG Expansion, Particle Pack — CC0

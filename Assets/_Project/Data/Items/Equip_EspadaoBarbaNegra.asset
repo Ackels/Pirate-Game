@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Espad\xE3o do Barba-Negra"
   category: 3
   rarity: 3
+  group: 0
   color: {r: 0.82, g: 0.52, b: 1, a: 1}
   spacePerUnit: 0
-  description: "A l\xE2mina negra do Capit\xE3o Barba-Negra, que ele largou nas ru\xEDnas da Caveira. Arco largo; o terceiro golpe do combo corta duas vezes e derruba."
+  description: "A l\xE2mina negra do Capit\xE3o Barba-Negra, que ele largou nas ru\xEDnas da Caveira. Arco largo; o terceiro golpe do combo, de cima, derruba."
   icon: {fileID: 2800000, guid: c58ee2d26dd3b6b428c0a46a91da3d39, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 1
   equipment: {fileID: 11400000, guid: def13b2e192cd9a49812687bbf5e0d8a, type: 2}

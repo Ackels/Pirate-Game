@@ -142,12 +142,8 @@ namespace Pirates.EditorTools
             var gun = PistolOn(model, iron, wood, brass, out Transform muzzle, out Transform gunHand, out Transform gunHolster);
             var bigGun = BlunderbussOn(model, iron, wood, out Transform bigMuzzle, out Transform bigGunHand, out Transform bigGunHolster);
             var tracer = ShotTracer(character.transform);
-            // Mira (botão direito, 05/10: pedido do Jhonata): laser vermelho forte da boca até onde a bala bate, com brilho largo em
-            // volta e um ponto no fim; travado num alvo, um anel dourado contorna o corpo dele (a linha branca fina quase não se via).
-            var laserColor = new Color(1f, 0.12f, 0.08f, 1f);
-            var aimLine = AimLine(character.transform, laserColor, 0.065f);
-            var glow = AimLine(character.transform, laserColor, 0.15f);
-            glow.name = "BrilhoDoLaser";
+            // Mira (botão direito): anel de latão onde a bala para; travado num alvo, um anel dourado contorna o corpo dele. Sem linha:
+            // o laser vermelho de 05/10 saiu em 28/10 ("em um jogo de pirata não faz muito sentido").
 
             // Começa com o cutelo na mão, a pistola no cinto e o bacamarte nas costas (o CharacterCombat refaz isso ao iniciar).
             gun.SetParent(gunHolster, false);
@@ -156,9 +152,9 @@ namespace Pirates.EditorTools
             combat.Configure(new[] { cutlass, pistol, blunderbuss }, new[] { sword, gun, bigGun },
                 new[] { swordHand, gunHand, bigGunHand }, new[] { swordHolster, gunHolster, bigGunHolster }, muzzle, tracer);
             combat.SetMuzzles(new[] { null, muzzle, bigMuzzle });
-            var rig = AddAimRig(model, combat, muzzle, aimLine);
+            var rig = AddAimRig(model, combat, muzzle);
             if (!rig) return;
-            rig.ConfigureReticle(Reticle(character.transform), glow, laserColor, new Color(1f, 0.8f, 0.25f, 1f));
+            rig.ConfigureReticle(Reticle(character.transform), new Color(0.62f, 0.4f, 0.14f, 0.95f), new Color(1f, 0.8f, 0.25f, 1f));
             RifleAimYaw(model, out float rifleUpper, out float rifleFull);
             rig.ConfigureTwoHanded(rifleUpper, rifleFull);
         }
@@ -170,8 +166,8 @@ namespace Pirates.EditorTools
             ring.transform.SetParent(parent, false);
             ring.useWorldSpace = true;
             ring.loop = true;
-            // Grosso: pequeno, vira o ponto do laser; grande, o anel em volta do alvo travado.
-            ring.widthMultiplier = 0.07f;
+            // A grossura muda com o anel (o CharacterAimRig põe: fino onde a bala para, grosso em volta do alvo travado).
+            ring.widthMultiplier = 0.065f;
             ring.shadowCastingMode = ShadowCastingMode.Off;
             ring.sharedMaterial = GetTransparentMaterial("M_AimLine", Color.white);
             ring.enabled = false;
@@ -184,7 +180,8 @@ namespace Pirates.EditorTools
         {
             Transform hand = Bone(model, HumanBodyBones.RightHand);
             Transform hips = Bone(model, HumanBodyBones.Hips);
-            HandGrip(model, out Vector3 arm, out Vector3 thumb);
+            // Em pé (cão para cima) na pose de mira que o jogo usa.
+            HandGrip(model, PistolAimClip(), out Vector3 arm, out Vector3 thumb);
             var gun = Pistol(hand, arm, thumb, iron, wood, brass, out muzzle);
             handSlot = SlotFor(gun, hand, "Mao_Pistola");
             holsterSlot = BeltHolster(hips, model);
@@ -206,29 +203,108 @@ namespace Pirates.EditorTools
             return tracer;
         }
 
-        /// <summary>Linha fina da mira segurada, da boca da pistola até o alvo, sumindo na ponta.</summary>
-        static LineRenderer AimLine(Transform parent, Color color, float width = 0.015f)
-        {
-            var line = new GameObject("LinhaDeMira").AddComponent<LineRenderer>();
-            line.transform.SetParent(parent, false);
-            line.useWorldSpace = true;
-            line.widthMultiplier = width;
-            line.shadowCastingMode = ShadowCastingMode.Off;
-            line.sharedMaterial = GetTransparentMaterial("M_AimLine", Color.white);
-            line.startColor = color;
-            line.endColor = new Color(color.r, color.g, color.b, 0f);
-            line.enabled = false;
-            return line;
-        }
-
         /// <summary>Mira procedural da pistola (braço e tronco seguem o alvo), com a pose medida no clipe.</summary>
-        static CharacterAimRig AddAimRig(Transform model, CharacterCombat combat, Transform muzzle, LineRenderer aimLine)
+        static CharacterAimRig AddAimRig(Transform model, CharacterCombat combat, Transform muzzle)
         {
             if (!model || !model.TryGetComponent(out Animator animator) || !animator.isHuman) return null;
-            AimPoseArmYaw(model, ClipPistolAim, out float upperBodyYaw, out float fullBodyYaw);
+            AimPoseArmYaw(model, PistolAimClip(), out float upperBodyYaw, out float fullBodyYaw);
             var rig = model.gameObject.AddComponent<CharacterAimRig>();
-            rig.Configure(combat, muzzle, aimLine, upperBodyYaw, fullBodyYaw);
+            rig.Configure(combat, muzzle, upperBodyYaw, fullBodyYaw);
             return rig;
+        }
+
+        /// <summary>
+        /// Aviso do atirador inimigo (28/10, no lugar da linha vermelha): faíscas e fumacinha na caçoleta (no alto da arma, logo à frente
+        /// da mão), a pólvora acendendo enquanto ele mira; o CharacterAimRig liga e aumenta perto do tiro.
+        /// </summary>
+        static void AddFuse(CharacterAimRig rig, Transform muzzle, float pan)
+        {
+            if (!rig || !muzzle || !muzzle.parent) return;
+            var gun = muzzle.parent;
+            var at = new GameObject("Cacoleta").transform;
+            at.SetParent(gun, false);
+            // Eixos da arma: +X = cano, +Y = alto (cão). A caçoleta fica na culatra, logo acima do cano (a altura da boca): a pistola do kit
+            // é grande e, a 5 cm da mão, as faíscas saíam do cabo, na altura do quadril.
+            at.localPosition = new Vector3(pan, muzzle.localPosition.y + 0.04f, 0f);
+            at.localRotation = Quaternion.LookRotation(Vector3.up);
+            rig.ConfigureFuse(FuseParticles(at, "Faiscas", FuseKind.Sparks), FuseParticles(at, "Fumacinha", FuseKind.Smoke),
+                FuseParticles(at, "Brasa", FuseKind.Glow));
+        }
+
+        enum FuseKind { Sparks, Smoke, Glow }
+
+        /// <summary>
+        /// Partículas da caçoleta, grandes o bastante para a câmera do jogo (~15 m): com 3–7 cm as faíscas não apareciam nem de perto.
+        /// </summary>
+        static ParticleSystem FuseParticles(Transform parent, string name, FuseKind kind)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main;
+            main.playOnAwake = true;
+            main.loop = true;
+            main.duration = 1f;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.radius = 0.03f;
+            AnimationCurve sizeCurve;
+            float midAlpha;
+            switch (kind)
+            {
+                case FuseKind.Sparks:
+                    main.maxParticles = 120;
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.2f, 0.45f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f, 3.2f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.1f, 0.2f);
+                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.9f, 0.5f, 1f), new Color(1f, 0.55f, 0.15f, 1f));
+                    main.gravityModifier = 0.6f;
+                    shape.angle = 45f;
+                    sizeCurve = AnimationCurve.Linear(0f, 1f, 1f, 0.25f);
+                    midAlpha = 0.9f;
+                    break;
+                case FuseKind.Smoke:
+                    main.maxParticles = 30;
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.8f, 1.4f);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(0.25f, 0.6f);
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.25f, 0.45f);
+                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.55f, 0.53f, 0.5f, 0.75f), new Color(0.72f, 0.7f, 0.66f, 0.6f));
+                    main.gravityModifier = -0.05f;
+                    shape.angle = 15f;
+                    sizeCurve = AnimationCurve.Linear(0f, 0.6f, 1f, 1.8f);
+                    midAlpha = 0.7f;
+                    break;
+                default:
+                    // Brasa: um clarão laranja que pisca parado na caçoleta.
+                    main.maxParticles = 24;
+                    main.startLifetime = new ParticleSystem.MinMaxCurve(0.25f, 0.4f);
+                    main.startSpeed = 0f;
+                    main.startSize = new ParticleSystem.MinMaxCurve(0.22f, 0.36f);
+                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.6f, 0.2f, 0.9f), new Color(1f, 0.82f, 0.4f, 0.8f));
+                    shape.enabled = false;
+                    sizeCurve = AnimationCurve.Linear(0f, 1f, 1f, 0.7f);
+                    midAlpha = 1f;
+                    break;
+            }
+            var emission = ps.emission;
+            emission.rateOverTime = 0f;
+            var size = ps.sizeOverLifetime;
+            size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
+            var color = ps.colorOverLifetime;
+            color.enabled = true;
+            var fade = new Gradient();
+            fade.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(midAlpha, 0.4f), new GradientAlphaKey(0f, 1f) });
+            color.color = fade;
+            var renderer = go.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = kind == FuseKind.Smoke ? FxMaterial("M_FX_Fumaca", "smoke_04", additive: false)
+                : FxMaterial("M_FX_Brilho", "circle_05", additive: true);
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            return ps;
         }
 
         /// <summary>Pistola dos piratas: menos dano e precisão, recarga mais longa. Mirando (a IA sempre mira) atira na hora.</summary>
@@ -256,7 +332,9 @@ namespace Pirates.EditorTools
         /// Bacamarte dos piratas (inimigo novo, passo 3 de 09/10): 6 chumbos × 7 = 42 colado (o capitão tem 100), leque de 18°, só até 13 m,
         /// recarga de 4,5 s: perigoso de perto, fácil de punir na recarga. Mesmo modelo e animações do bacamarte do jogador.
         /// </summary>
-        static WeaponDefinition EnemyBlunderbuss() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Bacamarte_Pirata.asset", w =>
+        static WeaponDefinition EnemyBlunderbuss() => WithSupportHand(EnemyBlunderbussAsset(), RifleSupport);
+
+        static WeaponDefinition EnemyBlunderbussAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Bacamarte_Pirata.asset", w =>
         {
             JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(BlunderbussWeapon()), w);
             w.displayName = "Bacamarte de pirata";
@@ -273,7 +351,9 @@ namespace Pirates.EditorTools
             name.StartsWith("Bacamarteiro") ? EnemyBlunderbuss() : IsChief(name) ? ChiefSword() : IsBrute(name) ? BruteAxe() : IsDuelist(name) ? DuelistDagger() : gunner ? pistol : cutlass;
 
         /// <summary>Cutelo dos piratas inimigos: mais fraco e com o golpe mais lento (dá para ver vindo e reagir).</summary>
-        static WeaponDefinition EnemyCutlass() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Cutelo_Pirata.asset", w =>
+        static WeaponDefinition EnemyCutlass() => EnemyMeleeMoves(EnemyCutlassAsset());
+
+        static WeaponDefinition EnemyCutlassAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Cutelo_Pirata.asset", w =>
         {
             const float animSpeed = 0.7f;
             w.displayName = "Cutelo de pirata";
@@ -443,12 +523,14 @@ namespace Pirates.EditorTools
         /// O modelo não tem ossos de dedo mapeados, então vêm do clipe "Pistol Aim" do Mixamo: nele o antebraço aponta
         /// para o alvo e o polegar fica para cima. Valem para qualquer pose (são do osso, não do mundo).
         /// </summary>
-        static void HandGrip(Transform model, out Vector3 arm, out Vector3 thumb)
+        static void HandGrip(Transform model, out Vector3 arm, out Vector3 thumb) => HandGrip(model, MixamoClip(ClipPistolAim), out arm, out thumb);
+
+        /// <summary>Os mesmos eixos medidos em outra pose de mira (a pistola usa a do Human Soldier: lá o punho fica girado ~90°).</summary>
+        static void HandGrip(Transform model, AnimationClip clip, out Vector3 arm, out Vector3 thumb)
         {
             // Sem o clipe: eixos típicos de um osso de mão humanoide (dedos em +X local, polegar em +Z).
             arm = Vector3.right;
             thumb = Vector3.forward;
-            var clip = MixamoClip(ClipPistolAim);
             var temp = clip ? MeasureCopy(model) : null;
             if (!temp) return;
 
@@ -469,11 +551,13 @@ namespace Pirates.EditorTools
         /// com o corpo inteiro (o quadril do clipe fica de lado) e só com o tronco (quadril da locomoção, de frente).
         /// O personagem vira o contrário disso ao mirar, e o braço já sai apontado para o alvo.
         /// </summary>
-        static void AimPoseArmYaw(Transform model, string clipName, out float upperBody, out float fullBody)
+        static void AimPoseArmYaw(Transform model, string clipName, out float upperBody, out float fullBody) =>
+            AimPoseArmYaw(model, MixamoClip(clipName), out upperBody, out fullBody);
+
+        static void AimPoseArmYaw(Transform model, AnimationClip clip, out float upperBody, out float fullBody)
         {
             upperBody = -45f;
             fullBody = -20f;
-            var clip = MixamoClip(clipName);
             var temp = clip ? MeasureCopy(model) : null;
             if (!temp) return;
 
@@ -598,6 +682,8 @@ namespace Pirates.EditorTools
             AddParameter(controller, "Down", AnimatorControllerParameterType.Bool);
             AddParameter(controller, "Dead", AnimatorControllerParameterType.Bool);
             AddParameter(controller, "Block", AnimatorControllerParameterType.Bool);
+            AddParameter(controller, "Fishing", AnimatorControllerParameterType.Bool);
+            AddParameter(controller, "Gathering", AnimatorControllerParameterType.Bool);
             AddParameter(controller, "BlockHit", AnimatorControllerParameterType.Trigger);
             AddParameter(controller, "Parried", AnimatorControllerParameterType.Trigger);
             AddParameter(controller, "Taunt", AnimatorControllerParameterType.Trigger);
@@ -631,6 +717,8 @@ namespace Pirates.EditorTools
             var ready = State(sm, "EspadaPronta", ClipDraw, 1f, new Vector3(0f, -60f));
             ready.timeParameterActive = true;
             ready.timeParameter = "PoseTime";
+            // Human Melee Animations (27/10): postura de luta em loop no lugar do quadro congelado.
+            UseMeleeReadyPose(ready);
             var slash1 = State(sm, "Golpe1", ClipSlashOut, SlashSpeed, new Vector3(600f, -60f));
             var slash2 = State(sm, "Golpe2", ClipSlashIn, SlashSpeed, new Vector3(600f, 20f));
             var draw = State(sm, "Sacar", ClipDraw, DrawSpeed, new Vector3(600f, 100f));
@@ -639,6 +727,7 @@ namespace Pirates.EditorTools
             var aim = State(sm, "PistolaMirando", ClipPistolAim, 1f, new Vector3(0f, 220f));
             var shoot = State(sm, "Tiro", ClipShoot, ShootSpeed, new Vector3(300f, 300f));
             var reload = State(sm, "Recarga", ClipGunplay, 1f, new Vector3(0f, 320f));
+            UseSoldierPistol(aim, shoot, reload);
             foreach (var st in new[] { slash1, slash2, draw, sheath, idle, reload }) st.tag = FullBodyTag;
             aim.tag = AimTag;
             shoot.tag = AimTag;
@@ -666,6 +755,7 @@ namespace Pirates.EditorTools
                     ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, CutlassFinisherVariant));
                 Exit(slash3, ready, Mathf.Min(0.95f, (finisherImpact + FinisherFollow) / finisherClip.length), 0.3f);
             }
+            AddMeleeSlash(sm, ready);
             Any(sm, shoot, 0f, 0.1f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 1));
             Any(sm, draw, 0f, 0.15f, ("Equip", AnimatorConditionMode.If, 0));
             Any(sm, sheath, 0f, 0.15f, ("Holster", AnimatorConditionMode.If, 0));
@@ -706,15 +796,21 @@ namespace Pirates.EditorTools
             AddFirearmStates(sm, empty, 2, "Bacamarte", new Vector3(-300f, 120f),
                 Or(ClipRifleIdle, Or(ClipRifleAim, ClipPistolIdle)), Or(ClipRifleAim, ClipPistolAim), Or(ClipRifleShoot, ClipShoot),
                 Or(ClipRifleReload, ClipGunplay), MixamoClip(ClipRifleRun) ? ClipRifleRun : null);
+            UseSoldierRifle(sm, "Bacamarte");
 
             AddHitAndDeath(sm, empty);
             AddDodge(sm, empty);
             AddKickAndKnockdown(sm, empty);
+            AddFishingStates(sm, empty);
+            AddGatherStates(sm, empty);
             AddBlock(sm, empty, ready, run);
             AddAxe(sm, empty);
+            AddBruteAxe(sm, empty);
             AddDagger(sm, ready);
+            AddSkeletonAttacks(sm, ready);
             AddRise(sm, empty);
             AddGreatsword(sm, empty);
+            AddPlayerHeavyAttacks(sm);
             ExitsToWeaponPose(sm, empty);
             AllowInterruptions(sm);
 
@@ -733,7 +829,9 @@ namespace Pirates.EditorTools
             controller.layers = layers;
 
             AddEatLayer(controller);
+            UseBasicMotions(controller);
             AddStrafeLocomotion(controller);
+            EnableSupportHandIK(controller);
             PruneOrphans(controller);
 
             EditorUtility.SetDirty(controller);
@@ -828,6 +926,7 @@ namespace Pirates.EditorTools
                 toDeath.AddCondition(AnimatorConditionMode.IfNot, 0, "Down");
                 deaths.Add(name);
             }
+            AddMeleeReactions(sm, empty, hits, deaths);
             // Levantou: volta ao vazio (e dali à pose da arma). Existe mesmo sem clipe, para consumir o trigger.
             var revive = sm.AddAnyStateTransition(empty);
             revive.hasExitTime = false;
@@ -996,11 +1095,10 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Machado do brutamontes (pacote B, passo 1; WeaponType 3, pacote do machado do Mixamo): "MachadoPronto" (Standing Idle; corpo todo
-        /// parado, só o tronco andando), "MachadoCorrendo" (Standing Run Forward) e três golpes sorteados pelo AttackVariant (para baixo,
-        /// horizontal, de revés). Cada golpe começa <see cref="AxeLead"/> s de clipe antes do impacto medido (mão mais rápida), então o
-        /// impacto cai sempre no mesmo tempo (WeaponDefinition.hitDelay do machado) e o aviso é igual para aparar. "Provocar" (trigger
-        /// "Taunt", Taunt Battlecry) é o grito de guerra ao ver o capitão.
+        /// Machado do capitão (WeaponType 3, pacote do machado do Mixamo; era do brutamontes, que ganhou o WeaponType 5 em 27/10):
+        /// "MachadoPronto" (Standing Idle; corpo todo parado, só o tronco andando) e "MachadoCorrendo" (Standing Run Forward); os golpes do
+        /// capitão são os do AddPlayerHeavyAttacks. "Provocar" (trigger "Taunt", Taunt Battlecry) é o grito de guerra do brutamontes ao ver
+        /// o capitão (ação de corpo inteiro: a mão de apoio solta o cabo para abrir os braços).
         /// </summary>
         static void AddAxe(AnimatorStateMachine sm, AnimatorState empty)
         {
@@ -1018,23 +1116,10 @@ namespace Pirates.EditorTools
                 Go(axeRun, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 3));
             }
             HeavyGuard(sm, empty, 3, ready, axeRun);
-            for (int v = 0; v < AxeAttacks.Length; v++)
-            {
-                var (clipName, impact, lead) = AxeAttacks[v];
-                var clip = MixamoClip(clipName);
-                if (!clip) continue;
-                var swing = State(sm, $"Machado_Golpe{v}", clipName, 1f, new Vector3(-1200f, 60f + 80f * v));
-                swing.tag = FullBodyTag;
-                swing.speedParameterActive = true;
-                swing.speedParameter = "AttackSpeed";
-                Any(sm, swing, Mathf.Max(0f, impact - lead) / clip.length, HeavyAttackBlend,
-                    ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 3), ("AttackVariant", AnimatorConditionMode.Equals, v));
-                Exit(swing, ready, Mathf.Min(0.95f, (impact + 0.75f) / clip.length), 0.3f);
-            }
             if (MixamoClip(ClipTaunt))
             {
                 var taunt = State(sm, "Provocar", ClipTaunt, TauntSpeed, new Vector3(-1200f, 320f));
-                taunt.tag = FullBodyTag;
+                taunt.tag = MovingFullBodyTag;
                 Any(sm, taunt, 0f, 0.15f, ("Taunt", AnimatorConditionMode.If, 0));
                 Exit(taunt, empty, 0.92f, 0.25f);
             }
@@ -1141,12 +1226,14 @@ namespace Pirates.EditorTools
                 else if (child.state.motion is BlendTree && child.state.name == "Idle Walk Run Blend") locomotion = child.state;
             }
             if (!locomotion || locomotion.motion is not BlendTree walkTree || walkTree.children.Length == 0) return;
-            var clips = new System.Collections.Generic.List<(AnimationClip clip, Vector2 at)>();
-            foreach (var (name, x, z) in StrafeClips)
-            {
-                var clip = MixamoClip(name);
-                if (clip) clips.Add((clip, new Vector2(x, z)));
-            }
+            // Human Basic Motions (27/10): 8 direções andando e correndo; sem o pacote, os clipes avulsos do Mixamo de antes.
+            var clips = BasicStrafeClips();
+            if (clips.Count == 0)
+                foreach (var (name, x, z) in StrafeClips)
+                {
+                    var clip = MixamoClip(name);
+                    if (clip) clips.Add((clip, new Vector2(x, z)));
+                }
             if (clips.Count < 4) return;
             var tree = new BlendTree
             {
@@ -1168,7 +1255,7 @@ namespace Pirates.EditorTools
         static readonly (int type, string state, int aiming)[] WeaponPoses =
         {
             (0, "EspadaPronta", -1), (1, "PistolaMirando", 1), (1, "PistolaParada", 0), (2, "BacamarteMirando", 1), (2, "BacamarteParado", 0),
-            (3, "MachadoPronto", -1), (4, "Espadao_Pronto", -1),
+            (3, "MachadoPronto", -1), (4, "Espadao_Pronto", -1), (BruteWeaponType, "Bruto_Pronto", -1),
         };
 
         /// <summary>

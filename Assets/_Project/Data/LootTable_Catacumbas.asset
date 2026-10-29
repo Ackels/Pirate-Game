@@ -60,6 +60,8 @@ MonoBehaviour:
     weight: 1
   - item: {fileID: 11400000, guid: 39409e1094029974c965715d50423a9d, type: 2}
     weight: 1
+  - item: {fileID: 11400000, guid: 002faafd8e8687d44938311de3547f97, type: 2}
+    weight: 1
   guaranteedGear: {fileID: 11400000, guid: cd4d45f550c77f346806bbac39c5169a, type: 2}
   wreckPrefab: {fileID: 0}
   lifetime: 120

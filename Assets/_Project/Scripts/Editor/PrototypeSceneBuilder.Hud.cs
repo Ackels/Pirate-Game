@@ -47,6 +47,9 @@ namespace Pirates.EditorTools
             go.AddComponent<CryptWarningHUD>();
             // Tela de equipamento (E1): se o capitão já foi montado (cena 06; na 07 ele vem depois e põe ela).
             AttachEquipmentHud();
+            // Pesca (D2): idem.
+            AttachFishingHud();
+            AttachGatheringHud();
             return hud;
         }
 

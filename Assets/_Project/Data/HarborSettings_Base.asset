@@ -143,6 +143,104 @@ MonoBehaviour:
     demand: 20
     demandRefillSeconds: 45
     requiredRank: 4
+  - item: {fileID: 11400000, guid: 901de94fdb35a9541bed27783861a687, type: 2}
+    buyPrice: 60
+    sellPrice: 0
+    toHold: 0
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 5f5fdb6cee1fa0043b6cebb499aae5e1, type: 2}
+    buyPrice: 0
+    sellPrice: 2
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 1300e1abe9e29414ba6e2aebc02e7be8, type: 2}
+    buyPrice: 0
+    sellPrice: 2
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: b192ce7d040fa9c4e81feb05bf7b02b9, type: 2}
+    buyPrice: 0
+    sellPrice: 1
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: ab988795098cb1045a2d37d3d507dc71, type: 2}
+    buyPrice: 0
+    sellPrice: 3
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: bcd1f4dd1f6597040bc4e1c2dcca65d5, type: 2}
+    buyPrice: 0
+    sellPrice: 1
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: a0a7d525ad56f0145af65b31946de843, type: 2}
+    buyPrice: 0
+    sellPrice: 5
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 957f2f0b55fb0f74f8cfae39c47ca803, type: 2}
+    buyPrice: 0
+    sellPrice: 6
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 0096cf777c4b64841a889d2979d99a2b, type: 2}
+    buyPrice: 0
+    sellPrice: 8
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 76129c1f66516f849922748547319c0a, type: 2}
+    buyPrice: 0
+    sellPrice: 16
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: bfadc8b4ae42c434ba75418544b53911, type: 2}
+    buyPrice: 0
+    sellPrice: 20
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 6b2fe9c2bd2a16a4c88f134015db7d5f, type: 2}
+    buyPrice: 0
+    sellPrice: 80
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: f4f278aa639166446973515426116907, type: 2}
+    buyPrice: 80
+    sellPrice: 0
+    toHold: 0
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 5df88e2c426c2db43b60cc5b3c83c305, type: 2}
+    buyPrice: 120
+    sellPrice: 0
+    toHold: 0
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 0
   smithy:
   - result:
       item: {fileID: 11400000, guid: c0be865e055b6c04989863b058f7cbd5, type: 2}

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Espadao_Chefe
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: "Espad\xE3o"
+  icon: {fileID: 0}
   kind: 0
   animatorWeaponType: 4
   damage: 24
@@ -25,6 +26,7 @@ MonoBehaviour:
   reloadTime: 2.5
   attackVariants: 8
   animatorVariantOffset: 0
+  animatorVariants: 
   randomVariants: 0
   variantHitDelays:
   - 0.5
@@ -49,9 +51,14 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0.07
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 3
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
   variantStrikes:
   - range: 0
     angle: 0
@@ -61,6 +68,8 @@ MonoBehaviour:
     unblockable: 0
     followUps: []
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 0
     angle: 170
     damage: 28
@@ -69,6 +78,8 @@ MonoBehaviour:
     unblockable: 0
     followUps: []
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 0
     angle: 0
     damage: 18
@@ -78,6 +89,8 @@ MonoBehaviour:
     followUps:
     - 0.8
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 3.3
     angle: 70
     damage: 32
@@ -86,6 +99,8 @@ MonoBehaviour:
     unblockable: 0
     followUps: []
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 3.4
     angle: 360
     damage: 26
@@ -94,6 +109,8 @@ MonoBehaviour:
     unblockable: 1
     followUps: []
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 3.2
     angle: 360
     damage: 36
@@ -102,6 +119,8 @@ MonoBehaviour:
     unblockable: 1
     followUps: []
     lungeSpeed: 11
+    extraRecovery: 0
+    push: 0
   - range: 2.5
     angle: 100
     damage: 10
@@ -110,6 +129,8 @@ MonoBehaviour:
     unblockable: 1
     followUps: []
     lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
   - range: 0
     angle: 0
     damage: 17
@@ -120,3 +141,5 @@ MonoBehaviour:
     - 0.9
     - 1.84
     lungeSpeed: 3.5
+    extraRecovery: 0
+    push: 0

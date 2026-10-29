@@ -20,7 +20,11 @@ namespace Pirates.EditorTools
         static void CreateDayNight(Light sun)
         {
             var go = new GameObject("CicloDiaNoite");
-            go.AddComponent<DayNightCycle>().Configure(DayNightAsset(), sun);
+            var cycle = go.AddComponent<DayNightCycle>();
+            cycle.Configure(DayNightAsset(), sun);
+            // A luz ambiente do dia como o editor calcula do céu: no jogo compilado a da cena ainda é lixo no Awake (29/10).
+            DynamicGI.UpdateEnvironment();
+            cycle.StoreSceneAmbient(RenderSettings.ambientProbe);
         }
 
         /// <summary>

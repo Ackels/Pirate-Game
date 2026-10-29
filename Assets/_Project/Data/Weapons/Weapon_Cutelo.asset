@@ -46,11 +46,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 1
   breaksGuard: 0
   hitPush: 2.4
+  backstabDamage: 1
   holy: 0
   variantStrikes:
   - range: 0

@@ -65,7 +65,22 @@ namespace Pirates.UI
             }
             int other = OpenTab;
             if (other < 0 && ScreenPanel.Open) return;   // outro painel (conversa, carta) na frente
+            if (OtherWindowOpen()) return;
             Open(tab);
+        }
+
+        /// <summary>
+        /// Janela de fora do livro aberta (casa do porto, baú, destroços): I/J/C não abrem o livro por cima (29/10, pedido do Jhonata: as
+        /// duas se espremiam na tela).
+        /// </summary>
+        static bool OtherWindowOpen()
+        {
+            var hud = GameHud.Current;
+            if (!hud || hud.Windows == null) return false;
+            foreach (var child in hud.Windows.Children())
+                if (child.ClassListContains("hud-window") && !child.ClassListContains("hud-window--book")
+                    && child.style.display != DisplayStyle.None) return true;
+            return false;
         }
 
         public static void Open(Tab tab)

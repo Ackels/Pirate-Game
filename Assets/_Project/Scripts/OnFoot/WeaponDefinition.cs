@@ -86,6 +86,16 @@ namespace Pirates.OnFoot
         public float pelletSpread;
         [Tooltip("Arma de duas mãos (bacamarte): a mira gira o tronco inteiro com a arma, não só o braço.")]
         public bool twoHanded;
+        [Tooltip("Mão de apoio (SupportHandIK): onde a mão esquerda segura, a partir da mão direita, em fração do comprimento da arma para a " +
+                 "ponta mais longe (boca do cano, lâmina). 0 = sem IK.")]
+        [Range(-0.5f, 0.8f)] public float supportOffset;
+
+        [Tooltip("Mão de apoio que escorrega no cabo (machado de duas mãos): vai ao ponto do cabo mais perto de onde a animação põe a mão " +
+                 "esquerda, entre o supportOffset e supportSlideGap da mão direita (o braço fica dobrado como na animação).")]
+        public bool supportSlides;
+
+        [Tooltip("Com supportSlides: distância mínima da mão direita, em fração do comprimento da arma.")]
+        [Range(0f, 0.5f)] public float supportSlideGap = 0.12f;
 
         [Header("Movimento")]
         [Tooltip("Fração da velocidade enquanto ataca (1 = normal).")]
@@ -100,6 +110,8 @@ namespace Pirates.OnFoot
         public bool breaksGuard;
         [Tooltip("Empurrão (m/s) em quem leva o golpe sem guarda (as lâminas do capitão; 0 = nenhum).")]
         public float hitPush;
+        [Tooltip("Adaga (E2, passo 2): golpe em quem está de costas para quem bate (mais de 110° da frente dele) × isto (1 = nada a mais).")]
+        public float backstabDamage = 1f;
 
         [Header("Lâmina sagrada (Lâmina de São Telmo)")]
         [Tooltip("Fere as almas das catacumbas mesmo transparentes, e o morto amaldiçoado que ela derruba não levanta de novo.")]

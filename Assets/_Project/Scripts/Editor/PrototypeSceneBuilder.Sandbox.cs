@@ -10,8 +10,11 @@ namespace Pirates.EditorTools
     /// <summary>Modo sandbox (F1) nas cenas com itens: painel de debug com todos os itens de Data/Items.</summary>
     public static partial class PrototypeSceneBuilder
     {
-        static void AddSandbox(ShipController player) =>
+        static void AddSandbox(ShipController player)
+        {
+            TagItemGroups();
             new GameObject("Sandbox").AddComponent<SandboxPanel>().Configure(player, AllItems());
+        }
 
         /// <summary>
         /// Todos os itens de Data/Items (recursos, tripulação, esquemas), na ordem do painel. As lâminas entram também pela lista delas: a
@@ -21,6 +24,7 @@ namespace Pirates.EditorTools
             AssetDatabase.FindAssets("t:ItemDefinition", new[] { ItemsFolder })
                 .Select(guid => AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
                 .Concat(BladeItems())
+                .Concat(FishItems())
                 .Where(item => item)
                 .Distinct()
                 .OrderBy(item => item.category)

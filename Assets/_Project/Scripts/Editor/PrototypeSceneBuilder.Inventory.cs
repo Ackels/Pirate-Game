@@ -12,9 +12,8 @@ namespace Pirates.EditorTools
 {
     /// <summary>
     /// Inventário da tela I (E1, 20/10; pedido do Jhonata: "mostrando o personagem e nele você coloca a espada, arma, roupa, acessório; e
-    /// outra parte com o resto dos itens"). (1) <b>Ícones</b> dos itens e armas, fotografados dos modelos 3D numa cena de prévia (fundo
-    /// preto e branco para o recorte, como o retrato da fama) em <c>UI/Icones/*.png</c>; só fotografa o que ainda não tem arquivo (apague o
-    /// PNG para refazer) e só põe o ícone em asset que ainda não tem um. (2) A <b>vitrine</b>: cópia do modelo do capitão (só malhas e
+    /// outra parte com o resto dos itens"). (1) <b>Ícones</b> dos itens e armas, low-poly pintados a partir dos modelos 3D (PrototypeSceneBuilder.Icons.cs)
+    /// em <c>UI/Icones/*.png</c>; refaz o que está em outro estilo e só põe o ícone em asset que ainda não tem um. (2) A <b>vitrine</b>: cópia do modelo do capitão (só malhas e
     /// Animator) num pedestal longe do mapa, com câmera e luzes próprias, desligada até a tela abrir (Controls/LoadoutMannequin).
     /// </summary>
     public static partial class PrototypeSceneBuilder
@@ -55,32 +54,37 @@ namespace Pirates.EditorTools
             }
 
             // Mochilas, recursos, munição, papéis.
-            var pack = Icon("Item_Mochila", t => Model(Kit.Survival, "bedroll-packed", t, Vector3.zero, 30f, 1f, "Mochila"), new Vector3(-0.6f, 0.7f, 1f));
-            SetItemIcon("Equip_MochilaCouro", pack);
-            SetItemIcon("Equip_MochilaContrabandista", pack);
-            SetItemIcon("Item_Ouro", Icon("Item_Ouro", CoinStack, new Vector3(-0.5f, 0.9f, 1f)));
-            SetItemIcon("Item_Madeira", Icon("Item_Madeira", t => Model(Kit.Survival, "resource-wood", t, Vector3.zero, 20f, 1f, "Madeira"), new Vector3(-0.6f, 0.8f, 1f)));
-            SetItemIcon("Item_Polvora", Icon("Item_Polvora", t => Kenney("barrel", t, Vector3.zero, 30f, 1f, "Polvora"), new Vector3(-0.5f, 0.6f, 1f)));
-            SetItemIcon("Item_Ferro", Icon("Item_Ferro", Ingots, new Vector3(-0.6f, 0.8f, 1f)));
-            SetItemIcon("Item_Racao", Icon("Item_Racao", t => Kenney("bottle", t, Vector3.zero, Quaternion.Euler(0f, 0f, -20f), 1f, "Racao")));
-            SetItemIcon("Item_Cartuchos", Icon("Item_Cartuchos", t => Model(Kit.Survival, "box", t, Vector3.zero, 25f, 1f, "Cartuchos"), new Vector3(-0.6f, 0.7f, 1f)));
-            SetItemIcon("Item_Chumbo", Icon("Item_Chumbo", LeadShot, new Vector3(-0.4f, 0.9f, 1f)));
-            var ball = Icon("Item_Bomba", t =>
-            {
-                Kenney("cannon-ball", t, Vector3.zero, 0f, 1f, "Bomba");
-                Part(PrimitiveType.Cylinder, "Pavio", t, new Vector3(0.05f, 0.27f, 0f), new Vector3(0.04f, 0.08f, 0.04f), Quaternion.Euler(0f, 0f, -25f),
-                    GetMaterial("M_Icone_Pavio", new Color(0.82f, 0.7f, 0.45f), 0.1f));
-            }, new Vector3(-0.5f, 0.5f, 1f));
-            SetItemIcon("Item_Bomba", ball);
-            SetItemIcon("Item_CargaCorrente", Icon("Item_CargaCorrente", t =>
-            {
-                Kenney("cannon-ball", t, new Vector3(-0.18f, 0f, 0f), 0f, 1f, "Bala1");
-                Kenney("cannon-ball", t, new Vector3(0.18f, 0f, 0f), 0f, 1f, "Bala2");
-                Part(PrimitiveType.Cylinder, "Corrente", t, new Vector3(0f, 0.1f, 0f), new Vector3(0.03f, 0.18f, 0.03f), Quaternion.Euler(0f, 0f, 90f),
-                    GetMaterial("M_Icone_Ferro", IconIron, 0.5f));
-            }, new Vector3(-0.4f, 0.6f, 1f)));
-            SetItemIcon("Item_CargaMetralha", Icon("Item_CargaMetralha", t => Model(Kit.Survival, "bucket", t, Vector3.zero, 0f, 1f, "Metralha"), new Vector3(-0.4f, 0.9f, 1f)));
+            var bag = new Vector3(-0.6f, 0.7f, 1f);
+            Icon("Item_Mochila", t => Backpack(t, "Lona", new Color(0.8f, 0.72f, 0.52f), new Color(0.36f, 0.5f, 0.3f)), bag);
+            SetItemIcon("Equip_MochilaCouro", Icon("Item_MochilaCouro",
+                t => Backpack(t, "Couro", new Color(0.58f, 0.34f, 0.18f), new Color(0.7f, 0.2f, 0.16f)), bag));
+            SetItemIcon("Equip_MochilaContrabandista", Icon("Item_MochilaContrabandista",
+                t => Backpack(t, "Contrabandista", new Color(0.26f, 0.24f, 0.27f), new Color(0.62f, 0.12f, 0.12f), skull: true), bag));
+            SetItemIcon("Item_Ouro", Icon("Item_Ouro", GoldCoins, new Vector3(-0.5f, 0.9f, 1f)));
+            SetItemIcon("Item_Madeira", Icon("Item_Madeira", Logs, new Vector3(-0.6f, 0.7f, 1f), 0f, LogPaint));
+            SetItemIcon("Item_Polvora", Icon("Item_Polvora", PowderKegIcon, new Vector3(-0.5f, 0.6f, 1f)));
+            SetItemIcon("Item_Ferro", Icon("Item_Ferro", IronOre, new Vector3(-0.6f, 0.6f, 1f)));
+            SetItemIcon("Item_Racao", Icon("Item_Racao", Ration, new Vector3(-0.5f, 0.5f, 1f)));
+            SetItemIcon("Item_Cartuchos", Icon("Item_Cartuchos", Cartridges, new Vector3(-0.6f, 0.8f, 1f)));
+            SetItemIcon("Item_Chumbo", Icon("Item_Chumbo", LeadBalls, new Vector3(-0.4f, 0.9f, 1f)));
+            SetItemIcon("Item_Bomba", Icon("Item_Bomba", Bomb, new Vector3(-0.5f, 0.5f, 1f)));
+            SetItemIcon("Item_CargaCorrente", Icon("Item_CargaCorrente", ChainShot, new Vector3(-0.4f, 0.6f, 1f)));
+            SetItemIcon("Item_CargaMetralha", Icon("Item_CargaMetralha", GrapeShot, new Vector3(-0.4f, 0.9f, 1f)));
             SetItemIcon("Item_PedacoMapa", Icon("Item_PedacoMapa", MapPiece, new Vector3(-0.2f, 1.4f, 1f)));
+            SetItemIcon("Item_Sobreviventes", Icon("Item_Tripulacao", CrewBust, new Vector3(0.3f, 0.25f, -1f), frameFrom: 0.5f));
+
+            // Esquemas: a planta com a miniatura do que constrói (a fita na cor de cada um); o rolo fechado fica para esquema novo.
+            var plans = new (string item, Color ribbon, System.Action<Transform> mini)[]
+            {
+                ("Esquema_Estaleiro", new Color(0.2f, 0.36f, 0.72f), ShipyardMiniature),
+                ("Esquema_Forja", new Color(0.72f, 0.16f, 0.12f), t => Model(Kit.Survival, "workbench-anvil", t, Vector3.zero, 30f, 1f, "Bigorna")),
+                ("Esquema_Paiol", new Color(0.2f, 0.52f, 0.26f), PowderKegIcon),
+                ("Esquema_Escuna", new Color(0.86f, 0.64f, 0.14f), t => Kenney("ship-pirate-medium", t, Vector3.zero, 60f, 1f, "Escuna")),
+                ("Esquema_Fortaleza", new Color(0.46f, 0.22f, 0.62f), t => Kenney("tower-complete-small", t, Vector3.zero, 20f, 1f, "Torre")),
+                ("Esquema_Galeao", new Color(0.12f, 0.5f, 0.52f), t => Kenney("ship-pirate-large", t, Vector3.zero, 60f, 1f, "Galeao")),
+            };
+            foreach (var (item, ribbon, mini) in plans)
+                SetItemIcon(item, Icon(item, t => Blueprint(t, ribbon, mini), new Vector3(-0.35f, 0.9f, 1f)));
             var scroll = Icon("Item_Esquema", Scroll, new Vector3(-0.4f, 0.8f, 1f));
             foreach (var guid in AssetDatabase.FindAssets("t:ItemDefinition", new[] { ItemsFolder }))
             {
@@ -105,30 +109,6 @@ namespace Pirates.EditorTools
             EditorUtility.SetDirty(item);
         }
 
-        static void CoinStack(Transform t)
-        {
-            var gold = GetMaterial("M_Icone_Ouro", IconGold, 0.7f);
-            for (int i = 0; i < 5; i++)
-                Part(PrimitiveType.Cylinder, "Moeda", t, new Vector3(0.015f * (i % 2), 0.025f + i * 0.045f, 0.01f * i), new Vector3(0.3f, 0.02f, 0.3f), Quaternion.identity, gold);
-            Part(PrimitiveType.Cylinder, "Moeda", t, new Vector3(0.3f, 0.12f, -0.05f), new Vector3(0.3f, 0.02f, 0.3f), Quaternion.Euler(0f, 0f, 70f), gold);
-            Part(PrimitiveType.Cylinder, "Moeda", t, new Vector3(-0.28f, 0.03f, 0.05f), new Vector3(0.3f, 0.02f, 0.3f), Quaternion.identity, gold);
-        }
-
-        static void Ingots(Transform t)
-        {
-            var iron = GetMaterial("M_Icone_Ferro", IconIron, 0.5f);
-            Part(PrimitiveType.Cube, "Barra", t, new Vector3(-0.11f, 0.06f, 0f), new Vector3(0.2f, 0.12f, 0.45f), Quaternion.identity, iron);
-            Part(PrimitiveType.Cube, "Barra", t, new Vector3(0.11f, 0.06f, 0f), new Vector3(0.2f, 0.12f, 0.45f), Quaternion.identity, iron);
-            Part(PrimitiveType.Cube, "Barra", t, new Vector3(0f, 0.18f, 0f), new Vector3(0.2f, 0.12f, 0.45f), Quaternion.identity, iron);
-        }
-
-        static void LeadShot(Transform t)
-        {
-            var lead = GetMaterial("M_Icone_Chumbo", IconLead, 0.6f);
-            var at = new[] { new Vector3(0f, 0f, 0f), new Vector3(0.11f, 0f, 0.03f), new Vector3(0.05f, 0f, -0.1f), new Vector3(-0.08f, 0f, -0.06f), new Vector3(0.05f, 0.09f, -0.03f) };
-            foreach (var p in at) Part(PrimitiveType.Sphere, "Chumbo", t, p, Vector3.one * 0.1f, Quaternion.identity, lead);
-        }
-
         static void MapPiece(Transform t)
         {
             Part(PrimitiveType.Cube, "Papel", t, Vector3.zero, new Vector3(0.5f, 0.01f, 0.4f), Quaternion.Euler(0f, 15f, 0f), GetMaterial("M_Icone_Papel", IconPaper, 0.1f));
@@ -141,94 +121,6 @@ namespace Pirates.EditorTools
         {
             Part(PrimitiveType.Cylinder, "Rolo", t, Vector3.zero, new Vector3(0.18f, 0.3f, 0.18f), Quaternion.Euler(0f, 0f, 90f), GetMaterial("M_Icone_Papel", IconPaper, 0.1f));
             Part(PrimitiveType.Cylinder, "Fita", t, Vector3.zero, new Vector3(0.19f, 0.03f, 0.19f), Quaternion.Euler(0f, 0f, 90f), GetMaterial("M_Icone_Fita", IconRibbon, 0.2f));
-        }
-
-        /// <summary>
-        /// Foto de um objeto para ícone (recorte pelo fundo preto e branco), enquadrado pela caixa dele e visto de <paramref name="view"/>
-        /// (direção do objeto para a câmera; padrão: de frente, um pouco de cima). Já existe = só carrega.
-        /// </summary>
-        static Texture2D Icon(string file, System.Action<Transform> build, Vector3? view = null)
-        {
-            string path = $"{IconsFolder}/{file}.png";
-            if (File.Exists(path)) return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-            var scene = EditorSceneManager.NewPreviewScene();
-            var rt = new RenderTexture(IconSize * 2, IconSize * 2, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
-            try
-            {
-                var holder = new GameObject("Icone");
-                SceneManager.MoveGameObjectToScene(holder, scene);
-                build(holder.transform);
-                var renderers = holder.GetComponentsInChildren<Renderer>();
-                if (renderers.Length == 0) return null;
-                var bounds = renderers[0].bounds;
-                foreach (var r in renderers) bounds.Encapsulate(r.bounds);
-
-                PortraitLight(scene, Quaternion.Euler(40f, 150f, 0f), 1.3f, new Color(1f, 0.96f, 0.88f));
-                PortraitLight(scene, Quaternion.Euler(20f, -100f, 0f), 0.6f, new Color(0.75f, 0.82f, 1f));
-                PortraitLight(scene, Quaternion.Euler(-30f, 0f, 0f), 0.35f, Color.white);
-
-                var camGo = new GameObject("Camera");
-                SceneManager.MoveGameObjectToScene(camGo, scene);
-                var cam = camGo.AddComponent<Camera>();
-                cam.scene = scene;
-                cam.fieldOfView = 22f;
-                cam.nearClipPlane = 0.01f;
-                cam.farClipPlane = 100f;
-                cam.clearFlags = CameraClearFlags.SolidColor;
-                cam.targetTexture = rt;
-                var dir = (view ?? new Vector3(0f, 0.15f, -1f)).normalized;
-                float radius = bounds.extents.magnitude;
-                float distance = radius / Mathf.Sin(cam.fieldOfView * 0.5f * Mathf.Deg2Rad) * 1.02f;
-                // A câmera fica do lado de "view" (direção do objeto para a câmera).
-                camGo.transform.position = bounds.center + dir * distance;
-                camGo.transform.LookAt(bounds.center);
-
-                int size = rt.width;
-                var black = Render(cam, rt, Color.black);
-                var white = Render(cam, rt, Color.white);
-                cam.targetTexture = null;
-                // Recorte e redução 2:1 (bordas mais lisas que o MSAA sozinho).
-                var pixels = new Color[IconSize * IconSize];
-                for (int y = 0; y < IconSize; y++)
-                for (int x = 0; x < IconSize; x++)
-                {
-                    Color sum = Color.clear;
-                    for (int dy = 0; dy < 2; dy++)
-                    for (int dx = 0; dx < 2; dx++)
-                    {
-                        int k = (y * 2 + dy) * size + x * 2 + dx;
-                        Color b = black[k], w = white[k];
-                        float alpha = Mathf.Clamp01(1f - ((w.r - b.r) + (w.g - b.g) + (w.b - b.b)) / 3f);
-                        Color fg = alpha > 0.01f ? b / alpha : Color.black;
-                        sum += new Color(fg.r * alpha, fg.g * alpha, fg.b * alpha, alpha);
-                    }
-                    sum /= 4f;
-                    pixels[y * IconSize + x] = sum.a > 0.001f ? new Color(sum.r / sum.a, sum.g / sum.a, sum.b / sum.a, sum.a) : Color.clear;
-                }
-                var tex = new Texture2D(IconSize, IconSize, TextureFormat.RGBA32, false);
-                tex.SetPixels(pixels);
-                tex.Apply();
-                File.WriteAllBytes(path, tex.EncodeToPNG());
-                Object.DestroyImmediate(tex);
-            }
-            finally
-            {
-                rt.Release();
-                Object.DestroyImmediate(rt);
-                EditorSceneManager.ClosePreviewScene(scene);
-            }
-            AssetDatabase.ImportAsset(path);
-            if (AssetImporter.GetAtPath(path) is TextureImporter importer)
-            {
-                importer.textureType = TextureImporterType.Default;
-                importer.alphaIsTransparency = true;
-                importer.mipmapEnabled = false;
-                importer.textureCompression = TextureImporterCompression.Uncompressed;
-                importer.wrapMode = TextureWrapMode.Clamp;
-                importer.filterMode = FilterMode.Bilinear;
-                importer.SaveAndReimport();
-            }
-            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
         // ---------- Vitrine ----------

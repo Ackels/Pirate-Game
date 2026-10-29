@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Peda\xE7o de mapa do tesouro"
   category: 0
   rarity: 2
+  group: 4
   color: {r: 0.86, g: 0.74, b: 0.5, a: 1}
   spacePerUnit: 0.1
   description: "Um canto rasgado de mapa, com tra\xE7os de costa e um peda\xE7o de X. Junte 3 e o mapa se monta sozinho: o X aparece numa ilha."
   icon: {fileID: 2800000, guid: 4c764b2429d5658429de0797dd8a20f5, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

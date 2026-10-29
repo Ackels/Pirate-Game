@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Cartuchos de pistola
   category: 0
   rarity: 0
+  group: 2
   color: {r: 0.78, g: 0.74, b: 0.66, a: 1}
   spacePerUnit: 0.05
   description: "Bala de chumbo e p\xF3lvora num papel encerado: cada tiro da pistola gasta um. O capit\xE3o leva 20 do por\xE3o ao desembarcar."
   icon: {fileID: 2800000, guid: 6c1002270a2b3664b8a584dc2c2aba61, type: 3}
   keepAboard: 60
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

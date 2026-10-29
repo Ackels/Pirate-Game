@@ -23,8 +23,11 @@ namespace Pirates.EditorTools
         /// Uma lâmina: arquivo do item e da arma, nome, raridade, modelo do kit (escala e ponto de pegada no espaço do modelo), tinta do
         /// material (branco = o atlas do kit), brilho e os números (dano, velocidade da animação de golpe, alcance).
         /// </summary>
-        /// <summary>Que arma é: cutelo e sabres (animações do cutelo), machado (as do brutamontes, WeaponType 3) ou espadão (as do Barba-Negra, 4).</summary>
-        enum BladeKind { Cutlass, Axe, Greatsword }
+        /// <summary>
+        /// Que arma é: cutelo e sabres (animações do cutelo), machado (as do brutamontes, WeaponType 3), espadão (as do Barba-Negra, 4) ou
+        /// adaga (pose, guarda e bainha do cutelo, golpes próprios: E2, passo 2).
+        /// </summary>
+        enum BladeKind { Cutlass, Axe, Greatsword, Dagger }
 
         sealed class BladeSpec
         {
@@ -40,7 +43,11 @@ namespace Pirates.EditorTools
             /// <summary>Machado e espadão (E2): espera entre golpes (s) e se quebra a guarda.</summary>
             public float cooldown = 0.85f;
             public bool breaksGuard;
+            /// <summary>Adaga: dano × isto pelas costas.</summary>
+            public float backstab = 1f;
         }
+
+        static bool IsHeavy(BladeSpec spec) => spec.kind == BladeKind.Axe || spec.kind == BladeKind.Greatsword;
 
         // Cutelo de começo: 25 de dano, 0,6 s entre golpes (~42 de dano/s). As novas: +20% a +45% de dano por segundo.
         static readonly BladeSpec[] BladeSpecs =
@@ -75,36 +82,57 @@ namespace Pirates.EditorTools
             },
             // E2, passo 1 (20/10): armas pesadas, com as animações do brutamontes (machado) e do Barba-Negra (espadão). Combo de 3 golpes; o
             // terceiro derruba (o do espadão corta duas vezes). Os raros caem dos baús; os épicos, do brutamontes e do Barba-Negra.
+            // Tamanho (23/10, "muito pequenas na mão"): ~1,45× (machado do carrasco 1,6×), e a mão no couro do cabo dos machados.
             new()
             {
                 kind = BladeKind.Axe, file = "MachadoAbordagem", name = "Machado de abordagem", rarity = ItemRarity.Rare, model = "Weapon_Axe",
-                scale = 0.6f, grip = new Vector3(0f, -0.05f, 0f), damage = 38f, animSpeed = 1.3f, cooldown = 0.85f, range = 2.3f, angle = 115f,
+                scale = 0.87f, grip = new Vector3(0f, 0.15f, 0f), damage = 38f, animSpeed = 1.3f, cooldown = 0.85f, range = 2.3f, angle = 115f,
                 breaksGuard = true,
                 description = "Machado curto de arrombar portas e escotilhas. Golpes pesados que quebram a guarda de quem se defende; o terceiro "
-                    + "golpe do combo derruba.",
+                    + "golpe do combo, uma machadada de cima, derruba.",
             },
             new()
             {
                 kind = BladeKind.Axe, file = "MachadoCarrasco", name = "Machado do carrasco", rarity = ItemRarity.Epic, model = "Weapon_DoubleAxe",
-                scale = 0.5f, grip = new Vector3(0f, -0.05f, 0f), tint = new Color(0.62f, 0.6f, 0.63f),
+                scale = 0.8f, grip = new Vector3(0f, 0.11f, 0f), tint = new Color(0.62f, 0.6f, 0.63f),
                 damage = 46f, animSpeed = 1.3f, cooldown = 0.85f, range = 2.5f, angle = 120f, breaksGuard = true,
                 description = "O machado duplo do brutamontes, o carrasco da Caveira. Quebra qualquer guarda, e o terceiro golpe do combo derruba.",
             },
             new()
             {
                 kind = BladeKind.Greatsword, file = "Montante", name = "Montante do corsário", rarity = ItemRarity.Rare, model = "Weapon_Sword_2",
-                scale = 0.58f, grip = new Vector3(0f, -0.1f, 0f), tint = new Color(0.95f, 0.96f, 1.02f), damage = 40f, animSpeed = 1.2f,
+                scale = 0.84f, grip = new Vector3(0f, -0.1f, 0f), tint = new Color(0.95f, 0.96f, 1.02f), damage = 40f, animSpeed = 1.2f,
                 cooldown = 0.9f, range = 2.7f, angle = 160f,
-                description = "Espadão de duas mãos: lento, mas corta num arco largo e pega vários de uma vez. O terceiro golpe do combo corta "
-                    + "duas vezes e derruba.",
+                description = "Espadão de duas mãos: lento, mas corta num arco largo e pega vários de uma vez. O terceiro golpe do combo, de "
+                    + "cima, derruba.",
             },
             new()
             {
                 kind = BladeKind.Greatsword, file = "EspadaoBarbaNegra", name = "Espadão do Barba-Negra", rarity = ItemRarity.Epic,
-                model = "Weapon_Sword_2", scale = 0.62f, grip = new Vector3(0f, -0.1f, 0f), tint = new Color(0.4f, 0.35f, 0.37f),
+                model = "Weapon_Sword_2", scale = 0.9f, grip = new Vector3(0f, -0.1f, 0f), tint = new Color(0.4f, 0.35f, 0.37f),
                 damage = 48f, animSpeed = 1.2f, cooldown = 0.9f, range = 2.8f, angle = 165f,
-                description = "A lâmina negra do Capitão Barba-Negra, que ele largou nas ruínas da Caveira. Arco largo; o terceiro golpe do combo "
-                    + "corta duas vezes e derruba.",
+                description = "A lâmina negra do Capitão Barba-Negra, que ele largou nas ruínas da Caveira. Arco largo; o terceiro golpe do combo, "
+                    + "de cima, derruba.",
+            },
+            // E2, passo 2 (23/10): adagas (cabo na mão: a pegada do cutelo + 13 cm, medida na foto). Medido no boneco: punhal ~46 de dano/s,
+            // a da duelista ~56; pelas costas, o dobro. Rápidas e curtas, combo de estocada, corte curto e bote com dois cortes; pelas costas o golpe
+            // dobra (quem rolou para trás do inimigo, aparou e o pegou cambaleando, ou chegou sem ser visto). A rara cai dos baús; a
+            // épica, da duelista.
+            new()
+            {
+                kind = BladeKind.Dagger, file = "PunhalContrabandista", name = "Punhal do contrabandista", rarity = ItemRarity.Rare,
+                model = "Weapon_Dagger", scale = 0.42f, grip = new Vector3(0f, 0.19f, 0f), damage = 22f, animSpeed = 1.35f, range = 1.9f,
+                angle = 95f, backstab = 2f,
+                description = "Lâmina curta de quem resolve as coisas no escuro do cais. Golpes rápidos (o terceiro do combo, um bote com dois "
+                    + "cortes), pouco alcance, e pelas costas o dano dobra.",
+            },
+            new()
+            {
+                kind = BladeKind.Dagger, file = "AdagaDuelista", name = "Adaga da duelista", rarity = ItemRarity.Epic,
+                model = "Weapon_Dagger", scale = 0.44f, grip = new Vector3(0f, 0.19f, 0f), tint = new Color(0.55f, 0.5f, 0.56f),
+                damage = 25f, animSpeed = 1.45f, range = 2f, angle = 95f, backstab = 2.2f,
+                description = "A adaga da duelista que guardava a enseada dos contrabandistas. A lâmina mais rápida dos mares; pelas costas, mais "
+                    + "que o dobro do dano.",
             },
         };
 
@@ -155,7 +183,8 @@ namespace Pirates.EditorTools
                 w.hitDelay /= k;
                 w.cooldown /= k;
                 w.comboWindow /= k;
-                if (spec.kind != BladeKind.Cutlass) HeavyWeapon(w, spec);
+                if (IsHeavy(spec)) HeavyWeapon(w, spec);
+                else if (spec.kind == BladeKind.Dagger) PlayerDaggerMoves(w, spec.damage, spec.backstab);
             });
 
         /// <summary>
@@ -180,10 +209,7 @@ namespace Pirates.EditorTools
             w.animatedDraw = false;
             w.moveSpeedWhileAttacking = 0.25f;
             w.breaksGuard = spec.breaksGuard;
-            var finisher = new StrikeOverride { customKnockdown = true, knockdown = Pirates.Core.Knockdown.Stumble };
-            // "Slash 4": o segundo corte sai 0,80 s de clipe depois do primeiro.
-            if (!axe) finisher.followUps = new[] { 0.8f / k };
-            w.variantStrikes = new[] { new StrikeOverride(), new StrikeOverride(), finisher };
+            PlayerHeavyMoves(w, axe);
         }
 
         static ItemDefinition BladeItem(BladeSpec spec)
@@ -220,15 +246,24 @@ namespace Pirates.EditorTools
             foreach (var spec in BladeSpecs)
             {
                 if (spec.kind == BladeKind.Cutlass) CutlassFinisher(BladeWeapon(spec));
+                else if (spec.kind == BladeKind.Dagger)
+                {
+                    // Adaga (E2, passo 2): golpes próprios, refeitos a cada geração.
+                    PlayerDaggerMoves(BladeWeapon(spec), spec.damage, spec.backstab);
+                    var daggerItem = BladeItem(spec);
+                    daggerItem.description = spec.description;
+                    EditorUtility.SetDirty(daggerItem);
+                }
                 else
                 {
                     // Machado e espadão (passo 5 da revisão): empurram mais que o cutelo; a finalização, bem mais.
-                    var heavyWeapon = BladeWeapon(spec);
-                    heavyWeapon.hitPush = 3f;
-                    if (heavyWeapon.variantStrikes != null && heavyWeapon.variantStrikes.Length > 2) heavyWeapon.variantStrikes[2].push = 5f;
-                    EditorUtility.SetDirty(heavyWeapon);
+                    // Golpes próprios do capitão (23/10): Sword and Shield no machado, 2Hand-Sword da Explosive no espadão.
+                    PlayerHeavyMoves(BladeWeapon(spec), spec.kind == BladeKind.Axe);
+                    var heavyItem = BladeItem(spec);
+                    heavyItem.description = spec.description;
+                    EditorUtility.SetDirty(heavyItem);
                 }
-                if (spec.kind != BladeKind.Cutlass)
+                if (IsHeavy(spec))
                 {
                     // Machado e espadão: pegada própria (a dos clipes deles) e guardados nas costas.
                     var heavy = HeavyBladeOn(model, spec, out var heavyHand, out var heavyBack);
@@ -332,8 +367,8 @@ namespace Pirates.EditorTools
             Vector3 right = model.right, forward = model.forward;
             Vector3 blade = (Vector3.up * 0.75f - right * 0.65f).normalized;
             Vector3 edge = Vector3.Cross(forward, blade).normalized;
-            // A arma é montada a partir da pegada: o meio dela fica ~0,3 m (espadão) / ~0,2 m (machado) lâmina acima.
-            float half = spec.kind == BladeKind.Greatsword ? 0.3f : 0.2f;
+            // A arma é montada a partir da pegada: o meio dela fica ~0,44 m (espadão) / ~0,12 m (machado) lâmina acima.
+            float half = spec.kind == BladeKind.Greatsword ? 0.44f : 0.12f;
             Vector3 center = chest.position - forward * 0.27f;
             back.SetPositionAndRotation(center - blade * half, Quaternion.LookRotation(blade, edge));
             back.SetParent(chest, true);
@@ -431,20 +466,21 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Os raros do E2 (machado de abordagem e montante) entram nas tabelas que já têm equipamento, se ainda não estão (o asset é do
-        /// Jhonata: não mexe nos pesos que já existem). Os épicos não entram em baú: caem do brutamontes e do Barba-Negra.
+        /// Os raros do E2 (machado de abordagem, montante e o punhal do contrabandista) entram nas tabelas que já têm equipamento, se ainda não estão (o asset é do
+        /// Jhonata: não mexe nos pesos que já existem). Os épicos não entram em baú: caem do brutamontes, do Barba-Negra e da duelista.
         /// </summary>
         static void AddHeavyDrops()
         {
             var axe = BladeItemByFile("MachadoAbordagem");
             var sword = BladeItemByFile("Montante");
+            var dagger = BladeItemByFile("PunhalContrabandista");
             foreach (var (file, weight) in HeavyDrops)
             {
                 var table = AssetDatabase.LoadAssetAtPath<LootTable>($"{DataFolder}/{file}.asset");
                 if (!table || table.gear == null || table.gear.Length == 0) continue;
                 var gear = new List<LootTable.WeightedItem>(table.gear);
                 bool changed = false;
-                foreach (var item in new[] { axe, sword })
+                foreach (var item in new[] { axe, sword, dagger })
                 {
                     if (!item || gear.Exists(g => g.item == item)) continue;
                     gear.Add(Weighted(item, weight));

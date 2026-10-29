@@ -13,25 +13,25 @@ MonoBehaviour:
   m_Name: Weapon_MachadoAbordagem
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Machado de abordagem
-  icon: {fileID: 2800000, guid: 099a3a68c01de304599aa5265b0025c1, type: 3}
+  icon: {fileID: 2800000, guid: 19db96dae1dde8840ad0f34999bf4f40, type: 3}
   kind: 0
   animatorWeaponType: 3
   damage: 38
   range: 2.3
   angle: 115
-  hitDelay: 0.53846157
+  hitDelay: 0.32307693
   attackAnimSpeed: 1.3
   cooldown: 0.85
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 3
   animatorVariantOffset: 0
-  animatorVariants: 
+  animatorVariants: 030000000400000005000000i
   randomVariants: 0
   variantHitDelays:
-  - 0.53846157
-  - 0.4615385
-  - 0.7692308
+  - 0.32307693
+  - 0.42307696
+  - 0.44615385
   comboWindow: 1.8
   animatedDraw: 0
   drawGrabTime: 0.4615385
@@ -46,11 +46,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.25
   knockdown: 0
   guardCost: 1
   breaksGuard: 1
   hitPush: 3
+  backstabDamage: 1
   holy: 0
   variantStrikes:
   - range: 0

@@ -1,3 +1,4 @@
+using Pirates.Core;
 using UnityEngine;
 
 namespace Pirates.OnFoot
@@ -5,9 +6,10 @@ namespace Pirates.OnFoot
     /// <summary>
     /// Mira procedural da pistola (fica no modelo, junto do Animator). Depois da animação (LateUpdate), gira a coluna
     /// para os lados e o peito + braço para cima/baixo até o cano apontar para o alvo, suavizando a entrada/saída
-    /// e o movimento do alvo: o braço segue o cursor sem trancos. Também faz o coice do tiro, a linha de mira e (jogador)
-    /// o laser até onde a bala bate, com um ponto ali (anel dourado em volta do alvo quando a mira trava nele).
-    /// Vale nos estados do Animator com a tag "Mira" (pose de mira e tiro).
+    /// e o movimento do alvo: o braço segue o cursor sem trancos. Também faz o coice do tiro e o aviso da mira: o jogador vê um anel
+    /// de latão no chão onde mira, ou onde a bala bate se algo fica no caminho (dourado em volta do alvo quando a mira trava nele); o atirador inimigo solta faíscas e fumaça na
+    /// caçoleta enquanto mira (a pólvora acendendo), mais fortes logo antes do tiro. Sem linha nem laser (28/10, pedido do Jhonata:
+    /// "em um jogo de pirata não faz muito sentido"). Vale nos estados do Animator com a tag "Mira" (pose de mira e tiro).
     /// </summary>
     [RequireComponent(typeof(Animator))]
     public class CharacterAimRig : MonoBehaviour
@@ -17,19 +19,26 @@ namespace Pirates.OnFoot
         [SerializeField] CharacterCombat combat;
         [Tooltip("Boca da pistola: o eixo Z (forward) é o cano.")]
         [SerializeField] Transform muzzle;
-        [SerializeField] LineRenderer aimLine;
-        [Tooltip("Anel no ponto mirado (só o jogador). Com ele, a linha vira o laser: vai até onde a bala bate, com um ponto ali.")]
+        [Tooltip("Anel no ponto onde a bala para (só o jogador).")]
         [SerializeField] LineRenderer reticle;
-        [Tooltip("Brilho largo e fraco em volta do laser (só o jogador).")]
-        [SerializeField] LineRenderer laserGlow;
-        [SerializeField] Color aimColor = new(1f, 0.12f, 0.08f, 1f);
-        [Tooltip("Cor do anel quando a mira trava num alvo (o laser continua vermelho).")]
+        [SerializeField] Color markColor = new(0.62f, 0.4f, 0.14f, 0.95f);
+        [Tooltip("Cor do anel quando a mira trava num alvo.")]
         [SerializeField] Color lockedColor = new(1f, 0.8f, 0.25f, 1f);
-        [Tooltip("Raio do ponto do laser onde ele bate.")]
-        [SerializeField] float dotRadius = 0.07f;
+        [Tooltip("Raio do anel onde a bala para (arma de chumbo: o leque na distância, no mínimo isto).")]
+        [SerializeField] float markRadius = 0.3f;
+        [SerializeField] float markWidth = 0.065f;
         [Tooltip("Travado num alvo: raio do anel que contorna o corpo dele.")]
         [SerializeField] float lockedRingRadius = 0.5f;
-        [SerializeField, Range(0f, 1f)] float glowAlpha = 0.25f;
+        [SerializeField] float lockedWidth = 0.07f;
+
+        [Header("Aviso do atirador inimigo")]
+        [Tooltip("Faíscas na caçoleta enquanto mira (só os inimigos).")]
+        [SerializeField] ParticleSystem fuseSparks;
+        [SerializeField] ParticleSystem fuseSmoke;
+        [Tooltip("Brasa piscando na caçoleta (o que se vê de longe, da câmera do jogo).")]
+        [SerializeField] ParticleSystem fuseGlow;
+        [Tooltip("Faíscas, fumaça e brasa por segundo mirando; no fim (ShotWarning = 1), o máximo.")]
+        [SerializeField] Vector2 sparksRate = new(40f, 160f), smokeRate = new(8f, 24f), glowRate = new(14f, 40f);
         [Tooltip("Camada do tronco (onde ficam os estados de mira).")]
         [SerializeField] string upperLayer = "Tronco";
         [Tooltip("Camada do corpo inteiro (parado, a pose de mira usa o quadril do clipe).")]
@@ -80,13 +89,20 @@ namespace Pirates.OnFoot
         /// <summary>Boca da arma na mão (cada arma de fogo tem a sua).</summary>
         Transform Muzzle => combat && combat.CurrentMuzzle ? combat.CurrentMuzzle : muzzle;
 
-        /// <summary>Laser do jogador: ponto/anel, brilho e cores (laser; anel travado num alvo).</summary>
-        public void ConfigureReticle(LineRenderer ring, LineRenderer glow, Color laser, Color locked)
+        /// <summary>Mira do jogador: o anel onde a bala para e as cores (normal; travado num alvo).</summary>
+        public void ConfigureReticle(LineRenderer ring, Color mark, Color locked)
         {
             reticle = ring;
-            laserGlow = glow;
-            aimColor = laser;
+            markColor = mark;
             lockedColor = locked;
+        }
+
+        /// <summary>Aviso do atirador inimigo: faíscas e fumaça na caçoleta da arma.</summary>
+        public void ConfigureFuse(ParticleSystem sparks, ParticleSystem smoke, ParticleSystem glow)
+        {
+            fuseSparks = sparks;
+            fuseSmoke = smoke;
+            fuseGlow = glow;
         }
 
         /// <summary>Pose de mira da arma de duas mãos (graus do braço, como em <see cref="Configure"/>).</summary>
@@ -96,11 +112,10 @@ namespace Pirates.OnFoot
             twoHandedYawFullBody = fullBodyYaw;
         }
 
-        public void Configure(CharacterCombat characterCombat, Transform gunMuzzle, LineRenderer line, float upperBodyArmYaw, float fullBodyArmYaw)
+        public void Configure(CharacterCombat characterCombat, Transform gunMuzzle, float upperBodyArmYaw, float fullBodyArmYaw)
         {
             combat = characterCombat;
             muzzle = gunMuzzle;
-            aimLine = line;
             armYawUpperBody = upperBodyArmYaw;
             armYawFullBody = fullBodyArmYaw;
         }
@@ -123,9 +138,8 @@ namespace Pirates.OnFoot
             }
             upperIndex = animator.GetLayerIndex(upperLayer);
             fullIndex = animator.GetLayerIndex(fullBodyLayer);
-            if (aimLine) aimLine.enabled = false;
             if (reticle) reticle.enabled = false;
-            if (laserGlow) laserGlow.enabled = false;
+            SetFuse(-1f);
         }
 
         void OnEnable()
@@ -137,9 +151,8 @@ namespace Pirates.OnFoot
         {
             if (combat) combat.Fired -= OnFired;
             weight = weightVelocity = recoil = 0f;
-            if (aimLine) aimLine.enabled = false;
             if (reticle) reticle.enabled = false;
-            if (laserGlow) laserGlow.enabled = false;
+            SetFuse(-1f);
         }
 
         void OnFired(WeaponDefinition weapon, Vector3 from, Vector3 to)
@@ -168,7 +181,7 @@ namespace Pirates.OnFoot
                 Kick(gun, recoil * weight, twoHanded);
                 recoil *= Mathf.Exp(-recoilRecovery * dt);
             }
-            UpdateAimLine(gun, weapon);
+            UpdateAimSigns(gun, weapon);
         }
 
         bool InAimState()
@@ -235,79 +248,118 @@ namespace Pirates.OnFoot
             Rotate(upperChest, right, -recoilDegrees * 0.15f * amount);
         }
 
-        static readonly RaycastHit[] laserHits = new RaycastHit[16];
-        float enemyLineWidth = -1f;
-        Color enemyLineColor;
+        static readonly RaycastHit[] markHits = new RaycastHit[16];
+        IOceanSampler ocean;
+        float shownFuse = -2f;
 
-        void UpdateAimLine(Transform gun, WeaponDefinition weapon)
+        void UpdateAimSigns(Transform gun, WeaponDefinition weapon)
         {
-            if (!aimLine) return;
             bool show = combat.IsAiming && weight > 0.7f;
-            aimLine.enabled = show;
-            if (reticle) reticle.enabled = show;
-            if (laserGlow) laserGlow.enabled = show;
-            if (!show) return;
-            Vector3 from = gun.position;
             if (!reticle)
             {
-                // Inimigo: linha seguindo o cano (o aviso de que vai atirar), na cor do gerador. Nos últimos instantes antes do tiro
-                // (revisão de 21/10) ela engrossa e pisca clara: é a hora de rolar.
-                float length = Mathf.Max(1f, Vector3.Distance(from, aimPoint));
-                aimLine.positionCount = 2;
-                aimLine.SetPosition(0, from);
-                aimLine.SetPosition(1, from + gun.forward * length);
-                if (enemyLineWidth < 0f)
-                {
-                    enemyLineWidth = aimLine.widthMultiplier;
-                    enemyLineColor = aimLine.startColor;
-                }
-                float warn = combat.ShotWarning;
-                aimLine.widthMultiplier = enemyLineWidth * (1f + 1.6f * warn);
-                var flash = warn > 0f && Mathf.Repeat(Time.time * 14f, 1f) < 0.5f ? Color.Lerp(enemyLineColor, new Color(1f, 0.95f, 0.6f, 1f), warn) : enemyLineColor;
-                aimLine.startColor = flash;
-                aimLine.endColor = new Color(flash.r, flash.g, flash.b, flash.a * 0.8f);
+                // Inimigo: a pólvora acendendo na caçoleta enquanto mira; nos últimos instantes antes do tiro (ShotWarning) as faíscas
+                // aumentam: é a hora de rolar. O medalhão sobre a cabeça (CryptWarningHUD) avisa junto.
+                SetFuse(show ? combat.ShotWarning : -1f);
                 return;
             }
+            reticle.enabled = show;
+            if (!show) return;
 
-            // Jogador (05/10, pedido do Jhonata): laser vermelho da boca na direção do tiro até onde a bala para (a 1ª coisa no
-            // caminho, ou o alcance), com um ponto ali; travado num alvo, um anel dourado pulsa em volta do corpo dele.
+            // Jogador: anel de latão no chão onde ele mira (o cursor, até o alcance da arma) ou, se algo fica no caminho antes, deitado
+            // onde a bala bate; travado num alvo, um anel dourado pulsa em volta do corpo dele.
+            Vector3 from = gun.position;
             Vector3 target = combat.AimTarget;
+            if (combat.AimOnTarget)
+            {
+                reticle.widthMultiplier = lockedWidth;
+                DrawRing(target, lockedRingRadius * (1f + 0.06f * Mathf.Sin(Time.time * 12f)), lockedColor, Vector3.zero);
+                return;
+            }
             Vector3 dir = target - from;
             float range = weapon ? weapon.range : 35f;
             dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : gun.forward;
-            Vector3 end = from + dir * range;
-            float nearest = range;
-            int count = Physics.RaycastNonAlloc(from, dir, laserHits, range, ~0, QueryTriggerInteraction.Ignore);
+            float reach = Mathf.Min(range, Vector3.Distance(from, target));
+            Vector3 end = from + dir * reach;
+            Vector3 normal = Vector3.zero;
+            float nearest = reach + 0.3f;
+            int count = Physics.RaycastNonAlloc(from, dir, markHits, nearest, ~0, QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
-                var hit = laserHits[i];
+                var hit = markHits[i];
                 if (hit.distance >= nearest || hit.transform.IsChildOf(combat.transform)) continue;
                 nearest = hit.distance;
                 end = hit.point;
+                normal = hit.normal;
             }
-            aimLine.positionCount = 2;
-            aimLine.SetPosition(0, from);
-            aimLine.SetPosition(1, end);
-            aimLine.startColor = aimColor;
-            aimLine.endColor = new Color(aimColor.r, aimColor.g, aimColor.b, aimColor.a * 0.8f);
-            if (laserGlow)
+            // Nada no caminho: o anel fica no chão embaixo do ponto mirado (no fim do alcance a bala não bate em nada e o anel ficava
+            // flutuando longe, fora da vista).
+            if (normal == Vector3.zero)
             {
-                laserGlow.positionCount = 2;
-                laserGlow.SetPosition(0, from);
-                laserGlow.SetPosition(1, end);
-                laserGlow.startColor = new Color(aimColor.r, aimColor.g, aimColor.b, glowAlpha);
-                laserGlow.endColor = new Color(aimColor.r, aimColor.g, aimColor.b, glowAlpha * 0.6f);
+                nearest = reach;
+                count = Physics.RaycastNonAlloc(end + Vector3.up * 0.5f, Vector3.down, markHits, 8f, ~0, QueryTriggerInteraction.Ignore);
+                float below = float.PositiveInfinity;
+                for (int i = 0; i < count; i++)
+                {
+                    var hit = markHits[i];
+                    if (hit.distance >= below || hit.transform.IsChildOf(combat.transform)) continue;
+                    below = hit.distance;
+                    end = hit.point;
+                    normal = hit.normal;
+                }
+                // Mar (a água não tem colisor e é opaca): na superfície dela.
+                if (ocean != null || Services.TryGet(out ocean))
+                {
+                    float water = ocean.GetHeight(end);
+                    if (normal == Vector3.zero || end.y < water)
+                    {
+                        end.y = water;
+                        normal = Vector3.up;
+                    }
+                }
             }
-            if (combat.AimOnTarget) DrawRing(target, lockedRingRadius * (1f + 0.06f * Mathf.Sin(Time.time * 12f)), lockedColor);
-            else DrawRing(end - dir * 0.05f, dotRadius, aimColor);
+            // Chumbo em leque: o anel mostra até onde ele se abre naquela distância.
+            float radius = markRadius;
+            if (weapon && weapon.pellets > 1)
+                radius = Mathf.Clamp(nearest * Mathf.Tan(weapon.pelletSpread * 0.5f * Mathf.Deg2Rad), markRadius, 1.6f);
+            reticle.widthMultiplier = markWidth;
+            DrawRing(end + (normal != Vector3.zero ? normal * 0.04f : -dir * 0.05f), radius, markColor, normal);
         }
 
-        /// <summary>Anel virado para a câmera (pequeno e grosso, vira o ponto do laser).</summary>
-        void DrawRing(Vector3 center, float radius, Color color)
+        /// <summary>Caçoleta acesa no nível do aviso (0–1; negativo = apagada). Só mexe na emissão quando o nível muda.</summary>
+        void SetFuse(float level)
         {
-            const int segments = 24;
-            var cam = Camera.main;
-            Vector3 right = cam ? cam.transform.right : Vector3.right, up = cam ? cam.transform.up : Vector3.up;
+            level = level < 0f ? -1f : Mathf.Round(level * 10f) / 10f;
+            if (Mathf.Approximately(level, shownFuse)) return;
+            shownFuse = level;
+            Emit(fuseSparks, level < 0f ? 0f : Mathf.Lerp(sparksRate.x, sparksRate.y, level));
+            Emit(fuseSmoke, level < 0f ? 0f : Mathf.Lerp(smokeRate.x, smokeRate.y, level));
+            Emit(fuseGlow, level < 0f ? 0f : Mathf.Lerp(glowRate.x, glowRate.y, level));
+        }
+
+        static void Emit(ParticleSystem system, float rate)
+        {
+            if (!system) return;
+            var emission = system.emission;
+            emission.rateOverTime = rate;
+            if (rate > 0f && !system.isPlaying) system.Play();
+        }
+
+        /// <summary>Anel deitado na superfície (pela normal) ou, sem ela, virado para a câmera.</summary>
+        void DrawRing(Vector3 center, float radius, Color color, Vector3 normal)
+        {
+            const int segments = 28;
+            Vector3 right, up;
+            if (normal != Vector3.zero)
+            {
+                right = Vector3.Cross(normal, Mathf.Abs(normal.y) < 0.9f ? Vector3.up : Vector3.forward).normalized;
+                up = Vector3.Cross(right, normal);
+            }
+            else
+            {
+                var cam = Camera.main;
+                right = cam ? cam.transform.right : Vector3.right;
+                up = cam ? cam.transform.up : Vector3.up;
+            }
             reticle.loop = true;
             reticle.positionCount = segments;
             for (int i = 0; i < segments; i++)

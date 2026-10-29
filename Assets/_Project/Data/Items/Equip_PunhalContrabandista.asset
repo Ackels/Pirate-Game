@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Equip_PunhalContrabandista
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Punhal do contrabandista
+  category: 3
+  rarity: 2
+  group: 0
+  color: {r: 0.45, g: 0.72, b: 1, a: 1}
+  spacePerUnit: 0
+  description: "L\xE2mina curta de quem resolve as coisas no escuro do cais. Golpes r\xE1pidos (o terceiro do combo, um bote com dois cortes), pouco alcance, e pelas costas o dano dobra."
+  icon: {fileID: 2800000, guid: 195f7e113cbf1b445bfe95d0f8676caa, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  equipSlot: 1
+  equipment: {fileID: 11400000, guid: 5f8abcf2607af184fa96fcd44efe092c, type: 2}

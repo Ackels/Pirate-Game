@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Carga de metralha
   category: 0
   rarity: 1
+  group: 2
   color: {r: 0.9, g: 0.62, b: 0.45, a: 1}
   spacePerUnit: 1
   description: "Saco de balinhas de ferro: espalha muito e alcan\xE7a pouco (60 m), mas de perto faz mais dano e abate a tripula\xE7\xE3o inimiga (ela recarrega mais devagar). Uma carga por bordada (tecla 3 no navio)."
   icon: {fileID: 2800000, guid: 71d82e9c948c67d498e670a5c06e7297, type: 3}
   keepAboard: 9999
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

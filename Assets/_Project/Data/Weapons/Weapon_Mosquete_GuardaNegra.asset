@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Mosquete_GuardaNegra
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Mosquete da Guarda Negra
+  icon: {fileID: 0}
   kind: 1
   animatorWeaponType: 2
   damage: 26
@@ -25,6 +26,7 @@ MonoBehaviour:
   reloadTime: 4
   attackVariants: 1
   animatorVariantOffset: 0
+  animatorVariants: 
   randomVariants: 0
   variantHitDelays: []
   comboWindow: 1
@@ -41,7 +43,12 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 1
+  supportOffset: 0.3
   moveSpeedWhileAttacking: 0.25
   knockdown: 0
   guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
   variantStrikes: []

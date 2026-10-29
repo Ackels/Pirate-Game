@@ -17,10 +17,15 @@ namespace Pirates.UI
     /// depois o nome do capitão, M10, e o prólogo), Prólogo (rever), Opções (gráficos, áudio, controles: <see cref="GameOptions"/>),
     /// Créditos e Sair. Enquanto está na tela o tempo para, os comandos de jogo ficam desligados e toca a música do menu
     /// (<see cref="TitleScreen"/>). Depois mostra "Jogo salvo" a cada salvamento (ao atracar e ao sair do porto), no canto de baixo.
+    /// <b>Menu de pausa</b> (29/10, pedido do Jhonata: no jogo compilado não dava para sair sem Alt+F4): Esc durante o jogo, sem nada aberto
+    /// (janela, painel, conversa, pesca...), para o jogo e abre Continuar, Opções (as mesmas do menu inicial), Salvar o jogo, Voltar ao menu
+    /// inicial e Sair do jogo (os dois últimos perguntam se salva antes). Roda antes dos outros scripts no quadro
+    /// (<see cref="DefaultExecutionOrderAttribute"/>) para ver o que estava aberto antes de o Esc fechar.
     /// </summary>
+    [DefaultExecutionOrder(-300)]
     public class SaveMenuHUD : MonoBehaviour
     {
-        enum View { Main, ConfirmNew, Name, Options, Credits, Prologue }
+        enum View { Main, ConfirmNew, Name, Options, Credits, Prologue, Pause, ConfirmMenu, ConfirmQuit }
         enum Tab { Graphics, Audio, Controls }
 
         [SerializeField] GameSave save;
@@ -34,6 +39,10 @@ namespace Pirates.UI
         [SerializeField] float toastSeconds = 2.5f;
 
         bool paused, peeked;
+        // Menu de pausa (no meio do jogo): a tela "inicial" dele é a Pause, e o tempo volta ao que era ao fechar.
+        bool inGamePause;
+        float pausedScale = 1f;
+        PlayerModeSwitcher switcher;
         bool withTutorial = true;
         View view;
         Tab tab;
@@ -96,16 +105,114 @@ namespace Pirates.UI
                 save.Saved -= OnSaved;
                 save.Failed -= OnFailed;
             }
-            if (paused) SetPaused(false);
+            if (inGamePause) ClosePause();
+            else if (paused) SetPaused(false);
             if (menu != null) Hud.Show(menu, false);
         }
 
         void Update()
         {
             bool showMenu = save && save.WaitingForChoice;
-            if (showMenu != paused) SetPaused(showMenu);
+            if (!inGamePause && showMenu != paused) SetPaused(showMenu);
+            if (!showMenu) CheckPauseKey();
             UpdateMenu();
             UpdateToast();
+        }
+
+        /// <summary>A tela de volta do Esc e do "Voltar": a do menu inicial ou a da pausa.</summary>
+        View Home => inGamePause ? View.Pause : View.Main;
+
+        // ---------- Pausa ----------
+
+        void CheckPauseKey()
+        {
+            var keyboard = Keyboard.current;
+            var pad = Gamepad.current;
+            bool pressed = keyboard != null && keyboard.escapeKey.wasPressedThisFrame || pad != null && pad.startButton.wasPressedThisFrame;
+            if (!pressed) return;
+            if (inGamePause)
+            {
+                if (view == View.Pause) ClosePause();
+                return;
+            }
+            if (!save || !save.Started || TitleScreen.Showing || ScreenPanel.Open || SomethingOpen()) return;
+            OpenPause();
+        }
+
+        /// <summary>Alguma interação aberta no navio ou no capitão (casa, baú, destroços, pesca, conversa): o Esc é dela.</summary>
+        bool SomethingOpen()
+        {
+            if (!switcher) switcher = FindAnyObjectByType<PlayerModeSwitcher>();
+            if (!switcher) return false;
+            Component who = switcher.IsOnFoot ? switcher.Character : (Component)switcher.Ship;
+            if (!who) return false;
+            foreach (var i in who.GetComponents<IInteraction>())
+                if (i.IsOpen) return true;
+            return false;
+        }
+
+        void OpenPause()
+        {
+            inGamePause = paused = true;
+            pausedScale = Time.timeScale;
+            Time.timeScale = 0f;
+            GameInput.Instance.GameplayEnabled = false;
+            AudioListener.pause = true;
+            view = View.Pause;
+            peeked = true;   // o resumo do save é só do menu inicial; sem isto a pausa se remontaria a cada quadro
+            dirty = true;
+        }
+
+        void ClosePause()
+        {
+            if (view == View.Options) GameOptions.Save();
+            inGamePause = paused = false;
+            Time.timeScale = pausedScale > 0f ? pausedScale : 1f;
+            GameInput.Instance.GameplayEnabled = true;
+            AudioListener.pause = false;
+        }
+
+        void BuildPause()
+        {
+            content.Add(Hud.Text("Jogo pausado", "hud-menu__question"));
+            content.Add(Win.Button("Continuar", ClosePause, true, "hud-button--big"));
+            content.Add(Win.Button("Opções", () =>
+            {
+                tab = Tab.Graphics;
+                Go(View.Options);
+            }, true, "hud-button--big"));
+            content.Add(Win.Button("Salvar o jogo", () =>
+            {
+                if (save.SaveNow()) dirty = true;
+            }, true, "hud-button--big"));
+            content.Add(Hud.Text(save.LastSaved is DateTime at ? $"Salvo pela última vez às {at:HH:mm}." : "<i>Ainda não salvo nesta partida.</i>",
+                "hud-title__summary"));
+            content.Add(Win.Button("Voltar ao menu inicial", () => Go(View.ConfirmMenu), true, "hud-button--big"));
+            content.Add(Win.Button("Sair do jogo", () => Go(View.ConfirmQuit), true, "hud-button--big"));
+        }
+
+        void BuildConfirmLeave(bool quit)
+        {
+            content.Add(Hud.Text(quit ? "Sair do jogo?" : "Voltar ao menu inicial?", "hud-menu__question"));
+            content.Add(Hud.Text("O que você fez desde o último save se perde se não salvar agora. (O jogo também salva sozinho ao atracar " +
+                                 "e ao sair do porto.)", "hud-menu__summary"));
+            content.Add(Win.Button(quit ? "Salvar e sair" : "Salvar e voltar", () =>
+            {
+                if (save.SaveNow()) Leave(quit);
+            }, true, "hud-button--big"));
+            content.Add(Win.Button(quit ? "Sair sem salvar" : "Voltar sem salvar", () => Leave(quit), true, "hud-button--big"));
+            content.Add(Win.Button("Cancelar", () => Go(View.Pause), true, "hud-button--big"));
+        }
+
+        void Leave(bool quit)
+        {
+            if (quit)
+            {
+                Quit();
+                return;
+            }
+            ClosePause();
+            save.ReloadScene(GameSave.StartMode.Menu);
         }
 
         void SetPaused(bool value)
@@ -142,7 +249,8 @@ namespace Pirates.UI
                 return;
             }
             if (menu == null && !BuildMenu()) return;
-            TitleScreen.Showing = true;
+            if (!inGamePause) TitleScreen.Showing = true;
+            menu.EnableInClassList("hud-title--pause", inGamePause);
             Hud.Show(menu, view != View.Prologue);
             var hud = GameHud.Current;
             if (hud) hud.TypingText = view == View.Name;
@@ -153,10 +261,10 @@ namespace Pirates.UI
             backdrop.style.scale = new Scale(new Vector3(s, s, 1f));
 
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && view != View.Main)
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && view != Home)
             {
                 if (view == View.Options) GameOptions.Save();
-                view = View.Main;
+                view = Home;
             }
 
             if (view == shownView && peeked && !dirty) return;
@@ -165,9 +273,13 @@ namespace Pirates.UI
             content.Clear();
             nameField = null;
             panel.EnableInClassList("hud-title__panel--side", view == View.Main);
+            panel.EnableInClassList("hud-title__panel--pause", view is View.Pause or View.ConfirmMenu or View.ConfirmQuit);
             panel.EnableInClassList("hud-title__panel--wide", view is View.Options or View.Credits);
             switch (view)
             {
+                case View.Pause: BuildPause(); break;
+                case View.ConfirmMenu: BuildConfirmLeave(false); break;
+                case View.ConfirmQuit: BuildConfirmLeave(true); break;
                 case View.ConfirmNew: BuildConfirm(); break;
                 case View.Name: BuildName(); break;
                 case View.Options: BuildOptions(); break;
@@ -358,7 +470,7 @@ namespace Pirates.UI
             row.Add(Win.Button("Voltar", () =>
             {
                 GameOptions.Save();
-                Go(View.Main);
+                Go(Home);
             }, true, "hud-button--big"));
             content.Add(row);
         }

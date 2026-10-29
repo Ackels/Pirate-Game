@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Peixe_Polvo
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Polvo
+  category: 0
+  rarity: 2
+  color: {r: 0.75, g: 0.4, b: 0.85, a: 1}
+  spacePerUnit: 0.5
+  description: "Oito bra\xE7os e muita esperteza: escapa de quem fisga devagar. A taverna do porto paga caro."
+  icon: {fileID: 2800000, guid: d5e2151837154e24a84c59d37e063ece, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 25
+  equipSlot: 0
+  equipment: {fileID: 0}

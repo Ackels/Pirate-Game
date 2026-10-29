@@ -203,16 +203,23 @@ namespace Pirates.EditorTools
                 Part(PrimitiveType.Capsule, "Corpo", capsule, new Vector3(0f, 0.9f, 0f), new Vector3(0.6f, 0.9f, 0.6f), Quaternion.identity, GetMaterial("M_Pirata", tint, 0.1f));
             }
             var model = go.transform.Find("Model");
+            // Postura nos golpes e pescoço sem torcer além do peito (23/10): os mesmos limites do capitão, tronco e cabeça um pouco mais soltos.
+            var modelAnimator = model.GetComponent<Animator>();
+            // Modelo da Anne (duelista, mosqueteira): locomoção feminina do Human Basic Motions.
+            if (modelAnimator && kitModel == KitCharacters.Anne) modelAnimator.runtimeAnimatorController = FemaleAnimator(modelAnimator.runtimeAnimatorController);
+            if (modelAnimator && modelAnimator.isHuman && !model.GetComponent<PostureLimiter>())
+                model.gameObject.AddComponent<PostureLimiter>().ConfigureBend(24f, 0.35f, 25f, 0.2f);
             var combat = go.AddComponent<CharacterCombat>();
             if (weapon.twoHanded)
             {
-                // Bacamarteiro: o bacamarte do jogador (duas mãos, pose de rifle), com a mesma linha vermelha de aviso.
+                // Bacamarteiro: o bacamarte do jogador (duas mãos, pose de rifle), com o mesmo aviso dos atiradores (faíscas na caçoleta).
                 // A mosqueteira da Guarda Negra usa o mosquete-machadinha do kit; os bacamarteiros, o bacamarte.
                 var gun = BlunderbussOn(model, iron, wood, out Transform muzzle, out Transform hand, out Transform holster, IsMusketeer(name));
                 combat.Configure(new[] { weapon }, new[] { gun }, new[] { hand }, new[] { holster }, muzzle, ShotTracer(go.transform));
                 combat.SetMuzzles(new[] { muzzle });
                 combat.SetAimSnap(0f);
-                var rig = AddAimRig(model, combat, muzzle, AimLine(go.transform, new Color(1f, 0.1f, 0.05f, 0.95f), 0.045f));
+                var rig = AddAimRig(model, combat, muzzle);
+                AddFuse(rig, muzzle, 0.1f);
                 if (rig)
                 {
                     RifleAimYaw(model, out float upper, out float full);
@@ -225,8 +232,8 @@ namespace Pirates.EditorTools
                 combat.Configure(new[] { weapon }, new[] { gun }, new[] { hand }, new[] { holster }, muzzle, ShotTracer(go.transform));
                 // Sem "ímã" no corpo do alvo: a bala vai onde a mira (atrasada) está, e dá para desviar.
                 combat.SetAimSnap(0f);
-                // Linha de mira vermelha: o aviso de que ele vai atirar.
-                AddAimRig(model, combat, muzzle, AimLine(go.transform, new Color(1f, 0.1f, 0.05f, 0.95f), 0.045f));
+                // Aviso de que ele vai atirar: faíscas na caçoleta enquanto mira (e o medalhão sobre a cabeça).
+                AddFuse(AddAimRig(model, combat, muzzle), muzzle, 0f);
             }
             else if (IsDuelist(name))
             {
@@ -246,7 +253,7 @@ namespace Pirates.EditorTools
                 var sword = GreatswordOn(model, iron, wood, out Transform hand);
                 combat.Configure(new[] { weapon }, new[] { sword }, new[] { hand }, new[] { hand }, null, null);
             }
-            else if (weapon.animatorWeaponType == 3)
+            else if (IsBrute(name))
             {
                 // Brutamontes: machado duplo sempre na mão (não troca de arma).
                 var axe = AxeOn(model, iron, wood, out Transform hand);

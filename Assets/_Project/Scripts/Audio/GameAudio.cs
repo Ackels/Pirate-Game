@@ -60,6 +60,55 @@ namespace Pirates.Audio
             Pirates.LandCombat.RuinLever.Pulled += OnLeverPulled;
             Pirates.LandCombat.RuinPassage.Used += OnPassageUsed;
             Pirates.LandCombat.CryptMonster.Cued += OnCryptCue;
+            // Pesca (D2, 27/10): zunido da linha saindo, a carretilha e o peixe chegando.
+            FishingRod.CastOut += OnFishCast;
+            FishingRod.Hooking += OnFishHooked;
+            FishingRod.Landing += OnFishHooked;
+            FishingRod.Caught += OnFishCaught;
+            // Cortar árvores (D1, 28/10): machadada, o tronco rangendo ao tombar e a pancada no chão.
+            ResourceNode.Struck += OnChopped;
+            ResourceNode.Felled += OnTreeFelled;
+            ResourceNode.Landed += OnTreeLanded;
+        }
+
+        void OnChopped(ResourceNode node, Vector3 point, Vector3 direction)
+        {
+            if (node && node.Type == ResourceNode.Kind.Ore)
+            {
+                // Picaretada: a pancada na pedra e um tinido curto de ferro.
+                SoundPlayer.At(sounds.dig, point, 1f, 1.1f);
+                SoundPlayer.At(sounds.block, point, 0.35f, 1.6f);
+                return;
+            }
+            SoundPlayer.At(sounds.chop, point);
+        }
+
+        void OnTreeFelled(ResourceNode node, Vector3 foot, Vector3 direction)
+        {
+            // Veio: o minério se solta e rola (pedras batendo, mais grave).
+            if (node && node.Type == ResourceNode.Kind.Ore) SoundPlayer.At(sounds.dig, foot + Vector3.up * 0.3f, 1f, 0.7f);
+            else SoundPlayer.At(sounds.shipCreak, foot + Vector3.up * 2f, 1f, 0.8f);
+        }
+
+        void OnTreeLanded(ResourceNode node, Vector3 point)
+        {
+            if (node && node.Type == ResourceNode.Kind.Ore)
+            {
+                SoundPlayer.At(sounds.bodyFall, point, 0.6f, 1.2f);
+                return;
+            }
+            SoundPlayer.At(sounds.crateBreak, point, 1f, 0.6f);
+            SoundPlayer.At(sounds.bodyFall, point, 1f, 0.7f);
+        }
+
+        void OnFishCast(FishingRod rod) => SoundPlayer.At(sounds.dodge, rod.transform.position + Vector3.up, 0.45f, 1.6f);
+
+        void OnFishHooked(FishingRod rod) => SoundPlayer.At(sounds.shipCreak, rod.transform.position + Vector3.up, 0.5f, 2.2f);
+
+        void OnFishCaught(FishingRod rod, Pirates.Economy.ItemDefinition item)
+        {
+            SoundPlayer.At(sounds.pickup, rod.transform.position + Vector3.up, 1f, 1.1f);
+            if (item && item.rarity >= Pirates.Economy.ItemRarity.Rare) SoundPlayer.Ui(sounds.missionDone);
         }
 
         void OnTrapTriggered(Pirates.LandCombat.RuinTrap trap, bool warning)
@@ -150,6 +199,13 @@ namespace Pirates.Audio
             Pirates.LandCombat.RuinLever.Pulled -= OnLeverPulled;
             Pirates.LandCombat.RuinPassage.Used -= OnPassageUsed;
             Pirates.LandCombat.CryptMonster.Cued -= OnCryptCue;
+            FishingRod.CastOut -= OnFishCast;
+            FishingRod.Hooking -= OnFishHooked;
+            FishingRod.Landing -= OnFishHooked;
+            FishingRod.Caught -= OnFishCaught;
+            ResourceNode.Struck -= OnChopped;
+            ResourceNode.Felled -= OnTreeFelled;
+            ResourceNode.Landed -= OnTreeLanded;
         }
 
         // Etapa do tutorial cumprida: a vinheta de missão aceita; o fim do tutorial, a de missão cumprida.
@@ -176,6 +232,8 @@ namespace Pirates.Audio
                 };
                 // Cova abrindo (terra cavada, mais grave) ou ossos virando pó (queda do corpo, mais aguda).
                 effects.Unearthed += (p, rising) => SoundPlayer.At(rising ? sounds.dig : sounds.bodyFall, p, 1.2f, rising ? 0.75f : 1.35f);
+                // Pesca: o "plop" da boia (passo na água, mais grave quanto maior o respingo).
+                effects.Plopped += (p, size) => SoundPlayer.At(sounds.stepWater, p, Mathf.Clamp(0.5f + size * 0.4f, 0.4f, 1.3f), Mathf.Clamp(1.35f - size * 0.25f, 0.8f, 1.4f));
             }
             foreach (var visitor in FindObjectsByType<HarborVisitor>(FindObjectsInactive.Include))
             {

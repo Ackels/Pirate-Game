@@ -65,6 +65,25 @@ namespace Pirates.CameraSystem
         {
             target = newTarget;
             targetBody = target ? target.GetComponentInParent<Rigidbody>() : null;
+            targetInteractions = target ? target.GetComponentsInParent<IInteraction>(true) : null;
+        }
+
+        // O que o alvo abre com F (casas do porto, baú, destroços, conversa...): com algo aberto a roda do mouse é da janela.
+        IInteraction[] targetInteractions;
+
+        /// <summary>Janela, painel ou menu na frente: a roda do mouse rola a janela e não mexe no zoom (29/10).</summary>
+        bool PointerBusy()
+        {
+            if (ScreenPanel.Open || TitleScreen.Showing) return true;
+            if (targetInteractions == null) return false;
+            for (int i = 0; i < targetInteractions.Length; i++)
+            {
+                var interaction = targetInteractions[i];
+                // Pescar e cortar/minerar não têm janela: o zoom continua.
+                if (interaction is FishingRod || interaction is Gatherer) continue;
+                if (interaction is Object o && o && interaction.IsOpen) return true;
+            }
+            return false;
         }
 
         /// <summary>Segue outro alvo com outra faixa de zoom (ex.: personagem a pé fica mais perto que o navio).</summary>
@@ -195,7 +214,7 @@ namespace Pirates.CameraSystem
             }
             targetPitchOffset -= input.CameraPitch.ReadValue<float>() * stickPitchSpeed * dt;
 
-            float scroll = input.CameraZoomScroll.ReadValue<float>();
+            float scroll = PointerBusy() ? 0f : input.CameraZoomScroll.ReadValue<float>();
             if (Mathf.Abs(scroll) > 0.01f) targetDistance -= Mathf.Sign(scroll) * zoomStep;
             targetDistance -= input.CameraZoomStick.ReadValue<float>() * stickZoomSpeed * dt;
             targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);

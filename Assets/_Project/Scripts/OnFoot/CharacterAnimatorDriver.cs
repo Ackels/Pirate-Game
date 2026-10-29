@@ -48,6 +48,16 @@ namespace Pirates.OnFoot
         static readonly int LeverState = Animator.StringToHash("PuxarAlavanca");
         /// <summary>"Pulling Lever" do Mixamo: a mão sai do quadril aos 0,8 s (o começo é parado).</summary>
         const float LeverClipStart = 0.8f;
+        // Pesca (D2): clipes do Human Crafting Animations (Kevin Iglesias), do começo: lançar ("FishingThrow01"), esperar ("Fishing01 -
+        // Loop"), brigar com o peixe ("FishingFighting01", em loop) e puxar ("FishingPullOut01", o puxão para cima e as mãos descendo).
+        static readonly int FishCastState = Animator.StringToHash("PescarLancar");
+        static readonly int FishFightState = Animator.StringToHash("PescarBriga");
+        static readonly int FishReelState = Animator.StringToHash("PescarPuxar");
+        static readonly int FishingBool = Animator.StringToHash("Fishing");
+        // Coleta (D1): "MiningOneHand01_R - Wall" do Kevin Iglesias em loop (machadada de uma mão na altura da cintura).
+        static readonly int GatherState = Animator.StringToHash("Coletar");
+        static readonly int MineState = Animator.StringToHash("Minerar");
+        static readonly int GatheringBool = Animator.StringToHash("Gathering");
         static readonly int Knock = Animator.StringToHash("Knock");
         static readonly int KnockVariant = Animator.StringToHash("KnockVariant");
         static readonly int Down = Animator.StringToHash("Down");
@@ -121,6 +131,9 @@ namespace Pirates.OnFoot
                        || state.shortNameHash == ParryState;
             }
         }
+
+        /// <summary>Numa ação de corpo inteiro em movimento (rolar, chutar, arremessar, alavanca, pesca, cair): sem a mão de apoio na arma.</summary>
+        public bool InFullBodyMove => upperIndex >= 0 && TargetState().tagHash == MovingFullBodyTag;
 
         AnimatorStateInfo TargetState() =>
             animator.IsInTransition(upperIndex) ? animator.GetNextAnimatorStateInfo(upperIndex) : animator.GetCurrentAnimatorStateInfo(upperIndex);
@@ -303,6 +316,55 @@ namespace Pirates.OnFoot
             if (dead || upperIndex < 0 || !animator.HasState(upperIndex, LeverState)) return;
             ResetTrigger(Attack);
             animator.CrossFadeInFixedTime(LeverState, 0.15f, upperIndex, LeverClipStart);
+        }
+
+        /// <summary>Pesca: lança a linha (corpo todo) e fica esperando com a vara enquanto <see cref="SetFishing"/> estiver ligado.</summary>
+        public void PlayFishCast()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, FishCastState)) return;
+            ResetTrigger(Attack);
+            SetFishing(true);
+            animator.CrossFadeInFixedTime(FishCastState, 0.2f, upperIndex, 0f);
+        }
+
+        /// <summary>Pesca: briga com o peixe fisgado (segurando a vara aos trancos, em loop até puxar ou soltar).</summary>
+        public void PlayFishFight()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, FishFightState)) return;
+            animator.CrossFadeInFixedTime(FishFightState, 0.15f, upperIndex, 0f);
+        }
+
+        /// <summary>Pesca: puxa a linha para fora da água (peixe fisgado ou linha vazia) e volta à pose.</summary>
+        public void PlayFishReel()
+        {
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, FishReelState)) return;
+            SetFishing(false);
+            animator.CrossFadeInFixedTime(FishReelState, 0.12f, upperIndex, 0f);
+        }
+
+        /// <summary>Liga/desliga a espera com a vara (desligado, a espera volta à pose da arma).</summary>
+        public void SetFishing(bool on)
+        {
+            if (parameters.Contains(FishingBool)) animator.SetBool(FishingBool, on);
+        }
+
+        /// <summary>
+        /// Coleta: golpes de ferramenta em loop enquanto <see cref="SetGathering"/> estiver ligado: na parede (cortar árvore) ou, com
+        /// <paramref name="ground"/>, no chão (minerar o veio no pé da pedra).
+        /// </summary>
+        public void PlayGather(bool ground = false)
+        {
+            int state = ground ? MineState : GatherState;
+            if (dead || upperIndex < 0 || !animator.HasState(upperIndex, state)) return;
+            ResetTrigger(Attack);
+            SetGathering(true);
+            animator.CrossFadeInFixedTime(state, 0.15f, upperIndex, 0f);
+        }
+
+        /// <summary>Liga/desliga os golpes de ferramenta (desligado, volta à pose da arma).</summary>
+        public void SetGathering(bool on)
+        {
+            if (parameters.Contains(GatheringBool)) animator.SetBool(GatheringBool, on);
         }
 
         /// <summary>Golpe na guarda: o tranco da defesa (aparar também).</summary>

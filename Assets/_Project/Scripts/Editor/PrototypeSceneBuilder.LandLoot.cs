@@ -15,8 +15,11 @@ namespace Pirates.EditorTools
     /// </summary>
     public static partial class PrototypeSceneBuilder
     {
-        /// <summary>Espaço da mochila: metade do porão da chalupa. Um baú cheio (~22) não cabe inteiro: escolha.</summary>
-        const float BackpackCapacity = 15f;
+        /// <summary>
+        /// Espaço da mochila de lona (15 → 25 em 29/10, pedido do Jhonata: com madeira e minério ela enchia rápido). Um baú cheio ainda não
+        /// cabe inteiro: escolha.
+        /// </summary>
+        const float BackpackCapacity = 25f;
 
         // Caixotes e barris do acampamento (no espaço do acampamento).
         static readonly Vector3[] CampCrates =

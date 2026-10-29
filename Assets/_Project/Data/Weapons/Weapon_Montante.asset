@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Montante
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: "Montante do cors\xE1rio"
-  icon: {fileID: 2800000, guid: 099a3a68c01de304599aa5265b0025c1, type: 3}
+  icon: {fileID: 2800000, guid: a0e0d69eb185b7341a24e67ff87058d7, type: 3}
   kind: 0
   animatorWeaponType: 4
   damage: 40
@@ -26,12 +26,12 @@ MonoBehaviour:
   reloadTime: 2.5
   attackVariants: 3
   animatorVariantOffset: 0
-  animatorVariants: 
+  animatorVariants: 08000000090000000a000000i
   randomVariants: 0
   variantHitDelays:
   - 0.41666666
-  - 0.5416666
-  - 0.4583333
+  - 0.31666666
+  - 0.35833332
   comboWindow: 1.8
   animatedDraw: 0
   drawGrabTime: 0.4615385
@@ -46,11 +46,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0.07
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.25
   knockdown: 0
   guardCost: 1
   breaksGuard: 0
   hitPush: 3
+  backstabDamage: 1
   holy: 0
   variantStrikes:
   - range: 0
@@ -79,8 +83,7 @@ MonoBehaviour:
     customKnockdown: 1
     knockdown: 1
     unblockable: 0
-    followUps:
-    - 0.6666666
+    followUps: []
     lungeSpeed: 0
     extraRecovery: 0
     push: 5

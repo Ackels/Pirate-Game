@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Machadada
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 0c4cdf1ecd5c0714484c7f851fc76b98, type: 3}
+  - {fileID: 8300000, guid: 2b76b610d5c7a62499241fc9bd7e56ec, type: 3}
+  - {fileID: 8300000, guid: 580476104418f714cbc5f8144cb5ab9c, type: 3}
+  - {fileID: 8300000, guid: c6334d7b2fe74d14e96251808a9e2831, type: 3}
+  - {fileID: 8300000, guid: 8838a4ad5a7382346a64f7d74c7ef2b0, type: 3}
+  - {fileID: 8300000, guid: a0fc784a55951a143bd1c27ded03cf6d, type: 3}
+  clipVolumes: []
+  channel: 1
+  volume: {x: 0.7, y: 0.85}
+  pitch: {x: 0.9, y: 1.08}
+  spatial: 1
+  minDistance: 2
+  maxDistance: 30
+  cooldown: 0

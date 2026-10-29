@@ -117,10 +117,15 @@ namespace Pirates.EditorTools
                 bone.rotation = Quaternion.FromToRotation((towards - bone.position).normalized, direction) * bone.rotation;
             foreach (var (side, sign) in new[] { ("L", -1f), ("R", 1f) })
             {
+                // O pé do repouso é chato no chão; esticar a canela (joelho dobrado no kit) girava o pé junto, ~45° de ponta para cima, e
+                // o humanoide tomava isso como o pé "reto": toda animação levantava a ponta (27/10, "o pé do brutamontes está bugado").
+                var foot = B("Foot." + side);
+                var footFlat = foot.rotation;
                 Align(B("UpperArm." + side), B("LowerArm." + side).position, root.right * sign);
                 Align(B("LowerArm." + side), B("Hand." + side).position, root.right * sign);
                 Align(B("UpperLeg." + side), B("LowerLeg." + side).position, -root.up);
-                Align(B("LowerLeg." + side), B("Foot." + side).position, -root.up);
+                Align(B("LowerLeg." + side), foot.position, -root.up);
+                foot.rotation = footFlat;
             }
             // O repouso do kit é de joelho dobrado: com as pernas esticadas o pé desceria abaixo do chão. O quadril sobe até
             // o pé voltar ao chão (sem isso o Unity calcula a escala do corpo pela perna dobrada e ele anda agachado).

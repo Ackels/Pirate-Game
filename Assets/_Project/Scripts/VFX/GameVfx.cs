@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Pirates.Combat;
 using Pirates.Core;
+using Pirates.Loot;
 using Pirates.Ships;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -112,7 +113,10 @@ namespace Pirates.VFX
                 effects.Exploded += OnExploded;
                 effects.Unearthed += OnUnearthed;
                 effects.Surged += OnSurged;
+                effects.Plopped += OnPlopped;
             }
+            ResourceNode.Struck += OnChopped;
+            ResourceNode.Landed += OnTreeLanded;
             Scan();
         }
 
@@ -121,6 +125,8 @@ namespace Pirates.VFX
             foreach (var ship in known)
                 if (ship) ship.HullChanged -= Remeasure;
             DestroyFoot();
+            ResourceNode.Struck -= OnChopped;
+            ResourceNode.Landed -= OnTreeLanded;
             if (!effects) return;
             effects.Blasted -= OnBlasted;
             effects.Splashed -= OnSplashed;
@@ -128,9 +134,78 @@ namespace Pirates.VFX
             effects.Exploded -= OnExploded;
             effects.Unearthed -= OnUnearthed;
             effects.Surged -= OnSurged;
+            effects.Plopped -= OnPlopped;
         }
 
         float WaterHeight(Vector3 p) => ocean != null ? ocean.GetHeight(p) : 0f;
+
+        // ---------- Coleta (D1) ----------
+
+        /// <summary>Machadada no tronco: lascas pequenas voando para o lado de quem bateu e um pouco de pó de madeira.</summary>
+        void OnChopped(ResourceNode node, Vector3 point, Vector3 direction)
+        {
+            if (Far(point)) return;
+            Vector3 back = -direction;
+            if (node && node.Type == ResourceNode.Kind.Ore)
+            {
+                OnMined(point, back);
+                return;
+            }
+            for (int i = 0; i < 7; i++)
+            {
+                float shade = Random.Range(0.85f, 1.2f);
+                splinters.EmitSized(point, (back + Random.insideUnitSphere * 0.9f + Vector3.up * 0.6f) * Random.Range(2f, 4.5f),
+                    new Vector3(Random.Range(0.05f, 0.09f), Random.Range(0.04f, 0.07f), Random.Range(0.12f, 0.22f)),
+                    Random.Range(0.8f, 1.2f), new Color(0.78f * shade, 0.62f * shade, 0.42f * shade, 1f), Random.Range(300f, 700f));
+            }
+            for (int i = 0; i < 2; i++)
+                dust?.Emit(point + back * 0.1f, back * Random.Range(0.3f, 0.8f) + Vector3.up * 0.3f, Random.Range(0.4f, 0.7f), Random.Range(0.6f, 0.9f),
+                    new Color(0.72f, 0.62f, 0.48f, 0.55f), Random.Range(-40f, 40f));
+        }
+
+        /// <summary>Picaretada no veio (D1, passo 2): faíscas da ponta de ferro, lascas de pedra cinza e de minério e pó de pedra.</summary>
+        void OnMined(Vector3 point, Vector3 back)
+        {
+            for (int i = 0; i < 5; i++)
+                sparks.Emit(point, (back + Random.insideUnitSphere * 0.8f + Vector3.up * 0.9f) * Random.Range(3f, 6f), Random.Range(0.06f, 0.1f),
+                    Random.Range(0.15f, 0.3f), new Color(1f, 0.82f, 0.5f, 1f));
+            for (int i = 0; i < 6; i++)
+            {
+                bool ore = i % 2 == 0;
+                float shade = Random.Range(0.85f, 1.15f);
+                var color = ore ? new Color(0.55f * shade, 0.3f * shade, 0.2f * shade, 1f) : new Color(0.55f * shade, 0.54f * shade, 0.52f * shade, 1f);
+                splinters.EmitSized(point, (back + Random.insideUnitSphere * 0.9f + Vector3.up * 0.7f) * Random.Range(2f, 4f),
+                    Vector3.one * Random.Range(0.05f, 0.09f), Random.Range(0.7f, 1.1f), color, Random.Range(300f, 700f));
+            }
+            for (int i = 0; i < 2; i++)
+                dust?.Emit(point + back * 0.1f, back * Random.Range(0.3f, 0.8f) + Vector3.up * 0.3f, Random.Range(0.4f, 0.7f), Random.Range(0.6f, 0.9f),
+                    new Color(0.62f, 0.6f, 0.56f, 0.55f), Random.Range(-40f, 40f));
+        }
+
+        /// <summary>A árvore cortada bate no chão: poeira em volta de onde a copa caiu (no veio, em volta da pedra quando o minério se solta).</summary>
+        void OnTreeLanded(ResourceNode node, Vector3 point)
+        {
+            if (Far(point)) return;
+            if (node && node.Type == ResourceNode.Kind.Ore)
+            {
+                float reach = node.Radius + 0.4f;
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 ring = Random.insideUnitCircle.normalized;
+                    var flat = new Vector3(ring.x, 0f, ring.y);
+                    dust?.Emit(point + flat * reach, flat * Random.Range(0.8f, 1.8f) + Vector3.up * Random.Range(0.3f, 1f),
+                        Random.Range(0.7f, 1.2f), Random.Range(0.8f, 1.3f), new Color(0.6f, 0.56f, 0.52f, 0.6f), Random.Range(-40f, 40f));
+                }
+                return;
+            }
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 ring = Random.insideUnitCircle.normalized;
+                var flat = new Vector3(ring.x, 0f, ring.y);
+                dust?.Emit(point + flat * Random.Range(0.3f, 1.4f), flat * Random.Range(1.2f, 2.8f) + Vector3.up * Random.Range(0.4f, 1.4f),
+                    Random.Range(0.9f, 1.6f), Random.Range(1f, 1.6f), new Color(0.6f, 0.52f, 0.4f, 0.65f), Random.Range(-40f, 40f));
+            }
+        }
 
         // ---------- Canhões ----------
 
@@ -269,6 +344,23 @@ namespace Pirates.VFX
         /// Água estourando (lula gigante): coluna e gotas maiores e mais altas que as da bala, anel largo e espuma; <paramref name="size"/>
         /// 1 = um tentáculo rompendo a água, 2,5 = a cabeça, 0,35 = bolhas do aviso.
         /// </summary>
+        /// <summary>Respingo pequeno (pesca): gotinhas, um anel que se abre e espuma; <paramref name="size"/> 1 = a boia caindo.</summary>
+        void OnPlopped(Vector3 point, float size)
+        {
+            if (Far(point)) return;
+            float y = WaterHeight(point);
+            var at = new Vector3(point.x, y + 0.04f, point.z);
+            int n = Mathf.RoundToInt(5f + 5f * size);
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 r = Random.insideUnitCircle * 0.15f * size;
+                drops.Emit(at + new Vector3(r.x, 0f, r.y), new Vector3(r.x * 6f, Random.Range(1.5f, 3.2f) * Mathf.Sqrt(size), r.y * 6f),
+                    Random.Range(0.06f, 0.12f) * Mathf.Sqrt(size), Random.Range(0.35f, 0.6f), new Color(0.9f, 0.96f, 1f, 0.9f));
+            }
+            ring.Emit(at + Vector3.up * 0.06f, Vector3.zero, 0.7f * size, 1.1f, new Color(1f, 1f, 1f, 0.6f));
+            foam.Emit(at, Vector3.zero, 0.45f * size, 1.2f, new Color(1f, 1f, 1f, 0.4f), Random.Range(-20f, 20f));
+        }
+
         void OnSurged(Vector3 point, float size)
         {
             float s = Mathf.Clamp(size, 0.2f, 3f);

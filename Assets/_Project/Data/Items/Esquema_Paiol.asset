@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Paiol de P\xF3lvora"
   category: 2
   rarity: 2
+  group: 0
   color: {r: 0.45, g: 0.72, b: 1, a: 1}
   spacePerUnit: 0
   description: "Constru\xE7\xE3o da base: guarda mais p\xF3lvora com seguran\xE7a."
-  icon: {fileID: 2800000, guid: 894e4b1f036b43f428386dd81d864139, type: 3}
+  icon: {fileID: 2800000, guid: 0ac748972fff777459f67306cb9bf4fb, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

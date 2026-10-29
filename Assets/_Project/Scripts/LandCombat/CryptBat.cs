@@ -12,7 +12,7 @@ namespace Pirates.LandCombat
     /// </summary>
     public class CryptBat : CryptMonster
     {
-        enum Phase { Roost, Circle, WindUp, Dive, Climb, Dead }
+        enum Phase { Roost, Circle, WindUp, Dive, Climb, Stunned, Dead }
 
         [SerializeField] Collider hitBox;
         [Header("Combate")]
@@ -20,6 +20,8 @@ namespace Pirates.LandCombat
         [SerializeField] Vector2 circleRadius = new(2.8f, 4.2f), circleHeight = new(2.4f, 3.2f);
         [Tooltip("windUpSeconds = tempo tremendo no ar antes de mergulhar (o aviso; era 0,35 s).")]
         [SerializeField] float circleSpeed = 4.5f, diveSpeed = 9f, climbSpeed = 6f, windUpSeconds = 0.6f, climbSeconds = 0.9f, reach = 0.9f;
+        [Tooltip("Aparado: fica tonto à altura do peito do capitão (dá para bater) por estes segundos (22/10, revisão: o último morcego mordia sem parar e a guarda não resolvia).")]
+        [SerializeField] float stunSeconds = 1.5f, stunHeight = 1.1f, stunFallSpeed = 6f;
         [Tooltip("Espera entre um mergulho e outro (s).")]
         [SerializeField] Vector2 attackGap = new(1.4f, 3.2f);
         [Header("Dormindo")]
@@ -103,6 +105,16 @@ namespace Pirates.LandCombat
             phaseUntil = Time.time + seconds;
         }
 
+        /// <summary>Aparado: tonto e baixo, a hora de bater (como a alma aparada); depois sobe e espera a próxima vez.</summary>
+        void Stun()
+        {
+            if (Encounter) Encounter.EndAttack(this);
+            nextAttack = Time.time + Random.Range(attackGap.x, attackGap.y);
+            velocity = Vector3.zero;
+            Play("Levar", 0.05f);
+            Enter(Phase.Stunned, stunSeconds);
+        }
+
         void Climb()
         {
             if (Encounter) Encounter.EndAttack(this);
@@ -179,8 +191,8 @@ namespace Pirates.LandCombat
                     {
                         Raise(Cue.Strike);
                         var guard = Strike(damage, goal);
-                        if (guard == CharacterCombat.GuardResult.Parried) velocity = Vector3.up * 5f;
-                        Climb();
+                        if (guard == CharacterCombat.GuardResult.Parried) Stun();
+                        else Climb();
                     }
                     else if (now >= phaseUntil) Climb();
                     break;
@@ -190,6 +202,15 @@ namespace Pirates.LandCombat
                     Vector3 c = target.transform.position;
                     FlyTo(c + new Vector3(Mathf.Cos(angle) * radius, height, Mathf.Sin(angle) * radius), climbSpeed, dt);
                     if (now >= phaseUntil) Enter(Phase.Circle, 0f);
+                    break;
+                }
+                case Phase.Stunned:
+                {
+                    // Cai na vertical até o peito do capitão e fica balançando; o resto do tempo é dele para bater.
+                    Vector3 p = transform.position;
+                    p.y = Mathf.MoveTowards(p.y, target.transform.position.y + stunHeight, stunFallSpeed * dt);
+                    transform.position = p;
+                    if (now >= phaseUntil) Climb();
                     break;
                 }
             }

@@ -317,10 +317,23 @@ namespace Pirates.EditorTools
             return true;
         }
 
-        /// <summary>Mata fechada (Nature Kit) e palmeiras nas praias, em volta de tudo que já está na ilha.</summary>
-        static void PlantSkullJungle(SkullIsland s) =>
-            PlantLush(s.island, s.spec, p => SkullWild(s, p), trees: 300, bushes: 280, flowers: 110, grass: 320, ground: 50, rocks: 26,
-                palms: 90, seed: 42);
+        /// <summary>
+        /// Mata fechada e palmeiras nas praias, em volta de tudo que já está na ilha; perto do cemitério e das ruínas do Barba-Negra as
+        /// árvores nascem secas (28/10).
+        /// </summary>
+        static void PlantSkullJungle(SkullIsland s)
+        {
+            DeadTreeZone = p => (p - GraveyardSpot).magnitude < 26f || (p - RuinsSpot).magnitude < 22f;
+            try
+            {
+                PlantLush(s.island, s.spec, p => SkullWild(s, p), trees: 300, bushes: 280, flowers: 110, grass: 320, ground: 50, rocks: 26,
+                    palms: 90, seed: 42);
+            }
+            finally
+            {
+                DeadTreeZone = null;
+            }
+        }
 
         /// <summary>Guardas dos postos (perseguem o jogador), um EnemyCamp por posto.</summary>
         static List<EnemyCamp> CreateOutpostGuards(List<OutpostSite> outposts, FootCharacter player, Material iron, Material wood, Material brass)

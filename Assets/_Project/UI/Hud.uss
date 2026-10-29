@@ -705,12 +705,15 @@
     justify-content: center;
 }
 
+/* Janela (28/10, "estilo pirata"): moldura de madeira escura (a mesma dos cartões do HUD) com o título em dourado; o pergaminho
+   vai dentro (.hud-window__paper). */
 .hud-window {
-    width: 960px;
+    width: 980px;
     max-width: 94%;
-    max-height: 84%;
-    padding: 22px 30px 20px 30px;
-    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    max-height: 86%;
+    padding: 12px 16px 16px 16px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-background-image-tint-color: rgb(120, 92, 78);
     -unity-slice-left: 32;
     -unity-slice-right: 32;
     -unity-slice-top: 32;
@@ -719,34 +722,50 @@
     color: rgb(59, 36, 20);
 }
 
+.hud-window__paper {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    padding: 14px 20px 12px 20px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+}
+
 .hud-window--harbor {
-    width: 1040px;
-    height: 680px;
+    width: 1080px;
+    height: 720px;
 }
 
 .hud-window--loot {
-    width: 900px;
+    width: 940px;
+    height: 640px;
 }
 
 .hud-window__header {
     flex-shrink: 0;
     flex-direction: row;
     align-items: flex-end;
-    margin-bottom: 6px;
+    margin: 0 10px 8px 12px;
 }
 
 .hud-window__title {
     -unity-font-definition: url("Fonts/PirataOne SDF.asset");
     font-size: 40px;
-    color: rgb(122, 46, 22);
+    color: rgb(255, 211, 107);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.85);
 }
 
 .hud-window__subtitle {
     font-size: 17px;
     -unity-font-style: italic;
-    color: rgb(107, 74, 43);
+    color: rgb(228, 208, 172);
     margin-left: 14px;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 }
 
 .hud-window__body {
@@ -795,9 +814,9 @@
 .hud-window__item-row {
     flex-direction: row;
     align-items: center;
-    min-height: 32px;
+    min-height: 42px;
     border-bottom-width: 1px;
-    border-bottom-color: rgba(110, 75, 45, 0.18);
+    border-bottom-color: rgba(110, 75, 45, 0.22);
 }
 
 .hud-window__text {
@@ -830,12 +849,16 @@
     margin-top: 4px;
 }
 
+/* Cabeçalho de coluna/grupo: letras de pirata com um fio por baixo. */
 .hud-window__subtitle-strong {
     -unity-font-definition: url("Fonts/PirataOne SDF.asset");
-    font-size: 24px;
+    font-size: 25px;
     color: rgb(122, 46, 22);
     margin-top: 2px;
-    margin-bottom: 2px;
+    margin-bottom: 6px;
+    padding-bottom: 2px;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(122, 46, 22, 0.32);
 }
 
 .hud-window__hint {
@@ -844,26 +867,30 @@
     color: rgb(107, 74, 43);
 }
 
+/* Cartão dentro do pergaminho: papel mais claro com borda de couro e a beirada de baixo mais grossa (parece pregado). */
 .hud-section {
     margin-top: 4px;
-    margin-bottom: 4px;
-    padding: 8px 12px 8px 12px;
+    margin-bottom: 6px;
+    padding: 9px 13px 9px 13px;
     border-radius: 6px;
-    border-width: 1px;
-    border-color: rgba(110, 75, 45, 0.45);
-    background-color: rgba(150, 100, 50, 0.1);
+    border-width: 2px;
+    border-bottom-width: 3px;
+    border-color: rgba(128, 86, 48, 0.55);
+    border-bottom-color: rgba(98, 62, 32, 0.7);
+    background-color: rgba(255, 249, 232, 0.55);
 }
 
 .hud-section--job {
     flex-shrink: 0;
-    background-color: rgba(150, 100, 50, 0.18);
+    background-color: rgba(214, 178, 120, 0.3);
 }
 
 /* Navio novo no estaleiro: destaque dourado (é a maior compra do jogo). */
 .hud-section--ship {
     border-width: 2px;
-    border-color: rgba(190, 140, 40, 0.8);
-    background-color: rgba(230, 180, 60, 0.14);
+    border-bottom-width: 3px;
+    border-color: rgba(190, 140, 40, 0.85);
+    background-color: rgba(240, 200, 90, 0.2);
 }
 
 .hud-scroll {
@@ -873,11 +900,79 @@
     margin-top: 4px;
 }
 
+/* Barra de rolagem de madeira (o cinza do Unity destoava): trilho escuro, puxador do Kenney, sem setas. */
+.hud-window .unity-scroller--vertical {
+    width: 14px;
+    margin-left: 4px;
+}
+
+.hud-window .unity-scroller--vertical > .unity-scroller__low-button,
+.hud-window .unity-scroller--vertical > .unity-scroller__high-button {
+    display: none;
+}
+
+.hud-window .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: rgba(80, 52, 30, 0.28);
+    border-width: 0;
+    border-radius: 7px;
+}
+
+.hud-window .unity-scroller--vertical .unity-base-slider__dragger {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/scrollbar_brown_small.png");
+    -unity-slice-top: 12;
+    -unity-slice-bottom: 12;
+    -unity-slice-left: 8;
+    -unity-slice-right: 8;
+    -unity-slice-scale: 0.5px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    width: 14px;
+    left: 0;
+}
+
 .hud-item {
     flex-direction: row;
     align-items: center;
     flex-grow: 1;
     flex-shrink: 1;
+}
+
+/* Ícone do item nas janelas: o encaixe escuro da mochila do HUD, borda na cor da raridade. */
+.hud-item__slot {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-right: 9px;
+    border-radius: 6px;
+    border-width: 2px;
+    background-color: rgba(34, 21, 12, 0.88);
+}
+
+.hud-item__icon {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 3px;
+    bottom: 3px;
+    -unity-background-scale-mode: scale-to-fit;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-item__icon--swatch {
+    left: 7px;
+    right: 7px;
+    top: 7px;
+    bottom: 7px;
+    border-radius: 4px;
+}
+
+.hud-item__letter {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 15px;
+    color: rgb(247, 233, 201);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(20, 8, 4, 0.9);
 }
 
 .hud-item__name {
@@ -989,6 +1084,452 @@
     -unity-background-image-tint-color: rgb(255, 255, 255);
     color: rgb(255, 222, 140);
 }
+
+/* Filtros por grupo do mercado e do armazém (H4): madeira apagada; o escolhido afundado (botão apertado) com o texto dourado. */
+.hud-filters__box {
+    flex-shrink: 0;
+}
+
+.hud-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 0 6px 0;
+    padding-bottom: 6px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(110, 74, 46, 0.45);
+}
+
+.hud .hud-filters__label {
+    font-size: 15px;
+    color: rgb(110, 74, 46);
+    -unity-font-style: bold;
+    margin-right: 4px;
+}
+
+.hud .hud-filter {
+    font-size: 15px;
+    padding: 3px 11px 4px 11px;
+    margin: 1px 2px 1px 2px;
+    -unity-background-image-tint-color: rgb(190, 160, 138);
+    color: rgb(240, 226, 205);
+}
+
+.hud .hud-filter--on {
+    background-image: url("../../ThirdParty/UI/Kenney_UIRPG/buttonLong_brown_pressed.png");
+    -unity-background-image-tint-color: rgb(120, 82, 58);
+    color: rgb(255, 214, 110);
+}
+
+/* Ícone grande (armazém e mercado, H4 passo 2). */
+.hud-item__slot--big {
+    width: 62px;
+    height: 62px;
+    margin-right: 12px;
+    border-width: 3px;
+    border-radius: 8px;
+}
+
+.hud-item__slot--big .hud-item__icon--swatch {
+    left: 13px;
+    right: 13px;
+    top: 13px;
+    bottom: 13px;
+}
+
+/* Plaquinha de preço: moeda de ouro + valor. */
+.hud-price {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 1px 9px 1px 4px;
+    margin: 0 4px 0 4px;
+    border-radius: 11px;
+    border-width: 1px;
+    border-color: rgba(128, 86, 48, 0.6);
+    background-color: rgba(70, 45, 25, 0.12);
+}
+
+.hud-price__coin {
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hud .hud-price__value {
+    font-size: 17px;
+    -unity-font-style: bold;
+    color: rgb(124, 78, 14);
+}
+
+.hud-price--big .hud-price__coin {
+    width: 28px;
+    height: 28px;
+}
+
+.hud-price--big .hud-price__value {
+    font-size: 21px;
+}
+
+/* Armazém em grade: casinhas um pouco menores que as da tela I e o item escolhido embaixo. */
+.hud-cargo__grid .hud-equip__cell {
+    width: 62px;
+    height: 62px;
+    margin: 0 5px 5px 0;
+}
+
+.hud-cargo__grid .hud-equip__icon {
+    width: 48px;
+    height: 48px;
+}
+
+.hud-cargo-detail {
+    flex-shrink: 0;
+    min-height: 96px;
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+.hud-cargo-detail__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-cargo-detail__info {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.hud-cargo-detail__actions {
+    flex-shrink: 0;
+    align-items: flex-end;
+}
+
+.hud-cargo-detail__line {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 1px 0 1px 0;
+}
+
+.hud .hud-cargo-detail__label {
+    font-size: 15px;
+    color: rgb(90, 60, 36);
+    margin-right: 6px;
+}
+
+/* Mercado: fichas de duas em duas. */
+.hud-market {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hud-market__card {
+    width: 49.4%;
+    margin-top: 0;
+    margin-bottom: 8px;
+    padding: 8px 11px 8px 11px;
+}
+
+.hud-market__top {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.hud-market__info {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.hud .hud-market__name {
+    font-size: 19px;
+    white-space: normal;
+}
+
+.hud .hud-market__sub {
+    font-size: 14px;
+    color: rgb(107, 74, 43);
+}
+
+.hud-market__demand {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-market__demand-bar {
+    margin-left: 8px;
+}
+
+.hud-market__line {
+    flex-direction: row;
+    align-items: center;
+    min-height: 32px;
+    padding-top: 2px;
+    border-top-width: 1px;
+    border-top-color: rgba(128, 86, 48, 0.25);
+}
+
+.hud .hud-market__verb {
+    width: 74px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: rgb(90, 60, 36);
+}
+
+.hud .hud-market__blocked {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(168, 50, 31);
+}
+
+.hud .hud-market__desc {
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.hud .hud-market__note {
+    -unity-font-style: italic;
+    margin-top: 2px;
+}
+
+.hud-market__purse {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Estaleiro e mestre de obras (H4 passo 3): cartões de dois em dois, custo em fichas de ícone, vermelho o que falta. */
+.hud-cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hud-cards__card {
+    width: 49.4%;
+    margin-top: 0;
+    margin-bottom: 8px;
+    padding: 8px 11px 8px 11px;
+}
+
+.hud-work__top {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.hud-work__info {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.hud-work__head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud .hud-work__name {
+    font-size: 19px;
+    color: rgb(74, 46, 24);
+}
+
+.hud .hud-work__effect {
+    font-size: 15px;
+    white-space: normal;
+}
+
+.hud .hud-work__needs {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(168, 50, 31);
+}
+
+.hud-work__bottom {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    border-top-width: 1px;
+    border-top-color: rgba(128, 86, 48, 0.25);
+}
+
+.hud-work__stock {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-repair__row {
+    flex-wrap: wrap;
+}
+
+.hud-costs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.hud-cost {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 1px 8px 1px 2px;
+    margin: 2px 6px 2px 0;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(128, 86, 48, 0.5);
+    background-color: rgba(70, 45, 25, 0.1);
+}
+
+.hud .hud-cost__value {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(74, 46, 24);
+}
+
+.hud-cost--missing {
+    border-color: rgba(168, 50, 31, 0.8);
+    background-color: rgba(168, 50, 31, 0.12);
+}
+
+.hud .hud-cost--missing .hud-cost__value {
+    color: rgb(168, 50, 31);
+}
+
+.hud .hud-cost__label {
+    font-size: 15px;
+    color: rgb(90, 60, 36);
+    margin-right: 8px;
+}
+
+.hud-item__slot--small {
+    width: 28px;
+    height: 28px;
+    margin-right: 5px;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+/* Taverna (H4 passo 4): quadro de madeira com os contratos pregados como cartazes. */
+.hud-board {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    -unity-background-image-tint-color: rgb(150, 112, 86);
+    padding: 8px 12px 10px 12px;
+    margin-right: 10px;
+}
+
+.hud .hud-board__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 24px;
+    color: rgb(255, 211, 107);
+    -unity-text-outline-width: 0.4px;
+    -unity-text-outline-color: rgba(30, 14, 4, 0.9);
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.hud .hud-board__empty {
+    font-size: 15px;
+    -unity-font-style: italic;
+    color: rgb(235, 215, 180);
+    -unity-text-align: middle-center;
+    margin-top: 12px;
+}
+
+.hud-poster {
+    background-color: rgb(238, 222, 186);
+    border-width: 1px;
+    border-color: rgba(110, 74, 46, 0.6);
+    border-bottom-width: 3px;
+    border-bottom-color: rgba(70, 45, 25, 0.55);
+    border-radius: 3px;
+    padding: 12px 12px 8px 12px;
+    margin: 6px 6px 8px 6px;
+}
+
+.hud-poster__pin {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 6px;
+    background-color: rgb(168, 40, 30);
+    border-width: 1px;
+    border-color: rgb(90, 18, 12);
+}
+
+.hud .hud-poster__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 23px;
+    color: rgb(74, 40, 18);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.hud .hud-poster__giver {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(110, 74, 46);
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.hud .hud-poster__text {
+    font-size: 14px;
+    -unity-font-style: italic;
+    color: rgb(90, 60, 36);
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.hud-poster__bottom {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    border-top-width: 1px;
+    border-top-color: rgba(128, 86, 48, 0.3);
+    padding-top: 4px;
+}
+
+.hud-poster--off {
+    opacity: 0.6;
+}
+
+.hud .hud-poster__stamp {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 18px;
+    color: rgb(168, 50, 31);
+    border-width: 2px;
+    border-color: rgb(168, 50, 31);
+    border-radius: 4px;
+    padding: 0 8px 0 8px;
+    align-self: center;
+    rotate: -4deg;
+}
+
+.hud-mission--done {
+    border-color: rgba(47, 122, 42, 0.8);
+}
+
+.hud-cost--fame {
+    padding-left: 8px;
+    border-color: rgba(200, 150, 40, 0.8);
+    background-color: rgba(230, 180, 60, 0.18);
+}
+
+
+
 
 /* ---------- Menu inicial ---------- */
 
@@ -1612,6 +2153,13 @@
     padding: 26px 40px 22px 40px;
 }
 
+/* O painel do menu inicial e da pausa é uma janela só (sem o pergaminho por dentro das janelas do porto, H4): continua de pergaminho,
+   como era, senão o texto escuro some na madeira. */
+.hud-window.hud-title__panel {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_corners_a.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
 .hud-title__panel--side {
     left: 110px;
     top: 250px;
@@ -1623,6 +2171,33 @@
     left: 370px;
     top: 215px;
     width: 860px;
+}
+
+/* Menu de pausa (Esc no jogo): o jogo parado aparece escurecido atrás; sem o quadro e o título do menu inicial. */
+.hud-title--pause {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.hud-title--pause .hud-title__bg,
+.hud-title--pause .hud-title__heading,
+.hud-title--pause .hud-title__note {
+    display: none;
+}
+
+.hud-title--pause .hud-title__shade {
+    background-color: rgba(8, 5, 3, 0.62);
+}
+
+.hud-title__panel--pause {
+    left: 590px;
+    top: 150px;
+    width: 420px;
+    padding: 20px 32px 18px 32px;
+}
+
+.hud-title__panel--pause .hud-button--big {
+    height: 50px;
+    margin: 4px 0 4px 0;
 }
 
 .hud-title__panel--side .hud-menu__content {
@@ -2446,7 +3021,7 @@
 .hud-book-tabs {
     flex-direction: row;
     flex-shrink: 0;
-    margin: -6px 0 6px -4px;
+    margin: 0 0 4px 8px;
 }
 
 .hud .hud-book-tab {
@@ -2841,4 +3416,72 @@
     font-size: 14px;
     margin-top: 2px;
     -unity-text-align: middle-right;
+}
+
+/* ---------- Pesca: briga com o peixe (D2, estilo pirata) ---------- */
+
+.hud-fishing {
+    padding: 12px 14px 14px 14px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/panel_brown_dark_corners_b.png");
+    -unity-background-image-tint-color: rgb(120, 92, 78);
+    -unity-slice-left: 32;
+    -unity-slice-right: 32;
+    -unity-slice-top: 32;
+    -unity-slice-bottom: 32;
+    -unity-slice-scale: 0.5px;
+    align-items: center;
+}
+
+.hud-fishing__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 25px;
+    color: rgb(255, 211, 107);
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+    text-shadow: 1px 2px 0px rgba(30, 15, 5, 0.9);
+}
+
+.hud-fishing__row {
+    flex-direction: row;
+    flex-grow: 1;
+    align-self: stretch;
+    justify-content: center;
+}
+
+/* Saque (H4 passo 5): prêmio raro em destaque em cima das grades (borda na cor da raridade, posta no código). */
+.hud-loot-prizes {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    margin: 0 6px 4px 6px;
+}
+
+.hud-loot-prize {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    flex-basis: 40%;
+    margin: 0 6px 6px 0;
+    padding: 8px 12px 8px 10px;
+    border-width: 3px;
+    border-radius: 8px;
+    background-color: rgba(255, 214, 110, 0.24);
+}
+
+.hud-loot-prize__info {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: 8px;
+}
+
+.hud .hud-loot-prize__tag {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgb(110, 74, 40);
+}
+
+/* Item que não dá para pegar (já tem, não cabe): apagado na grade. */
+.hud-loot__cell--blocked {
+    opacity: 0.5;
 }

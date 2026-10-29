@@ -15,6 +15,13 @@ MonoBehaviour:
   displayName: Sobreviventes
   category: 1
   rarity: 1
+  group: 0
   color: {r: 0.55, g: 0.92, b: 0.6, a: 1}
   spacePerUnit: 0
   description: "Marujos do navio afundado que aceitam se juntar \xE0 sua tripula\xE7\xE3o. V\xE3o no alojamento, n\xE3o no por\xE3o."
+  icon: {fileID: 2800000, guid: 48a90aefa4c3c0e4cb2dd37884bcae24, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  equipSlot: 0
+  equipment: {fileID: 0}

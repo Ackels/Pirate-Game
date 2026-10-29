@@ -9,6 +9,9 @@ namespace Pirates.Economy
     /// <summary>Raridade (E1, 19/10: Lendário no fim, para não mudar o número das que já estão nos assets).</summary>
     public enum ItemRarity { Common, Uncommon, Rare, Epic, Legendary }
 
+    /// <summary>Grupo dos filtros das janelas (mercado, armazém; H4, 28/10). Auto = pelo resto do item (categoria, equipamento, comida).</summary>
+    public enum ItemGroup { Auto, Resource, Ammo, Food, Treasure, Weapon, Tool, Schematic, Crew }
+
     /// <summary>
     /// Um tipo de item: recurso (ouro, madeira...), tripulação resgatada ou esquema de construção.
     /// Os assets ficam em Data/Items; o M3 usa os mesmos para loja, base e upgrades.
@@ -19,6 +22,9 @@ namespace Pirates.Economy
         public string displayName = "Item";
         public ItemCategory category = ItemCategory.Resource;
         public ItemRarity rarity = ItemRarity.Common;
+        [Tooltip("Filtro das janelas (mercado, armazém). Auto = esquema, tripulação, equipamento (arma se equipa, senão ferramenta), " +
+                 "comida (se cura) ou recurso.")]
+        public ItemGroup group;
         [Tooltip("Cor do nome no HUD e nos rótulos sobre o item na água.")]
         public Color color = Color.white;
         [Tooltip("Espaço que cada unidade ocupa no porão. 0 = não ocupa (tripulação vai no alojamento, esquema é papel).")]
@@ -31,6 +37,8 @@ namespace Pirates.Economy
         [Min(0)] public int keepAboard;
         [Tooltip("Mochila (equipamento): espaço da mochila do capitão com ela. 0 = não é mochila. Vale a maior que o jogador tiver.")]
         [Min(0f)] public float backpackCapacity;
+        [Tooltip("Comida (peixe, D2): vida que cura ao comer com R quando a mochila não tem ração. 0 = não se come.")]
+        [Min(0f)] public float foodHeal;
         [Header("Equipamento (E1)")]
         [Tooltip("Onde o capitão usa este item (lâmina, arma de fogo, traje, relíquia). None = não se equipa.")]
         public EquipSlot equipSlot;
@@ -39,6 +47,15 @@ namespace Pirates.Economy
 
         /// <summary>Esquemas e equipamentos: um só (ter dois não serve para nada).</summary>
         public bool IsUnique => category is ItemCategory.Schematic or ItemCategory.Gear;
+
+        /// <summary>O grupo do filtro: o escolhido no asset ou, em Auto, o que o resto do item diz.</summary>
+        public ItemGroup Group => group != ItemGroup.Auto ? group : category switch
+        {
+            ItemCategory.Crew => ItemGroup.Crew,
+            ItemCategory.Schematic => ItemGroup.Schematic,
+            ItemCategory.Gear => equipSlot != EquipSlot.None ? ItemGroup.Weapon : ItemGroup.Tool,
+            _ => foodHeal > 0f ? ItemGroup.Food : ItemGroup.Resource,
+        };
     }
 
     [Serializable]

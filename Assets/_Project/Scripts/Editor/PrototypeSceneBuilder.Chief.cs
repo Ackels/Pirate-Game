@@ -69,7 +69,9 @@ namespace Pirates.EditorTools
         static bool IsChief(string postName) => postName.StartsWith("Chefe");
 
         /// <summary>Espadão do chefe (Data/Weapons/Weapon_Espadao_Chefe; preservado se existe).</summary>
-        static WeaponDefinition ChiefSword() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Espadao_Chefe.asset", w =>
+        static WeaponDefinition ChiefSword() => WithSupportHand(ChiefSwordAsset(), GreatswordSupport);
+
+        static WeaponDefinition ChiefSwordAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Espadao_Chefe.asset", w =>
         {
             w.displayName = "Espadão";
             w.kind = WeaponKind.Melee;

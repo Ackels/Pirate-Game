@@ -141,8 +141,9 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Mochilas maiores (revisão de equilíbrio 05/10, aprovada pelo Jhonata): couro 25 e contrabandista 35 (a de lona tem 15). Teto
-        /// 35 de propósito: o maior baú de terra dá ~40, ainda fica a escolha do que levar.
+        /// Mochilas maiores (revisão de equilíbrio 05/10, aprovada pelo Jhonata): couro 25 e contrabandista 35 (a de lona tinha 15). Em
+        /// 29/10 (pedido do Jhonata: cortar árvore e minerar enchiam a mochila rápido) lona 25, couro 37, contrabandista 50.
+        /// O gerador só põe o espaço em item novo: os assets foram atualizados à mão.
         /// </summary>
         static ItemDefinition[] Backpacks()
         {
@@ -158,10 +159,10 @@ namespace Pirates.EditorTools
             }
             return new[]
             {
-                Pack("Equip_MochilaCouro", "Mochila de couro", 25f, ItemRarity.Uncommon, new Color(0.62f, 0.42f, 0.25f),
-                    "Couro curtido com fivelas de latão: 25 de espaço para o saque em terra (a de lona tem 15)."),
-                Pack("Equip_MochilaContrabandista", "Mochila de contrabandista", 35f, ItemRarity.Rare, new Color(0.36f, 0.55f, 0.75f),
-                    "Fundo falso e bolsos escondidos: 35 de espaço para o saque em terra."),
+                Pack("Equip_MochilaCouro", "Mochila de couro", 37f, ItemRarity.Uncommon, new Color(0.62f, 0.42f, 0.25f),
+                    "Couro curtido com fivelas de latão: 37 de espaço para o saque em terra (a de lona tem 25)."),
+                Pack("Equip_MochilaContrabandista", "Mochila de contrabandista", 50f, ItemRarity.Rare, new Color(0.36f, 0.55f, 0.75f),
+                    "Fundo falso e bolsos escondidos: 50 de espaço para o saque em terra."),
             };
         }
 

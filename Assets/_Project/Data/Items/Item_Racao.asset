@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Ra\xE7\xE3o"
   category: 0
   rarity: 0
+  group: 3
   color: {r: 0.86, g: 0.66, b: 0.4, a: 1}
   spacePerUnit: 0.25
   description: "Biscoito do mar, carne salgada e um gole de rum. A p\xE9, R come uma e cura 40 de vida."
   icon: {fileID: 2800000, guid: e1239176c907ba24aa881dc82e751585, type: 3}
   keepAboard: 20
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

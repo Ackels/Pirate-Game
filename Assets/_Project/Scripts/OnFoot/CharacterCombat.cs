@@ -173,7 +173,7 @@ namespace Pirates.OnFoot
 
         /// <summary>Como foi um acerto (peso do impacto: parada, tremida, clarão).</summary>
         [Flags]
-        public enum StrikeFlags { None = 0, Blocked = 1, Heavy = 2, Riposte = 4, Ranged = 8, Finisher = 16 }
+        public enum StrikeFlags { None = 0, Blocked = 1, Heavy = 2, Riposte = 4, Ranged = 8, Finisher = 16, Backstab = 32 }
 
         /// <summary>Um acerto de golpe ou tiro: quem bateu, em quem (a peça que leva dano), onde, direção, dano e como.</summary>
         public struct StrikeReport
@@ -793,6 +793,9 @@ namespace Pirates.OnFoot
             pendingStrike = null;
         }
 
+        /// <summary>Ângulo a partir da frente de quem leva o golpe que conta como "pelas costas" (o mesmo do tranco do FootHealthReactions).</summary>
+        public const float BackstabAngle = 110f;
+
         /// <summary>Dano dos golpes × isto (fase 2 do chefe). Não mexe no asset da arma.</summary>
         public float DamageMultiplier { get; set; } = 1f;
 
@@ -841,6 +844,15 @@ namespace Pirates.OnFoot
                 bool blocked = guard == GuardResult.Blocked;
                 // Guarda quebrada pelo golpe: passa parte do dano, com a reação normal de levar golpe.
                 float scale = blocked ? defender.blockedDamage : guard == GuardResult.Broken ? defender.GuardBreakDamage : 1f;
+                // Adaga: pelas costas (rolou para trás dele, ele cambaleando de costas, ou ainda não tinha visto) o dano multiplica.
+                bool backstab = false;
+                if (weapon.backstabDamage > 1f && defender && defender != this && !blocked)
+                {
+                    Vector3 from = transform.position - defender.transform.position;
+                    from.y = 0f;
+                    backstab = from.sqrMagnitude > 0.0001f && Vector3.Angle(defender.transform.forward, from) > BackstabAngle;
+                    if (backstab) scale *= weapon.backstabDamage;
+                }
                 target.TakeDamage(new DamageInfo
                 {
                     amount = damage * scale, point = closest, direction = direction, source = gameObject,
@@ -852,7 +864,8 @@ namespace Pirates.OnFoot
                 if (!blocked) Hit?.Invoke(weapon, closest);
                 // Empurrão do golpe (as lâminas do capitão): o alvo recua um pouco, mais na finalização.
                 if (!blocked && push > 0f) col.GetComponentInParent<IPushable>()?.Push(direction * push);
-                var strikeFlags = flags | (blocked ? StrikeFlags.Blocked : StrikeFlags.None) | (!blocked && knockdown != Knockdown.None ? StrikeFlags.Heavy : StrikeFlags.None);
+                var strikeFlags = flags | (blocked ? StrikeFlags.Blocked : StrikeFlags.None) | (!blocked && knockdown != Knockdown.None ? StrikeFlags.Heavy : StrikeFlags.None)
+                    | (backstab ? StrikeFlags.Backstab : StrikeFlags.None);
                 Struck?.Invoke(new StrikeReport { attacker = this, victim = target as Component, point = closest, direction = direction, damage = damage * scale, flags = strikeFlags });
             }
             if (weapon.holy) HolySwing?.Invoke(this, chest, direction, range, angle, damage);
@@ -936,24 +949,10 @@ namespace Pirates.OnFoot
             Vector3 shotDir = Quaternion.Euler(UnityEngine.Random.Range(-1f, 1f) * cone * 0.25f,
                                                UnityEngine.Random.Range(-1f, 1f) * cone * 0.5f, 0f) * aimDir;
 
-            // Bacamarte: o primeiro chumbo vai na mira (com a dispersão de sempre), os outros abrem em leque em volta dele.
-            // O dano de todos os chumbos que pegam no mesmo alvo vira um golpe só (uma reação, um número).
+            // Bacamarte: o leque em área (Spray). O dano de todos os chumbos que pegam no mesmo alvo vira um golpe só (uma reação, um número).
             pelletDamage.Clear();
-            Vector3 end = Pellet(weapon, origin, shotDir);
             int pellets = Mathf.Max(1, weapon.pellets);
-            if (pellets > 1) StartPelletTracer(0, origin, end);
-            Vector3 right = Vector3.Cross(Vector3.up, shotDir).normalized, up = Vector3.Cross(shotDir, right);
-            float half = weapon.pelletSpread * 0.5f;
-            for (int p = 1; p < pellets; p++)
-            {
-                // Espalhados num disco (mais largos que altos: o leque é do cano para os lados).
-                Vector2 disc = UnityEngine.Random.insideUnitCircle;
-                Vector3 dir = Quaternion.AngleAxis(disc.x * half, up) * Quaternion.AngleAxis(disc.y * half * 0.5f, right) * shotDir;
-                Vector3 landed = Pellet(weapon, origin, dir);
-                StartPelletTracer(p, origin, landed);
-                PelletLanded?.Invoke(weapon, origin, landed);
-            }
-            if (pellets > 1) pelletTracerStart = Time.time;
+            Vector3 end = pellets > 1 ? Spray(weapon, origin, shotDir, pellets) : Pellet(weapon, origin, shotDir);
             foreach (var pair in pelletDamage)
             {
                 var (amount, point, dir) = pair.Value;
@@ -975,16 +974,134 @@ namespace Pirates.OnFoot
         }
 
         readonly Dictionary<IDamageable, (float amount, Vector3 point, Vector3 direction)> pelletDamage = new();
+        static readonly Collider[] sprayHits = new Collider[128];
+        static readonly Dictionary<IDamageable, Bounds> sprayBodies = new();
+        static readonly List<(IDamageable target, float share, Bounds body, float distance, bool onAxis)> sprayShares = new();
+        static readonly Comparison<(IDamageable target, float share, Bounds body, float distance, bool onAxis)> NearestFirst = (a, b) => a.distance.CompareTo(b.distance);
 
-        /// <summary>Um projétil: a 1ª coisa no caminho para; se leva dano, soma em pelletDamage. Devolve onde parou.</summary>
-        Vector3 Pellet(WeaponDefinition weapon, Vector3 origin, Vector3 dir)
+        /// <summary>
+        /// Chumbo em leque, em área (28/10, pedido do Jhonata: "por ela ser uma 12... deveria dar dano em área"). O leque abre
+        /// <c>pelletSpread</c> para os lados (metade disso para cima/baixo). Um chumbo vai onde se mira: leva quem está no meio do leque (como
+        /// antes); os outros abrem num disco (mais densos no meio) e cada alvo dentro dele, à vista da boca, leva a parte que o corpo dele
+        /// cobre naquela distância: colado, o corpo cobre o leque todo e leva todos; mais longe, o leque abre e cada um na região leva alguns.
+        /// Mais de um alvo cobrindo o leque divide os chumbos (nunca passa dos do tiro); quem está atrás de outro fica coberto. Chumbo
+        /// quebrado vira um a mais por sorteio (2,4 = 2, e 40% das vezes 3). Os riscos seguem a conta: k chumbos voam para o corpo de quem
+        /// levou k, o resto se espalha no leque. Devolve onde o primeiro risco parou.
+        /// </summary>
+        Vector3 Spray(WeaponDefinition weapon, Vector3 origin, Vector3 shotDir, int pellets)
+        {
+            float half = weapon.pelletSpread * 0.5f;
+            float tanSide = Mathf.Tan(half * Mathf.Deg2Rad), tanUp = Mathf.Tan(half * 0.5f * Mathf.Deg2Rad);
+            Vector3 right = Vector3.Cross(Vector3.up, shotDir).normalized, up = Vector3.Cross(shotDir, right);
+
+            // Corpos na distância do tiro (a caixa de todos os colisores de cada alvo).
+            sprayBodies.Clear();
+            int count = Physics.OverlapSphereNonAlloc(origin, weapon.range, sprayHits, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                var col = sprayHits[i];
+                if (col.transform.IsChildOf(transform) || IsAlly(col)) continue;
+                var target = col.GetComponentInParent<IDamageable>();
+                if (target == null) continue;
+                if (sprayBodies.TryGetValue(target, out var known))
+                {
+                    known.Encapsulate(col.bounds);
+                    sprayBodies[target] = known;
+                }
+                else sprayBodies[target] = col.bounds;
+            }
+
+            // Quanto do leque cada corpo cobre (lado × altura, num disco: mais chumbo no meio), naquela distância.
+            sprayShares.Clear();
+            float total = 0f;
+            foreach (var pair in sprayBodies)
+            {
+                var body = pair.Value;
+                Vector3 to = body.center - origin;
+                float distance = Vector3.Dot(to, shotDir);
+                if (distance <= 0.05f || distance > weapon.range) continue;
+                float side = Vector3.Dot(to, right), height = Vector3.Dot(to, up);
+                float halfWidth = Mathf.Clamp(Mathf.Max(body.extents.x, body.extents.z), 0.25f, 1.5f), halfHeight = Mathf.Max(body.extents.y, 0.25f);
+                float fanSide = Mathf.Max(distance * tanSide, 0.05f), fanUp = Mathf.Max(distance * tanUp, 0.05f);
+                float share = (DiscShare((side + halfWidth) / fanSide) - DiscShare((side - halfWidth) / fanSide))
+                              * (DiscShare((height + halfHeight) / fanUp) - DiscShare((height - halfHeight) / fanUp));
+                if (share <= 0f || !InSight(origin, body.center, pair.Key)) continue;
+                bool onAxis = Mathf.Abs(side) <= halfWidth && Mathf.Abs(height) <= halfHeight;
+                sprayShares.Add((pair.Key, share, body, distance, onAxis));
+                total += share;
+            }
+            sprayShares.Sort(NearestFirst);
+
+            // Chumbos de cada um (os mais perto primeiro) e os riscos até o corpo.
+            int left = pellets, shown = 0;
+            Vector3 first = origin + shotDir * weapon.range;
+            float scale = total > 1f ? 1f / total : 1f;
+            bool centerTaken = false;
+            for (int i = 0; i < sprayShares.Count && left > 0; i++)
+            {
+                var (target, share, body, _, onAxis) = sprayShares[i];
+                // O chumbo da mira: o mais perto que está no meio do leque.
+                bool center = onAxis && !centerTaken;
+                centerTaken |= center;
+                float expected = share * scale * (pellets - 1) + (center ? 1f : 0f);
+                int k = Mathf.Min(left, Mathf.FloorToInt(expected) + (UnityEngine.Random.value < expected - Mathf.Floor(expected) ? 1 : 0));
+                if (k <= 0) continue;
+                left -= k;
+                Vector3 toward = (body.center - origin).normalized;
+                pelletDamage[target] = (k * weapon.damage, body.ClosestPoint(origin), toward);
+                float halfWidth = Mathf.Max(body.extents.x, body.extents.z), halfHeight = body.extents.y;
+                for (int j = 0; j < k; j++)
+                {
+                    Vector3 point = body.center + right * (UnityEngine.Random.Range(-0.6f, 0.6f) * halfWidth) + Vector3.up * (UnityEngine.Random.Range(-0.5f, 0.5f) * halfHeight);
+                    if (shown == 0) first = point;
+                    StartPelletTracer(shown++, origin, point);
+                    PelletLanded?.Invoke(weapon, origin, point);
+                }
+            }
+            // O resto se perde no leque (espalhado num disco, mais largo que alto), sem dano: para na 1ª coisa do caminho.
+            for (int p = 0; p < left; p++)
+            {
+                Vector2 disc = UnityEngine.Random.insideUnitCircle;
+                Vector3 dir = Quaternion.AngleAxis(disc.x * half, up) * Quaternion.AngleAxis(disc.y * half * 0.5f, right) * shotDir;
+                Vector3 landed = Pellet(weapon, origin, dir, hurt: false);
+                if (shown == 0) first = landed;
+                StartPelletTracer(shown++, origin, landed);
+                PelletLanded?.Invoke(weapon, origin, landed);
+            }
+            pelletTracerStart = Time.time;
+            return first;
+        }
+
+        /// <summary>Parte dos chumbos de um disco (Random.insideUnitCircle) com a coordenada abaixo de u (−1…1, em raios do leque).</summary>
+        static float DiscShare(float u)
+        {
+            u = Mathf.Clamp(u, -1f, 1f);
+            return 0.5f + (u * Mathf.Sqrt(1f - u * u) + Mathf.Asin(u)) / Mathf.PI;
+        }
+
+        /// <summary>A boca vê o meio do corpo: a 1ª coisa no caminho é dele (outro personagem, parede ou pedra na frente cobrem).</summary>
+        bool InSight(Vector3 origin, Vector3 center, IDamageable target)
+        {
+            Vector3 to = center - origin;
+            float distance = to.magnitude;
+            if (distance < 0.01f) return true;
+            foreach (var hit in SortedHits(origin, to / distance, distance + 0.5f))
+            {
+                if (hit.transform.IsChildOf(transform) || IsAlly(hit.collider)) continue;
+                return hit.collider.GetComponentInParent<IDamageable>() == target;
+            }
+            return true;
+        }
+
+        /// <summary>Um projétil: a 1ª coisa no caminho para; se leva dano (hurt), soma em pelletDamage. Devolve onde parou.</summary>
+        Vector3 Pellet(WeaponDefinition weapon, Vector3 origin, Vector3 dir, bool hurt = true)
         {
             Vector3 end = origin + dir * weapon.range;
             foreach (var hit in SortedHits(origin, dir, weapon.range))
             {
                 if (hit.transform.IsChildOf(transform) || IsAlly(hit.collider)) continue;
                 end = hit.point;
-                var damageable = hit.collider.GetComponentInParent<IDamageable>();
+                var damageable = hurt ? hit.collider.GetComponentInParent<IDamageable>() : null;
                 if (damageable != null)
                     pelletDamage[damageable] = pelletDamage.TryGetValue(damageable, out var sum)
                         ? (sum.amount + weapon.damage, sum.point, sum.direction)

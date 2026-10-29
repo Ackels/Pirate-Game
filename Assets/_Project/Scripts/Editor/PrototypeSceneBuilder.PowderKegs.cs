@@ -85,25 +85,12 @@ namespace Pirates.EditorTools
             root.transform.SetPositionAndRotation(ground, Quaternion.Euler(0f, yaw, 0f));
             var visual = new GameObject("Visual").transform;
             visual.SetParent(root.transform, false);
-            var barrel = Kenney("barrel", visual, Vector3.zero, 0f, 0.8f, "Barril");
-
-            // Medido no modelo: as faixas abraçam o barril a 1/4 e 3/4 da altura, a tampa fica em cima.
-            var bounds = new Bounds(ground, Vector3.zero);
-            foreach (var r in barrel.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
-            float height = Mathf.Max(0.3f, bounds.max.y - ground.y);
-            float width = Mathf.Max(bounds.size.x, bounds.size.z);
-            var red = GetMaterial("M_Polvora_Faixa", new Color(0.72f, 0.1f, 0.07f), 0.25f);
-            var black = GetMaterial("M_Polvora_Tampa", new Color(0.09f, 0.08f, 0.07f), 0.2f);
-            foreach (float at in new[] { 0.3f, 0.7f })
-                Part(PrimitiveType.Cylinder, "Faixa", visual, Vector3.up * (height * at), new Vector3(width * 0.97f, 0.05f, width * 0.97f), Quaternion.identity, red);
-            Part(PrimitiveType.Cylinder, "Tampa", visual, Vector3.up * (height + 0.005f), new Vector3(width * 0.7f, 0.012f, width * 0.7f), Quaternion.identity, black);
-            Part(PrimitiveType.Cylinder, "Pavio", visual, new Vector3(width * 0.15f, height + 0.08f, 0f), new Vector3(0.035f, 0.08f, 0.035f),
-                Quaternion.Euler(0f, 0f, -20f), black);
-
-            var col = root.AddComponent<CapsuleCollider>();
-            col.center = new Vector3(0f, height * 0.5f, 0f);
-            col.height = height;
-            col.radius = width * 0.5f;
+            // O barril do ícone (29/10, pedido do Jhonata: como o do Sea of Thieves): vermelho, deitado num cavalete, aros pretos, etiqueta
+            // com os ossos cruzados e o pavio em cima; ~0,9 m de comprido e 0,9 m de altura até o pavio, como o barril do Kenney de antes.
+            PowderKegIcon(visual);
+            var col = root.AddComponent<BoxCollider>();
+            col.center = new Vector3(0f, 0.42f, 0f);
+            col.size = new Vector3(0.95f, 0.84f, 0.7f);
             var keg = root.AddComponent<PowderKeg>();
             keg.Configure(visual.gameObject);
             return keg;

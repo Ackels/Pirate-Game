@@ -30,8 +30,17 @@ namespace Pirates.EditorTools
         /// <summary>Texturas de partícula (Kenney Particle Pack): filtro, mipmap e 256 px comprimido.</summary>
         public const string VfxFolder = Folder + "/VFX";
 
+        /// <summary>
+        /// Pacotes da Asset Store guardados para usar com o tempo (23/10: masmorra, plantas de lava, medieval, peixes, animais, frutas): ficam com
+        /// a importação do fabricante (texturas com filtro e mipmap, materiais e animações do FBX); as regras abaixo não valem para eles.
+        /// </summary>
+        public const string StoreFolder = Folder + "/Loja";
+
         string NormalizedPath => assetPath.Replace('\\', '/');
-        bool InFolder => NormalizedPath.StartsWith(Folder + "/");
+        bool InFolder => NormalizedPath.StartsWith(Folder + "/") && !NormalizedPath.StartsWith(StoreFolder + "/");
+        /// <summary>Animações do RPG Character Mecanim Animation Pack FREE (Explosive, Asset Store; espadão de duas mãos do capitão).</summary>
+        public const string ExplosiveFolder = Folder + "/ExplosiveRPG";
+        bool Explosive => NormalizedPath.StartsWith(ExplosiveFolder + "/");
         bool UsesColorMaterials => NormalizedPath.StartsWith(ColorMaterialFolder + "/") || NormalizedPath.StartsWith(RuinsFolder + "/")
             || NormalizedPath.StartsWith(AnimatedMonstersFolder + "/");
 
@@ -58,6 +67,19 @@ namespace Pirates.EditorTools
             {
                 string n = clip.name.ToLowerInvariant();
                 clip.loopTime = n.EndsWith("idle") || n.EndsWith("walk") || n.EndsWith("run") || n.Contains("swim");
+                if (Explosive)
+                {
+                    // RPG Character da Explosive (23/10): como os pacotes do Mixamo, giro e deslocamento da raiz fora da pose (o Animator sem
+                    // root motion os descarta e o FootCharacter move o personagem); com o giro na pose os golpes viravam o capitão de costas
+                    // (até 158°). Ciclos: parado, andar, correr e de lado (menos os golpes correndo).
+                    clip.loopTime = !n.Contains("attack") && (n.Contains("idle") || n.Contains("walk") || n.Contains("run") || n.Contains("strafe"));
+                    clip.lockRootRotation = false;
+                    clip.lockRootPositionXZ = false;
+                    clip.lockRootHeightY = true;
+                    clip.keepOriginalOrientation = true;
+                    clip.keepOriginalPositionY = true;
+                    clip.keepOriginalPositionXZ = true;
+                }
             }
             importer.clipAnimations = clips;
         }

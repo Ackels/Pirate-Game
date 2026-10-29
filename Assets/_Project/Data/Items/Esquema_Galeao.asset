@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Gale\xE3o"
   category: 2
   rarity: 3
+  group: 0
   color: {r: 0.82, g: 0.52, b: 1, a: 1}
   spacePerUnit: 0
   description: "Planta de navio: o gale\xE3o de tr\xEAs mastros, o maior navio do mar. Constru\xEDdo no estaleiro do porto (pede o Estaleiro n\xEDvel 2)."
-  icon: {fileID: 2800000, guid: 894e4b1f036b43f428386dd81d864139, type: 3}
+  icon: {fileID: 2800000, guid: 77fc9d665ca37d140991ef4c312939f1, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

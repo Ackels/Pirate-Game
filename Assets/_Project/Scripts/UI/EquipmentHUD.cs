@@ -33,6 +33,9 @@ namespace Pirates.UI
         CharacterCombat combat;
         Object selected;
         readonly List<ItemDefinition> owned = new();
+        // Filtro por grupo (H4, pedido do Jhonata: o mesmo do mercado e do armazém), para os equipamentos e a mochila/porão juntos.
+        readonly ItemFilter filter = new();
+        readonly List<ItemDefinition> filterItems = new();
 
         public void Bind(GearWeapons captainGear, Texture2D packIcon)
         {
@@ -107,7 +110,7 @@ namespace Pirates.UI
             hash = Win.Mix(hash, OnFoot ? 1 : 2);
             hash = Win.Mix(hash, Win.Of(Bag));
             if (gear) hash = Win.Mix(hash, gear.CurrentBlade);
-            return hash;
+            return Win.Mix(hash, filter.Signature);
         }
 
         bool OnFoot => switcher && switcher.IsOnFoot;
@@ -135,17 +138,36 @@ namespace Pirates.UI
 
         void BuildItems(VisualElement left)
         {
+            var starter = gear ? gear.StarterBlade : null;
+            var bag = Bag;
+            filterItems.Clear();
+            filterItems.AddRange(owned);
+            int inBag = 0;
+            if (bag)
+                for (int i = 0; i < bag.Items.Count; i++)
+                    if (InBagGrid(bag.Items[i]))
+                    {
+                        filterItems.Add(bag.Items[i]);
+                        inBag++;
+                    }
+            filter.Build(left, filterItems, starter ? 1 : 0);
+
             var scroll = Win.Scroll(left);
             scroll.AddToClassList("hud-equip__items");
-            Win.Text(scroll, "Equipamentos", "hud-window__subtitle-strong");
-            var grid = Hud.Box("hud-equip__grid");
-            scroll.Add(grid);
-            var starter = gear ? gear.StarterBlade : null;
-            if (starter) Cell(grid, starter, null, Icon(null, starter), ItemRarity.Common, 0, IsInUse(null, starter));
+            bool starterShown = starter && filter.Shows(ItemGroup.Weapon);
+            int gearShown = starterShown ? 1 : 0;
             foreach (var item in owned)
-                Cell(grid, item, item, Icon(item, null), item.rarity, 0, IsInUse(item, null));
+                if (filter.Shows(item)) gearShown++;
+            if (gearShown > 0)
+            {
+                Win.Text(scroll, "Equipamentos", "hud-window__subtitle-strong");
+                var grid = Hud.Box("hud-equip__grid");
+                scroll.Add(grid);
+                if (starterShown) Cell(grid, starter, null, Icon(null, starter), ItemRarity.Common, 0, IsInUse(null, starter));
+                foreach (var item in owned)
+                    if (filter.Shows(item)) Cell(grid, item, item, Icon(item, null), item.rarity, 0, IsInUse(item, null));
+            }
 
-            var bag = Bag;
             Win.Text(scroll, OnFoot ? "Mochila" : "Porão", "hud-window__subtitle-strong");
             var bagGrid = Hud.Box("hud-equip__grid");
             scroll.Add(bagGrid);
@@ -154,15 +176,17 @@ namespace Pirates.UI
                 for (int i = 0; i < bag.Items.Count; i++)
                 {
                     var item = bag.Items[i];
-                    if (!item || item.IsUnique || item.category == ItemCategory.Crew) continue;
+                    if (!InBagGrid(item) || !filter.Shows(item)) continue;
                     Cell(bagGrid, item, item, Icon(item, null), item.rarity, bag.Count(item), false);
                     shown++;
                 }
-            if (shown == 0) Win.Text(scroll, OnFoot ? "mochila vazia" : "porão vazio", "hud-window__empty");
+            if (shown == 0) Win.Text(scroll, inBag > 0 ? "nada deste tipo" : OnFoot ? "mochila vazia" : "porão vazio", "hud-window__empty");
 
             var details = Win.Section(left, "hud-equip__details");
             BuildDetails(details);
         }
+
+        static bool InBagGrid(ItemDefinition item) => item && !item.IsUnique && item.category != ItemCategory.Crew;
 
         /// <summary>Uma casinha da grade: ícone (ou a cor e a inicial), moldura da raridade, quantidade e "em uso".</summary>
         void Cell(VisualElement parent, Object key, ItemDefinition item, Texture2D icon, ItemRarity rarity, int count, bool inUse)
@@ -183,21 +207,7 @@ namespace Pirates.UI
             parent.Add(cell);
         }
 
-        static VisualElement IconBox(Texture2D icon, ItemDefinition item)
-        {
-            var box = Hud.Box("hud-equip__icon");
-            box.pickingMode = PickingMode.Ignore;
-            if (icon) box.style.backgroundImage = new StyleBackground(icon);
-            else if (item)
-            {
-                box.style.backgroundColor = item.color;
-                box.AddToClassList("hud-equip__icon--swatch");
-                var letter = Hud.Text(item.displayName.Substring(0, 1), "hud-equip__initial");
-                letter.pickingMode = PickingMode.Ignore;
-                box.Add(letter);
-            }
-            return box;
-        }
+        static VisualElement IconBox(Texture2D icon, ItemDefinition item) => Win.CellIcon(icon, item);
 
         static void SetBorder(VisualElement e, Color c)
         {
@@ -444,13 +454,6 @@ namespace Pirates.UI
         }
 
         /// <summary>Cor da raridade para texto no pergaminho (as do HUD são claras demais no papel).</summary>
-        static string InkHex(ItemRarity rarity) => "#" + ColorUtility.ToHtmlStringRGB(rarity switch
-        {
-            ItemRarity.Uncommon => new Color(0.2f, 0.48f, 0.16f),
-            ItemRarity.Rare => new Color(0.16f, 0.36f, 0.7f),
-            ItemRarity.Epic => new Color(0.46f, 0.22f, 0.68f),
-            ItemRarity.Legendary => new Color(0.72f, 0.46f, 0.04f),
-            _ => new Color(0.35f, 0.25f, 0.16f),
-        });
+        static string InkHex(ItemRarity rarity) => Win.Ink(rarity);
     }
 }

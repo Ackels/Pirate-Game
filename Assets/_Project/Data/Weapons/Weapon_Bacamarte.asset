@@ -26,6 +26,7 @@ MonoBehaviour:
   reloadTime: 3.5
   attackVariants: 1
   animatorVariantOffset: 0
+  animatorVariants: 
   randomVariants: 0
   variantHitDelays: []
   comboWindow: 1
@@ -40,9 +41,16 @@ MonoBehaviour:
   aimMoveSpeed: 0.6
   recoilDegrees: 24
   pellets: 7
-  pelletSpread: 16
+  pelletSpread: 22
   twoHanded: 1
+  supportOffset: 0.3
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.25
   knockdown: 0
   guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
   variantStrikes: []

@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Mochila de contrabandista
   category: 3
   rarity: 2
+  group: 0
   color: {r: 0.36, g: 0.55, b: 0.75, a: 1}
   spacePerUnit: 0
-  description: "Fundo falso e bolsos escondidos: 35 de espa\xE7o para o saque em terra."
-  icon: {fileID: 2800000, guid: d20d14a3858030e4ea59d1fcd332f242, type: 3}
+  description: "Fundo falso e bolsos escondidos: 50 de espa\xE7o para o saque em terra."
+  icon: {fileID: 2800000, guid: 8d5c05adbee91be4bbb9456222db7f0f, type: 3}
   keepAboard: 0
-  backpackCapacity: 35
+  backpackCapacity: 50
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

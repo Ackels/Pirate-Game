@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: "Montante do cors\xE1rio"
   category: 3
   rarity: 2
+  group: 0
   color: {r: 0.45, g: 0.72, b: 1, a: 1}
   spacePerUnit: 0
-  description: "Espad\xE3o de duas m\xE3os: lento, mas corta num arco largo e pega v\xE1rios de uma vez. O terceiro golpe do combo corta duas vezes e derruba."
+  description: "Espad\xE3o de duas m\xE3os: lento, mas corta num arco largo e pega v\xE1rios de uma vez. O terceiro golpe do combo, de cima, derruba."
   icon: {fileID: 2800000, guid: a0e0d69eb185b7341a24e67ff87058d7, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 1
   equipment: {fileID: 11400000, guid: 240159a85c9444a4789ccf50f8e85afd, type: 2}

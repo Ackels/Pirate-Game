@@ -198,6 +198,8 @@ namespace Pirates.EditorTools
             character.AllowRollOutOfKnockdown(true);
             // Revisão das animações (21/10): o golpe de lâmina vira para o inimigo mais perto da mira e dá um passo até ele.
             character.GetComponent<CharacterCombat>().SetMeleeAssist(true);
+            // Postura nos golpes (23/10): cabeça e tronco do capitão (cabeçudo) não dobram até o chão nos golpes do Mixamo.
+            if (model && !model.GetComponent<PostureLimiter>()) model.gameObject.AddComponent<PostureLimiter>();
             // Fôlego (pacote A, passo 6): limita rolar e segurar a guarda. Só o capitão (a IA não tem limite).
             character.gameObject.AddComponent<Stamina>();
             // Peso do impacto (passo 5 da revisão das animações): parada e tremida nos golpes do capitão, no aparar e ao levar golpe.
@@ -222,6 +224,10 @@ namespace Pirates.EditorTools
             // A pé, F abre o baú, cava o tesouro ou volta ao navio (perto do bote).
             character.gameObject.AddComponent<BoatBoarding>().Configure(switcher);
             character.gameObject.AddComponent<PlayerInteractInput>();
+            // Pesca (D2): depois das outras interações do F (ela só vale quando nenhuma outra está disponível).
+            AddFishingRod(character.gameObject);
+            // Cortar árvores (D1): idem, depois da pesca.
+            AddGatherer(character.gameObject);
             shipLanding.Configure(switcher);
             return new OnFootPlayer
             {
@@ -334,6 +340,8 @@ namespace Pirates.EditorTools
             animator.applyRootMotion = false;
             animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             model.AddComponent<CharacterAnimatorDriver>().Configure(character);
+            // Mão de apoio nas armas de duas mãos (só trabalha com arma que tem WeaponDefinition.supportOffset).
+            model.AddComponent<SupportHandIK>();
             return true;
         }
 

@@ -178,6 +178,8 @@ namespace Pirates.EditorTools
                 dummyHit = Cue("BonecoAcerto", Numbered(imp, "impactSoft_medium_{0:000}.ogg", 0, 4), fx, V(0.45f, 0.55f), V(0.9f, 1.05f), true, 2f, 30f),
                 chestOpen = Cue("BauAbre", Clips(rpg, "doorOpen_2.ogg", "creak2.ogg"), fx, V(0.65f, 0.75f), V(0.9f, 1f), true, 2f, 25f),
                 dig = Cue("Cavar", Numbered(imp, "impactMining_{0:000}.ogg", 0, 4), fx, V(0.7f, 0.8f), V(0.85f, 1f), true, 2f, 30f),
+                chop = Cue("Machadada", Join(Clips(rpg, "chop.ogg"), Numbered(imp, "impactWood_medium_{0:000}.ogg", 0, 4)), fx,
+                    V(0.7f, 0.85f), V(0.9f, 1.08f), true, 2f, 30f),
                 pickup = Cue("Saque", Clips(rpg, "handleCoins.ogg", "handleCoins2.ogg", "handleSmallLeather.ogg", "dropLeather.ogg"), ui,
                     V(0.45f, 0.55f), V(0.95f, 1.05f), false, 1f, 2f, 0.06f),
                 backpackFull = Cue("MochilaCheia", Numbered(gui, "error_{0:000}.ogg", 4, 4), ui, V(0.5f, 0.5f), V(1f, 1f), false, 1f, 2f, 1f),

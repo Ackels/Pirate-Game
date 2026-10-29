@@ -253,7 +253,6 @@ namespace Pirates.EditorTools
 
         // ---------- Decoração ----------
 
-        static readonly string[] PalmModels = { "palm-straight", "palm-bend", "palm-detailed-straight", "palm-detailed-bend" };
         static readonly string[] GrayRocks = { "rocks-a", "rocks-b", "rocks-c" };
         static readonly string[] SandRocks = { "rocks-sand-a", "rocks-sand-b", "rocks-sand-c" };
         static readonly string[] Tufts = { "grass", "grass-patch", "grass-plant" };
@@ -304,12 +303,9 @@ namespace Pirates.EditorTools
             for (int k = 0; k < palms; k++)
             {
                 if (!Spot(s.plateau * 0.7f, 22f, out var local)) continue;
-                float scale = R(1.45f, 2.15f);
-                var palm = Kenney(PalmModels[rng.Next(PalmModels.Length)], root, local, R(0f, 360f), scale, $"Palmeira_{k}");
-                var trunk = palm.AddComponent<CapsuleCollider>();
-                trunk.center = new Vector3(0f, 1.2f, 0f);
-                trunk.radius = 0.18f;
-                trunk.height = 2.4f;
+                float size = R(0f, 1f);
+                var v = PalmModels[rng.Next(PalmModels.Length)];
+                var palm = PlaceVeg(v, root, local, R(0f, 360f), Mathf.Lerp(v.minScale, v.maxScale, size), $"Palmeira_{k}");
                 Occluder(palm);
             }
             for (int k = 0; k < rocks; k++)

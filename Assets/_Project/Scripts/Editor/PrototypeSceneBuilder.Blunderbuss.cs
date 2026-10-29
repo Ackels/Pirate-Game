@@ -29,16 +29,19 @@ namespace Pirates.EditorTools
         // No kit: cano em −X (boca larga em x −2,04), coronha em +X; a mão pega o pescoço da coronha, logo atrás do gatilho.
         static readonly Vector3 BlunderbussGrip = new(-0.15f, 0f, 0f), BlunderbussMuzzle = new(-2.04f, 0.22f, 0f);
 
-        static WeaponDefinition BlunderbussWeapon() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Bacamarte.asset", w =>
+        static WeaponDefinition BlunderbussWeapon() => WithSupportHand(BlunderbussAsset(), RifleSupport);
+
+        static WeaponDefinition BlunderbussAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Bacamarte.asset", w =>
         {
             w.displayName = "Bacamarte";
             w.kind = WeaponKind.Firearm;
             w.animatorWeaponType = 2;
             w.twoHanded = true;
-            // 7 chumbos × 14 = 98 colado (um pirata de 60 cai de um tiro); a 10 m pegam ~3 a 4 no corpo.
+            // 7 chumbos × 14 = 98 colado (um pirata de 60 cai de um tiro). Leque de 22° (era 16; 28/10, pedido do Jhonata: "abrir um pouco
+            // mais", com o dano em área do CharacterCombat.Spray).
             w.damage = 14f;
             w.pellets = 7;
-            w.pelletSpread = 16f;
+            w.pelletSpread = 22f;
             w.range = 16f;
             w.angle = 3f;
             w.hitDelay = 0.3f;
@@ -182,13 +185,13 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Eixos do bacamarte no espaço do osso da mão direita: "barrel" (cano) e "top" (alto da arma). Do clipe "Rifle Aiming Idle":
+        /// Eixos do bacamarte no espaço do osso da mão direita: "barrel" (cano) e "top" (alto da arma). Da pose de mira de rifle (<see cref="RifleAimClip"/>):
         /// cano da mão direita para a esquerda (que segura o cano), alto = para cima. Sem o clipe, os da pistola (antebraço, polegar).
         /// </summary>
         static void RifleGrip(Transform model, out Vector3 barrel, out Vector3 top)
         {
             HandGrip(model, out barrel, out top);
-            var clip = MixamoClip(ClipRifleAim);
+            var clip = RifleAimClip();
             var temp = clip ? MeasureCopy(model) : null;
             if (!temp) return;
             var anim = temp.GetComponent<Animator>();
@@ -210,7 +213,7 @@ namespace Pirates.EditorTools
         static void RifleAimYaw(Transform model, out float upperBody, out float fullBody)
         {
             AimPoseArmYaw(model, ClipPistolAim, out upperBody, out fullBody);
-            var clip = MixamoClip(ClipRifleAim);
+            var clip = RifleAimClip();
             var temp = clip ? MeasureCopy(model) : null;
             if (!temp) return;
             var anim = temp.GetComponent<Animator>();

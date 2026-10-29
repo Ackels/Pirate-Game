@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Fortaleza Costeira
   category: 2
   rarity: 3
+  group: 0
   color: {r: 0.82, g: 0.52, b: 1, a: 1}
   spacePerUnit: 0
   description: "Constru\xE7\xE3o da base: canh\xF5es fixos que defendem o porto."
-  icon: {fileID: 2800000, guid: 894e4b1f036b43f428386dd81d864139, type: 3}
+  icon: {fileID: 2800000, guid: 64c65fa97c12f77459748d8413b2bb66, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

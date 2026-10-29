@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Equip_AdagaDuelista
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Adaga da duelista
+  category: 3
+  rarity: 3
+  group: 0
+  color: {r: 0.82, g: 0.52, b: 1, a: 1}
+  spacePerUnit: 0
+  description: "A adaga da duelista que guardava a enseada dos contrabandistas. A l\xE2mina mais r\xE1pida dos mares; pelas costas, mais que o dobro do dano."
+  icon: {fileID: 2800000, guid: fc49bfb7fcd921d4fae8d796b43d4d89, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  equipSlot: 1
+  equipment: {fileID: 11400000, guid: ad9ead4eafe111240bd752a52a6230d2, type: 2}

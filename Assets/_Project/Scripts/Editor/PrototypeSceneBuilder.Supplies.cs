@@ -129,6 +129,8 @@ namespace Pirates.EditorTools
             AddCartridgeTrade(settings, i, forge);
             AddBlunderbussTrade(settings, i, forge);
             AddBombTrade(settings, i, forge);
+            AddFishingMarket(settings);
+            AddGatheringMarket(settings);
             // Forja com tempo (05/10): receitas de antes nasceram com o padrão (90 s); a metralha leva 2 min. Só troca o padrão.
             foreach (var recipe in settings.smithy)
                 if (recipe?.result.item == s.grapeItem && Mathf.Approximately(recipe.craftSeconds, 90f)) recipe.craftSeconds = 120f;

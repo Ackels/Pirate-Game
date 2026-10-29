@@ -124,6 +124,7 @@ namespace Pirates.UI
                 combat.Blocked += OnBlocked;
                 combat.GuardBroken += OnGuardBroken;
             }
+            CharacterCombat.Struck += OnStruck;
         }
 
         void OnDisable()
@@ -154,6 +155,7 @@ namespace Pirates.UI
                 combat.Blocked -= OnBlocked;
                 combat.GuardBroken -= OnGuardBroken;
             }
+            CharacterCombat.Struck -= OnStruck;
             HideAll();
         }
 
@@ -175,7 +177,12 @@ namespace Pirates.UI
         void OnHurt(DamageInfo info) { if (hud) hud.Flash(); }
         void OnRespawned() => respawnedUntil = Time.time + 3.5f;
 
-        void OnAte(float healed) => FoodFeed($"+{healed:0} vida  <size=80%>comeu uma ração</size>", HudColors.Good);
+        void OnAte(float healed)
+        {
+            var meal = food ? food.LastEaten : null;
+            string what = !meal || meal == food.Food ? "uma ração" : meal.displayName.ToLowerInvariant();
+            FoodFeed($"+{healed:0} vida  <size=80%>comeu {what}</size>", HudColors.Good);
+        }
         void OnFoodRefused(string reason) => FoodFeed($"Não deu para comer: {reason}", HudColors.Muted);
         void OnFoodPacked(int n) => FoodFeed($"Levou {n} {(n == 1 ? "ração" : "rações")} na mochila  <size=80%>R para comer</size>", HudColors.Cream);
 
@@ -183,6 +190,15 @@ namespace Pirates.UI
         void OnBlocked(Vector3 point, bool parried)
         {
             if (parried) FoodFeed("<b>Aparou!</b>  Ele ficou atordoado: solte a guarda e ataque", HudColors.Gold);
+        }
+
+        // Adaga: golpe pelas costas avisa (no máximo um aviso a cada 2 s, o combo inteiro pode pegar de costas).
+        float backstabFeedUntil;
+        void OnStruck(CharacterCombat.StrikeReport report)
+        {
+            if (report.attacker != combat || (report.flags & CharacterCombat.StrikeFlags.Backstab) == 0 || Time.time < backstabFeedUntil) return;
+            backstabFeedUntil = Time.time + 2f;
+            FoodFeed($"<b>Pelas costas!</b>  {report.damage:0} de dano", HudColors.Gold);
         }
 
         void OnGuardBroken() => FoodFeed("<b>Guarda quebrada!</b>  Sem fôlego: recue ou role", HudColors.Bad);
@@ -274,7 +290,7 @@ namespace Pirates.UI
             help.Add(Hud.Text(
                 "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular     <b>Ctrl</b>   rolar (esquiva, gasta fôlego)     <b>V</b>   chutar (derruba)\n" +
                 "<b>Botão esquerdo</b>   atacar (mira no cursor)\n" +
-                "<b>Botão direito (segurar)</b>   pistola/bacamarte: mirar (laser), o esquerdo atira na hora · cutelo: <b>guarda</b> (gasta fôlego; golpe de frente vira arranhão; erguida na hora do golpe, <b>apara</b>, devolve fôlego e o pirata fica atordoado)\n" +
+                "<b>Botão direito (segurar)</b>   pistola/bacamarte: mirar (anel onde a bala para), o esquerdo atira na hora · cutelo: <b>guarda</b> (gasta fôlego; golpe de frente vira arranhão; erguida na hora do golpe, <b>apara</b>, devolve fôlego e o pirata fica atordoado)\n" +
                 "<b>G (segurar)</b>   mirar a bomba (arco e área da explosão): soltar lança, botão direito cancela\n" +
                 "<b>1 / 2 / 3</b>   cutelo / pistola / bacamarte (comprado no mercado)\n" +
                 "<b>Q / E</b>  ou  <b>botão do meio + mouse</b>   girar câmera     <b>Scroll</b>   zoom\n" +

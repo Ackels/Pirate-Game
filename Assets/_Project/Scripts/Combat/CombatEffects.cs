@@ -25,6 +25,8 @@ namespace Pirates.Combat
         public event System.Action<Vector3, float> Surged;
         /// <summary>Urro de monstro marinho (a lula gigante): ponto.</summary>
         public event System.Action<Vector3> Roared;
+        /// <summary>Respingo pequeno na água (a boia da pesca caindo, o peixe mordendo, o peixe saindo): ponto e tamanho (1 = a boia).</summary>
+        public event System.Action<Vector3, float> Plopped;
 
         void OnEnable() => Services.Register(this);
         void OnDisable() => Services.Unregister(this);
@@ -42,5 +44,7 @@ namespace Pirates.Combat
         public void Surge(Vector3 point, float size) => Surged?.Invoke(point, size);
 
         public void Roar(Vector3 point) => Roared?.Invoke(point);
+
+        public void Plop(Vector3 point, float size) => Plopped?.Invoke(point, size);
     }
 }

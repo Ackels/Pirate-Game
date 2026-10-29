@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Cutelo_Pirata
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Cutelo de pirata
+  icon: {fileID: 0}
   kind: 0
   animatorWeaponType: 0
   damage: 12
@@ -23,7 +24,14 @@ MonoBehaviour:
   cooldown: 0.8571429
   shotsPerReload: 0
   reloadTime: 2.5
-  attackVariants: 2
+  attackVariants: 3
+  animatorVariantOffset: 0
+  animatorVariants: 00000000010000001e000000i
+  randomVariants: 1
+  variantHitDelays:
+  - 0.42857146
+  - 0.42857146
+  - 0.41428572
   comboWindow: 1.5714287
   animatedDraw: 1
   drawGrabTime: 0.4615385
@@ -35,4 +43,17 @@ MonoBehaviour:
   aimedSpread: 0.3
   aimMoveSpeed: 0.75
   recoilDegrees: 14
+  pellets: 1
+  pelletSpread: 0
+  twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.15
+  knockdown: 0
+  guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
+  variantStrikes: []

@@ -10,6 +10,7 @@ namespace Pirates.Controls
     /// Comida do capitão (05/10): a pé, R come uma ração da mochila e cura na hora (não come com a vida cheia; um intervalo curto
     /// entre uma e outra). Ao desembarcar, o capitão leva algumas rações do porão na mochila; ao embarcar, as que sobraram voltam
     /// para o porão junto com o resto da mochila (BackpackUnloader). Fica no personagem, que só liga em terra.
+    /// Pesca (D2, 27/10): sem ração na mochila, R come o peixe comestível mais barato que ela tiver (<see cref="ItemDefinition.foodHeal"/>).
     /// </summary>
     [RequireComponent(typeof(Inventory), typeof(Health))]
     public class FoodEater : MonoBehaviour
@@ -47,6 +48,8 @@ namespace Pirates.Controls
         public float WaitSeconds => Mathf.Max(0f, nextEat - Time.time);
         /// <summary>Rações na mochila.</summary>
         public int Count => backpack && food ? backpack.Count(food) : 0;
+        /// <summary>O que comeu por último (ração ou peixe), para o aviso.</summary>
+        public ItemDefinition LastEaten { get; private set; }
 
         /// <summary>Comeu: quanto curou.</summary>
         public event Action<float> Ate;
@@ -120,9 +123,10 @@ namespace Pirates.Controls
                 Refused?.Invoke($"ainda mastigando (mais {Mathf.CeilToInt(nextEat - Time.time)} s)");
                 return false;
             }
-            if (Count <= 0)
+            var meal = Count > 0 ? food : CheapestFish();
+            if (!meal)
             {
-                Refused?.Invoke("sem ração na mochila (compre no mercado ou ache em caixotes e barris)");
+                Refused?.Invoke("sem ração na mochila (compre no mercado, ache em caixotes e barris ou pesque)");
                 return false;
             }
             if (health.Current >= health.Max)
@@ -130,9 +134,10 @@ namespace Pirates.Controls
                 Refused?.Invoke("vida cheia");
                 return false;
             }
-            backpack.Remove(food, 1);
+            backpack.Remove(meal, 1);
+            LastEaten = meal;
             float before = health.Current;
-            health.Heal(healAmount);
+            health.Heal(meal == food ? healAmount : meal.foodHeal);
             nextEat = Time.time + cooldown;
             // Gole na garrafa: animação no corpo de cima, sem atacar e andando devagar até terminar.
             bottleUntil = Time.time + eatSeconds;
@@ -146,6 +151,20 @@ namespace Pirates.Controls
             if (footCharacter) footCharacter.SetSpeedMultiplier(moveWhileEating, eatSeconds);
             Ate?.Invoke(health.Current - before);
             return true;
+        }
+
+        /// <summary>O peixe comestível da mochila que vale menos (raridade mais baixa, depois o que cura menos).</summary>
+        ItemDefinition CheapestFish()
+        {
+            ItemDefinition best = null;
+            var items = backpack.Items;
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                if (!item || item.foodHeal <= 0f || backpack.Count(item) <= 0) continue;
+                if (!best || item.rarity < best.rarity || (item.rarity == best.rarity && item.foodHeal < best.foodHeal)) best = item;
+            }
+            return best;
         }
 
         void OnModeChanged(bool onFoot)

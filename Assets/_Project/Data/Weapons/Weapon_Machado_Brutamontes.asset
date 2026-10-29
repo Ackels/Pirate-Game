@@ -13,23 +13,25 @@ MonoBehaviour:
   m_Name: Weapon_Machado_Brutamontes
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Machado duplo
+  icon: {fileID: 0}
   kind: 0
-  animatorWeaponType: 3
+  animatorWeaponType: 5
   damage: 35
   range: 2.5
   angle: 150
-  hitDelay: 0.6
+  hitDelay: 0.7
   attackAnimSpeed: 1
   cooldown: 1.7
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 3
   animatorVariantOffset: 0
+  animatorVariants: 
   randomVariants: 1
   variantHitDelays:
   - 0.7
-  - 0.6
-  - 1
+  - 0.59770113
+  - 0.76666665
   comboWindow: 3.5
   animatedDraw: 0
   drawGrabTime: 0.45
@@ -44,6 +46,14 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: -0.3
+  supportSlides: 1
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.1
   knockdown: 1
   guardCost: 3
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
+  variantStrikes: []

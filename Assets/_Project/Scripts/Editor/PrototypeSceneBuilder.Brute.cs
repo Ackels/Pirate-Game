@@ -9,7 +9,7 @@ namespace Pirates.EditorTools
 {
     /// <summary>
     /// Brutamontes (pacote B, passo 1, 09/10): pirata grande (homem-tubarão 35% maior, pele mais escura) com o machado duplo do Quaternius
-    /// e as animações do pacote do machado do Mixamo (WeaponType 3). Lento, muita vida, não é interrompido por golpe nem derrubado por
+    /// nas duas mãos (27/10: animações do anão e da Explosive, WeaponType 5, ver PrototypeSceneBuilder.BruteAnims). Lento, muita vida, não é interrompido por golpe nem derrubado por
     /// chute (a explosão derruba); golpes largos e pesados, avisados (0,6 s), que derrubam o capitão e cansam a guarda (3× o fôlego);
     /// aparar abre a guarda dele. Grita ao ver o capitão. Posto com nome "Brutamontes_..." nas listas dos acampamentos.
     /// </summary>
@@ -23,8 +23,10 @@ namespace Pirates.EditorTools
 
         static bool IsBrute(string postName) => postName.StartsWith("Brutamontes");
 
-        /// <summary>Machado duplo do brutamontes (Data/Weapons/Weapon_Machado_Brutamontes; preservado se existe).</summary>
-        static WeaponDefinition BruteAxe() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Machado_Brutamontes.asset", w =>
+        /// <summary>Machado duplo do brutamontes (Data/Weapons/Weapon_Machado_Brutamontes; preservado se existe, tempos refeitos).</summary>
+        static WeaponDefinition BruteAxe() => BruteMoves(BruteAxeAsset());
+
+        static WeaponDefinition BruteAxeAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Machado_Brutamontes.asset", w =>
         {
             w.displayName = "Machado duplo";
             w.kind = WeaponKind.Melee;
@@ -46,20 +48,36 @@ namespace Pirates.EditorTools
             w.guardCost = 3f;
         });
 
-        /// <summary>Machado duplo na mão direita: o mesmo eixo do cutelo (lâmina ao longo do antebraço), as duas cabeças no plano do golpe.</summary>
+        /// <summary>
+        /// Machado duplo na mão direita. Com as animações de duas mãos (27/10) o cabo passa pelas duas mãos e a cabeça fica além da
+        /// direita (<see cref="BruteAxeGrip"/>); sem elas, o eixo antigo do cutelo (lâmina ao longo do antebraço).
+        /// </summary>
         static Transform AxeOn(Transform model, Material iron, Material wood, out Transform handSlot)
         {
             Transform hand = Bone(model, HumanBodyBones.RightHand);
             HandGrip(model, out Vector3 arm, out Vector3 thumb);
             var root = new GameObject("Machado").transform;
             root.SetParent(hand, false);
-            Vector3 palm = Vector3.Cross(arm, thumb).normalized;
-            Vector3 blade = (0.96f * arm + 0.25f * palm + 0.11f * thumb).normalized;
-            Vector3 edge = 0.84f * thumb - 0.54f * palm + 0.04f * arm;
-            root.SetLocalPositionAndRotation(LocalOffset(hand, arm, 0.08f), Quaternion.LookRotation(blade, edge));
-            // No kit o cabo vai de y −0,29 a ~0,2 e as cabeças de 0,2 a 0,72: a mão pega no terço de baixo do cabo. Escala 0,62 (× 1,35 do
-            // brutamontes ≈ 0,84 m): com 0,85 as cabeças entravam no chão na pose parada (o braço fica baixo, a mão a ~0,68 m).
-            if (!KitWeapon(root, "Weapon_DoubleAxe", Quaternion.LookRotation(Vector3.right, Vector3.forward), 0.62f, new Vector3(0f, -0.05f, 0f)))
+            float scale = 0.62f;
+            Vector3 grip = new(0f, -0.05f, 0f);
+            if (BruteAxeGrip(model, out Vector3 handle, out Vector3 swing))
+            {
+                // O cabo passa pelo meio do punho fechado (~0,08 m à frente do pulso, onde fica o osso da mão do kit).
+                root.SetLocalPositionAndRotation(LocalOffset(hand, arm, 0.08f), Quaternion.LookRotation(handle, swing));
+                scale = BruteAxeScale;
+                grip = BruteAxeGripPoint;
+            }
+            else
+            {
+                Vector3 palm = Vector3.Cross(arm, thumb).normalized;
+                Vector3 blade = (0.96f * arm + 0.25f * palm + 0.11f * thumb).normalized;
+                Vector3 edge = 0.84f * thumb - 0.54f * palm + 0.04f * arm;
+                root.SetLocalPositionAndRotation(LocalOffset(hand, arm, 0.08f), Quaternion.LookRotation(blade, edge));
+            }
+            // No kit o cabo vai de y −0,29 a ~0,2 e as cabeças de 0,2 a 0,72. Uma mão: pega no terço de baixo, × 0,62 (com 0,85 as cabeças
+            // entravam no chão na pose parada). Duas mãos: a direita logo abaixo das cabeças e a esquerda perto do fim do cabo, × 0,95
+            // (× 1,35 do brutamontes ≈ 1,3 m; a cabeça fica para cima na guarda).
+            if (!KitWeapon(root, "Weapon_DoubleAxe", Quaternion.LookRotation(Vector3.right, Vector3.forward), scale, grip))
             {
                 Part(PrimitiveType.Cylinder, "Cabo", root, new Vector3(0f, 0f, 0.3f), new Vector3(0.04f, 0.42f, 0.04f), Quaternion.Euler(90f, 0f, 0f), wood);
                 Part(PrimitiveType.Cube, "Cabeca", root, new Vector3(0f, 0f, 0.62f), new Vector3(0.02f, 0.5f, 0.22f), Quaternion.identity, iron);

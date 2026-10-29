@@ -37,6 +37,11 @@ namespace Pirates.UI
         Inventory confirmInventory;
         ItemDefinition confirmItem;
         float confirmUntil;
+        // Filtros por grupo (H4): o do armazém vale para o porão e o armazém juntos.
+        readonly ItemFilter cargoFilter = new(), marketFilter = new();
+        readonly List<ItemDefinition> filterItems = new();
+        // Armazém em grade (H4, passo 2): o item escolhido mostra os botões embaixo.
+        ItemDefinition cargoSelected;
 
         public HarborWindow(VisualElement layer, HarborVisitor shipVisitor, HarborBuildingVisitor onFoot, float partialRepairHull)
         {
@@ -167,6 +172,11 @@ namespace Pirates.UI
 
         // ---------- Carga ----------
 
+        /// <summary>
+        /// Armazém (H4, passo 2): porão e armazém em grade de ícones (como a mochila e a tela I); o item escolhido aparece embaixo com o
+        /// ícone grande, quanto tem de cada lado e os botões de levar (e de descartar, no modo de descarte). Clique duplo leva tudo para o
+        /// outro lado.
+        /// </summary>
         void AddCargo(VisualElement body, HarborDock dock)
         {
             var hold = visitor.Hold;
@@ -182,55 +192,106 @@ namespace Pirates.UI
                 }, true, "hud-button--small"));
                 Win.Text(row, discardMode
                     ? "<size=85%>só o que o mercado não compra (munição, ração, cartuchos) e esquemas repetidos; <b>não devolve nada</b></size>"
-                    : "<size=85%>o armazém não tem limite; descarte o que sobrar (munição, ração, cartuchos)</size>", "hud-window__small", "hud-window__muted");
+                    : "<size=85%>clique escolhe · clique duplo leva tudo para o outro lado · o armazém não tem limite</size>", "hud-window__small", "hud-window__muted");
             });
             var backpack = building && building.IsOpen ? building.GetComponent<Inventory>() : null;
             if (backpack) AddBackpack(body, backpack, warehouse, dock);
+            var filters = Hud.Box("hud-filters__box");
+            body.Add(filters);
+            window.AddPane(filters, () => Win.Mix(Win.Mix(Win.Of(hold), Win.Of(warehouse)), cargoFilter.Signature), b =>
+            {
+                filterItems.Clear();
+                filterItems.AddRange(hold.Items);
+                filterItems.AddRange(warehouse.Items);
+                cargoFilter.Build(b, filterItems);
+            });
             var columns = Hud.Row("hud-window__columns");
             body.Add(columns);
-            long Sig() => Win.Mix(Win.Mix(Win.Of(hold), Win.Of(warehouse)), DiscardSignature());
+            long Sig() => Win.Mix(Win.Mix(Win.Mix(Win.Mix(Win.Of(hold), Win.Of(warehouse)), DiscardSignature()), cargoFilter.Signature), cargoSelected);
 
-            window.AddPane(ScrollColumn(columns), Sig, col =>
+            window.AddPane(ScrollColumn(columns), Sig, col => CargoGrid(col, hold, "No porão", "descarregar →",
+                item => item.category != ItemCategory.Crew ? visitor.Unload(item, hold.Count(item)) : 0));
+            window.AddPane(ScrollColumn(columns), Sig, col => CargoGrid(col, warehouse, "No armazém da base", "← carregar",
+                item => item.IsUnique ? 0 : visitor.Load(item, Mathf.Min(warehouse.Count(item), hold.MaxFit(item)))));
+            var detail = Win.Section(body, "hud-cargo-detail");
+            window.AddPane(detail, Sig, b => CargoDetail(b, hold, warehouse, dock));
+        }
+
+        /// <summary>Uma coluna: título, espaço usado e a grade do que passa no filtro.</summary>
+        void CargoGrid(VisualElement col, Inventory inventory, string title, string hint, Func<ItemDefinition, int> moveAll)
+        {
+            Win.Text(col, $"{title}   <size=85%>{hint}</size>", "hud-window__subtitle-strong");
+            Win.Capacity(col, inventory);
+            var grid = Hud.Box("hud-equip__grid", "hud-cargo__grid");
+            col.Add(grid);
+            int shown = 0;
+            for (int i = 0; i < inventory.Items.Count; i++)
             {
-                Win.Text(col, "No porão   <size=85%>descarregar →</size>", "hud-window__subtitle-strong");
-                Win.Capacity(col, hold);
-                if (hold.Items.Count == 0) Win.Text(col, "vazio", "hud-window__empty");
-                for (int i = 0; i < hold.Items.Count; i++)
+                var item = inventory.Items[i];
+                if (!cargoFilter.Shows(item)) continue;
+                shown++;
+                grid.Add(Win.Cell(item, inventory.Count(item), item == cargoSelected, clicks =>
                 {
-                    var item = hold.Items[i];
-                    int count = hold.Count(item);
-                    var row = Win.Row(col, "hud-window__item-row");
-                    Win.Item(row, item, $"{item.displayName}  <b>×{count}</b>");
-                    if (discardMode)
-                    {
-                        if (CanDiscard(item, hold, dock)) DiscardButtons(row, hold, item, count);
-                        continue;
-                    }
-                    if (item.category == ItemCategory.Crew) row.Add(Hud.Text("tripulação fica a bordo", "hud-item__note"));
-                    else TransferButtons(row, count, n => visitor.Unload(item, n), "→", after: true);
-                }
-            });
-            window.AddPane(ScrollColumn(columns), Sig, col =>
+                    cargoSelected = item;
+                    confirmItem = null;
+                    if (clicks >= 2 && !discardMode) moveAll(item);
+                }));
+            }
+            if (shown == 0) Win.Text(col, inventory.Items.Count == 0 ? "vazio" : "nada deste tipo", "hud-window__empty");
+        }
+
+        /// <summary>O item escolhido: ícone grande, nome, quanto tem em cada lado e os botões (ou o porquê de não dar).</summary>
+        void CargoDetail(VisualElement box, Inventory hold, Inventory warehouse, HarborDock dock)
+        {
+            var item = cargoSelected;
+            int inHold = item ? hold.Count(item) : 0, inWarehouse = item ? warehouse.Count(item) : 0;
+            if (!item || inHold + inWarehouse == 0)
             {
-                Win.Text(col, "No armazém da base   <size=85%>← carregar</size>", "hud-window__subtitle-strong");
-                Win.Capacity(col, warehouse);
-                if (warehouse.Items.Count == 0) Win.Text(col, "vazio", "hud-window__empty");
-                for (int i = 0; i < warehouse.Items.Count; i++)
-                {
-                    var item = warehouse.Items[i];
-                    int count = warehouse.Count(item);
-                    var row = Win.Row(col, "hud-window__item-row");
-                    Win.Item(row, item, $"{item.displayName}  <b>×{count}</b>");
-                    if (discardMode)
-                    {
-                        if (CanDiscard(item, warehouse, dock)) DiscardButtons(row, warehouse, item, count);
-                        continue;
-                    }
-                    if (item.IsUnique) row.Add(Hud.Text(item.category == ItemCategory.Gear ? "equipamento guardado na base" : "esquema guardado na base", "hud-item__note"));
-                    else if (hold.MaxFit(item) <= 0) row.Add(Hud.Text($"<color={Bad}>não cabe no porão</color>", "hud-item__note"));
-                    else TransferButtons(row, Mathf.Min(count, hold.MaxFit(item)), n => visitor.Load(item, n), "←", after: false);
-                }
-            });
+                Win.Text(box, "Clique num item do porão ou do armazém para ver e mover.", "hud-window__empty");
+                return;
+            }
+            var row = Win.Row(box, "hud-cargo-detail__row");
+            row.Add(Win.Icon(item, "hud-item__slot--big"));
+            var info = Hud.Box("hud-cargo-detail__info");
+            row.Add(info);
+            info.Add(Hud.Text($"<color={Win.Ink(item.rarity)}><b>{item.displayName}</b></color>   <size=85%>{Rarity.NameOf(item.rarity)}</size>",
+                "hud-window__label", "hud-window__text"));
+            info.Add(Hud.Text($"no porão <b>{inHold}</b>   ·   no armazém <b>{inWarehouse}</b>" +
+                              (item.spacePerUnit > 0f ? $"   ·   <size=85%>{item.spacePerUnit:0.##} de espaço cada</size>" : ""),
+                "hud-window__small", "hud-window__text"));
+            if (!string.IsNullOrEmpty(item.description))
+                info.Add(Hud.Text($"<i>{item.description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text"));
+
+            var actions = Hud.Box("hud-cargo-detail__actions");
+            row.Add(actions);
+            if (discardMode)
+            {
+                bool any = false;
+                if (inHold > 0 && CanDiscard(item, hold, dock)) any |= DiscardLine(actions, "do porão", hold, item, inHold);
+                if (inWarehouse > 0 && CanDiscard(item, warehouse, dock)) any |= DiscardLine(actions, "do armazém", warehouse, item, inWarehouse);
+                if (!any) actions.Add(Hud.Text("não dá para descartar (o mercado compra, ou é único)", "hud-item__note"));
+                return;
+            }
+            var unload = Win.Row(actions, "hud-cargo-detail__line");
+            unload.Add(Hud.Text("Descarregar no armazém", "hud-cargo-detail__label"));
+            if (item.category == ItemCategory.Crew) unload.Add(Hud.Text("tripulação fica a bordo", "hud-item__note"));
+            else if (inHold == 0) unload.Add(Hud.Text("nada no porão", "hud-item__note"));
+            else TransferButtons(unload, inHold, n => visitor.Unload(item, n), "→", after: true);
+
+            var load = Win.Row(actions, "hud-cargo-detail__line");
+            load.Add(Hud.Text("Carregar no porão", "hud-cargo-detail__label"));
+            if (item.IsUnique) load.Add(Hud.Text(item.category == ItemCategory.Gear ? "equipamento fica na base" : "esquema fica na base", "hud-item__note"));
+            else if (inWarehouse == 0) load.Add(Hud.Text("nada no armazém", "hud-item__note"));
+            else if (hold.MaxFit(item) <= 0) load.Add(Hud.Text($"<color={Bad}>não cabe no porão</color>", "hud-item__note"));
+            else TransferButtons(load, Mathf.Min(inWarehouse, hold.MaxFit(item)), n => visitor.Load(item, n), "←", after: false);
+        }
+
+        bool DiscardLine(VisualElement parent, string from, Inventory inventory, ItemDefinition item, int count)
+        {
+            var line = Win.Row(parent, "hud-cargo-detail__line");
+            line.Add(Hud.Text($"Descartar {from}", "hud-cargo-detail__label"));
+            DiscardButtons(line, inventory, item, count);
+            return true;
         }
 
         /// <summary>Coluna com rolagem (com a mochila em cima, porão e armazém cheios não cabem e as linhas se espremiam).</summary>
@@ -375,10 +436,13 @@ namespace Pirates.UI
                 row.Add(bar);
                 row.Add(Hud.Text($"{hull.Current:0} / {hull.Max:0}", "hud-window__value"));
                 if (!settings) return;
-                int wood = visitor.Available(settings.repairWood), gold = visitor.Available(settings.repairGold);
-                Win.Text(b, $"Conserto: {settings.woodPer10Hull} madeira + {settings.goldPer10Hull} ouro a cada 10 de casco   " +
-                            $"<size=85%>(você tem {wood} madeira e {gold} ouro, somando porão e armazém)</size>", "hud-window__small");
-                var buttons = Win.Row(b);
+                var buttons = Win.Row(b, "hud-repair__row");
+                buttons.Add(Hud.Text("Conserto a cada 10 de casco", "hud-cost__label"));
+                var per10 = Hud.Row("hud-costs");
+                if (settings.repairWood) per10.Add(CostChip(settings.repairWood, settings.woodPer10Hull, visitor.Available(settings.repairWood)));
+                if (settings.repairGold) per10.Add(CostChip(settings.repairGold, settings.goldPer10Hull, visitor.Available(settings.repairGold)));
+                buttons.Add(per10);
+                Win.Spacer(buttons);
                 if (visitor.MissingHull <= 0f)
                 {
                     buttons.Add(Hud.Text("<i>casco intacto</i>", "hud-window__small"));
@@ -422,8 +486,12 @@ namespace Pirates.UI
         void AddUpgrades(VisualElement body, HarborDock dock)
         {
             var summary = Win.Column(body, "hud-window__summary");
-            window.AddPane(summary, () => Win.Mix(Win.Mix(StockSignature(), visitor.CrewAboard), ShipSignature()), b => Win.Text(b,
-                $"{UpgradesFor()}Disponível (armazém + porão):  {AvailableSummary()}   ·   tripulantes a bordo: {visitor.CrewAboard}", "hud-window__small"));
+            window.AddPane(summary, () => Win.Mix(Win.Mix(StockSignature(), visitor.CrewAboard), ShipSignature()), b =>
+            {
+                string title = UpgradesFor();
+                if (title.Length > 0) Win.Text(b, title.TrimEnd(' ', '·'), "hud-window__small");
+                StockChips(b, true);
+            });
 
             var jobBox = Win.Section(body, "hud-section--job");
             window.AddPane(jobBox, () => Win.Mix(Win.Mix(dock.Job?.GetHashCode() ?? 0, Mathf.CeilToInt(dock.JobSecondsLeft)), HudDraw.Flag(dock.JobIsWorking)), b =>
@@ -446,32 +514,29 @@ namespace Pirates.UI
                 Win.Mix(Win.Mix(dock.Job != null ? 1 : 0, visitor.CrewAboard), Win.Mix(BuildingLevelsSignature(dock.Buildings), ShipSignature()))), list =>
             {
                 AddShips(list, dock);
+                var grid = Hud.Box("hud-cards");
+                list.Add(grid);
                 foreach (var upgrade in upgrades.Available)
                 {
                     if (!upgrade) continue;
                     int level = upgrades.Level(upgrade);
                     var next = upgrades.NextLevel(upgrade);
-                    var card = Win.Section(list);
-                    var top = Win.Row(card);
-                    top.Add(Hud.Text($"<b>{upgrade.displayName}</b>", "hud-window__label"));
-                    top.Add(Win.Pips(level, upgrade.MaxLevel));
-                    string effect = next == null
-                        ? $"{upgrades.EffectText(upgrade, false)}   <i>(máximo)</i>"
-                        : $"{upgrades.EffectText(upgrade, false)}  →  <b>{upgrades.EffectText(upgrade, true)}</b>";
-                    top.Add(Hud.Text(effect, "hud-window__small", "hud-grow", "hud-align-right"));
-                    Win.Text(card, $"<i>{upgrade.description}</i>", "hud-window__small", "hud-window__muted");
+                    var card = WorkCard(grid, null, upgrade.displayName, level, upgrade.MaxLevel,
+                        upgrades.EffectText(upgrade, false), next != null ? upgrades.EffectText(upgrade, true) : null, upgrade.description);
                     if (next == null) continue;
-                    var bottom = Win.Row(card);
-                    string needs = next.requiredBuilding && !(dock.Buildings && dock.Buildings.Level(next.requiredBuilding) >= next.requiredBuildingLevel)
-                        ? $"<color={Bad}>precisa de {next.requiredBuilding.displayName}{(next.requiredBuildingLevel > 1 ? $" nível {next.requiredBuildingLevel}" : "")} na base</color>   " : "";
-                    bottom.Add(Hud.Text(needs + CostText(upgrades.NextCost(upgrade), next.crewRequired), "hud-window__small", "hud-grow"));
+                    if (next.requiredBuilding && !(dock.Buildings && dock.Buildings.Level(next.requiredBuilding) >= next.requiredBuildingLevel))
+                        card.Add(Hud.Text($"precisa de {next.requiredBuilding.displayName}{(next.requiredBuildingLevel > 1 ? $" nível {next.requiredBuildingLevel}" : "")} na base",
+                            "hud-work__needs"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    bottom.Add(CostChips(upgrades.NextCost(upgrade), next.crewRequired));
+                    Win.Spacer(bottom);
                     string reason = visitor.BuyBlockReason(upgrade);
-                    string buy = $"Encomendar nível {level + 1}  <size=80%>({Win.Time(upgrades.NextBuildSeconds(upgrade) / dock.BuildSpeed)})</size>";
+                    string buy = $"Nível {level + 1}  <size=80%>({Win.Time(upgrades.NextBuildSeconds(upgrade) / dock.BuildSpeed)})</size>";
                     int nextLevel = level + 1;
                     bottom.Add(Win.Button(reason ?? buy, () =>
                     {
                         if (visitor.BuyUpgrade(upgrade)) Feed($"Obra encomendada: {upgrade.displayName} nível {nextLevel}");
-                    }, reason == null, "hud-button--buy"));
+                    }, reason == null, "hud-button--small"));
                 }
             });
         }
@@ -508,21 +573,25 @@ namespace Pirates.UI
                 Win.Text(card, Compare(mine, target), "hud-window__small");
                 Win.Text(card, $"<color={Bad}>Os upgrades voltam ao nível 0 no navio novo</color>: compre de novo. {UpgradeBonusText(target)}",
                     "hud-window__small");
-                var bottom = Win.Row(card);
-                string building = !target.requiredBuilding ? ""
-                    : dock.Buildings && dock.Buildings.Has(target.requiredBuilding) ? $"<color={Good}>{target.requiredBuilding.displayName}</color> ok   "
-                    : $"<color={Bad}>precisa de {target.requiredBuilding.displayName} na base</color>   ";
-                string schematic = !target.schematic ? ""
-                    : visitor.HasSchematic(target.schematic) ? $"esquema <color={Good}>{target.schematic.displayName}</color> ok   "
-                    : $"<color={Bad}>precisa do esquema {target.schematic.displayName} (baú raro)</color>   ";
-                bottom.Add(Hud.Text(building + schematic + CostText(target.cost, 0), "hud-window__small", "hud-grow"));
+                var bottom = Win.Row(card, "hud-work__bottom");
+                var needs = Hud.Row("hud-costs");
+                if (target.schematic) needs.Add(CostChip(target.schematic, 1, visitor.HasSchematic(target.schematic) ? 1 : 0, "esquema"));
+                if (target.requiredBuilding)
+                {
+                    bool built = dock.Buildings && dock.Buildings.Has(target.requiredBuilding);
+                    needs.Add(Hud.Text(built ? $"<color={Good}>{target.requiredBuilding.displayName} ✓</color>"
+                        : $"<color={Bad}>precisa de {target.requiredBuilding.displayName}</color>", "hud-cost__label"));
+                }
+                bottom.Add(needs);
+                bottom.Add(CostChips(target.cost, 0));
+                Win.Spacer(bottom);
                 string reason = visitor.ShipBlockReason(target);
                 string buy = $"Construir  <size=80%>({Win.Time(target.buildSeconds / dock.BuildSpeed)})</size>";
                 var t = target;
                 bottom.Add(Win.Button(reason ?? buy, () =>
                 {
                     if (visitor.BuyShip(t)) Feed($"Obra encomendada: {t.displayName}");
-                }, reason == null, "hud-button--buy"));
+                }, reason == null, "hud-button--small"));
             }
         }
 
@@ -568,7 +637,7 @@ namespace Pirates.UI
         void AddBuildings(VisualElement body, BaseBuildings buildings)
         {
             var summary = Win.Column(body, "hud-window__summary");
-            window.AddPane(summary, StockSignature, b => Win.Text(b, $"Disponível (armazém + porão):  {AvailableSummary()}", "hud-window__small"));
+            window.AddPane(summary, StockSignature, b => StockChips(b, false));
 
             var jobBox = Win.Section(body, "hud-section--job");
             window.AddPane(jobBox, () => Win.Mix(buildings.Job?.GetHashCode() ?? 0, Mathf.CeilToInt(buildings.JobSecondsLeft)), b =>
@@ -589,35 +658,28 @@ namespace Pirates.UI
             var scroll = Win.Scroll(body);
             window.AddPane(scroll, () => Win.Mix(Win.Mix(StockSignature(), BuildingLevelsSignature(buildings)), buildings.Job != null ? 1 : 0), list =>
             {
+                var grid = Hud.Box("hud-cards");
+                list.Add(grid);
                 foreach (var b in buildings.Available)
                 {
                     if (!b) continue;
                     int level = buildings.Level(b);
                     var next = buildings.NextLevel(b);
-                    var card = Win.Section(list);
-                    var top = Win.Row(card);
-                    top.Add(Hud.Text($"<b>{b.displayName}</b>", "hud-window__label"));
-                    top.Add(Win.Pips(level, b.MaxLevel));
-                    string effect = next == null
-                        ? $"{buildings.EffectText(b, false)}   <i>(máximo)</i>"
-                        : level == 0 ? $"→  <b>{buildings.EffectText(b, true)}</b>"
-                        : $"{buildings.EffectText(b, false)}  →  <b>{buildings.EffectText(b, true)}</b>";
-                    top.Add(Hud.Text(effect, "hud-window__small", "hud-grow", "hud-align-right"));
-                    Win.Text(card, $"<i>{b.description}</i>", "hud-window__small", "hud-window__muted");
+                    var card = WorkCard(grid, b.schematic, b.displayName, level, b.MaxLevel,
+                        level > 0 ? buildings.EffectText(b, false) : "não construído", next != null ? buildings.EffectText(b, true) : null, b.description);
                     if (next == null) continue;
-                    var bottom = Win.Row(card);
-                    string schematic = !b.schematic ? ""
-                        : visitor.HasSchematic(b.schematic) ? $"esquema <color={Good}>{b.schematic.displayName}</color> ok   "
-                        : $"<color={Bad}>precisa do esquema {b.schematic.displayName} (baú raro)</color>   ";
-                    bottom.Add(Hud.Text(schematic + CostText(next.cost, 0), "hud-window__small", "hud-grow"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    if (b.schematic && level == 0) bottom.Add(CostChip(b.schematic, 1, visitor.HasSchematic(b.schematic) ? 1 : 0, "esquema"));
+                    bottom.Add(CostChips(next.cost, 0));
+                    Win.Spacer(bottom);
                     string reason = visitor.BuildingBlockReason(b);
-                    string buy = $"Construir nível {level + 1}  <size=80%>({Win.Time(next.buildSeconds / buildings.WorkerSpeed)})</size>";
+                    string buy = $"{(level == 0 ? "Construir" : $"Nível {level + 1}")}  <size=80%>({Win.Time(next.buildSeconds / buildings.WorkerSpeed)})</size>";
                     int nextLevel = level + 1;
                     var target = b;
                     bottom.Add(Win.Button(reason ?? buy, () =>
                     {
                         if (visitor.BuyBuilding(target)) Feed($"Obra iniciada: {target.displayName} nível {nextLevel}");
-                    }, reason == null, "hud-button--buy"));
+                    }, reason == null, "hud-button--small"));
                 }
             });
         }
@@ -647,10 +709,13 @@ namespace Pirates.UI
                 var buttons = Win.Row(b);
                 int can = visitor.RecruitAffordable;
                 string reason = visitor.RecruitBlockReason();
-                buttons.Add(Hud.Text($"Marinheiro: {Win.Stacks(settings.recruitCost)} cada", "hud-window__small", "hud-grow"));
+                buttons.Add(Hud.Text("Marinheiro", "hud-cost__label"));
+                buttons.Add(CostChips(settings.recruitCost, 0));
+                buttons.Add(Hud.Text("cada", "hud-cost__label"));
+                Win.Spacer(buttons);
                 if (reason != null)
                 {
-                    buttons.Add(Win.Button(reason, null, false, "hud-button--buy"));
+                    buttons.Add(Hud.Text(reason, "hud-market__blocked"));
                     return;
                 }
                 RecruitButton(buttons, 1, settings);
@@ -679,6 +744,11 @@ namespace Pirates.UI
 
         // ---------- Mercado (praça) ----------
 
+        /// <summary>
+        /// Mercado (H4, passo 2): uma ficha por mercadoria, duas por linha: ícone grande na moldura da raridade, nome, quanto você tem, a
+        /// procura (barra) e as linhas Comprar / Vender com o preço na plaquinha da moeda de ouro e os botões 1 / 10 / Tudo. Esquemas e
+        /// equipamentos têm uma compra só.
+        /// </summary>
         void AddMarket(VisualElement body, HarborSettings settings)
         {
             if (!settings || settings.market.Length == 0)
@@ -687,65 +757,107 @@ namespace Pirates.UI
                 return;
             }
             var gold = settings.repairGold;
+            var coin = gold ? gold.icon : null;
             var summary = Win.Column(body, "hud-window__summary");
-            window.AddPane(summary, StockSignature, b => Win.Text(b,
-                $"Seu ouro (armazém + porão): <b>{visitor.Available(gold)}</b>   ·   <size=85%>o que você vende sai do armazém primeiro; o ouro " +
-                "vai para o armazém. Munição comprada vai direto para o porão.</size>", "hud-window__small"));
+            window.AddPane(summary, StockSignature, b =>
+            {
+                var row = Win.Row(b, "hud-market__purse");
+                row.Add(Hud.Text("Seu ouro", "hud-market__verb"));
+                row.Add(Win.Price(coin, visitor.Available(gold), "hud-price--big"));
+                Win.Text(row, "<size=85%>armazém + porão · o que você vende sai do armazém primeiro e o ouro vai para o armazém; munição " +
+                              "comprada vai direto para o porão</size>", "hud-window__small", "hud-window__muted");
+            });
 
+            var filters = Hud.Box("hud-filters__box");
+            body.Add(filters);
+            window.AddPane(filters, () => marketFilter.Signature, b =>
+            {
+                filterItems.Clear();
+                foreach (var entry in settings.market)
+                    if (entry?.item) filterItems.Add(entry.item);
+                marketFilter.Build(b, filterItems);
+            });
             var scroll = Win.Scroll(body);
             var dock = visitor.Current;
-            window.AddPane(scroll, () => Win.Mix(Win.Mix(StockSignature(), DemandSignature(dock, settings)), FameKey()), list =>
+            window.AddPane(scroll, () => Win.Mix(Win.Mix(Win.Mix(StockSignature(), DemandSignature(dock, settings)), FameKey()), marketFilter.Signature), list =>
             {
+                var grid = Hud.Box("hud-market");
+                list.Add(grid);
                 foreach (var entry in settings.market)
-                {
-                    if (entry?.item == null) continue;
-                    var e = entry;
-                    var card = Win.Section(list);
-                    var top = Win.Row(card);
-                    Win.Item(top, e.item, e.item.category == ItemCategory.Schematic ? $"Esquema: {e.item.displayName}"
-                        : e.item.backpackCapacity > 0f ? $"{e.item.displayName}   <size=85%>{e.item.backpackCapacity:0} de espaço na mochila</size>"
-                        : e.item.IsUnique ? e.item.displayName
-                        : $"{e.item.displayName}   <size=85%>você tem {visitor.Available(e.item)}</size>");
-                    top.Add(Hud.Text(PriceText(e), "hud-window__small", "hud-grow", "hud-align-right"));
-                    string blocked = e.buyPrice > 0 ? visitor.MarketBlockReason(e) : null;
-                    if (e.item.IsUnique)
-                    {
-                        // Esquema (M10, por patente): uma compra só.
-                        if (!string.IsNullOrEmpty(e.item.description))
-                            Win.Text(card, $"<i>{e.item.description}</i>", "hud-window__small", "hud-window__muted");
-                        var only = Win.Row(card);
-                        Win.Spacer(only);
-                        only.Add(blocked != null
-                            ? Win.Button(BlockText(blocked), null, false, "hud-button--buy")
-                            : Win.Button($"Comprar  <size=80%>({visitor.BuyPrice(e)} ouro)</size>", () => Trade(visitor.Buy(e, 1), e, true), visitor.MaxBuy(e) >= 1, "hud-button--buy"));
-                        continue;
-                    }
-                    if (e.sellPrice > 0 && e.demand > 0)
-                    {
-                        int wants = dock.Demand(e);
-                        Win.Text(card, wants > 0 ? $"<size=85%>compra de você até mais {wants} (a procura volta com o tempo)</size>"
-                                                 : $"<size=85%><color={Bad}>não quer mais por enquanto</color> (a procura volta com o tempo)</size>", "hud-window__small", "hud-window__muted");
-                    }
-                    var row = Win.Row(card);
-                    int canBuy = visitor.MaxBuy(e), canSell = visitor.MaxSell(e);
-                    if (e.buyPrice > 0 && blocked != null)
-                        row.Add(Win.Button(BlockText(blocked), null, false, "hud-button--small"));
-                    else if (e.buyPrice > 0)
-                    {
-                        int buy = visitor.BuyPrice(e);
-                        row.Add(Win.Button($"Comprar 1  <size=80%>({buy})</size>", () => Trade(visitor.Buy(e, 1), e, true), canBuy >= 1, "hud-button--small"));
-                        row.Add(Win.Button($"Comprar 10  <size=80%>({buy * 10})</size>", () => Trade(visitor.Buy(e, 10), e, true), canBuy >= 10, "hud-button--small"));
-                    }
-                    Win.Spacer(row);
-                    if (e.sellPrice > 0)
-                    {
-                        int sell = visitor.SellPrice(e);
-                        row.Add(Win.Button($"Vender 1  <size=80%>(+{sell})</size>", () => Trade(visitor.Sell(e, 1), e, false), canSell >= 1, "hud-button--small"));
-                        row.Add(Win.Button($"Vender 10  <size=80%>(+{sell * 10})</size>", () => Trade(visitor.Sell(e, 10), e, false), canSell >= 10, "hud-button--small"));
-                        row.Add(Win.Button($"Vender tudo  <size=80%>(+{sell * canSell})</size>", () => Trade(visitor.Sell(e, canSell), e, false), canSell >= 1, "hud-button--small"));
-                    }
-                }
+                    if (entry?.item && marketFilter.Shows(entry.item)) MarketCard(grid, entry, dock, gold, coin);
             });
+        }
+
+        void MarketCard(VisualElement grid, HarborSettings.MarketEntry e, HarborDock dock, ItemDefinition gold, Texture2D coin)
+        {
+            var item = e.item;
+            var card = Win.Section(grid, "hud-market__card");
+            var top = Win.Row(card, "hud-market__top");
+            top.Add(Win.Icon(item, "hud-item__slot--big"));
+            var info = Hud.Box("hud-market__info");
+            top.Add(info);
+            string name = item.category == ItemCategory.Schematic ? $"Esquema: {item.displayName}" : item.displayName;
+            info.Add(Hud.Text($"<color={Win.Ink(item.rarity)}><b>{name}</b></color>", "hud-market__name"));
+            string sub = item.backpackCapacity > 0f ? $"mochila com {item.backpackCapacity:0} de espaço"
+                : item.IsUnique ? $"{Rarity.NameOf(item.rarity)} · {(item.category == ItemCategory.Gear ? "equipamento" : "esquema de construção")} · um só"
+                : $"você tem <b>{visitor.Available(item)}</b>";
+            info.Add(Hud.Text(sub, "hud-market__sub"));
+            if (e.sellPrice > 0 && e.demand > 0) DemandLine(info, dock.Demand(e), e.demand);
+            string blocked = e.buyPrice > 0 ? visitor.MarketBlockReason(e) : null;
+
+            if (item.IsUnique)
+            {
+                if (!string.IsNullOrEmpty(item.description))
+                    card.Add(Hud.Text($"<i>{item.description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                var only = Win.Row(card, "hud-market__line");
+                only.Add(Hud.Text("Comprar", "hud-market__verb"));
+                only.Add(Win.Price(coin, visitor.BuyPrice(e)));
+                Win.Spacer(only);
+                int missing = visitor.BuyPrice(e) - visitor.Available(gold);
+                if (blocked != null) only.Add(Hud.Text(BlockText(blocked), "hud-market__blocked"));
+                else if (missing > 0) only.Add(Hud.Text($"faltam {missing} de ouro", "hud-market__blocked"));
+                else only.Add(Win.Button("Comprar", () => Trade(visitor.Buy(e, 1), e, true), visitor.MaxBuy(e) >= 1, "hud-button--small"));
+                return;
+            }
+            if (e.buyPrice > 0)
+            {
+                var buy = Win.Row(card, "hud-market__line");
+                buy.Add(Hud.Text("Comprar", "hud-market__verb"));
+                buy.Add(Win.Price(coin, visitor.BuyPrice(e)));
+                Win.Spacer(buy);
+                int can = visitor.MaxBuy(e);
+                if (blocked != null) buy.Add(Hud.Text(BlockText(blocked), "hud-market__blocked"));
+                else
+                {
+                    buy.Add(Win.Button("1", () => Trade(visitor.Buy(e, 1), e, true), can >= 1, "hud-button--small"));
+                    buy.Add(Win.Button("10", () => Trade(visitor.Buy(e, 10), e, true), can >= 10, "hud-button--small"));
+                }
+            }
+            if (e.sellPrice > 0)
+            {
+                var sell = Win.Row(card, "hud-market__line");
+                sell.Add(Hud.Text("Vender", "hud-market__verb"));
+                sell.Add(Win.Price(coin, visitor.SellPrice(e)));
+                Win.Spacer(sell);
+                int can = visitor.MaxSell(e);
+                sell.Add(Win.Button("1", () => Trade(visitor.Sell(e, 1), e, false), can >= 1, "hud-button--small"));
+                sell.Add(Win.Button("10", () => Trade(visitor.Sell(e, 10), e, false), can >= 10, "hud-button--small"));
+                sell.Add(Win.Button("Tudo", () => Trade(visitor.Sell(e, visitor.MaxSell(e)), e, false), can >= 1, "hud-button--small"));
+            }
+            else if (e.buyPrice > 0)
+                card.Add(Hud.Text("o mercado não compra de volta", "hud-market__sub", "hud-market__note"));
+        }
+
+        /// <summary>Quanto o mercado ainda compra de você: texto e barra (cheia = compra tudo; volta com o tempo).</summary>
+        static void DemandLine(VisualElement parent, int wants, int max)
+        {
+            var row = Hud.Row("hud-market__demand");
+            row.Add(Hud.Text(wants > 0 ? $"procura: compra mais {wants}" : $"<color={Bad}>sem procura agora</color>", "hud-market__sub"));
+            var bar = new HudBar("hud-bar--thin");
+            bar.AddToClassList("hud-market__demand-bar");
+            bar.SetDanger((float)wants / Mathf.Max(1, max), greenWhenFull: true);
+            row.Add(bar);
+            parent.Add(row);
         }
 
         static long DemandSignature(HarborDock dock, HarborSettings settings)
@@ -754,14 +866,6 @@ namespace Pirates.UI
             foreach (var e in settings.market)
                 if (e != null && e.sellPrice > 0 && e.demand > 0) hash = Win.Mix(hash, dock.Demand(e));
             return hash;
-        }
-
-        string PriceText(HarborSettings.MarketEntry e)
-        {
-            var parts = new List<string>();
-            if (e.buyPrice > 0) parts.Add($"vende por <b>{visitor.BuyPrice(e)}</b>");
-            if (e.sellPrice > 0) parts.Add($"compra de você por <b>{visitor.SellPrice(e)}</b>");
-            return string.Join("  ·  ", parts) + " ouro";
         }
 
         /// <summary>"patente Corsário" → "pede a patente Corsário"; o resto ("você já tem") como está.</summary>
@@ -793,10 +897,12 @@ namespace Pirates.UI
                 return;
             }
             var summary = Win.Column(body, "hud-window__summary");
-            window.AddPane(summary, StockSignature, b => Win.Text(b,
-                $"Disponível (armazém + porão):  {AvailableSummary()}   ·   <size=85%>encomende e volte para retirar: o ferreiro trabalha " +
-                "mesmo com você no mar. No mar: <b>1</b> bala comum, <b>2</b> corrente, <b>3</b> metralha; cada bordada gasta uma carga.</size>",
-                "hud-window__small"));
+            window.AddPane(summary, StockSignature, b =>
+            {
+                StockChips(b, false);
+                Win.Text(b, "<size=85%>Encomende e volte para retirar: o ferreiro trabalha mesmo com você no mar. No mar: <b>1</b> bala comum, " +
+                            "<b>2</b> corrente, <b>3</b> metralha; cada bordada gasta uma carga.</size>", "hud-window__small", "hud-window__muted");
+            });
 
             var orderBox = Win.Column(body, "hud-window__summary");
             window.AddPane(orderBox, () => SmithySignature(dock), b => AddSmithyOrder(b, dock));
@@ -804,23 +910,31 @@ namespace Pirates.UI
             var scroll = Win.Scroll(body);
             window.AddPane(scroll, () => Win.Mix(Win.Mix(StockSignature(), BuildingLevelsSignature(dock.Buildings)), SmithySignature(dock)), list =>
             {
+                var grid = Hud.Box("hud-cards");
+                list.Add(grid);
                 foreach (var recipe in settings.smithy)
                 {
                     if (recipe?.result.item == null) continue;
                     var r = recipe;
-                    var card = Win.Section(list);
-                    var top = Win.Row(card);
-                    string amount = r.result.amount > 1 ? $" ×{r.result.amount}" : "";
-                    Win.Item(top, r.result.item, $"{r.result.item.displayName}{amount}   <size=85%>no porão: {visitor.Hold.Count(r.result.item)}</size>");
-                    if (!string.IsNullOrEmpty(r.result.item.description))
-                        Win.Text(card, $"<i>{r.result.item.description}</i>", "hud-window__small", "hud-window__muted");
-                    var bottom = Win.Row(card);
-                    bottom.Add(Hud.Text($"{CostText(r.cost, 0)}   ·   <size=90%>{Win.Time(visitor.CraftSeconds(r, 1))} de forja cada</size>", "hud-window__small", "hud-grow"));
+                    var item = r.result.item;
+                    // Receita (H4, passo 4): o que sai em ícone grande, os materiais em fichas e o tempo de forja.
+                    var card = Win.Section(grid, "hud-cards__card");
+                    var top = Win.Row(card, "hud-work__top");
+                    top.Add(Win.Icon(item, "hud-item__slot--big"));
+                    var info = Hud.Box("hud-work__info");
+                    top.Add(info);
+                    info.Add(Hud.Text($"<b>{item.displayName}</b>{(r.result.amount > 1 ? $"  <size=85%>×{r.result.amount} por receita</size>" : "")}", "hud-work__name"));
+                    info.Add(Hud.Text($"no porão: <b>{visitor.Hold.Count(item)}</b>   ·   {Win.Time(visitor.CraftSeconds(r, 1))} de forja", "hud-market__sub"));
+                    if (!string.IsNullOrEmpty(item.description))
+                        card.Add(Hud.Text($"<i>{item.description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    bottom.Add(CostChips(r.cost, 0));
+                    Win.Spacer(bottom);
                     string reason = visitor.CraftBlockReason(r);
                     int max = visitor.MaxCraft(r);
                     if (reason != null)
                     {
-                        bottom.Add(Win.Button(reason, null, false, "hud-button--buy"));
+                        bottom.Add(Hud.Text(reason, "hud-market__blocked"));
                         continue;
                     }
                     bottom.Add(Win.Button("Encomendar 1", () => Forged(visitor.Craft(r, 1), r), true, "hud-button--small"));
@@ -857,6 +971,7 @@ namespace Pirates.UI
             }
             string what = $"{o.Result.amount}× {o.Result.item.displayName.ToLowerInvariant()}";
             var row = Win.Row(box);
+            row.Add(Win.Icon(o.Result.item));
             if (o.Ready)
             {
                 row.Add(Hud.Text($"<color={Good}><b>Pronto:</b></color> {what}", "hud-window__label", "hud-grow"));
@@ -877,45 +992,44 @@ namespace Pirates.UI
 
         // ---------- Missões (taverna) ----------
 
+        /// <summary>
+        /// Taverna (H4, passo 4): à esquerda o quadro de madeira com os contratos pregados como cartazes (alfinete, papel um pouco torto,
+        /// pagamento em fichas e a fama); os que descansam e os de patente alta aparecem apagados com o carimbo. À direita, as suas missões.
+        /// </summary>
         void AddMissions(VisualElement body, MissionBoard board, Inventory warehouse)
         {
             var columns = Hud.Row("hud-window__columns");
             body.Add(columns);
 
-            var left = Win.Column(columns);
-            Win.Text(left, "Contratos no quadro", "hud-window__subtitle-strong");
+            var left = Win.Column(columns, "hud-board");
+            left.Add(Hud.Text("Quadro de contratos", "hud-board__title"));
             var scroll = Win.Scroll(left);
             window.AddPane(scroll, () => Win.Mix(Win.Mix(Win.Mix(Win.Mix(board.Active.Count, board.Finished.Count), HudDraw.Flag(board.CanAccept)), board.RestingKey()), board.Rank), list =>
             {
                 var available = board.Available();
                 var locked = board.Locked();
-                if (available.Count == 0 && board.Cooldowns.Count == 0 && locked.Count == 0) Win.Text(list, "nenhum contrato agora: volte mais tarde", "hud-window__empty");
+                if (available.Count == 0 && board.Cooldowns.Count == 0 && locked.Count == 0) list.Add(Hud.Text("nenhum contrato agora: volte mais tarde", "hud-board__empty"));
+                int n = 0;
                 foreach (var mission in available)
                 {
-                    var card = Win.Section(list);
-                    Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label");
-                    Win.Text(card, $"\"{mission.description}\"", "hud-window__small", "hud-window__muted");
-                    var row = Win.Row(card);
-                    row.Add(Hud.Text($"Paga: {Win.Stacks(board.Rewards(mission))}   <size=85%>· +{mission.fameReward} fama</size>", "hud-window__small", "hud-grow"));
+                    var poster = Poster(list, mission, n++, null);
+                    poster.Add(Hud.Text($"\"{mission.description}\"", "hud-poster__text"));
+                    var row = Win.Row(poster, "hud-poster__bottom");
+                    row.Add(RewardChips(board, mission));
+                    Win.Spacer(row);
                     var m = mission;
-                    row.Add(Win.Button(board.CanAccept ? "Aceitar" : $"Máx. {board.MaxActive} ativas", () => board.Accept(m), board.CanAccept, "hud-button--small"));
+                    if (board.CanAccept) row.Add(Win.Button("Aceitar", () => board.Accept(m), true, "hud-button--small"));
+                    else row.Add(Hud.Text($"máx. {board.MaxActive} ativas", "hud-market__blocked"));
                 }
-                // Repetíveis entregues descansando: aparecem apagadas, com quanto falta.
+                // Repetíveis entregues descansando: apagadas, com quanto falta.
                 foreach (var (mission, _) in board.Cooldowns)
                 {
                     if (mission.givenByNpc) continue;   // as dos NPCs da vila não são do quadro
-                    var card = Win.Section(list);
-                    Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label", "hud-window__muted");
-                    Win.Text(card, $"<i>já entregue: volta ao quadro em {RestingText(board.CooldownLeft(mission))}</i>", "hud-window__small", "hud-window__muted");
+                    Poster(list, mission, n++, $"volta em {RestingText(board.CooldownLeft(mission))}");
                 }
-                // Contratos de capitães famosos (M10): aparecem trancados, com a patente que falta.
+                // Contratos de capitães famosos (M10): trancados, com a patente que falta.
                 foreach (var mission in locked)
-                {
-                    var card = Win.Section(list);
-                    Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label", "hud-window__muted");
-                    Win.Text(card, $"<i>só para capitães com a patente <b>{board.RankTitle(mission.requiredRank)}</b> (tecla C: sua fama)</i>",
-                        "hud-window__small", "hud-window__muted");
-                }
+                    Poster(list, mission, n++, $"patente {board.RankTitle(mission.requiredRank)}");
             });
 
             var right = Win.Column(columns);
@@ -928,19 +1042,54 @@ namespace Pirates.UI
                     var active = board.Active[i];
                     var mission = active.definition;
                     bool done = board.IsComplete(active);
-                    var card = Win.Section(col);
-                    Win.Text(card, $"<b>{mission.title}</b>   <size=85%><i>{mission.giver}</i></size>", "hud-window__label");
-                    Win.Text(card, done ? $"<color={Good}>pronta para entregar{(mission.givenByNpc ? $" a {mission.giver}, na vila" : "")}</color>" : board.ProgressText(active), "hud-window__small");
-                    var row = Win.Row(card);
+                    var card = Win.Section(col, "hud-mission");
+                    card.EnableInClassList("hud-mission--done", done);
+                    card.Add(Hud.Text($"<b>{mission.title}</b>", "hud-work__name"));
+                    card.Add(Hud.Text($"<i>{mission.giver}</i>", "hud-market__sub"));
+                    card.Add(Hud.Text(done ? $"<color={Good}><b>pronta para entregar</b>{(mission.givenByNpc ? $" a {mission.giver}, na vila" : "")}</color>"
+                        : board.ProgressText(active), "hud-work__effect"));
+                    var row = Win.Row(card, "hud-work__bottom");
+                    row.Add(RewardChips(board, mission));
+                    Win.Spacer(row);
                     var a = active;
                     // Missão de NPC da vila: entrega com ele (ele conta o fim da história e paga), não no quadro.
-                    if (mission.givenByNpc) row.Add(Hud.Text($"<i>entregue a {mission.giver}</i>", "hud-window__small", "hud-window__muted", "hud-grow"));
-                    else row.Add(Win.Button($"Entregar  <size=80%>(+{Win.Stacks(board.Rewards(mission))}, +{mission.fameReward} fama)</size>", () => board.TurnIn(a, warehouse), done, "hud-button--small"));
+                    if (mission.givenByNpc) row.Add(Hud.Text($"<i>entregue a {mission.giver}</i>", "hud-window__small", "hud-window__muted"));
+                    else row.Add(Win.Button("Entregar", () => board.TurnIn(a, warehouse), done, "hud-button--small"));
                     row.Add(Win.Button("Desistir", () => board.Abandon(a), extraClass: "hud-button--small"));
                 }
                 Win.Spacer(col);
                 Win.Text(col, "<i>Entregas contam o porão e o armazém; o pagamento vai para o armazém.</i>", "hud-window__small", "hud-window__muted");
             });
+        }
+
+        /// <summary>Cartaz pregado no quadro: alfinete, título, quem paga; <paramref name="stamp"/> = apagado com o carimbo (descanso, patente).</summary>
+        static VisualElement Poster(VisualElement list, MissionDefinition mission, int index, string stamp)
+        {
+            var poster = Hud.Box("hud-poster");
+            poster.pickingMode = PickingMode.Position;
+            poster.style.rotate = new Rotate(new Angle(index % 3 == 0 ? -1.2f : index % 3 == 1 ? 0.9f : -0.4f, AngleUnit.Degree));
+            if (stamp != null) poster.AddToClassList("hud-poster--off");
+            poster.Add(Hud.Box("hud-poster__pin"));
+            poster.Add(Hud.Text(mission.title, "hud-poster__title"));
+            poster.Add(Hud.Text(mission.giver, "hud-poster__giver"));
+            if (stamp != null) poster.Add(Hud.Text(stamp, "hud-poster__stamp"));
+            list.Add(poster);
+            return poster;
+        }
+
+        /// <summary>O pagamento em fichas (ouro e itens, com a patente) e a fama.</summary>
+        static VisualElement RewardChips(MissionBoard board, MissionDefinition mission)
+        {
+            var row = Hud.Row("hud-costs");
+            foreach (var stack in board.Rewards(mission))
+                if (stack.item && stack.amount > 0) row.Add(Chip(stack.item, $"+{stack.amount}"));
+            if (mission.fameReward > 0)
+            {
+                var fame = Hud.Row("hud-cost", "hud-cost--fame");
+                fame.Add(Hud.Text($"+{mission.fameReward} fama", "hud-cost__value"));
+                row.Add(fame);
+            }
+            return row;
         }
 
         static string RestingText(float seconds)
@@ -963,34 +1112,78 @@ namespace Pirates.UI
 
         // ---------- Textos ----------
 
-        string AvailableSummary()
+        /// <summary>
+        /// Cartão de obra (upgrade ou construção; H4, passo 3): ícone (o do esquema, se tem), nome, bolinhas de nível, o efeito de agora →
+        /// o do próximo nível (ou "máximo") e a descrição. Quem chama põe os requisitos, o custo e o botão embaixo.
+        /// </summary>
+        VisualElement WorkCard(VisualElement grid, ItemDefinition icon, string name, int level, int max, string now, string next, string description)
         {
-            var seen = new HashSet<ItemDefinition>();
-            var parts = new List<string>();
-            foreach (var inventory in new[] { visitor.Current.Warehouse, visitor.Hold })
-            foreach (var item in inventory.Items)
-            {
-                if (item.category != ItemCategory.Resource || !seen.Add(item)) continue;
-                parts.Add($"{item.displayName.ToLowerInvariant()} {visitor.Available(item)}");
-            }
-            return parts.Count > 0 ? string.Join("  ·  ", parts) : "<i>nada</i>";
+            var card = Win.Section(grid, "hud-cards__card");
+            var top = Win.Row(card, "hud-work__top");
+            if (icon) top.Add(Win.Icon(icon, "hud-item__slot--big"));
+            var info = Hud.Box("hud-work__info");
+            top.Add(info);
+            var head = Hud.Row("hud-work__head");
+            head.Add(Hud.Text($"<b>{name}</b>", "hud-work__name"));
+            Win.Spacer(head);
+            head.Add(Win.Pips(level, max));
+            info.Add(head);
+            info.Add(Hud.Text(next == null ? $"{now}   <i>(máximo)</i>" : $"<color=#7a5a3c>{now}</color>  →  <color={Good}><b>{next}</b></color>",
+                "hud-work__effect"));
+            if (!string.IsNullOrEmpty(description))
+                card.Add(Hud.Text($"<i>{description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+            return card;
         }
 
-        string CostText(ItemStack[] cost, int crewRequired)
+        /// <summary>Custo em fichas: ícone e quantidade; vermelho, com quanto você tem, o que falta.</summary>
+        VisualElement CostChips(ItemStack[] cost, int crewRequired)
         {
-            var parts = new List<string>();
+            var row = Hud.Row("hud-costs");
             foreach (var c in cost)
+                if (c.item) row.Add(CostChip(c.item, c.amount, visitor.Available(c.item)));
+            var crewItem = visitor.Crew ? visitor.Crew.CrewItem : null;
+            if (crewRequired > 0 && crewItem) row.Add(CostChip(crewItem, crewRequired, visitor.CrewAboard, "a bordo"));
+            return row;
+        }
+
+        static VisualElement CostChip(ItemDefinition item, int amount, int have, string label = null)
+        {
+            bool missing = have < amount;
+            string text = label == "esquema" ? (missing ? "falta o esquema" : "esquema ✓")
+                : missing ? $"{amount} <size=80%>(tem {have})</size>"
+                : label != null ? $"{amount} {label}" : amount.ToString();
+            return Chip(item, text, missing);
+        }
+
+        static VisualElement Chip(ItemDefinition item, string text, bool missing = false)
+        {
+            var chip = Hud.Row("hud-cost");
+            if (missing) chip.AddToClassList("hud-cost--missing");
+            chip.Add(Win.Icon(item, "hud-item__slot--small"));
+            chip.Add(Hud.Text(text, "hud-cost__value"));
+            return chip;
+        }
+
+        /// <summary>"Você tem": os recursos (ouro, madeira, pólvora, ferro) do armazém + porão em fichas; tripulantes a bordo, se pedido.</summary>
+        void StockChips(VisualElement parent, bool crew)
+        {
+            var row = Win.Row(parent, "hud-work__stock");
+            row.Add(Hud.Text("Você tem", "hud-cost__label"));
+            var chips = Hud.Row("hud-costs");
+            row.Add(chips);
+            var seen = new HashSet<ItemDefinition>();
+            foreach (var inventory in new[] { visitor.Current.Warehouse, visitor.Hold })
             {
-                if (!c.item) continue;
-                string text = $"{c.amount} {c.item.displayName.ToLowerInvariant()}";
-                parts.Add(visitor.Available(c.item) >= c.amount ? text : $"<color={Bad}>{text}</color>");
+                if (!inventory) continue;
+                for (int i = 0; i < inventory.Items.Count; i++)
+                {
+                    var item = inventory.Items[i];
+                    if (!item || item.Group != ItemGroup.Resource || !seen.Add(item)) continue;
+                    chips.Add(Chip(item, visitor.Available(item).ToString()));
+                }
             }
-            if (crewRequired > 0)
-            {
-                string crew = $"{crewRequired} tripulantes a bordo";
-                parts.Add(visitor.CrewAboard >= crewRequired ? crew : $"<color={Bad}>{crew}</color>");
-            }
-            return "Custo: " + string.Join(", ", parts);
+            var crewItem = visitor.Crew ? visitor.Crew.CrewItem : null;
+            if (crew && crewItem) chips.Add(Chip(crewItem, $"{visitor.CrewAboard} a bordo"));
         }
 
         static void Feed(string text)

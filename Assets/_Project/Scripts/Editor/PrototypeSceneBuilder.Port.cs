@@ -93,24 +93,19 @@ namespace Pirates.EditorTools
 
         // ---------- Vegetação (todas as cenas) ----------
 
-        static readonly string[] ForestTrees =
-        {
-            "tree_default", "tree_oak", "tree_fat", "tree_detailed", "tree_tall", "tree_plateau", "tree_simple",
-            "tree_default_dark", "tree_oak_dark", "tree_fat_darkh", "tree_detailed_dark", "tree_palmTall", "tree_palmDetailedTall",
-        };
-        static readonly string[] Bushes = { "plant_bush", "plant_bushDetailed", "plant_bushLarge", "plant_bushSmall", "plant_bushTriangle", "plant_flatTall" };
+        // Árvores, palmeiras, arbustos, capim e pedras: listas em PrototypeSceneBuilder.Vegetation.cs (28/10).
         static readonly string[] Flowers =
         {
             "flower_purpleA", "flower_purpleB", "flower_purpleC", "flower_redA", "flower_redB", "flower_redC",
             "flower_yellowA", "flower_yellowB", "flower_yellowC",
         };
-        static readonly string[] Grasses = { "grass", "grass_large", "grass_leafs", "grass_leafsLarge" };
         static readonly string[] GroundProps = { "log", "log_large", "stump_old", "stump_round", "stump_oldTall", "mushroom_redGroup", "mushroom_tanGroup" };
-        static readonly string[] BigRocks = { "rock_largeA", "rock_largeB", "rock_largeC", "rock_largeD", "rock_largeE", "rock_largeF" };
 
         /// <summary>
-        /// Mata cheia: árvores (colisor no tronco), arbustos, flores, capim, troncos/tocos e pedras grandes do Nature Kit,
-        /// palmeiras do kit pirata na praia. Só onde <paramref name="allowed"/> deixa. Tudo estático.
+        /// Mata cheia: árvores das ruínas do Quaternius (colisor no tronco; secas perto de <see cref="DeadTreeZone"/>), arbustos e capim das
+        /// ruínas e do kit pirata, flores e troncos/tocos do Nature Kit, pedras do Quaternius e do Medieval, palmeiras do Quaternius na praia.
+        /// Só onde <paramref name="allowed"/> deixa. Tudo estático. Cada objeto gasta os mesmos sorteios de antes da troca (28/10): as posições
+        /// não mudaram (garrafas, moedas, gaivotas e tesouros foram postos onde a mata deixava).
         /// </summary>
         static void PlantLush(Transform island, IslandSpec s, Func<Vector2, bool> allowed, int trees, int bushes, int flowers,
             int grass, int ground, int rocks, int palms, int seed)
@@ -138,49 +133,58 @@ namespace Pirates.EditorTools
                 return false;
             }
 
-            void Trunk(GameObject tree, float radius, float height)
-            {
-                var c = tree.AddComponent<CapsuleCollider>();
-                c.center = new Vector3(0f, height * 0.5f, 0f);
-                c.radius = radius;
-                c.height = height;
-            }
+            float Size(Veg v, float roll) => Mathf.Lerp(v.minScale, v.maxScale, roll);
 
             float inland = s.plateau + 0.05f;
             for (int k = 0; k < trees; k++)
             {
                 if (!Spot(inland, 99f, 28f, out var local)) continue;
-                float scale = R(3.4f, 5.2f);
-                var tree = Model(Kit.Nature, Pick(ForestTrees), root, local + Vector3.down * 0.1f, R(0f, 360f), scale, $"Arvore_{k}");
-                Trunk(tree, 0.08f, 0.7f);
+                float size = R(0f, 1f);
+                double roll = rng.NextDouble();
+                var v = DeadTreeZone != null && DeadTreeZone(new Vector2(local.x, local.z))
+                    ? roll < 0.75 ? PickVeg(DeadTrees, roll / 0.75) : PickVeg(ForestTrees, (roll - 0.75) / 0.25)
+                    : PickVeg(ForestTrees, roll);
+                float scale = Size(v, size);
+                var tree = PlaceVeg(v, root, local + Vector3.down * 0.1f, R(0f, 360f), scale, $"Arvore_{k}");
                 Occluder(tree);
+                // D1 (28/10): toda árvore da mata se corta com a machadinha.
+                Choppable(tree, v.trunkRadius * scale, palm: false);
             }
             for (int k = 0; k < palms; k++)
             {
                 // Palmeiras na areia, perto do mar.
                 if (!Spot(0.25f, s.plateau + 0.02f, 22f, out var local)) continue;
-                var palm = Kenney(PalmModels[rng.Next(PalmModels.Length)], root, local, R(0f, 360f), R(1.45f, 2.2f), $"Palmeira_{k}");
-                Trunk(palm, 0.18f, 2.4f);
+                float size = R(0f, 1f);
+                var v = PickVeg(PalmModels, rng.NextDouble());
+                float palmScale = Size(v, size);
+                var palm = PlaceVeg(v, root, local, R(0f, 360f), palmScale, $"Palmeira_{k}");
                 Occluder(palm);
+                Choppable(palm, v.trunkRadius * palmScale, palm: true);
             }
             for (int k = 0; k < bushes; k++)
                 if (Spot(inland, 99f, 32f, out var local))
-                    Model(Kit.Nature, Pick(Bushes), root, local, R(0f, 360f), R(3f, 5f), $"Arbusto_{k}");
+                {
+                    var v = PickVeg(Bushes, rng.NextDouble());
+                    PlaceVeg(v, root, local, R(0f, 360f), Size(v, R(0f, 1f)), $"Arbusto_{k}");
+                }
             for (int k = 0; k < flowers; k++)
                 if (Spot(inland, 99f, 30f, out var local))
                     Model(Kit.Nature, Pick(Flowers), root, local, R(0f, 360f), R(2.6f, 3.6f), $"Flor_{k}");
             for (int k = 0; k < grass; k++)
                 if (Spot(s.plateau * 0.6f, 99f, 32f, out var local))
-                    Model(Kit.Nature, Pick(Grasses), root, local, R(0f, 360f), R(2.6f, 4f), $"Capim_{k}");
+                {
+                    var v = PickVeg(Grasses, rng.NextDouble());
+                    PlaceVeg(v, root, local, R(0f, 360f), Size(v, R(0f, 1f)), $"Capim_{k}");
+                }
             for (int k = 0; k < ground; k++)
                 if (Spot(inland, 99f, 25f, out var local))
                     Model(Kit.Nature, Pick(GroundProps), root, local, R(0f, 360f), R(2.4f, 3.2f), $"Chao_{k}");
             for (int k = 0; k < rocks; k++)
             {
                 if (!Spot(0.3f, 99f, 35f, out var local)) continue;
-                var rock = Model(Kit.Nature, Pick(BigRocks), root, local + Vector3.down * 0.2f, R(0f, 360f), R(2.5f, 4.5f), $"Pedra_{k}");
-                foreach (var filter in rock.GetComponentsInChildren<MeshFilter>())
-                    filter.gameObject.AddComponent<MeshCollider>().sharedMesh = filter.sharedMesh;
+                var v = PickVeg(BigRocks, rng.NextDouble());
+                var rock = PlaceVeg(v, root, local + Vector3.down * 0.2f, R(0f, 360f), Size(v, R(0f, 1f)), $"Pedra_{k}");
+                RockColliders(rock);
                 Occluder(rock);
             }
             foreach (var t in root.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = true;
@@ -455,7 +459,8 @@ namespace Pirates.EditorTools
                     var offset = new Vector2((float)rng.NextDouble() * 3f - 1.5f, (float)rng.NextDouble() * 3f - 1.5f);
                     Model(Kit.Nature, Flowers[rng.Next(Flowers.Length)], village, PortGround(p + offset), rng.Next(360), 3.2f, "Flor");
                 }
-                Model(Kit.Nature, Bushes[rng.Next(Bushes.Length)], village, PortGround(p + new Vector2(1.8f, 0.5f)), rng.Next(360), 4f, "Arbusto");
+                var bush = Bushes[rng.Next(Bushes.Length)];
+                PlaceVeg(bush, village, PortGround(p + new Vector2(1.8f, 0.5f)), rng.Next(360), (bush.minScale + bush.maxScale) * 0.5f, "Arbusto");
             }
             Model(Kit.Nature, "log_stackLarge", village, PortGround(new Vector2(-37f, 22f)), 90f, NatureScale, "Lenha_A");
             Model(Kit.Nature, "log_stack", village, PortGround(new Vector2(18f, 22f)), 0f, NatureScale, "Lenha_B");

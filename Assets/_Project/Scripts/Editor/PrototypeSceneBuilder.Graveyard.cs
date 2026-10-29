@@ -111,7 +111,8 @@ namespace Pirates.EditorTools
         {
             var camp = site.gameObject.AddComponent<EnemyCamp>();
             var parent = new GameObject("Esqueletos").transform;
-            var cutlass = SkeletonCutlass();
+            // Golpes próprios (Skeleton Animations do Kevin Iglesias, 27/10).
+            var cutlass = SkeletonMoves(SkeletonCutlass());
             int count = Mathf.Min(SkeletonCount, Graves.Length);
             var members = new EnemyFootAI[count];
             for (int k = 0; k < count; k++)
@@ -147,6 +148,8 @@ namespace Pirates.EditorTools
             go.GetComponent<Health>().Configure(SkeletonHealth);
             go.GetComponent<FootCharacter>().ConfigureSpeeds(2f, 4.6f);
             if (!model) return;
+            // Parado, pose de luta, levar golpe e morte do Skeleton Animations (o golpe vem dos estados Esqueleto_Golpe*).
+            if (model.TryGetComponent(out Animator animator)) animator.runtimeAnimatorController = SkeletonAnimator(animator.runtimeAnimatorController);
             var mat = CursedMaterial();
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {

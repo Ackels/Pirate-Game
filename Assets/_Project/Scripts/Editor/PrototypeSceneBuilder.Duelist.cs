@@ -85,6 +85,8 @@ namespace Pirates.EditorTools
             ai.ConfigureDuelist(parry: 0.4f, dodge: 0.3f, keepAt: 3.2f, guardChance: 0.45f, pressedGuard: 0.6f);
             // Cambaleia menos que os piratas (0,6 s) ao levar golpe: volta logo à guarda ou ao contra-ataque.
             go.GetComponent<FootHealthReactions>().Configure(model, 0.35f);
+            // E2, passo 2: a adaga dela cai uma vez (a épica das adagas do capitão).
+            DropsBlade(go, "AdagaDuelista");
             if (!model) return;
             var outfit = CivilianMaterial(KitCharacters.Anne, DuelistPalette);
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))

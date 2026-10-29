@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Cargas de chumbo
   category: 0
   rarity: 0
+  group: 2
   color: {r: 0.55, g: 0.57, b: 0.62, a: 1}
   spacePerUnit: 0.1
   description: "Punhado de chumbo e p\xF3lvora para o bacamarte: cada tiro gasta uma. O capit\xE3o leva 12 do por\xE3o ao desembarcar."
   icon: {fileID: 2800000, guid: 71e87b3a9ed0b1646a2674410485dfb6, type: 3}
   keepAboard: 40
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}

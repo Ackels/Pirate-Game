@@ -7,13 +7,16 @@ using UnityEngine.UIElements;
 namespace Pirates.UI
 {
     /// <summary>
-    /// Janela grande do HUD (UI Toolkit): pergaminho no meio da tela com título, corpo e rodapé de botões. Fica na camada
+    /// Janela grande do HUD (UI Toolkit) no meio da tela: moldura de madeira escura com o título em dourado (como os cartões do HUD) e,
+    /// dentro, o pergaminho com o corpo e o rodapé de botões (28/10, pedido do Jhonata: "deixar mais no estilo pirata"). Fica na camada
     /// de janelas do <see cref="GameHud"/> e recebe o mouse (o resto do HUD deixa o clique passar para o jogo).
     /// O corpo é feito de <see cref="Pane"/>s: cada um se remonta só quando a "assinatura" dos dados que ele mostra muda.
     /// </summary>
     class HudWindow
     {
         public readonly VisualElement Root;
+        /// <summary>O pergaminho dentro da moldura (corpo + rodapé).</summary>
+        public readonly VisualElement Paper;
         public readonly VisualElement Body;
         public readonly VisualElement Footer;
         readonly Label title, subtitle;
@@ -30,10 +33,13 @@ namespace Pirates.UI
             header.Add(title);
             header.Add(subtitle);
             Root.Add(header);
+            Paper = Hud.Box("hud-window__paper");
+            Paper.pickingMode = PickingMode.Position;
+            Root.Add(Paper);
             Body = Hud.Box("hud-window__body");
-            Root.Add(Body);
+            Paper.Add(Body);
             Footer = Hud.Box("hud-window__footer");
-            Root.Add(Footer);
+            Paper.Add(Footer);
             Root.style.display = DisplayStyle.None;
             layer.Add(Root);
         }
@@ -163,16 +169,98 @@ namespace Pirates.UI
             return scroll;
         }
 
-        /// <summary>Nome do item com o quadradinho da cor dele.</summary>
+        /// <summary>Nome do item com o ícone dele num encaixe escuro com a borda na cor da raridade (sem ícone, a cor e a inicial).</summary>
         public static VisualElement Item(VisualElement parent, ItemDefinition item, string text)
         {
             var row = Hud.Row("hud-item");
-            var swatch = Hud.Box("hud-swatch");
-            swatch.style.backgroundColor = item.color;
-            row.Add(swatch);
+            row.Add(Icon(item));
             row.Add(Hud.Text(text, "hud-item__name"));
             parent.Add(row);
             return row;
+        }
+
+        /// <summary>Encaixe do ícone do item (o mesmo jeito da mochila no HUD e da tela de inventário).</summary>
+        public static VisualElement Icon(ItemDefinition item, string extraClass = null)
+        {
+            var slot = Hud.Box("hud-item__slot");
+            if (extraClass != null) slot.AddToClassList(extraClass);
+            var icon = Hud.Box("hud-item__icon");
+            if (item.icon) icon.style.backgroundImage = new StyleBackground(item.icon);
+            else
+            {
+                icon.AddToClassList("hud-item__icon--swatch");
+                icon.style.backgroundColor = item.color;
+                icon.Add(Hud.Text(item.displayName.Substring(0, 1), "hud-item__letter"));
+            }
+            slot.Add(icon);
+            var border = item.rarity >= ItemRarity.Uncommon ? Rarity.ColorOf(item.rarity) : new Color(0.43f, 0.29f, 0.18f);
+            slot.style.borderTopColor = border;
+            slot.style.borderBottomColor = border;
+            slot.style.borderLeftColor = border;
+            slot.style.borderRightColor = border;
+            return slot;
+        }
+
+        /// <summary>
+        /// Casinha de grade (a da tela de inventário): ícone, moldura da raridade, quantidade no canto. <paramref name="clicked"/> recebe o
+        /// número de cliques (2 = clique duplo).
+        /// </summary>
+        public static VisualElement Cell(ItemDefinition item, int count, bool selected, Action<int> clicked, Texture2D icon = null)
+        {
+            var cell = Hud.Box("hud-equip__cell");
+            cell.pickingMode = PickingMode.Position;
+            if (item && item.rarity >= ItemRarity.Uncommon)
+            {
+                var c = Rarity.ColorOf(item.rarity);
+                cell.style.borderTopColor = c;
+                cell.style.borderBottomColor = c;
+                cell.style.borderLeftColor = c;
+                cell.style.borderRightColor = c;
+            }
+            if (selected) cell.AddToClassList("hud-equip__cell--selected");
+            cell.Add(CellIcon(icon ? icon : item ? item.icon : null, item));
+            if (count > 1) cell.Add(Hud.Text(count >= 1000 ? $"{count / 1000f:0.#}k" : count.ToString(), "hud-equip__count"));
+            if (clicked != null) cell.RegisterCallback<ClickEvent>(e => clicked(e.clickCount));
+            return cell;
+        }
+
+        /// <summary>O ícone dentro da casinha (sem ícone: a cor do item numa bolinha com a inicial).</summary>
+        public static VisualElement CellIcon(Texture2D icon, ItemDefinition item)
+        {
+            var box = Hud.Box("hud-equip__icon");
+            box.pickingMode = PickingMode.Ignore;
+            if (icon) box.style.backgroundImage = new StyleBackground(icon);
+            else if (item)
+            {
+                box.style.backgroundColor = item.color;
+                box.AddToClassList("hud-equip__icon--swatch");
+                var letter = Hud.Text(item.displayName.Substring(0, 1), "hud-equip__initial");
+                letter.pickingMode = PickingMode.Ignore;
+                box.Add(letter);
+            }
+            return box;
+        }
+
+        /// <summary>Cor da raridade para texto no pergaminho (as do HUD são claras demais no papel).</summary>
+        public static string Ink(ItemRarity rarity) => "#" + ColorUtility.ToHtmlStringRGB(rarity switch
+        {
+            ItemRarity.Uncommon => new Color(0.2f, 0.48f, 0.16f),
+            ItemRarity.Rare => new Color(0.16f, 0.36f, 0.7f),
+            ItemRarity.Epic => new Color(0.46f, 0.22f, 0.68f),
+            ItemRarity.Legendary => new Color(0.72f, 0.46f, 0.04f),
+            _ => new Color(0.35f, 0.25f, 0.16f),
+        });
+
+        /// <summary>Plaquinha de preço: a moeda de ouro e o valor.</summary>
+        public static VisualElement Price(Texture2D coin, int amount, string extraClass = null)
+        {
+            var chip = Hud.Row("hud-price");
+            if (extraClass != null) chip.AddToClassList(extraClass);
+            var icon = Hud.Box("hud-price__coin");
+            if (coin) icon.style.backgroundImage = new StyleBackground(coin);
+            chip.Add(icon);
+            chip.Add(Hud.Text(amount.ToString(), "hud-price__value"));
+            return chip;
         }
 
         public static void Capacity(VisualElement parent, Inventory inventory)

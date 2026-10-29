@@ -16,6 +16,9 @@ namespace Pirates.Ambient
         [SerializeField] DayNightSettings settings;
         [Tooltip("A luz do sol da cena (de noite, a lua).")]
         [SerializeField] Light sun;
+        [Tooltip("Luz ambiente do dia como o editor calculou do céu (27 números, gravados pelo gerador): no jogo compilado a da cena ainda " +
+                 "é lixo no Awake (29/10: −3e13 = cena inteira em cores puras ao amanhecer).")]
+        [SerializeField, HideInInspector] float[] sceneAmbient = new float[0];
 
         float hour;
         int day = 1;
@@ -39,10 +42,47 @@ namespace Pirates.Ambient
             sun = sunLight;
         }
 
+        /// <summary>Gerador: guarda a luz ambiente do dia que o editor calculou (só se ela for válida).</summary>
+        public void StoreSceneAmbient(SphericalHarmonicsL2 ambient)
+        {
+            if (!Valid(ambient)) return;
+            sceneAmbient = new float[27];
+            for (int c = 0; c < 3; c++)
+            for (int k = 0; k < 9; k++) sceneAmbient[c * 9 + k] = ambient[c, k];
+        }
+
+        /// <summary>A luz ambiente do dia: a da cena se for válida; senão a gravada pelo gerador; senão a das cores do céu.</summary>
+        SphericalHarmonicsL2 DayAmbient()
+        {
+            var probe = RenderSettings.ambientProbe;
+            if (Valid(probe)) return probe;
+            var safe = new SphericalHarmonicsL2();
+            if (sceneAmbient != null && sceneAmbient.Length == 27)
+            {
+                for (int c = 0; c < 3; c++)
+                for (int k = 0; k < 9; k++) safe[c, k] = sceneAmbient[c * 9 + k];
+                if (Valid(safe)) return safe;
+                safe.Clear();
+            }
+            safe.AddAmbientLight(RenderSettings.ambientSkyColor);
+            return safe;
+        }
+
+        static bool Valid(SphericalHarmonicsL2 sh)
+        {
+            for (int c = 0; c < 3; c++)
+            for (int k = 0; k < 9; k++)
+            {
+                float v = sh[c, k];
+                if (float.IsNaN(v) || float.IsInfinity(v) || Mathf.Abs(v) > 20f) return false;
+            }
+            return true;
+        }
+
         void Awake()
         {
             if (!sun) sun = RenderSettings.sun;
-            dayAmbient = RenderSettings.ambientProbe;
+            dayAmbient = DayAmbient();
             dayFog = RenderSettings.fogColor;
             dayReflection = RenderSettings.reflectionIntensity;
             dayFogDensity = RenderSettings.fogDensity;
@@ -207,7 +247,8 @@ namespace Pirates.Ambient
             bool daytime = hour >= settings.sunrise && hour < settings.sunset;
             float t = daytime ? (hour - settings.sunrise) / dayLength : Mathf.Repeat(hour - settings.sunset, 24f) / (24f - dayLength);
             // Curva "gorda" (raiz do seno): o sol fica mais tempo baixo-mas-acima do horizonte, a hora dourada dura e só mergulha no fim.
-            float elevation = Mathf.Pow(Mathf.Sin(Mathf.PI * t), 0.55f) * (daytime ? settings.sunMaxElevation : settings.moonMaxElevation);
+            // Max(0): perto do nascer o seno de π·t dá −0,0000001 (π em float é um pouco maior) e a raiz de negativo é NaN (luz estragada).
+            float elevation = Mathf.Pow(Mathf.Max(0f, Mathf.Sin(Mathf.PI * t)), 0.55f) * (daytime ? settings.sunMaxElevation : settings.moonMaxElevation);
             float azimuth = (daytime ? settings.sunNoonAzimuth : settings.moonAzimuth) + (t - 0.5f) * 2f * settings.sunAzimuthSwing;
             sun.transform.rotation = Quaternion.Euler(Mathf.Max(elevation, 1f), azimuth, 0f);
             float up = Mathf.SmoothStep(0f, 1f, elevation / 10f);

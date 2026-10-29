@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_LaminaSaoTelmo
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: "L\xE2mina de S\xE3o Telmo"
-  icon: {fileID: 2800000, guid: 099a3a68c01de304599aa5265b0025c1, type: 3}
+  icon: {fileID: 2800000, guid: c8e1ac2fb5a05484e96a84ac031005c0, type: 3}
   kind: 0
   animatorWeaponType: 0
   damage: 32
@@ -46,11 +46,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 1
   breaksGuard: 0
   hitPush: 2.4
+  backstabDamage: 1
   holy: 1
   variantStrikes:
   - range: 0

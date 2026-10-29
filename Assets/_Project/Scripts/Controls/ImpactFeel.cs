@@ -71,7 +71,7 @@ namespace Pirates.Controls
             var flags = report.flags;
             if ((flags & CharacterCombat.StrikeFlags.Blocked) != 0) Play(guarded);
             else if ((flags & CharacterCombat.StrikeFlags.Ranged) != 0) Play(ranged);
-            else if ((flags & (CharacterCombat.StrikeFlags.Heavy | CharacterCombat.StrikeFlags.Finisher | CharacterCombat.StrikeFlags.Riposte)) != 0) Play(heavyHit);
+            else if ((flags & (CharacterCombat.StrikeFlags.Heavy | CharacterCombat.StrikeFlags.Finisher | CharacterCombat.StrikeFlags.Riposte | CharacterCombat.StrikeFlags.Backstab)) != 0) Play(heavyHit);
             else Play(hit);
         }
 

@@ -128,6 +128,8 @@ namespace Pirates.LandCombat
         Vector3 pathGoal;
         readonly RaycastHit[] sightHits = new RaycastHit[16];
         float aimStart = float.NegativeInfinity, aimDuration;
+        // Atirador: apertou o gatilho e o tiro ainda não saiu (a arma leva uns quadros): segura a mira e o aviso em "agora".
+        float firingUntil = float.NegativeInfinity;
         Vector3 trackedAim;
         bool taunted;
         CharacterAnimatorDriver driver;
@@ -165,22 +167,27 @@ namespace Pirates.LandCombat
         /// <summary>Momento em que percebeu o jogador (para o "!" sobre a cabeça).</summary>
         public float AlertedAt { get; private set; } = float.NegativeInfinity;
         /// <summary>
-        /// Segundos até o golpe dele acertar (o preparo + o golpe); −1 = não está golpeando. O aviso "!"/"!!" sobre a cabeça
-        /// (CryptWarningHUD).
+        /// Segundos até o golpe dele acertar (o preparo + o golpe) ou, atirador, até o tiro sair; −1 = não está golpeando nem mirando.
+        /// O aviso sobre a cabeça (CryptWarningHUD).
         /// </summary>
         public float ImpactIn
         {
             get
             {
                 if (health.IsDead) return -1f;
+                if (IsGunner)
+                {
+                    if (Time.time < firingUntil && !combat.IsReloading) return 0f;
+                    return aimStart > 0f && combat.IsAiming ? Mathf.Max(0f, aimStart + aimDuration - Time.time) : -1f;
+                }
                 float strike = combat.ImpactIn;
                 if (strike >= 0f) return strike;
                 if (Time.time < intentUntil && combat.Current) return intentUntil - Time.time + combat.Current.hitDelay;
                 return -1f;
             }
         }
-        /// <summary>O golpe que vem passa pela guarda (imparáveis do chefe): aviso azul.</summary>
-        public bool ImpactUnblockable => combat.ImpactUnblockable;
+        /// <summary>O golpe que vem passa pela guarda (imparáveis do chefe, tiro): aviso azul, a caveira = role.</summary>
+        public bool ImpactUnblockable => IsGunner || combat.ImpactUnblockable;
         bool InIntent => Time.time < intentUntil;
 
         /// <summary>Preparo antes de cada golpe novo (0 = nenhum).</summary>
@@ -558,7 +565,7 @@ namespace Pirates.LandCombat
         }
 
         /// <summary>
-        /// Atirador: chega a um alcance de tiro com vista livre, segura a mira (linha vermelha) por aimTime e atira.
+        /// Atirador: chega a um alcance de tiro com vista livre, segura a mira (faíscas na caçoleta e o aviso sobre a cabeça) por aimTime e atira.
         /// A mira persegue o jogador com atraso; recarregando, volta à distância preferida.
         /// </summary>
         void Shoot(ref FootCommand command)
@@ -569,7 +576,7 @@ namespace Pirates.LandCombat
             trackedAim = Vector3.Lerp(trackedAim, lastKnown, 1f - Mathf.Exp(-aimTracking * Time.deltaTime));
             command.hasAim = true;
             command.aimPoint = trackedAim;
-            combat.ShotWarning = aimStart > 0f ? Mathf.Clamp01(1f - (aimStart + aimDuration - Time.time) / 0.35f) : 0f;
+            combat.ShotWarning = Time.time < firingUntil ? 1f : aimStart > 0f ? Mathf.Clamp01(1f - (aimStart + aimDuration - Time.time) / 0.35f) : 0f;
 
             if (!sees || distance > shootRange)
             {
@@ -591,6 +598,7 @@ namespace Pirates.LandCombat
             }
 
             command.aim = true;
+            if (Time.time < firingUntil) return;
             if (aimStart < 0f)
             {
                 // Começa a mirar onde o jogador está agora; daí a mira o segue com atraso.
@@ -603,6 +611,7 @@ namespace Pirates.LandCombat
             {
                 command.attack = true;
                 aimStart = float.NegativeInfinity;
+                firingUntil = Time.time + 0.4f;
             }
         }
 

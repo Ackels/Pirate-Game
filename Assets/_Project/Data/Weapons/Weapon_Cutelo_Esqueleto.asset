@@ -13,20 +13,24 @@ MonoBehaviour:
   m_Name: Weapon_Cutelo_Esqueleto
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Cutelo enferrujado
+  icon: {fileID: 0}
   kind: 0
   animatorWeaponType: 0
   damage: 14
   range: 2
   angle: 100
-  hitDelay: 0.42857146
-  attackAnimSpeed: 0.7
+  hitDelay: 0.47
+  attackAnimSpeed: 1
   cooldown: 0.8571429
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 2
   animatorVariantOffset: 0
+  animatorVariants: 1400000015000000i
   randomVariants: 0
-  variantHitDelays: []
+  variantHitDelays:
+  - 0.47
+  - 0.29166666
   comboWindow: 1.5714287
   animatedDraw: 1
   drawGrabTime: 0.4615385
@@ -41,6 +45,14 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
+  variantStrikes: []

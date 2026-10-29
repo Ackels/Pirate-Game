@@ -27,7 +27,9 @@ namespace Pirates.EditorTools
         static bool IsMusketeer(string postName) => IsBlackGuard(postName) && postName.Contains("Mosquete");
 
         /// <summary>Sabre da Guarda Negra: o cutelo dos piratas mais forte (14, era 12) e um pouco mais rápido; sempre na mão.</summary>
-        static WeaponDefinition BlackGuardSabre() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Sabre_GuardaNegra.asset", w =>
+        static WeaponDefinition BlackGuardSabre() => EnemyMeleeMoves(BlackGuardSabreAsset());
+
+        static WeaponDefinition BlackGuardSabreAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Sabre_GuardaNegra.asset", w =>
         {
             JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(EnemyCutlass()), w);
             const float animSpeed = 0.8f;
@@ -45,7 +47,9 @@ namespace Pirates.EditorTools
         /// Mosquete da Guarda Negra: as animações e a mira do bacamarte, mas um tiro só (26 de dano), longe (24 m) e recarga de 4 s. A linha
         /// vermelha avisa: correndo de lado ou rolando dá para sair da mira.
         /// </summary>
-        static WeaponDefinition BlackGuardMusket() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Mosquete_GuardaNegra.asset", w =>
+        static WeaponDefinition BlackGuardMusket() => WithSupportHand(BlackGuardMusketAsset(), RifleSupport);
+
+        static WeaponDefinition BlackGuardMusketAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Mosquete_GuardaNegra.asset", w =>
         {
             JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(BlunderbussWeapon()), w);
             w.displayName = "Mosquete da Guarda Negra";

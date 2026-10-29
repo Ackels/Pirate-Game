@@ -15,11 +15,13 @@ MonoBehaviour:
   displayName: Bacamarte
   category: 3
   rarity: 2
+  group: 5
   color: {r: 0.55, g: 0.4, b: 0.28, a: 1}
   spacePerUnit: 0
   description: "Boca de sino e chumbo grosso: um tiro em leque que derruba um pirata de perto. Arma 3 a p\xE9 (duas m\xE3os), gasta cargas de chumbo."
   icon: {fileID: 2800000, guid: a0f837fbc02c9994e961099f597e77b6, type: 3}
   keepAboard: 0
   backpackCapacity: 0
+  foodHeal: 0
   equipSlot: 0
   equipment: {fileID: 0}
