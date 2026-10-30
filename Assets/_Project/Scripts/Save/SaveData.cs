@@ -69,6 +69,13 @@ namespace Pirates.Save
         // Equipamento do capitão (E1, 19/10): ids (nome do asset) dos itens equipados, um por lugar (lâmina...). Save de antes não tem
         // (null): nada equipado, o cutelo de começo.
         public string[] equipped;
+
+        // Diário do pescador (D2, 30/10): espécies pescadas (id = nome do asset do item), quantas, o maior tamanho (m) e os prêmios já
+        // recebidos (bits). Save de antes não tem (null): diário vazio.
+        public string[] fishIds;
+        public int[] fishCounts;
+        public float[] fishBest;
+        public int fishPrizes;
     }
 
     [Serializable]

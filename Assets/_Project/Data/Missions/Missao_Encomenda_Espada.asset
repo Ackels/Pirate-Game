@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Espada
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_espada
+  title: O peixe da tempestade
+  giver: Iara
+  description: "O peixe-espada s\xF3 sobe quando o mar ferve na tempestade. Um s\xF3, capit\xE3o, para provar que existe."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: 064cf346c7589c84e95cffed12834948, type: 2}
+    amount: 1
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 120
+  - item: {fileID: 11400000, guid: 3f6e43842ccdf03478e12ad27f27fcf6, type: 2}
+    amount: 1
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 1500
+  requiredRank: 0
+  fameReward: 12
+  givenByNpc: 1
+  offerLines:
+  - "O meu sobrinho jura que o peixe-espada \xE9 lenda de b\xEAbado. Eu digo que existe."
+  - "Ele s\xF3 sobe na tempestade, na \xE1gua funda. Traga um, e calamos a boca do moleque."
+  acceptLine: "Espere o c\xE9u fechar e o mar ferver, capit\xE3o. \xC9 a\xED que ele vem."
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Um peixe-espada, capit\xE3o. S\xF3 na tempestade."
+  doneLines:
+  - Ha! Olha o tamanho disso! Quero ver o moleque falar agora.
+  - O ouro, e a minha isca dourada. O senhor mereceu.
+  restingLine: "O moleque ainda est\xE1 de boca aberta. Volte depois."

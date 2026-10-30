@@ -23,5 +23,10 @@ MonoBehaviour:
   keepAboard: 0
   backpackCapacity: 0
   foodHeal: 0
+  relicEffect: 0
+  relicAmount: 0
+  mealEffect: 0
+  mealAmount: 0
+  mealMinutes: 8
   equipSlot: 1
   equipment: {fileID: 11400000, guid: ad9ead4eafe111240bd752a52a6230d2, type: 2}

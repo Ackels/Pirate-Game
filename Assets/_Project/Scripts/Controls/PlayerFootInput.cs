@@ -21,11 +21,13 @@ namespace Pirates.Controls
 
         IInteraction[] interactions;
         BombThrower bombs;
+        CrewCommander crew;
 
         void Awake()
         {
             interactions = GetComponents<IInteraction>();
             bombs = GetComponent<BombThrower>();
+            crew = GetComponent<CrewCommander>();
         }
 
         /// <summary>Janela do porto, baú ou painel aberto: o mouse é da janela (bomba e comida também esperam).</summary>
@@ -71,6 +73,8 @@ namespace Pirates.Controls
             }
             // Mirando a bomba (segurando G): o mouse é da mira, não ataca nem mira a pistola.
             if (bombs && bombs.IsAiming) command.attack = command.aim = false;
+            // Roda de comando dos marujos (segurando T) ou apontando a ordem: o mouse é dela.
+            if (crew && crew.OwnsMouse) command.attack = command.aim = false;
             return command;
         }
 

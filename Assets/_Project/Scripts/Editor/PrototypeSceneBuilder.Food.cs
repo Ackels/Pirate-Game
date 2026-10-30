@@ -70,6 +70,8 @@ namespace Pirates.EditorTools
             AddBlunderbussGear(character);
             AddBladeGear(character);
             AddBombThrower(character, switcher);
+            // Bomba de fumaça (tinta de siba, 30/10): tecla B a pé.
+            AddSmokeBomb(character, switcher);
         }
 
         // Garrafa na mão direita (o clipe "Drinking" entra espelhado: o gole da esquerda ficava atrás do papagaio), ~30 cm no mundo,

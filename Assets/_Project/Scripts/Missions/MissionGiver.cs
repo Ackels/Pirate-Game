@@ -36,6 +36,8 @@ namespace Pirates.Missions
         public string DisplayName => displayName;
         public string Role => role;
         public IReadOnlyList<MissionDefinition> Missions => missions;
+        /// <summary>A última oferta recusada ("Agora não"): na próxima conversa ele oferece outra, se tiver (30/10: a Iara tem várias encomendas).</summary>
+        public MissionDefinition LastDeclined { get; set; }
         public IReadOnlyList<string> SmallTalk => smallTalk;
         public float TalkRange => talkRange;
         public Vector3 LabelPosition => transform.position + Vector3.up * labelHeight;

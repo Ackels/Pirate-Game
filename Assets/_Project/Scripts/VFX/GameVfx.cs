@@ -114,6 +114,9 @@ namespace Pirates.VFX
                 effects.Unearthed += OnUnearthed;
                 effects.Surged += OnSurged;
                 effects.Plopped += OnPlopped;
+                effects.Smoked += OnSmoked;
+                effects.Poisoned += OnPoisoned;
+                effects.Burned += OnBurned;
             }
             ResourceNode.Struck += OnChopped;
             ResourceNode.Landed += OnTreeLanded;
@@ -135,6 +138,9 @@ namespace Pirates.VFX
             effects.Unearthed -= OnUnearthed;
             effects.Surged -= OnSurged;
             effects.Plopped -= OnPlopped;
+            effects.Smoked -= OnSmoked;
+            effects.Poisoned -= OnPoisoned;
+            effects.Burned -= OnBurned;
         }
 
         float WaterHeight(Vector3 p) => ocean != null ? ocean.GetHeight(p) : 0f;
@@ -279,6 +285,47 @@ namespace Pirates.VFX
         /// Barril de pólvora: clarão grande, bola de fogo que sobe, faíscas e aduelas voando, poeira rasteira em anel e uma coluna de
         /// fumaça escura que fica no ar e vai com o vento. Tudo pelos sistemas que já existem (nada criado por explosão).
         /// </summary>
+        /// <summary>Bomba de fumaça (30/10): nuvem cinza-escura e baixa, do tamanho do raio, que fica o tempo todo (puf de partida no chão).</summary>
+        void OnSmoked(Vector3 center, float radius, float seconds)
+        {
+            // Rala o bastante para ver o capitão lá dentro (a primeira, densa, escondia tudo), baixa e espalhada pelo raio.
+            for (int i = 0; i < 40; i++)
+            {
+                Vector2 ring = Random.insideUnitCircle * radius * 0.9f;
+                float grey = Random.Range(0.3f, 0.45f);
+                smoke.Emit(center + new Vector3(ring.x, Random.Range(0.1f, 1.4f), ring.y),
+                    new Vector3(ring.x, 0f, ring.y) * 0.06f + Vector3.up * Random.Range(0.03f, 0.15f), Random.Range(2.4f, 3.6f),
+                    seconds * Random.Range(0.8f, 1.05f), new Color(grey, grey * 0.97f, grey * 1.05f, 0.7f), Random.Range(-20f, 20f));
+            }
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 ring = Random.insideUnitCircle.normalized;
+                var flat = new Vector3(ring.x, 0f, ring.y);
+                dust?.Emit(center + flat * 0.4f, flat * Random.Range(3f, 6f) + Vector3.up * 0.4f, Random.Range(1f, 1.6f),
+                    Random.Range(0.8f, 1.2f), new Color(0.35f, 0.34f, 0.38f, 0.8f), Random.Range(-40f, 40f));
+            }
+        }
+
+        /// <summary>Navio pegando fogo (munição incendiária, 30/10): chamas e fumaça escura saindo do convés a cada meio segundo.</summary>
+        void OnBurned(Vector3 point)
+        {
+            for (int i = 0; i < 4; i++)
+                fire.Emit(point + Random.insideUnitSphere * 0.6f, Vector3.up * Random.Range(1.5f, 3f) + Random.insideUnitSphere * 0.4f,
+                    Random.Range(1f, 1.7f), Random.Range(0.4f, 0.7f), new Color(1f, Random.Range(0.45f, 0.65f), 0.2f, 1f));
+            float grey = Random.Range(0.18f, 0.28f);
+            smoke.Emit(point + Vector3.up * 1f, Vector3.up * Random.Range(1.5f, 2.5f) + Random.insideUnitSphere * 0.4f, Random.Range(1.4f, 2.2f),
+                Random.Range(2.5f, 3.5f), new Color(grey, grey, grey, 0.8f), Random.Range(-30f, 30f));
+        }
+
+        /// <summary>Veneno pegando (lâmina envenenada, 30/10): bolhas e fumacinha verdes no alvo.</summary>
+        void OnPoisoned(Vector3 point)
+        {
+            glow.Emit(point, Vector3.zero, 0.7f, 0.25f, new Color(0.45f, 1f, 0.35f, 0.9f));
+            for (int i = 0; i < 4; i++)
+                smoke.Emit(point + Random.insideUnitSphere * 0.3f, Vector3.up * Random.Range(0.5f, 1.1f) + Random.insideUnitSphere * 0.3f,
+                    Random.Range(0.35f, 0.6f), Random.Range(0.7f, 1.1f), new Color(0.35f, 0.75f, 0.25f, 0.8f), Random.Range(-60f, 60f));
+        }
+
         void OnExploded(Vector3 center, float radius)
         {
             float r = Mathf.Max(1f, radius);

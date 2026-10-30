@@ -79,8 +79,8 @@ namespace Pirates.CameraSystem
             for (int i = 0; i < targetInteractions.Length; i++)
             {
                 var interaction = targetInteractions[i];
-                // Pescar e cortar/minerar não têm janela: o zoom continua.
-                if (interaction is FishingRod || interaction is Gatherer) continue;
+                // Pescar, cortar/minerar e a rede do navio não têm janela: o zoom continua.
+                if (interaction is INoWindowInteraction) continue;
                 if (interaction is Object o && o && interaction.IsOpen) return true;
             }
             return false;

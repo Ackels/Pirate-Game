@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Festa
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_festa
+  title: Peixe para a festa do santo
+  giver: Iara
+  description: "Festa de S\xE3o Telmo: o povo quer garoupa da Ilha Norte e pargo vermelho daqui do porto. Dois de cada."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: 421221e2edef2474a85aa85c3ef6db49, type: 2}
+    amount: 2
+  - item: {fileID: 11400000, guid: dcb134cacde98a44fad5e669f722fde4, type: 2}
+    amount: 2
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 150
+  - item: {fileID: 11400000, guid: 66627b120ac430b41be2b3d1069a48ea, type: 2}
+    amount: 6
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 900
+  requiredRank: 0
+  fameReward: 10
+  givenByNpc: 1
+  offerLines:
+  - "Chegando a festa de S\xE3o Telmo, e a vila inteira quer peixe de festa."
+  - Duas garoupas, que moram nas pedras da Ilha Norte e da Caveira, e dois pargos vermelhos daqui do porto ou da Ilha Oeste.
+  acceptLine: Isso! Eu guardo um lugar na mesa para o senhor.
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Duas garoupas e dois pargos para a festa, capit\xE3o."
+  doneLines:
+  - Que garoupas! A festa vai ser lembrada por anos.
+  - O ouro da festa, e iscas para o senhor continuar pescando.
+  restingLine: A festa passou. Ano que vem tem outra.

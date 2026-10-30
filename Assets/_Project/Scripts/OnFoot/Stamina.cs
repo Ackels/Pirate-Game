@@ -31,8 +31,11 @@ namespace Pirates.OnFoot
         float lastSpend = float.NegativeInfinity;
 
         public float Current { get; private set; }
-        public float Max => max;
-        public float Normalized => max > 0f ? Current / max : 0f;
+        /// <summary>Máximo com o bônus de comida (caldeirada, 30/10).</summary>
+        public float Max => max + BonusMax;
+        /// <summary>Fôlego a mais no máximo (prato da taverna), posto por quem cuida das refeições.</summary>
+        public float BonusMax { get; set; }
+        public float Normalized => Max > 0f ? Current / Max : 0f;
         public float DodgeCost => dodgeCost;
         public float GuardPerSecond => guardPerSecond;
         public float BlockHitCost => blockHitCost;
@@ -46,13 +49,13 @@ namespace Pirates.OnFoot
         /// <summary>Faltou fôlego para uma ação (HUD).</summary>
         public event Action Denied;
 
-        void Awake() => Current = max;
+        void Awake() => Current = Max;
 
         void OnEnable() => Refill();
 
         public void Refill()
         {
-            Current = max;
+            Current = Max;
             lastSpend = float.NegativeInfinity;
         }
 
@@ -75,7 +78,7 @@ namespace Pirates.OnFoot
             lastSpend = Time.time;
         }
 
-        public void Refund(float amount) => Current = Mathf.Min(max, Current + amount);
+        public void Refund(float amount) => Current = Mathf.Min(Max, Current + amount);
 
         public void Deny()
         {
@@ -85,7 +88,8 @@ namespace Pirates.OnFoot
 
         void Update()
         {
-            if (Current < max && Time.time - lastSpend >= regenDelay) Current = Mathf.Min(max, Current + regenPerSecond * Time.deltaTime);
+            if (Current > Max) Current = Max;   // o prato acabou
+            if (Current < Max && Time.time - lastSpend >= regenDelay) Current = Mathf.Min(Max, Current + regenPerSecond * Time.deltaTime);
         }
     }
 }

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Perola
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_perola
+  title: "Uma p\xE9rola para o noivado"
+  giver: Iara
+  description: "A filha do ferreiro vai casar, e o noivo quer dar uma p\xE9rola. Ostra fisgada no fundo, rara."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: 6b2fe9c2bd2a16a4c88f134015db7d5f, type: 2}
+    amount: 1
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 220
+  - item: {fileID: 11400000, guid: 3f6e43842ccdf03478e12ad27f27fcf6, type: 2}
+    amount: 1
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 1800
+  requiredRank: 0
+  fameReward: 15
+  givenByNpc: 1
+  offerLines:
+  - "A filha do ferreiro vai casar! E o noivo, coitado, quer dar uma p\xE9rola de presente."
+  - "P\xE9rola vem em ostra, na \xE1gua funda, e \xE9 rara. Traga uma, e ele paga bem."
+  acceptLine: "Que o mar seja generoso, capit\xE3o."
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Uma p\xE9rola para o noivado, capit\xE3o."
+  doneLines:
+  - "Que p\xE9rola linda! O noivo vai chorar."
+  - Tome o pagamento dele, e uma isca dourada minha.
+  restingLine: "O casamento foi lindo. Por enquanto, ningu\xE9m mais vai casar."

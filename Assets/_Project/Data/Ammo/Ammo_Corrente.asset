@@ -21,3 +21,5 @@ MonoBehaviour:
   chainVisual: 1
   sailDamagePerHit: 0.05
   crewDamagePerHit: 0
+  burnPerSecond: 0
+  burnSeconds: 0

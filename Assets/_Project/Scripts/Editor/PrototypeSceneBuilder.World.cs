@@ -73,7 +73,10 @@ namespace Pirates.EditorTools
             // Porto a pé: F no cais atraca e desce no píer; as casas da vila abrem cada parte do porto.
             var visitor = ship.GetComponent<HarborVisitor>();
             visitor.Configure(openMenuOnDock: false);
-            ship.gameObject.AddComponent<HarborShoreLeave>().Configure(foot.switcher, CreatePierLanding());
+            var shoreLeave = ship.gameObject.AddComponent<HarborShoreLeave>();
+            shoreLeave.Configure(foot.switcher, CreatePierLanding());
+            // Marujos (D3): no píer da vila não descem.
+            if (foot.switcher.TryGetComponent(out CrewEscort escort)) escort.SetPort(shoreLeave);
             var buildingVisitor = foot.character.gameObject.AddComponent<HarborBuildingVisitor>();
             buildingVisitor.Configure(visitor);
             var harborHud = Object.FindAnyObjectByType<HarborHUD>();
@@ -119,6 +122,16 @@ namespace Pirates.EditorTools
             AddCollectibles(foot.character, foot.switcher, hud, loot.items);
             // Ilha da Ermida (C4, 19/10): ruína com 3 alavancas atrás de armadilhas, no lugar vazio "A" (sudoeste).
             AddErmida(foot.character, materials, island.loot, loot.items, deck, hull, hud);
+            // Pesca com rede (D2, passo 2, 30/10): a rede no navio (depois das outras interações do F) e os cardumes no mar, depois de
+            // todas as ilhas (os pontos de pesca ficam longe da terra).
+            AddFishingNet(ship, loot.items);
+            AddFishingGrounds(ship);
+            // Diário do pescador (30/10): depois de todas as ilhas (as regiões são achadas pelo nome).
+            AddFishJournal(ship.GetComponent<Inventory>());
+            // Pratos da taverna (30/10): os bônus e a plaquinha no HUD.
+            AddMeals(ship, foot.character.gameObject);
+            var gameHud = Object.FindAnyObjectByType<GameHud>(FindObjectsInactive.Include);
+            if (gameHud && !gameHud.GetComponent<CrewEscortHUD>()) gameHud.gameObject.AddComponent<CrewEscortHUD>();
             // Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo, opções, créditos; o prólogo toca no Novo jogo.
             var prologue = hud.AddComponent<PrologueHUD>();
             var frames = Enumerable.Range(1, 9)
@@ -229,6 +242,8 @@ namespace Pirates.EditorTools
             list.AddRange(FamousMissions(i));
             // Pacote B: brutamontes, duelista e cemitério.
             list.AddRange(BountyMissions(i));
+            // Encomendas de peixe da Iara (30/10).
+            list.AddRange(FishOrderMissions(i));
             return list.ToArray();
         }
 

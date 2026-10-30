@@ -241,6 +241,111 @@ MonoBehaviour:
     demand: 20
     demandRefillSeconds: 45
     requiredRank: 0
+  - item: {fileID: 11400000, guid: 16909097b8872644ab4e3e4592afbd11, type: 2}
+    buyPrice: 150
+    sellPrice: 0
+    toHold: 0
+    demand: 20
+    demandRefillSeconds: 45
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: ac523c142d020ba488fbb1063644c6b0, type: 2}
+    buyPrice: 0
+    sellPrice: 2
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 5011cf52f1e652c4992aa4d5acb0df9f, type: 2}
+    buyPrice: 0
+    sellPrice: 4
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 01bb285fa24b51047b900f85a1101fea, type: 2}
+    buyPrice: 0
+    sellPrice: 3
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 421221e2edef2474a85aa85c3ef6db49, type: 2}
+    buyPrice: 0
+    sellPrice: 10
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: dcb134cacde98a44fad5e669f722fde4, type: 2}
+    buyPrice: 0
+    sellPrice: 9
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 8a8aa408c6149754398387784453542d, type: 2}
+    buyPrice: 0
+    sellPrice: 7
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 2f6baf54f6094c3459c4bac5842ec462, type: 2}
+    buyPrice: 0
+    sellPrice: 22
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 064cf346c7589c84e95cffed12834948, type: 2}
+    buyPrice: 0
+    sellPrice: 26
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: bd273bc622e78354f954168d65509280, type: 2}
+    buyPrice: 0
+    sellPrice: 18
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 53299d9a7223e3e44aa012409b87d683, type: 2}
+    buyPrice: 0
+    sellPrice: 300
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 0e586c701a37a2c45adced736813225d, type: 2}
+    buyPrice: 0
+    sellPrice: 260
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 346d86a0efa6a4840a39677a9c766714, type: 2}
+    buyPrice: 0
+    sellPrice: 240
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: d759307704432ab42a39843e50ef0a8e, type: 2}
+    buyPrice: 0
+    sellPrice: 320
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
+  - item: {fileID: 11400000, guid: 469dde593547a624fa825c2e0b3bbcca, type: 2}
+    buyPrice: 0
+    sellPrice: 280
+    toHold: 0
+    demand: 12
+    demandRefillSeconds: 60
+    requiredRank: 0
   smithy:
   - result:
       item: {fileID: 11400000, guid: c0be865e055b6c04989863b058f7cbd5, type: 2}
@@ -302,3 +407,136 @@ MonoBehaviour:
     requiredLevel: 2
     toHold: 1
     craftSeconds: 120
+  - result:
+      item: {fileID: 11400000, guid: 05ff2b582d2e1fc46be2da171d1548b7, type: 2}
+      amount: 2
+    cost:
+    - item: {fileID: 11400000, guid: a0a7d525ad56f0145af65b31946de843, type: 2}
+      amount: 2
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 40
+  - result:
+      item: {fileID: 11400000, guid: 549b6f93c65cba34ebb140abd566e88b, type: 2}
+      amount: 2
+    cost:
+    - item: {fileID: 11400000, guid: 957f2f0b55fb0f74f8cfae39c47ca803, type: 2}
+      amount: 2
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 1
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 50
+  - result:
+      item: {fileID: 11400000, guid: a9adfeaab73421f4d87b5dd09c979038, type: 2}
+      amount: 6
+    cost:
+    - item: {fileID: 11400000, guid: 5f5fdb6cee1fa0043b6cebb499aae5e1, type: 2}
+      amount: 4
+    - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
+      amount: 2
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 90
+  - result:
+      item: {fileID: 11400000, guid: d10ddd2ddb67fa2468a0ea244390bf9e, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 6b2fe9c2bd2a16a4c88f134015db7d5f, type: 2}
+      amount: 3
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 50
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 120
+  - result:
+      item: {fileID: 11400000, guid: 9b323356107dc1544b3c7c703a49299c, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: bfadc8b4ae42c434ba75418544b53911, type: 2}
+      amount: 3
+    requiredBuilding: {fileID: 11400000, guid: a4841aed57e8a0744b8b22f15f84e0c8, type: 2}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 60
+  kitchen:
+  - result:
+      item: {fileID: 11400000, guid: 55209c99ad2823f4092692a038e7f673, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 5f5fdb6cee1fa0043b6cebb499aae5e1, type: 2}
+      amount: 2
+    - item: {fileID: 11400000, guid: b192ce7d040fa9c4e81feb05bf7b02b9, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 5
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0
+  - result:
+      item: {fileID: 11400000, guid: ff3103704bf52084bbc5f08e828c946d, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 0096cf777c4b64841a889d2979d99a2b, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 5
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0
+  - result:
+      item: {fileID: 11400000, guid: b421171f44466f24993afa75f401bd94, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 76129c1f66516f849922748547319c0a, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: ac523c142d020ba488fbb1063644c6b0, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 5
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0
+  - result:
+      item: {fileID: 11400000, guid: 8c743e1b5be999743b4bb77c1dfda6db, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 957f2f0b55fb0f74f8cfae39c47ca803, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 5
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0
+  - result:
+      item: {fileID: 11400000, guid: 7878393c5fe8dcd40a3f14ebf45e6c0f, type: 2}
+      amount: 1
+    cost:
+    - item: {fileID: 11400000, guid: 421221e2edef2474a85aa85c3ef6db49, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: dcb134cacde98a44fad5e669f722fde4, type: 2}
+      amount: 1
+    - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+      amount: 8
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0
+  - result:
+      item: {fileID: 11400000, guid: 66627b120ac430b41be2b3d1069a48ea, type: 2}
+      amount: 4
+    cost:
+    - item: {fileID: 11400000, guid: b192ce7d040fa9c4e81feb05bf7b02b9, type: 2}
+      amount: 2
+    requiredBuilding: {fileID: 0}
+    requiredLevel: 1
+    toHold: 1
+    craftSeconds: 0

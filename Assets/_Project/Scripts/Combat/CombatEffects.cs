@@ -27,6 +27,12 @@ namespace Pirates.Combat
         public event System.Action<Vector3> Roared;
         /// <summary>Respingo pequeno na água (a boia da pesca caindo, o peixe mordendo, o peixe saindo): ponto e tamanho (1 = a boia).</summary>
         public event System.Action<Vector3, float> Plopped;
+        /// <summary>Bomba de fumaça (30/10): centro, raio e segundos da nuvem.</summary>
+        public event System.Action<Vector3, float, float> Smoked;
+        /// <summary>Veneno pegando num alvo (bolhas verdes).</summary>
+        public event System.Action<Vector3> Poisoned;
+        /// <summary>Navio queimando (munição incendiária): chamas e fumaça num ponto do casco.</summary>
+        public event System.Action<Vector3> Burned;
 
         void OnEnable() => Services.Register(this);
         void OnDisable() => Services.Unregister(this);
@@ -46,5 +52,8 @@ namespace Pirates.Combat
         public void Roar(Vector3 point) => Roared?.Invoke(point);
 
         public void Plop(Vector3 point, float size) => Plopped?.Invoke(point, size);
+        public void Smoke(Vector3 center, float radius, float seconds) => Smoked?.Invoke(center, radius, seconds);
+        public void Poison(Vector3 point) => Poisoned?.Invoke(point);
+        public void Burn(Vector3 point) => Burned?.Invoke(point);
     }
 }

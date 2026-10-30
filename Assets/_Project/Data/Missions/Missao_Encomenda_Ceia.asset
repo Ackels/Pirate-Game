@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Ceia
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_ceia
+  title: A ceia dos pescadores
+  giver: Iara
+  description: Os pescadores velhos ceiam juntos no cais aos domingos, e a minha rede rasgou. Me traga cavala e arenque.
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: 5f5fdb6cee1fa0043b6cebb499aae5e1, type: 2}
+    amount: 6
+  - item: {fileID: 11400000, guid: 1300e1abe9e29414ba6e2aebc02e7be8, type: 2}
+    amount: 4
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 70
+  - item: {fileID: 11400000, guid: 66627b120ac430b41be2b3d1069a48ea, type: 2}
+    amount: 4
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 0
+  fameReward: 5
+  givenByNpc: 1
+  offerLines:
+  - "Capit\xE3o, uma encomenda pequena. A minha rede rasgou e domingo tem ceia no cais."
+  - Seis cavalas e quatro arenques. Pesca na beira da praia mesmo, ou com a rede do navio.
+  acceptLine: "Que santo te pague! Na entrega eu pago, e ainda dou umas iscas de camar\xE3o."
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Seis cavalas e quatro arenques, capit\xE3o. Os velhos est\xE3o com fome."
+  doneLines:
+  - "Olha que beleza de peixe! A ceia est\xE1 salva."
+  - "Tome o ouro e umas iscas de camar\xE3o: peixe raro gosta delas."
+  restingLine: "A ceia de domingo est\xE1 garantida. Volte na semana que vem, capit\xE3o."

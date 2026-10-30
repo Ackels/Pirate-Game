@@ -27,6 +27,12 @@ namespace Pirates.Combat
         ShipController ship;
         CannonBattery[] batteries;
         float lastSailHit, lastCrewHit;
+        float burnPerSecond, burnUntil, nextBurnTick;
+        BoxCollider hullBox;
+        CombatEffects effects;
+
+        /// <summary>Pegando fogo (munição incendiária) agora.</summary>
+        public bool Burning => Time.time < burnUntil && !health.IsDead;
 
         /// <summary>Fração das velas rasgada (0 = inteiras).</summary>
         public float SailDamage { get; private set; }
@@ -41,6 +47,7 @@ namespace Pirates.Combat
             health = GetComponent<Health>();
             ship = GetComponent<ShipController>();
             batteries = GetComponentsInChildren<CannonBattery>(true);
+            hullBox = GetComponent<BoxCollider>();
         }
 
         void OnEnable() => health.Damaged += OnDamaged;
@@ -48,6 +55,13 @@ namespace Pirates.Combat
 
         void OnDamaged(DamageInfo info)
         {
+            if (info.burnPerSecond > 0f && info.burnSeconds > 0f)
+            {
+                // Incendiária: um acerto novo recomeça o fogo (não soma).
+                if (!Burning) nextBurnTick = Time.time + 0.5f;
+                burnPerSecond = Mathf.Max(Burning ? burnPerSecond : 0f, info.burnPerSecond);
+                burnUntil = Time.time + info.burnSeconds;
+            }
             if (info.sailDamage <= 0f && info.crewDamage <= 0f) return;
             if (info.sailDamage > 0f) lastSailHit = Time.time;
             if (info.crewDamage > 0f) lastCrewHit = Time.time;
@@ -58,11 +72,28 @@ namespace Pirates.Combat
 
         void Update()
         {
+            UpdateFire();
             if (SailDamage <= 0f && CrewDamage <= 0f) return;
             float heal = recoverPerSecond * Time.deltaTime;
             if (SailDamage > 0f && Time.time - lastSailHit > recoverDelay) SailDamage = Mathf.Max(0f, SailDamage - heal);
             if (CrewDamage > 0f && Time.time - lastCrewHit > recoverDelay) CrewDamage = Mathf.Max(0f, CrewDamage - heal);
             ApplyEffects();
+        }
+
+        /// <summary>Fogo a bordo: meio segundo de dano por vez, num ponto sorteado do convés, com as chamas.</summary>
+        void UpdateFire()
+        {
+            if (!Burning || Time.time < nextBurnTick) return;
+            nextBurnTick += 0.5f;
+            Vector3 point = transform.position + Vector3.up * 1.5f;
+            if (hullBox)
+            {
+                var local = hullBox.center + Vector3.Scale(hullBox.size, new Vector3(UnityEngine.Random.Range(-0.35f, 0.35f), 0.4f, UnityEngine.Random.Range(-0.4f, 0.4f)));
+                point = transform.TransformPoint(local);
+            }
+            health.TakeDamage(new DamageInfo { amount = burnPerSecond * 0.5f, point = point, direction = Vector3.up, source = gameObject });
+            if (effects == null) Services.TryGet(out effects);
+            effects?.Burn(point);
         }
 
         void ApplyEffects()

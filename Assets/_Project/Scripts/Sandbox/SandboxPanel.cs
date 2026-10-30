@@ -46,6 +46,7 @@ namespace Pirates.Sandbox
         ShipUpgrades upgrades;
         ShipCrew crew;
         PlayerShipClass shipClass;
+        FishingNet net;
         float originalCapacity;
         GUIStyle small;
         PlayerModeSwitcher modes;
@@ -74,6 +75,7 @@ namespace Pirates.Sandbox
             player.TryGetComponent(out upgrades);
             player.TryGetComponent(out crew);
             player.TryGetComponent(out shipClass);
+            player.TryGetComponent(out net);
             if (hold) originalCapacity = hold.Capacity;
             modes = FindAnyObjectByType<PlayerModeSwitcher>();
             save = FindAnyObjectByType<GameSave>();
@@ -242,6 +244,41 @@ namespace Pirates.Sandbox
                     if (GUILayout.Button(c.displayName)) shipClass.SetClass(c, newShip: true);
                 }
                 GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+
+            if (net)
+            {
+                // Pesca com rede (D2, passo 2): traz um cardume para o navio, dá a rede e enche a que está na água.
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Rede: {net.State} {(net.IsOpen ? $"{net.Caught}/{net.Capacity}" : "")}", small, GUILayout.Width(150f));
+                if (GUILayout.Button("Cardume aqui"))
+                {
+                    var grounds = FindAnyObjectByType<FishingGrounds>();
+                    if (grounds) grounds.MoveNearestTo(player.transform.position);
+                }
+                GUI.enabled = net.NetItem && hold && !net.HasNet;
+                if (GUILayout.Button("Dar a rede")) hold.Add(net.NetItem, 1);
+                GUI.enabled = net.IsOpen;
+                if (GUILayout.Button("Encher")) net.FillNow();
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+            var journal = FishJournal.Current;
+            if (journal)
+            {
+                // Diário do pescador (30/10): anota a próxima espécie que falta (paga prêmios como se tivesse pescado) ou esvazia.
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Diário: {journal.FoundCommon}/{journal.CommonTotal} · lend. {journal.FoundLegends}/{journal.LegendTotal}", small,
+                    GUILayout.Width(150f));
+                if (GUILayout.Button("+1 espécie"))
+                    foreach (var s in journal.AllSpecies)
+                        if (s != null && s.item && journal.Count(s.item) == 0)
+                        {
+                            journal.LogForTest(s.item);
+                            break;
+                        }
+                if (GUILayout.Button("Zerar")) journal.ClearAll();
                 GUILayout.EndHorizontal();
             }
 

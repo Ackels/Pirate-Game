@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaef39c4c3a384e4eace6fa37d2b250f, type: 3}
+  m_Name: Ammo_Incendiaria
+  m_EditorClassIdentifier: Pirates.Combat::Pirates.Combat.AmmoDefinition
+  displayName: "Incendi\xE1ria"
+  damageMultiplier: 0.8
+  spreadMultiplier: 1.1
+  maxRange: 0
+  pellets: 1
+  visualScale: 1
+  chainVisual: 0
+  sailDamagePerHit: 0
+  crewDamagePerHit: 0
+  burnPerSecond: 4
+  burnSeconds: 8

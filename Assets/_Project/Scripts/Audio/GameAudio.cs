@@ -234,6 +234,12 @@ namespace Pirates.Audio
                 effects.Unearthed += (p, rising) => SoundPlayer.At(rising ? sounds.dig : sounds.bodyFall, p, 1.2f, rising ? 0.75f : 1.35f);
                 // Pesca: o "plop" da boia (passo na água, mais grave quanto maior o respingo).
                 effects.Plopped += (p, size) => SoundPlayer.At(sounds.stepWater, p, Mathf.Clamp(0.5f + size * 0.4f, 0.4f, 1.3f), Mathf.Clamp(1.35f - size * 0.25f, 0.8f, 1.4f));
+                // Bomba de fumaça (30/10): um "puf" abafado (a explosão baixa e aguda) com o chiado da queda de um corpo.
+                effects.Smoked += (p, _, _) =>
+                {
+                    SoundPlayer.At(sounds.explosion, p, 0.35f, 1.7f);
+                    SoundPlayer.At(sounds.bodyFall, p, 0.8f, 0.6f);
+                };
             }
             foreach (var visitor in FindObjectsByType<HarborVisitor>(FindObjectsInactive.Include))
             {

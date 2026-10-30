@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_CargaIncendiaria
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: "Carga incendi\xE1ria"
+  category: 0
+  rarity: 1
+  group: 0
+  color: {r: 1, g: 0.5, b: 0.2, a: 1}
+  spacePerUnit: 1
+  description: "Bala enrolada em estopa encharcada no \xF3leo de cavala. Menos dano na hora, mas o navio acertado pega fogo: 4 de casco por segundo por 8 s (um acerto novo recome\xE7a). Uma carga por bordada (tecla 4 no navio)."
+  icon: {fileID: 2800000, guid: 244d33428e32ab147b51f218d4dfc3c5, type: 3}
+  keepAboard: 9999
+  backpackCapacity: 0
+  foodHeal: 0
+  relicEffect: 0
+  relicAmount: 0
+  mealEffect: 0
+  mealAmount: 0
+  mealMinutes: 8
+  equipSlot: 0
+  equipment: {fileID: 0}

@@ -5,6 +5,7 @@ using Pirates.Core;
 using Pirates.Economy;
 using Pirates.LandCombat;
 using Pirates.OnFoot;
+using Pirates.Progression;
 using UnityEngine;
 
 namespace Pirates.Controls
@@ -23,7 +24,7 @@ namespace Pirates.Controls
     /// Fica no capitão (só liga em terra). Não pesca com piratas atrás dele nem com a mochila cheia; perde para qualquer outra
     /// interação do F que esteja disponível ali (baú, bote, alavanca).
     /// </summary>
-    public class FishingRod : MonoBehaviour, IPagedInteraction
+    public class FishingRod : MonoBehaviour, IPagedInteraction, INoWindowInteraction
     {
         public enum Phase { Idle, Casting, Waiting, Bite, Fight, Reeling, Showing }
 
@@ -38,10 +39,27 @@ namespace Pirates.Controls
             [Min(0f)] public float shallow = 1f;
             [Tooltip("Peso × isto com a boia no fundo (água a partir de Deep Depth).")]
             [Min(0f)] public float deep = 1f;
+            [Tooltip("Hora, tempo e regiões em que morde (vazio = sempre, em qualquer água).")]
+            public FishWhen when;
         }
 
         [SerializeField] ItemDefinition rodItem;
+        [Tooltip("Vara de ouro (prêmio do diário do pescador): vale como vara e fisga mais fácil.")]
+        [SerializeField] ItemDefinition goldRodItem;
         [SerializeField] Catch[] catches = Array.Empty<Catch>();
+        [Tooltip("Com a vara de ouro: janela para fisgar × isto e barra da briga × o outro.")]
+        [SerializeField] float goldHookWindow = 1.4f, goldBarSize = 1.2f;
+
+        [Header("Iscas (D2, 30/10): uma gasta a cada lançamento, da mochila")]
+        [Tooltip("Isca de camarão (feita na cozinha da taverna).")]
+        [SerializeField] ItemDefinition shrimpBait;
+        [Tooltip("Isca dourada (encomendas da Iara): só é gasta onde um lendário pode morder agora.")]
+        [SerializeField] ItemDefinition goldenBait;
+        [Tooltip("Peso no sorteio por raridade (comum, incomum, raro, épico, lendário) com cada isca.")]
+        [SerializeField] float[] shrimpWeights = { 0.7f, 1.3f, 2f, 2f, 2f };
+        [SerializeField] float[] goldenWeights = { 0.6f, 1.3f, 2.5f, 2.5f, 4f };
+        [Tooltip("Iscas de cada tipo que o capitão leva do porão ao desembarcar.")]
+        [SerializeField, Min(0)] int baitAshore = 10;
 
         [Header("Visual (montado pelo gerador)")]
         [SerializeField] Transform rod;
@@ -114,7 +132,20 @@ namespace Pirates.Controls
         /// <summary>Tem um lugar de água à frente para lançar (atualizado a cada 0,2 s).</summary>
         public bool SpotAhead { get; private set; }
         /// <summary>O jogador tem a vara (em qualquer lugar: mochila, porão ou armazém).</summary>
-        public bool HasRod => rodItem && PlayerStorage.Count(rodItem) > 0;
+        public bool HasRod => (rodItem && PlayerStorage.Count(rodItem) > 0) || GoldRod;
+        /// <summary>O jogador tem a vara de ouro (prêmio do diário).</summary>
+        public bool GoldRod => goldRodItem && PlayerStorage.Count(goldRodItem) > 0;
+        /// <summary>A isca na linha agora (null = sem isca).</summary>
+        public ItemDefinition Bait { get; private set; }
+        /// <summary>A isca que o próximo lançamento vai gastar aqui (null = nenhuma na mochila).</summary>
+        public ItemDefinition NextBait { get; private set; }
+        public int BaitCount(ItemDefinition bait) => bait && backpack ? backpack.Count(bait) : 0;
+        public ItemDefinition ShrimpBait => shrimpBait;
+        public ItemDefinition GoldenBait => goldenBait;
+        /// <summary>Iscas que passaram do porão para a mochila ao desembarcar.</summary>
+        public static event Action<FishingRod, ItemDefinition, int> BaitPacked;
+        /// <summary>O último peixe que veio (tamanho, espécie nova, recorde), para o aviso.</summary>
+        public FishJournal.Result LastCatch { get; private set; }
         /// <summary>Por que não dá para pescar aqui agora (vazio = dá ou não há água à frente).</summary>
         public string BlockReason { get; private set; } = "";
         /// <summary>O peixe que está na linha (mordendo, vindo ou mostrado).</summary>
@@ -152,16 +183,23 @@ namespace Pirates.Controls
         /// <summary>Não veio nada: o motivo (para o aviso).</summary>
         public static event Action<FishingRod, string> Missed;
 
-        public void Configure(ItemDefinition rodDefinition, Catch[] table, Transform rodVisual, Transform rodTip, Transform bobberVisual,
-            LineRenderer fishingLine, Transform show)
+        public void Configure(ItemDefinition rodDefinition, ItemDefinition goldRodDefinition, Catch[] table, Transform rodVisual, Transform rodTip,
+            Transform bobberVisual, LineRenderer fishingLine, Transform show)
         {
             rodItem = rodDefinition;
+            goldRodItem = goldRodDefinition;
             catches = table;
             rod = rodVisual;
             tip = rodTip;
             bobber = bobberVisual;
             line = fishingLine;
             showPoint = show;
+        }
+
+        public void ConfigureBaits(ItemDefinition shrimp, ItemDefinition golden)
+        {
+            shrimpBait = shrimp;
+            goldenBait = golden;
         }
 
         void Awake()
@@ -189,6 +227,38 @@ namespace Pirates.Controls
         void OnEnable()
         {
             if (health) health.Damaged += OnDamaged;
+            PackBaits();
+        }
+
+        /// <summary>
+        /// Desembarcou (o capitão só liga em terra): leva iscas do porão para a mochila, até <see cref="baitAshore"/> de cada (como a ração).
+        /// Ao embarcar a mochila descarrega tudo no porão de volta.
+        /// </summary>
+        void PackBaits()
+        {
+            if (!backpack || baitAshore <= 0) return;
+            var switcher = FindAnyObjectByType<PlayerModeSwitcher>();
+            if (!switcher || !switcher.Ship || !switcher.Ship.TryGetComponent(out Inventory hold)) return;
+            foreach (var bait in new[] { shrimpBait, goldenBait })
+            {
+                if (!bait) continue;
+                int want = Mathf.Min(baitAshore - backpack.Count(bait), Mathf.Min(hold.Count(bait), backpack.MaxFit(bait)));
+                if (want <= 0) continue;
+                int moved = backpack.Add(bait, hold.Remove(bait, want));
+                if (moved > 0) BaitPacked?.Invoke(this, bait, moved);
+            }
+        }
+
+        /// <summary>
+        /// Isca do próximo lançamento: a dourada só onde um lendário pode morder agora (para não gastar à toa), senão a de camarão, se houver.
+        /// </summary>
+        ItemDefinition PickBait()
+        {
+            if (!backpack) return null;
+            if (goldenBait && backpack.Count(goldenBait) > 0)
+                foreach (var c in catches)
+                    if (c != null && c.item && c.when.once && FishJournal.Allows(c.when, c.item, target)) return goldenBait;
+            return shrimpBait && backpack.Count(shrimpBait) > 0 ? shrimpBait : null;
         }
 
         void OnDisable()
@@ -311,6 +381,7 @@ namespace Pirates.Controls
         {
             SpotAhead = false;
             BlockReason = "";
+            NextBait = null;
             if (ocean == null || !footCharacter || !footCharacter.IsGrounded || footCharacter.InDeepWater) return;
             Vector3 me = transform.position;
             // Os pés na água funda ou longe dela: só na beira (o raso da praia vale).
@@ -328,6 +399,7 @@ namespace Pirates.Controls
                 break;
             }
             if (!SpotAhead) return;
+            NextBait = PickBait();
             if (!HasRod) BlockReason = "sem vara de pesca (compre no mercado)";
             else if (backpack && backpack.FreeSpace < minFreeSpace) BlockReason = "mochila cheia";
             else if (EnemiesNear()) BlockReason = "piratas por perto";
@@ -406,6 +478,9 @@ namespace Pirates.Controls
             State = Phase.Waiting;
             castFrom = tip ? tip.position : transform.position + Vector3.up * 2f;
             castAt = Time.time;
+            // A isca vai na linha (gasta mesmo se o peixe escapar).
+            Bait = PickBait();
+            if (Bait) backpack.Remove(Bait, 1);
             phaseUntil = Time.time + UnityEngine.Random.Range(waitRange.x, waitRange.y);
             nextNibble = Time.time + flightSeconds + UnityEngine.Random.Range(1f, 2f);
             if (bobber) bobber.gameObject.SetActive(true);
@@ -423,12 +498,15 @@ namespace Pirates.Controls
             }
             State = Phase.Bite;
             int r = Mathf.Clamp((int)hooked.item.rarity, 0, hookWindow.Length - 1);
-            biteUntil = Time.time + hookWindow[r];
+            biteUntil = Time.time + hookWindow[r] * (GoldRod ? goldHookWindow : 1f);
             Plop(1.2f);
             Bitten?.Invoke(this);
         }
 
-        /// <summary>Sorteio pelo peso de cada peixe, mudado pela fundura da água onde a boia caiu.</summary>
+        /// <summary>
+        /// Sorteio pelo peso de cada peixe, mudado pela fundura da água onde a boia caiu; só entram os que mordem ali agora (região, hora,
+        /// tempo; lendário já pescado não).
+        /// </summary>
         Catch Pick()
         {
             float deepness = Mathf.InverseLerp(shallowDepth, deepDepth, targetDepth);
@@ -440,21 +518,29 @@ namespace Pirates.Controls
             foreach (var c in catches)
             {
                 if (c == null || !c.item) continue;
-                roll -= Weight(c, deepness);
+                float w = Weight(c, deepness);
+                if (w <= 0f) continue;
+                roll -= w;
                 if (roll <= 0f) return c;
             }
             return null;
         }
 
-        static float Weight(Catch c, float deepness) =>
-            c.weight * (deepness <= 0f ? c.shallow : deepness >= 1f ? c.deep : Mathf.Lerp(c.shallow, c.deep, deepness));
+        float Weight(Catch c, float deepness)
+        {
+            if (!FishJournal.Allows(c.when, c.item, target)) return 0f;
+            float bait = 1f;
+            var table = Bait == null ? null : Bait == goldenBait ? goldenWeights : Bait == shrimpBait ? shrimpWeights : null;
+            if (table != null && table.Length > 0) bait = table[Mathf.Clamp((int)c.item.rarity, 0, table.Length - 1)];
+            return bait * c.weight * (deepness <= 0f ? c.shallow : deepness >= 1f ? c.deep : Mathf.Lerp(c.shallow, c.deep, deepness));
+        }
 
         /// <summary>Fisgou: começa a briga, com a barra centrada no peixe.</summary>
         void Hook()
         {
             State = Phase.Fight;
             int r = Rarity;
-            FightBarSize = barSize[Mathf.Min(r, barSize.Length - 1)];
+            FightBarSize = Mathf.Min(0.6f, barSize[Mathf.Min(r, barSize.Length - 1)] * (GoldRod ? goldBarSize : 1f));
             FightFish = UnityEngine.Random.Range(0.25f, 0.45f);
             fishTarget = FightFish;
             fishVelocity = 0f;
@@ -549,7 +635,11 @@ namespace Pirates.Controls
             showFrom = hooked.model ? hooked.model.transform.position : transform.position;
             var item = hooked.item;
             int added = backpack ? backpack.Add(item, 1) : 0;
-            if (added > 0) Caught?.Invoke(this, item);
+            if (added > 0)
+            {
+                LastCatch = FishJournal.Current ? FishJournal.Current.Log(item) : default;
+                Caught?.Invoke(this, item);
+            }
             else Missed?.Invoke(this, "mochila cheia: o peixe escorregou de volta para a água");
         }
 
@@ -574,6 +664,7 @@ namespace Pirates.Controls
         void End()
         {
             State = Phase.Idle;
+            Bait = null;
             if (hooked?.model) hooked.model.SetActive(false);
             hooked = null;
             reelingFish = false;

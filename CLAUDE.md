@@ -280,6 +280,88 @@ lançar por cima da cabeça, esperar, brigar aos trancos e o puxão para cima. C
 **Painel no estilo pirata (27/10, pedido do Jhonata):** cartão de madeira escura do HUD com a plaquinha "Fisgado!" em dourado, vara de bambu com
 carretilha de latão ao lado (a manivela gira, rápido segurando), água desenhada em faixas com ondinhas, bolhas, algas e areia, borda de corda,
 barra com cordas em cima e embaixo e medidor de latão com rebites | ⏳ **aguardando revisão** |
+| D2 Pesca, passo 2: rede do navio parado, nos cardumes (30/10, cena 07; pedido do Jhonata: pescar "em lugares que estão com bolhas, onde
+você para o barco"): **cardumes** no mar aberto (5 ao mesmo tempo, em 18 pontos longe das ilhas e dos covis dos monstros): bolhas subindo,
+anéis abrindo na água e **peixes pulando** em arco para fora d'água (cavala, arenque e atum do jogo, maiores que de verdade, com respingo na
+saída e na volta; pedido "além das bolhas, uns peixes pulando"), "Cardume" escrito em cima de perto; cada um tem 8–14 peixes: vazio, as
+bolhas param e ele aparece noutro ponto, longe do navio (o velho também muda de lugar depois de 7–12 min, fora da vista). **Rede de pesca** no
+mercado (150 de ouro, uma vez). Com o navio quase parado (≤ 1,5 nós) **dentro das bolhas**, 2+ tripulantes, espaço no porão e nenhum navio
+inimigo lutando a até 220 m, **F lança** a rede pelo estibordo: ela desce da amurada, fica com as boias de cortiça na linha d'água, e dois
+marujos vão à amurada puxar o cabo; um peixe cai nela a cada 5–9 s (respingo), tirado do cardume, até encher (4 + até 4 pela tripulação
+cheia); 8% das vezes vem madeira boiando (1–2) ou, raro, um pedaço de mapa. **F (ou Esc) puxa**: a rede sobe com a malha em losango e os
+peixes dentro e tudo vai para o porão (o que não cabe volta ao mar, com aviso); acelerar (> 3 nós), levar tiro ou o cardume sumir puxa na
+hora. Avisos: "Entre nas bolhas do cardume para lançar a rede", "[F] Lançar a rede", o porquê de não dar, "[F] Puxar a rede (3 / 8)" e os
+ganhos. A roda do mouse continua no zoom com a rede na água. F1 → Navio: Cardume aqui, Dar a rede, Encher | ✅ aprovado (30/10, "achei legal"; pediu mais peixes e mais usos para eles) |
+| D2 Pesca, passo 3: peixes por lugar, hora e clima + diário do pescador (30/10, cenas 06 e 07; pedido do Jhonata: "mais tipos de peixes e
+dar mais propósitos"; plano de 4 passos aprovado: 1 isto, 2 cozinha com bônus, 3 encomendas da Iara e iscas, 4 veneno/fumaça/munição
+incendiária e relíquias): **14 pescados novos** (25 no total): **pepino-do-mar, ouriço e concha** no raso das praias; **garoupa** (Ilha Norte
+e Caveira) e **pargo vermelho** (Porto Alento e Ilha Oeste) presos a lugar; **lula** e **peixe-lanterna** (brilha azul) **só à noite**;
+**peixe-espada** (atum esticado) **só na tempestade**; **enguia negra** na Ermida e, na rede, nas Águas Negras; e **um lendário por ilha**, um só
+cada (some do sorteio depois de pescado, briga de lendário): **Rei de Prata** (porto, fundo), **Velha Bocuda** (Ilha Norte, fundo), **Dama
+Rubra** (Ilha Oeste), **Peixe-Fantasma** (Caveira, à noite) e **Serpente da Ermida** (Ermida, na chuva), ~2–3% das mordidas no lugar e na
+hora certos, vendem 240–320. A rede segue as mesmas regras pela região do navio (sem lendários). Cada peixe sai com um **tamanho sorteado**
+(cavala 25–45 cm, atum 0,8–1,8 m, Serpente 2,5–4 m...): o aviso mostra "Pescou: Atum · 1,08 m · espécie nova no diário!". **Diário do
+pescador** = aba **Pesca** da tela do capitão (tecla **P**): espécies e lendários achados, os 3 prêmios e uma ficha por espécie (ícone,
+quantos, recorde; a que falta fica em sombra "???" com a dica de onde e quando). Espécie nova +3 de fama (lendário +20). **Prêmios** (chegam
+no porão): **10 espécies = Vara de ouro** (épica: fisga com 40% mais tempo, barra da briga 20% maior; vale no lugar da vara), **as 20
+espécies = Rede reforçada** (épica: a rede segura +4), **os 5 lendários = 600 de ouro + 150 de fama**. Save guarda o diário (save antigo =
+vazio). F1 → Navio: "+1 espécie" e "Zerar" o diário | ✅ aprovado (30/10) |
+| D2 Pesca, passo 4: cozinha da taverna (30/10, cena 07; passo 2 do plano dos peixes): aba **Cozinha** na taverna (ao lado de "Contratos e
+marinheiros"; na 05, aba da janela do porto) com 5 pratos feitos **na hora** com peixe do porão e do armazém + 5 de ouro (a garoupa 8),
+que vão para o porão; **come-se pela tela I** (botão "Comer" no prato escolhido; no navio pelo porão, a pé pela mochila) e cada um dá um
+**bônus por alguns minutos de jogo**: **Caldeirada de cavala** (2 cavala + 1 camarão) +25 de fôlego máximo a pé, 10 min; **Atum grelhado**
+(1 atum) canhões recarregam 10% mais rápido, 8 min; **Ensopado de polvo** (1 polvo + 1 pepino-do-mar) casco se conserta sozinho, 1,0/s
+(60 por minuto; era 0,5, ajuste do chat de otimização em 30/10), 8 min; **Sopa de siba** (1 siba; eram 2, mesmo ajuste) piratas de terra com a vista 35% menor, 10 min; **Garoupa assada** (1 garoupa + 1 pargo)
+golpes de lâmina a pé +15%, 8 min. Um prato de cada tipo vale ao mesmo tempo (comer outro do mesmo tipo recomeça o tempo). Plaquinha
+"Pratos" embaixo do relógio com o que está valendo e quanto falta; avisos ao comer e quando acaba. Não é salvo (carregar começa sem
+prato). O R (ração/peixe) não come prato. Ícones refeitos com o Food Kit do Kenney | ✅ aprovado (30/10) |
+| D2 Pesca, passo 5: encomendas da Iara e iscas (30/10, cena 07; passo 3 do plano dos peixes): a **Iara** (pescadora, no cais dos botes)
+ganhou **8 encomendas de peixe** repetíveis, uma por vez, entregues a ela (conta porão, armazém **e a mochila**): ceia dos pescadores (6
+cavala + 4 arenque: 70 ouro + 4 iscas de camarão), tinta para as cartas (3 siba: 60 + 4 iscas), remédio do boticário (2 baiacu + 2 ouriço:
+80), festa do santo (2 garoupa + 2 pargo: 150 + 6 iscas), lula ao luar (3 lula: 100 + **isca dourada**), enguia defumada (2 enguia: 130 +
+dourada), peixe da tempestade (1 peixe-espada: 120 + dourada) e pérola para o noivado (1 pérola: 220 + dourada); fama 5–15, descanso de
+10 a 30 min. "Agora não" faz ela oferecer **outra** na próxima conversa (também vale para os outros NPCs). **Iscas** para a vara, uma
+gasta a cada lançamento (mesmo se o peixe escapar): **de camarão** (2 camarões = 4 iscas na cozinha da taverna, ou das encomendas;
+comuns ×0,7, incomuns ×1,3, raros e lendários ×2) e **dourada** (só das encomendas difíceis; raros ×2,5, lendários ×4; **só é gasta onde um
+lendário pode morder agora**, senão vai a de camarão). O capitão leva até 10 de cada do porão ao desembarcar; o aviso mostra "Pescar (com
+isca dourada: 2 na mochila)". Medido no fundo do porto: sem isca comuns 50%, raros 10%, Rei de Prata 2,5%; camarão 32/17/5%; dourada
+26/21/10,5% | ✅ aprovado (30/10) |
+| D2 Pesca, passo 6 (4a do plano dos peixes): veneno e fumaça (30/10, cenas 06 e 07; o passo 4 foi dividido: 4b = munição incendiária e
+relíquias): na **Forja** (nível 1), **Veneno de baiacu** (2 baiacus = 2 frascos, 40 s) e **Bomba de fumaça** (2 sibas + 1 pólvora = 2, 50 s).
+**Veneno:** tela I → **Usar** (no navio ou a pé): por 2 min, cada golpe de lâmina do capitão que acerta (não na guarda) **envenena** o
+alvo: 4 de dano por segundo por 5 s (o golpe seguinte recomeça o tempo, não soma), com bolhas verdes, sem tranco nem reação (o pirata
+continua lutando). **Fumaça:** a pé, **B** estoura no pé uma nuvem escura de 6 m por 8 s: **ninguém vê quem está dentro** (nem o
+acampamento provocado sabe onde você está) e os piratas pegos nela ficam **cegos 4 s** (não atacam, andam devagar, esquecem você e voltam
+ao posto); boa para fugir ou chegar pelas costas (adaga ×2). O capitão leva 3 do porão ao desembarcar; encaixe **B** na barra a pé; a
+plaquinha virou "Pratos e preparos" (mostra o veneno valendo). Ajuda do H e aviso "Fumaça!" | ✅ aprovado (30/10) |
+| D2 Pesca, passo 7 (4b do plano dos peixes): munição incendiária e relíquias (30/10, cenas 05 a 07): na **Forja** (nível 1), **Carga
+incendiária** (4 cavalas + 2 pólvora = 6 cargas, 90 s): **tecla 4** no navio (encaixe novo na artilharia), 80% do dano, e o navio
+acertado **pega fogo**: 4 de casco por segundo por 8 s (um acerto novo recomeça, não soma), com chamas e fumaça no convés; com 8/s por
+10 s uma bordada quase afundava uma chalupa sozinha. **Relíquias** no encaixe **Relíquia** da tela I (era "em breve"), feitas na Forja, uma
+de cada: **Colar de pérolas** (épico, 3 pérolas + 50 ouro, 120 s): **+15% de ouro** nas missões (fora as entregas) e no saque (baús,
+destroços, caixotes); **Cavalo-marinho seco** (raro, 3 cavalos-marinhos, 60 s): **+50% de chance** de baú nos destroços e de equipamento
+nos baús. Uma relíquia por vez (Equipar/Tirar no quadro do item); a Forja não faz a segunda se você já tem. Medido: missão do Tormenta
+540 → 621 com o colar, ouro médio do paiol do forte 200 → 230, chance de baú 60% → 90% com o cavalo-marinho | ✅ aprovado (30/10) |
+| D3 Marujos lutando junto a pé (30/10, cenas 06 e 07; plano de 16/10): ao desembarcar numa **ilha** (no píer da vila, não), **dois marujos**
+da tripulação descem com o capitão (um por tripulante a bordo, no máximo 2; roupa dos marujos do convés, cutelo dos piratas, 90 de vida) e
+o **seguem** um pouco atrás, um de cada lado (correm para alcançar; muito longe, aparecem perto dele). Com pirata **em alerta** a até 16 m
+(e o capitão a até 25 m), vão até ele e **golpeiam**; os **piratas também brigam com eles**: na briga, cada pirata vai para quem estiver
+mais perto, o capitão ou um marujo (o atirador atira no marujo). Marujo **derrubado** fica caído e **levanta com metade da vida** quando
+a briga acaba (4 s sem pirata em alerta a 15 m; no máximo 25 s): a tripulação não perde ninguém. Ao embarcar, voltam para o navio. Avisos:
+"2 marujos desceram com você", "Marujo caído!", "Marujo de pé de novo"; barra de vida sobre a cabeça. Testado no posto do naufrágio: os
+dois mataram os dois guardas de cutelo em ~5 s, o atirador passou a atirar no marujo 0 (90 → 54) e fugiu recuando; caído, levantou com 45 |
+✅ aprovado (30/10, "gostei bastante"; pediu a roda de comando) |
+| D3 Roda de comando dos marujos (30/10, cenas 06 e 07; pedido do Jhonata ao aprovar o D3): a pé, com marujos em terra, **segurar T** abre
+uma roda de 6 fatias em volta do cursor (madeira escura com aro dourado; o jogo fica em **câmera lenta** ×0,3); o mouse escolhe e **soltar T**
+dá a ordem aos dois (no meio, sem ordem): **Seguir** (o jeito do D3), **Ficar aqui** (param onde estão e só lutam com pirata a até 9 m do
+lugar), **Ir até lá** (anel dourado no chão segue o cursor, clique confirma; vão lado a lado e esperam lá como no "ficar"), **Atacar alvo**
+(anel vermelho no pirata mais perto do cursor, clique confirma; os dois vão nele mesmo calmo, o que provoca o acampamento, e quando ele cai
+voltam à ordem de antes), **Proteger** (colados no capitão, só batem em quem chega a 6 m dele) e **Não lutar** (seguem sem atacar; só se
+defendem de quem bate neles). Apontando: botão direito, Esc ou T cancelam; plaquinha no alto diz o que fazer. No meio da roda a ordem
+escolhida e a que vale agora, embaixo a explicação; aviso "Marujos, fiquem aqui!" ao dar a ordem; sem marujos (ou caídos), aviso. Ao descer
+de novo, voltam a seguir. Ajuda do H. Testado no posto do naufrágio: ficar (capitão andou 27 m, eles ficaram), ir até lá (chegaram a 0,4 m
+do lugar), atacar o atirador calmo a 16 m (os dois foram, mataram, voltaram a seguir e lutaram com os guardas), proteger (a 1,1–1,3 m) e
+não lutar (o que estava sendo atacado se defendeu, o outro não) | ✅ aprovado (30/10) |
 | Esqueletos e mão de apoio (27/10, cenas 06 e 07; pedido do Jhonata: "pode começar pelos esqueletos e o IK", pacotes do Kevin Iglesias): **esqueletos
 amaldiçoados** com as animações do *Skeleton Animations*: parados e na pose de luta corcundas com o cutelo baixo, **golpe próprio** (preparo com o
 cutelo para trás e corte para a frente; o 2º do combo mais curto), tranco ao levar golpe e **desabam** ao morrer; o andar e a corrida continuam os
@@ -2091,6 +2173,120 @@ a troca começa por navios e objetos (o navio grande do pacote vira o brigue ini
   **Build pelo terminal do Claude:** o `.exe` aberto pelo shell grava no `AppData/LocalLow` virtual do sandbox: leia o `Player.log`
   pelo shell (`$USERPROFILE/AppData/LocalLow/...`), não pelo eval do Unity; o save real não é tocado. Feche com `CloseMainWindow`
   (matando à força o log fica cortado). O erro que o relatório do build conta é o tempo esgotado da CLI, não do jogo.
+  **Rede e cardumes (D2, passo 2, 30/10):** `Progression/FishingNet` no navio (`IInteraction` + `Core/INoWindowInteraction`, a marca nova
+  que a câmera usa para não travar o zoom: pesca com vara, corte/mineração e a rede; última na ordem do F; fases Idle → Lowering → Soaking →
+  Hauling; mede o `BoxCollider` do casco a cada lançamento, então vale para as 3 classes; `Catch` com `extra` = achado; `FillNow` para testes;
+  eventos estáticos `Cast`/`NetFilled`/`Hauled`), `Progression/FishingSpot` (estoque, efeitos só com a câmera a < 170 m, saltos dos peixes
+  por código: arco, nariz para onde vai, `CombatEffects.Plop` na saída e na volta; `InUse` segura o lugar) e `Progression/FishingGrounds`
+  (objeto "Cardumes": liga/realoca; `MoveNearestTo` para o F1 e testes; nada é salvo). `DeckCrew.WorkNet(lado)`/`StopNet`: tarefa `Net` nos
+  lugares dos canhões do meio daquele bordo, puxando o cabo. `UI/FishingNetHUD` (aviso, "Cardume", ganhos). Gerador
+  `PrototypeSceneBuilder.FishingNet.cs` (`AddFishingNet` + `AddFishingGrounds` no fim do `AddWorld`, depois da Ermida: os pontos saem de uma
+  grade de 40 m sem nada sólido a 85 m (`Physics.CheckSphere`), a 260 m dos covis e do Tormenta, até 820 m do centro, 170 m entre si; malha
+  `Meshes/Rede_Pesca` + `M_Rede` com a textura `Textures/Rede_Malha.png` feita aqui, recorte por alfa, dos dois lados; ícone `Item_RedePesca`).
+  Bolhas 0,9–1,8 m e anéis 4,5–8 m (com 0,4 e 2 m não apareciam da câmera alta: a textura tem muita borda). **Para o chat de otimização:**
+  ouro da rede (~8 peixes de água funda a cada ~50–70 s, limitado pela procura do mercado e pelo estoque dos cardumes) e o custo dos efeitos.
+  **Testar:** `net.cs` + `net.txt` (`setup x z` = continua, dá a rede, põe o navio parado num ponto e traz um cardume; `open`, `wait N`,
+  `fill`, `close`, `haul`, `crew`, `state`, `unpause`), `netshot.cs` + `netshot.txt` (foto com câmera no espaço do navio), `jumpshot.cs` (força
+  um salto e fotografa), `shipaway.cs`, `spots.cs`, `haulspeed.cs` + `hs.txt` (prep/sail/go); poucos `Step()` por chamada (5 s do eval).
+  **Peixes novos e diário do pescador (D2, passo 3, 30/10):** `Progression/FishJournal` (objeto "DiarioDoPescador", `Current`,
+  `Core/IFishJournal` para o save: `fishIds`/`fishCounts`/`fishBest`/`fishPrizes`): `Species` (item, tamanho mín./máx. em m, dica,
+  lendário), `Region` (id, nome, círculo no chão), `Log(item)` (sorteia o tamanho com `pow(rand, 1,6)`, anota, fama, prêmios; evento
+  `Logged`, `PrizeWon`), `RegionAt`, `Allows(FishWhen, item, ponto)` (hora pelo `ITimeOfDay.Night` ≥ 0,5, chuva/tempestade pelo `IWeather`
+  ≥ 0,5, região, `once` = lendário já pescado não). `FishWhen` (Progression) entra no `FishingRod.Catch.when` e no `FishingNet.Catch.when`
+  (peso 0 quando não vale). Vara de ouro: `FishingRod.goldRodItem` (`HasRod` aceita ela; `goldHookWindow` 1,4, `goldBarSize` 1,2); rede
+  reforçada: `FishingNet.strongNetItem` (+`strongNetBonus` 4). UI: `UI/FishJournalHUD` (aba `CaptainBook.Tab.Fishing`, `GameInput.FishLog` = P,
+  estilos `.hud-fishlog*`). Gerador: `FishSpecs` ganhou `tint`/`glow`/`plain` (cópias em `Materials/Peixes/M_Peixe_<nome>_<material>`, refeitas a
+  cada geração: `plain` tira a textura, usado no Rei de Prata, enguia, Serpente e Fantasma: a cobra do Quirky é marrom-avermelhada e o
+  atum tingido continuava azul e amarelo), `stretch` (estica o lado mais comprido medido no espaço do modelo), `length`, `where`, `legendary`,
+  `when` (`When(...)`; regiões `RegionPort/Skull/North/West/Ermida/Dark`); `AddFishJournal(porão)` no fim do mundo (World.cs, depois dos
+  cardumes) e da 06 (Landing.cs): regiões pelos objetos "Ilha_Sul" (120 m), "IlhaGrande" (200), "Ilha_Norte"/"Ilha_Oeste" (160),
+  "Ilha_Ermida" (120) e as Águas Negras (420 m em volta do `SquidLair`, se a lula existe). Peixe sem cura entra no grupo Comida (menos a
+  pérola). Medido (2000 mordidas): porto de dia no fundo pargo 12%, Rei de Prata 2,6%; Ilha Norte garoupa 11%, Velha Bocuda 2,8%; Caveira
+  à noite lula 12%, lanterna 5%, Fantasma 2,8%; Ermida na tempestade à noite espada 8%, enguia 5,5%, Serpente 2%. **Testar:** `fj.sh` no
+  scratchpad (`setup`, `cond hora clear|rain|storm passos`, `dist x z fundura n`, `netdist x z n`, `foot`, `cast <Nome>` = pescaria inteira com
+  o peixe escolhido, `log <Nome>`, `logn N`, `loglegend`, `book`, `save`/`clear`/`continue`). **Para o chat de otimização:** os
+  lendários (240–320 de ouro, uma vez cada) e as espécies novas no ouro/hora da pesca; fama do diário (máx. 3 × 20 + 20 × 5 + 150 = 310).
+  **Cozinha da taverna (D2, passo 4, 30/10):** `Core/IMealBuffs` + enum `MealEffect` (Stamina, Reload, HullRegen, Stealth, Damage);
+  `ItemDefinition.mealEffect/mealAmount/mealMinutes`; `HarborSettings.kitchen` (receitas, mesmo `Recipe` do ferreiro, sem obra nem tempo)
+  e `HarborVisitor.CookBlockReason/MaxCook/Cook` (evento `Cooked`); `Controls/Meals` (objeto "Refeicoes", `Current`, registra `IMealBuffs`):
+  `Eat(prato, inventário)`, `Amount/Remaining/Dish`, `Describe`, eventos `Eaten`/`Expired`; aplica a cada quadro só o que mudou: 
+  `CannonBattery.ReloadMultiplier` de todas as baterias do navio (inclusive as dos outros cascos, procuradas a cada 1 s; no jogador ninguém
+  mais mexe nisso, o `ShipDebuffs` é só dos inimigos; **passa por cima do limite de 2,5 s de recarga** enquanto dura), `Health.Heal` do
+  casco, `CharacterCombat.DamageMultiplier` do capitão (só golpe de lâmina; tiro não usa), `Stamina.BonusMax` (novo; `Max` = max + bônus).
+  Furtividade: `EnemyFootAI.CanSee` × (1 − `IMealBuffs.Amount(Stealth)`). UI: `HarborWindow.AddKitchen` (sub-abas na taverna: `tab`
+  entra na chave da casa), `EquipmentHUD.AddEat`, `UI/MealHUD` (`.hud-meals`). Gerador `PrototypeSceneBuilder.Kitchen.cs` (`DishSpecs`,
+  `DishItem` refeito a cada geração, `AddKitchenRecipes` no Supplies.cs, só as que faltam; `AddMeals(navio, capitão)` na 06 e na 07;
+  ícones `UI/Icones/Prato_*.png`: tigela com caldo ou prato de madeira com o peixe; o peixe do ícone usa material próprio
+  `M_Peixe_Prato_*`, para não sujar o do peixe). **Ícones refeitos com o Food Kit do Kenney** (30/10, pedido do Jhonata: os de prisma não
+  agradaram; CC0, 200 FBX em `ThirdParty/Kenney_FoodKit/Models`, `Kit.Food`, paleta `M_KenneyFood`; original em `_Downloads/kenney_food-kit`):
+  `FoodPiece` (largura e apoio pela caixa; `roll` 90 deita o peixe do Kenney, que vem em pé), caldeirada = `pot-stew`, atum = `plate` + `fish`
+  grelhado + `lemon-half`, polvo = `pan-stew` + o polvo do jogo, siba = `bowl-soup` + a siba, garoupa = `cutting-board` + `fish` assado + limão. Testado na 07: os 5 cozinhados (28 de ouro), comidos: recarga ×0,90, fôlego 125, dano
+  ×1,15, furtivo 0,35, casco +10 em 20 s; fim = tudo volta. **Testar:** `ck.sh` no scratchpad (`setup` atraca e põe peixe no porão, `cook`,
+  `eat`, `hurt`, `bonus`, `clear`, `tab Kitchen` com a taverna aberta pelo `house.cs`); `ashore_port.cs` desce no píer. **Para o chat de
+  otimização:** peso dos bônus (recarga −10% por cima do teto; casco 0,5/s; furtividade −35%) e o preço (5 ouro + peixe que valeria 2–10).
+  **Save trocado no meio (30/10, 10:45):** o Jhonata jogou entre os passos 3 e 4 e o save andou (bed675a9, Jhoww, fama 263): o backup do
+  teste da cozinha é `savebak_cook` (não o `savebak_fish`, que é de antes).
+  **Encomendas da Iara e iscas (D2, passo 5, 30/10):** gerador `PrototypeSceneBuilder.FishOrders.cs` (`OrderSpecs` = contratos `Deliver`
+  `Missao_Encomenda_*`, ids `encomenda_*`, na lista do `LoadMissions` (World.cs); `NpcSpec.more` = mais contratos de um NPC, a Iara recebe
+  as 8 depois da lula e do megalodonte; falas escritas só na 1ª vez, como as outras de NPC: **mudou a fala na tabela, mude o asset**),
+  `ShrimpBaitItem`/`GoldenBaitItem` (`Item_Isca_*`, grupo Comida), `AddBaitRecipe` (cozinha, depois dos pratos), `BakeBaitIcons`.
+  `MissionBoard.Stock` agora pelo `PlayerStorage` (porão + mochila + armazém) e a entrega tira do armazém, do porão e depois da mochila
+  (`PlayerStorage.Take`); `MissionGiver.LastDeclined` (`NpcTalker`: recusada = pulada na próxima oferta; aceitar limpa). `FishingRod`:
+  `ConfigureBaits`, `shrimpWeights`/`goldenWeights` por raridade, `Bait` (a da linha), `NextBait` (no `Scan`), `PickBait` (dourada só com
+  um `when.once` permitido no alvo), gasta no `BeginWaiting`, `PackBaits` no `OnEnable` (desembarcar; evento `BaitPacked`), as iscas são
+  suprimento (`CaptainSupplies.IsSupply`: "Guardar o saque" não leva). **Testar:** `ia.sh` no scratchpad (`setup` atraca e desce, `go` vai
+  até a Iara, `talk`, `decline`, `accept`, `give <item> n` na mochila, `turnin`, `baits` (porão → embarca → desembarca), `dist x z fundura n
+  none|shrimp|gold`, `cast`). Backup do teste: `savebak_iara` (save do Jhonata de 30/10 11:16, d8163ad1). **Para o chat de otimização:** ouro
+  das encomendas (~70–220 por entrega, 10–30 min de descanso) e as iscas no ouro/hora da pesca.
+  **Veneno e fumaça (D2, passo 6, 30/10):** `MealEffect.Poison`/`Smoke` (o mesmo `Meals` dos pratos: `IsTool` = "Usar"); `Meals.OnStruck`
+  (ouve `CharacterCombat.Struck`: atacante = o capitão, sem `Ranged`/`Blocked`) → `Combat/PoisonDot.Apply(health, dps, 5 s)` (componente
+  posto no alvo e reaproveitado; pingo por segundo com `DamageInfo.blocked` + `poison`, novo: sem reação nem `ImpactFeel`; `until` + 0,1 s
+  para dar os 5 pingos). `CombatEffects.Smoke`/`Poison` (eventos `Smoked`/`Poisoned` → `GameVfx.OnSmoked`/`OnPoisoned`; som do "puf" no
+  `GameAudio`). `Controls/SmokeBomb` no capitão (`GameInput.Smoke` = B; `TryUse`, `carryAshore` 3, eventos `Used`/`Refused`/`Packed`) →
+  `EnemyFootAI.AddSmoke(centro, raio, s, cego)` (lista estática de nuvens; `InSmoke(ponto)`; `Blind(s)`: `blindUntil`, `Interrupt`, 35% de
+  velocidade, `lastSeen` zerado, larga a vez de atacar); `CanSee` falso cego ou com o alvo na fumaça, e o "provocado" não sabe onde ele
+  está nesse caso. Gerador `PrototypeSceneBuilder.Preparations.cs` (itens `Item_Veneno_Baiacu`/`Item_Bomba_Fumaca` grupo Munição, receitas
+  no fim da Forja, `AddSmokeBomb` no Food.cs depois do `AddBombThrower`, ícones: o frasco verde é a `bottle-oil` do Food Kit). Nuvem: 40
+  partículas do sistema "Fumaca" do `GameVfx` (alfa 0,7; a primeira, 46 com 0,92, escondia o capitão). Testado na 07: boneco 100 → 75
+  (golpe) → 55 em 5 s; posto do naufrágio: os dois dentro dos 6 m cegos e voltando ao posto, o de 7,3 m continua. **Testar:** `p4.sh` no
+  scratchpad (`setup` desce no porto com 2 venenos e 3 fumaças, `poison` usa e golpeia o boneco, `tick N`, `outpost` vai ao posto do
+  naufrágio e acorda, `smoke`, `watch N`, `away N`). Backup do teste: `savebak_p4a` (save do Jhonata de 30/10 12:16, 7b6ba59b).
+  **Incendiária e relíquias (D2, passo 7, 30/10):** `AmmoDefinition.burnPerSecond/burnSeconds` → `CannonballSystem.Fire(..., burnPerSecond,
+  burnSeconds)` → `DamageInfo.burnPerSecond/burnSeconds` (novos) → `ShipDebuffs` (só inimigos) põe fogo: `Burning`, pingo a cada 0,5 s num
+  ponto do `BoxCollider` do casco + `CombatEffects.Burn` (evento `Burned` → `GameVfx.OnBurned`: chamas e fumaça). `GameInput.Weapon4` (4) →
+  `ShipAmmo.Select(3)`; o slot é o 3º do `ShipAmmo` (gerador `LoadSupplies`/`AddPlayerSupplies`, asset `Data/Ammo/Ammo_Incendiaria`, refeito
+  a cada geração); o HUD do navio monta o encaixe pelos `Slots`. Relíquias: `Economy.RelicEffect` (Gold, Treasure) +
+  `ItemDefinition.relicEffect/relicAmount`, `PlayerLoadout.RelicBonus(efeito)` (relíquia equipada no `EquipSlot.Relic`, salva como as
+  lâminas). Ganchos: `MissionBoard.RewardAmount` (ouro × colar), `LootTable.RollCargo` (o drop "Item_Ouro" × colar), `RollChest` e
+  `RollGear` (chance × cavalo-marinho). `HarborVisitor.CraftBlockReason/MaxCraft`: peça única que o jogador já tem = "você já tem".
+  `EquipmentHUD`: encaixe Relíquia, `RelicText`, `EquipRelic`. Gerador: `PrototypeSceneBuilder.Preparations.cs` (`IncendiaryItem`,
+  `PearlNecklaceItem`, `SeahorseAmuletItem`, receitas no fim da Forja, ícones). **Testar:** `p4b.sh` no scratchpad (`setup` põe uma
+  chalupa pirata parada a 40 m a estibordo no mar aberto e 6 cargas, `fire` dá a bordada, `watch N`, `relic` mede ouro e baú sem
+  relíquia, com o colar e com o cavalo-marinho); `ships.cs` lista os navios inimigos (há moldes desligados com o mesmo nome: pegue o ativo).
+  Backup do teste: `savebak_p4b` (save do Jhonata de 30/10 15:10, bddb8a54). **Para o chat de otimização:** o fogo (4/s por 8 s por
+  acerto) contra os chefes e o ouro do colar (+15%).
+  **Marujos em terra (D3, 30/10):** `LandCombat/CrewmateAI` (`IFootInput`: seguir pelo NavMesh atrás do capitão (`slot` 0/1 = lado),
+  `PickFoe` = pirata em alerta mais perto a `sight` 16 m e `leash` 25 m do capitão, ataque com `combat.ReadyToAttack` e pausa 0,5–1,1 s,
+  separação do capitão e do outro; `Update` cuida do caído, porque morto o personagem não pede comando; `Arrive`, eventos estáticos
+  `Downed`/`Revived`; lista `Active`). `EnemyFootAI`: no `Chase`, a cada 0,6 s `NearestCrewmate()` (marujo de pé pelo menos 1 m mais
+  perto que o capitão, 1,5 m de preferência para o de agora) põe o `lastKnown` nele e renova o `lastSeen` (todo o resto da briga segue o
+  `lastKnown`); `Foe` público. `Controls/CrewEscort` no objeto do `PlayerModeSwitcher` (`ModeChanged`: a pé = desce no `LateUpdate`
+  seguinte, atrás do capitão, pelo NavMesh; embarcar = desliga; píer do porto = `SetPort(HarborShoreLeave)`, sem marujos; quantos =
+  `ShipCrew.Count`, máx. 2; `LandNow` para testes). `UI/CrewEscortHUD` (avisos). Gerador `PrototypeSceneBuilder.Crewmates.cs`
+  (`AddCrewEscort` no `CreateOnFoot` depois do `AddFoodEater`: `CreatePirate` + tira a `EnemyFootAI`, time do capitão, roupa `SailorLooks`,
+  velocidade 2,4/5,8). **Testar:** `d3.sh` no scratchpad (`setup` continua e desce na praia norte da Caveira, `walk x z N`, `outpost` leva o
+  capitão (invencível) a 5 m do posto do naufrágio e acorda, `fight N`, `embark`); `d3kill.cs` derruba o marujo 0 e mata os guardas.
+  **Para o chat de otimização:** custo de 2 personagens a mais (Animator, NavMesh) e o equilíbrio (a Caveira fica mais fácil com eles).
+  **Roda de comando (30/10):** `LandCombat.CrewOrder` + `CrewmateAI.Command(ordem, ponto, inimigo)` (`Order`, `Post`, `Target`; `PickFoe` pela
+  âncora da ordem: capitão/lugar, `holdRadius` 9, `guardRadius` 6; quem bate no marujo colado (`ai.Foe == this`, 2 m) vale sempre; `Arrive`
+  volta a Follow). `Controls/CrewCommander` no capitão (gerador: `AddCrewEscort`, marca `MarcaDaOrdem` = `BombAimLine`): `GameInput.CrewWheel`
+  (T, sem gamepad: o direcional de cima é da câmera), fases Closed/Wheel/Pointing, `Slices` (horário a partir de cima), `SliceAt` (zona morta
+  4% da altura), câmera lenta `slowMotion` 0,3 (volta o de antes se ninguém mexeu), `OwnsMouse` (o `PlayerFootInput` não ataca nem mira,
+  inclusive no quadro em que fechou), `Busy` (o `SaveMenuHUD.SomethingOpen` deixa o Esc com ela), eventos `Ordered`/`Refused`. Testes:
+  `OpenWheel`, `PinWheel(tela, fatia)` (foto: não lê T nem mouse), `Choose`, `Aim`, `Confirm`, `Give`. `UI/CrewWheelHUD` (Painter2D, estilos
+  `.hud-crew-wheel*`/`.hud-crew-hint`). **Testar:** `wh.sh` no scratchpad (`setup`, `wheel`, `choose N passos`, `point dx dz passos [dy]`,
+  `near 16` + `choose 3 1` + `aimguard Atirador`, `give Ordem N`, `pin N` + `cap.sh`, `pointvp N 0,5 0,32` + `capcam.sh`); **no eval o
+  `float.Parse` segue o português: "0.5" vira 5, use vírgula.**
   **Cuidado com `sed -i` no Git Bash:** num arquivo CRLF ele grava LF no arquivo inteiro (aconteceu com o `Hud.uss` em 29/10; voltei com Python).
   **HUD do navio (H3, 21/10):** `ShipDebugHUD` refeito em três peças: `nav` (TopLeft, `hud-nav`), `plate` (BottomLeft, reaproveita as
   classes `hud-player*` da HUD a pé + `hud-ship*`) e `artillery` (Loadout, `hud-guns`/`hud-gun` + os `hud-slot` da HUD a pé). Ícones em

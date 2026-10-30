@@ -80,7 +80,9 @@ namespace Pirates.Missions
         {
             if (!reward.item || reward.item != bonusItem || (mission && mission.type == MissionType.Deliver) ||
                 !Services.TryGet(out ICaptainRank rank)) return reward.amount;
-            return Mathf.RoundToInt(reward.amount * Mathf.Max(0f, rank.MissionGoldMultiplier));
+            // Colar de pérolas (relíquia, 30/10): mais ouro, como a patente (fora das entregas).
+            float relic = 1f + PlayerLoadout.RelicBonus(RelicEffect.Gold);
+            return Mathf.RoundToInt(reward.amount * Mathf.Max(0f, rank.MissionGoldMultiplier) * relic);
         }
 
         /// <summary>Pagamento de agora, já com a patente (para o quadro mostrar).</summary>
@@ -102,7 +104,12 @@ namespace Pirates.Missions
         }
 
         /// <summary>Quanto há de um item para as entregas (porão + armazém).</summary>
-        int Stock(ItemDefinition item) => (hold ? hold.Count(item) : 0) + (warehouse ? warehouse.Count(item) : 0);
+        /// <summary>
+        /// Quanto o jogador tem para entregar: porão, armazém e (30/10, encomendas da Iara) a mochila do capitão, pelo PlayerStorage (cena
+        /// sem ele registrado: porão + armazém).
+        /// </summary>
+        int Stock(ItemDefinition item) => PlayerStorage.Count(item) > 0 ? PlayerStorage.Count(item)
+            : (hold ? hold.Count(item) : 0) + (warehouse ? warehouse.Count(item) : 0);
 
         void OnEnable()
         {
@@ -234,7 +241,8 @@ namespace Pirates.Missions
                 foreach (var stack in def.delivery)
                 {
                     int left = stack.amount - (warehouse ? warehouse.Remove(stack.item, stack.amount) : 0);
-                    if (left > 0) hold.Remove(stack.item, left);
+                    if (left > 0) left -= hold.Remove(stack.item, left);
+                    if (left > 0) PlayerStorage.Take(stack.item, left);   // o resto da mochila
                 }
             var paid = new List<ItemStack>();
             foreach (var reward in def.rewards)
@@ -276,7 +284,7 @@ namespace Pirates.Missions
                     var parts = new List<string>();
                     foreach (var stack in def.delivery)
                         parts.Add($"{stack.item.displayName} {Mathf.Min(Stock(stack.item), stack.amount)}/{stack.amount}");
-                    return (warehouse ? "no porão e no armazém: " : "no porão: ") + string.Join(", ", parts);
+                    return (warehouse ? "com você e no armazém: " : "no porão: ") + string.Join(", ", parts);
             }
         }
 

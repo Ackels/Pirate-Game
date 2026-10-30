@@ -104,6 +104,7 @@ namespace Pirates.Missions
         public void Accept()
         {
             if (!Current || PendingChoice != Choice.Offer || !board.Accept(Mission)) return;
+            Current.LastDeclined = null;   // a recusada volta à fila
             Current.Gesture("Yes");
             Say(Line(Mission.acceptLine, "Combinado, capitão. Volte aqui quando terminar."));
         }
@@ -113,6 +114,7 @@ namespace Pirates.Missions
         {
             if (!Current || PendingChoice != Choice.Offer) return;
             Current.Gesture("No");
+            Current.LastDeclined = Mission;
             Say(Line(Mission.declineLine, "Fica para outra hora, então."));
         }
 
@@ -158,15 +160,17 @@ namespace Pirates.Missions
                 pages.Add(Line(m.waitingLine, "Ainda esperando, capitão. Volte quando estiver feito."));
                 return;
             }
-            for (int i = 0; i < list.Count; i++)
-            {
-                var m = list[i];
-                if (!m || !board.IsOfferable(m)) continue;
-                Mission = m;
-                AddPages(m.offerLines, m.description);
-                PendingChoice = Choice.Offer;
-                return;
-            }
+            // Oferece a primeira que dá; a recusada da última vez só se não houver outra.
+            for (int pass = 0; pass < 2; pass++)
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var m = list[i];
+                    if (!m || !board.IsOfferable(m) || (pass == 0 && m == Current.LastDeclined)) continue;
+                    Mission = m;
+                    AddPages(m.offerLines, m.description);
+                    PendingChoice = Choice.Offer;
+                    return;
+                }
             for (int i = 0; i < list.Count; i++)
             {
                 var m = list[i];

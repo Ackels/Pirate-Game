@@ -45,6 +45,7 @@ namespace Pirates.UI
         FoodEater food;
         PistolAmmo pistolAmmo;
         BombThrower bombs;
+        SmokeBomb smoke;
         CachedText[] campLines = System.Array.Empty<CachedText>();
         readonly System.Collections.Generic.Dictionary<LandingPoint, string> landingLabels = new();
 
@@ -67,7 +68,7 @@ namespace Pirates.UI
             public VisualElement root, icon;
             public Label key, count;
             public int weapon = -1;
-            public bool food, bomb, on, empty, none;
+            public bool food, bomb, smoke, on, empty, none;
             public int lastCount = int.MinValue;
         }
         Stamina stamina;
@@ -92,6 +93,7 @@ namespace Pirates.UI
             if (switcher.Character) food = switcher.Character.GetComponent<FoodEater>();
             if (switcher.Character) pistolAmmo = switcher.Character.GetComponent<PistolAmmo>();
             if (switcher.Character) bombs = switcher.Character.GetComponent<BombThrower>();
+            if (switcher.Character) smoke = switcher.Character.GetComponent<SmokeBomb>();
             if (switcher.Character) combat = switcher.Character.GetComponent<CharacterCombat>();
             if (switcher.Character) stamina = switcher.Character.GetComponent<Stamina>();
         }
@@ -118,6 +120,12 @@ namespace Pirates.UI
             {
                 bombs.Refused += OnBombRefused;
                 bombs.Packed += OnBombsPacked;
+            }
+            if (smoke)
+            {
+                smoke.Used += OnSmokeUsed;
+                smoke.Refused += OnSmokeRefused;
+                smoke.Packed += OnSmokePacked;
             }
             if (combat)
             {
@@ -149,6 +157,12 @@ namespace Pirates.UI
             {
                 bombs.Refused -= OnBombRefused;
                 bombs.Packed -= OnBombsPacked;
+            }
+            if (smoke)
+            {
+                smoke.Used -= OnSmokeUsed;
+                smoke.Refused -= OnSmokeRefused;
+                smoke.Packed -= OnSmokePacked;
             }
             if (combat)
             {
@@ -204,6 +218,9 @@ namespace Pirates.UI
         void OnGuardBroken() => FoodFeed("<b>Guarda quebrada!</b>  Sem fôlego: recue ou role", HudColors.Bad);
 
         void OnBombRefused(string reason) => FoodFeed($"Não deu para lançar: {reason}", HudColors.Muted);
+        void OnSmokeUsed(Vector3 at) => FoodFeed("<b>Fumaça!</b>  <size=80%>dentro dela ninguém te vê; quem ficou preso nela não enxerga</size>", HudColors.Cream);
+        void OnSmokeRefused(string reason) => FoodFeed($"Sem fumaça: {reason}", HudColors.Muted);
+        void OnSmokePacked(int n) => FoodFeed($"Levou {n} {(n == 1 ? "bomba de fumaça" : "bombas de fumaça")} na mochila  <size=80%>B para estourar</size>", HudColors.Cream);
         void OnBombsPacked(int n) => FoodFeed($"Levou {n} {(n == 1 ? "bomba" : "bombas")} na mochila  <size=80%>G para lançar</size>", HudColors.Cream);
 
         void OnNoCartridges(Pirates.Economy.ItemDefinition item) =>
@@ -291,13 +308,15 @@ namespace Pirates.UI
                 "<b>WASD</b>   andar     <b>Shift</b>   correr     <b>Espaço</b>   pular     <b>Ctrl</b>   rolar (esquiva, gasta fôlego)     <b>V</b>   chutar (derruba)\n" +
                 "<b>Botão esquerdo</b>   atacar (mira no cursor)\n" +
                 "<b>Botão direito (segurar)</b>   pistola/bacamarte: mirar (anel onde a bala para), o esquerdo atira na hora · cutelo: <b>guarda</b> (gasta fôlego; golpe de frente vira arranhão; erguida na hora do golpe, <b>apara</b>, devolve fôlego e o pirata fica atordoado)\n" +
-                "<b>G (segurar)</b>   mirar a bomba (arco e área da explosão): soltar lança, botão direito cancela\n" +
+                "<b>G (segurar)</b>   mirar a bomba (arco e área da explosão): soltar lança, botão direito cancela     <b>B</b>   bomba de fumaça (no pé)\n" +
+                "<b>T (segurar)</b>   roda de comando dos marujos: o mouse escolhe a ordem, soltar dá (ir até lá / atacar: aponte e clique)\n" +
                 "<b>1 / 2 / 3</b>   cutelo / pistola / bacamarte (comprado no mercado)\n" +
                 "<b>Q / E</b>  ou  <b>botão do meio + mouse</b>   girar câmera     <b>Scroll</b>   zoom\n" +
                 "<b>F</b>   entrar nas casas do porto · perto do bote, voltar ao navio\n" +
                 "<b>R</b>   comer uma ração (cura; o capitão leva 5 do porão ao desembarcar)" +
                 "\n<b>I</b>   inventário: trocar a lâmina     <b>J</b>   diário: missões e História" +
-                (CaptainFame.Current ? "     <b>C</b>   fama do capitão" : ""), "hud-help__text"));
+                (CaptainFame.Current ? "     <b>C</b>   fama do capitão" : "") +
+                (FishJournal.Current ? "     <b>P</b>   diário do pescador" : ""), "hud-help__text"));
             help.style.display = DisplayStyle.None;
             hud.TopLeft.Add(help);
 
@@ -447,7 +466,8 @@ namespace Pirates.UI
         /// <summary>Cartão da arma na mão e encaixes: refaz os encaixes só quando muda o que há (arma comprada, lâmina trocada).</summary>
         void UpdateLoadout()
         {
-            long signature = combat.WeaponsVersion * 1_000_000L + combat.Weapons.Count * 1000L + (food && food.Food ? 1 : 0) + (bombs && bombs.Bomb ? 2 : 0);
+            long signature = combat.WeaponsVersion * 1_000_000L + combat.Weapons.Count * 1000L + (food && food.Food ? 1 : 0) + (bombs && bombs.Bomb ? 2 : 0)
+                + (smoke && smoke.Item ? 500 : 0);
             for (int i = 0; i < combat.Weapons.Count && i < 16; i++) if (combat.IsAvailable(i)) signature += 4L << i;
             if (signature != slotSignature)
             {
@@ -465,7 +485,7 @@ namespace Pirates.UI
                     empty = combat.IsEmpty(slot.weapon) && !on;
                     count = weapon && weapon.kind == WeaponKind.Firearm && combat.Ammo != null ? Mathf.Min(999, combat.AmmoFor(weapon)) : -1;
                 }
-                else count = slot.food ? food.Count : bombs.Count;
+                else count = slot.food ? food.Count : slot.smoke ? smoke.Count : bombs.Count;
                 if (on != slot.on)
                 {
                     slot.on = on;
@@ -503,6 +523,7 @@ namespace Pirates.UI
             }
             if (food && food.Food) MakeSlot("R", food.Food.icon, food.Food.displayName).food = true;
             if (bombs && bombs.Bomb) MakeSlot("G", bombs.Bomb.icon, bombs.Bomb.displayName).bomb = true;
+            if (smoke && smoke.Item) MakeSlot("B", smoke.Item.icon, smoke.Item.displayName).smoke = true;
         }
 
         Slot MakeSlot(string key, Texture2D icon, string name)

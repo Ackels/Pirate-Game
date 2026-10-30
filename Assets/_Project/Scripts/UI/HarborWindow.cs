@@ -21,7 +21,7 @@ namespace Pirates.UI
     /// </summary>
     class HarborWindow
     {
-        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy }
+        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy, Kitchen }
 
         const string Bad = "#a8321f", Good = "#2f7a2a";
 
@@ -73,7 +73,7 @@ namespace Pirates.UI
                 shownKey = long.MinValue;
                 return;
             }
-            long key = house ? Win.Mix(1, house) : 100 + (int)tab;
+            long key = house ? Win.Mix(Win.Mix(1, house), (int)tab) : 100 + (int)tab;
             if (key != shownKey)
             {
                 shownKey = key;
@@ -114,6 +114,21 @@ namespace Pirates.UI
                         AddSmithy(body, dock);
                         break;
                     default:
+                        // Taverna: contratos e marinheiros, ou a cozinha (D2, 30/10: pratos de peixe com bônus).
+                        bool kitchen = dock.Settings && dock.Settings.kitchen.Length > 0;
+                        if (kitchen)
+                        {
+                            var tabs2 = Hud.Row("hud-tabs");
+                            body.Add(tabs2);
+                            if (tab != Tab.Kitchen) tab = Tab.Missions;
+                            AddTab(tabs2, Tab.Missions, "Contratos e marinheiros");
+                            AddTab(tabs2, Tab.Kitchen, "Cozinha");
+                        }
+                        if (kitchen && tab == Tab.Kitchen)
+                        {
+                            AddKitchen(body, dock);
+                            break;
+                        }
                         AddRecruit(body);
                         if (board) AddMissions(body, board, dock.Warehouse);
                         else Win.Text(body, "nenhum contrato neste porto", "hud-window__empty");
@@ -134,8 +149,13 @@ namespace Pirates.UI
             bool market = dock.Settings && dock.Settings.market.Length > 0, smithy = dock.Settings && dock.Settings.smithy.Length > 0;
             if (market) AddTab(tabs, Tab.Market, "Mercado");
             if (smithy) AddTab(tabs, Tab.Smithy, "Forja");
+            bool cook = dock.Settings && dock.Settings.kitchen.Length > 0;
+            if (cook) AddTab(tabs, Tab.Kitchen, "Cozinha");
             switch (tab)
             {
+                case Tab.Kitchen when cook:
+                    AddKitchen(body, dock);
+                    break;
                 case Tab.Market when market:
                     AddMarket(body, dock.Settings);
                     break;
@@ -942,6 +962,65 @@ namespace Pirates.UI
                     if (max > 1 && max != 5) bottom.Add(Win.Button($"{max}", () => Forged(visitor.Craft(r, max), r), true, "hud-button--small"));
                 }
             });
+        }
+
+        // ---------- Cozinha (taverna, D2 30/10) ----------
+
+        /// <summary>
+        /// Cozinha da taverna: pratos de peixe feitos na hora (pagos do armazém e do porão), que vão para o porão; comidos pela tela I, dão um
+        /// bônus por alguns minutos. Cartões como os do ferreiro.
+        /// </summary>
+        void AddKitchen(VisualElement body, HarborDock dock)
+        {
+            var summary = Win.Column(body, "hud-window__summary");
+            window.AddPane(summary, StockSignature, b =>
+            {
+                StockChips(b, false);
+                Win.Text(b, "<size=85%>O cozinheiro faz na hora com o peixe do porão e do armazém. O prato vai para o porão: coma pela tela " +
+                            "<b>I</b> (no navio ou a pé, com ele na mochila). Um prato de cada tipo vale ao mesmo tempo.</size>",
+                    "hud-window__small", "hud-window__muted");
+            });
+            var scroll = Win.Scroll(body);
+            window.AddPane(scroll, () => Win.Mix(StockSignature(), Win.Of(visitor.Hold)), list =>
+            {
+                var grid = Hud.Box("hud-cards");
+                list.Add(grid);
+                foreach (var recipe in dock.Settings.kitchen)
+                {
+                    if (recipe?.result.item == null) continue;
+                    var r = recipe;
+                    var item = r.result.item;
+                    var card = Win.Section(grid, "hud-cards__card");
+                    var top = Win.Row(card, "hud-work__top");
+                    top.Add(Win.Icon(item, "hud-item__slot--big"));
+                    var info = Hud.Box("hud-work__info");
+                    top.Add(info);
+                    info.Add(Hud.Text($"<b>{item.displayName}</b>{(r.result.amount > 1 ? $"  <size=85%>×{r.result.amount} por receita</size>" : "")}", "hud-work__name"));
+                    info.Add(Hud.Text($"no porão: <b>{visitor.Hold.Count(item)}</b>", "hud-market__sub"));
+                    card.Add(Hud.Text(Pirates.Controls.Meals.IsMeal(item) ? Pirates.Controls.Meals.Describe(item)
+                        : "isca para a vara: o capitão leva do porão ao desembarcar e gasta uma por lançamento", "hud-work__effect"));
+                    if (!string.IsNullOrEmpty(item.description))
+                        card.Add(Hud.Text($"<i>{item.description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    bottom.Add(CostChips(r.cost, 0));
+                    Win.Spacer(bottom);
+                    string reason = visitor.CookBlockReason(r);
+                    if (reason != null)
+                    {
+                        bottom.Add(Hud.Text(reason, "hud-market__blocked"));
+                        continue;
+                    }
+                    int max = visitor.MaxCook(r);
+                    bottom.Add(Win.Button("Cozinhar 1", () => Cooked(visitor.Cook(r, 1), r), true, "hud-button--small"));
+                    if (max > 1) bottom.Add(Win.Button($"{max}", () => Cooked(visitor.Cook(r, max), r), true, "hud-button--small"));
+                }
+            });
+        }
+
+        void Cooked(int times, HarborSettings.Recipe recipe)
+        {
+            if (times <= 0) return;
+            Feed($"Cozinhou: {times * recipe.result.amount}× {recipe.result.item.displayName.ToLowerInvariant()} (no porão)");
         }
 
         void Forged(int times, HarborSettings.Recipe recipe)

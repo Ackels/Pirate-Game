@@ -60,12 +60,19 @@ namespace Pirates.Loot
             {
                 if (!drop.item || Random.value > drop.chance) continue;
                 int amount = Random.Range(drop.minAmount, Mathf.Max(drop.minAmount, drop.maxAmount) + 1);
+                // Colar de pérolas (relíquia, 30/10): mais ouro no saque. O ouro é o item "Item_Ouro" (ids = nome do asset).
+                if (drop.item.name == GoldId) amount = Mathf.RoundToInt(amount * (1f + PlayerLoadout.RelicBonus(RelicEffect.Gold)));
                 cargo.Add(new ItemStack(drop.item, amount));
             }
             return cargo;
         }
 
-        public bool RollChest() => Random.value < chestChance;
+        const string GoldId = "Item_Ouro";
+
+        /// <summary>Cavalo-marinho seco (relíquia, 30/10): mais chance de baú e de equipamento.</summary>
+        static float TreasureLuck => 1f + PlayerLoadout.RelicBonus(RelicEffect.Treasure);
+
+        public bool RollChest() => Random.value < chestChance * TreasureLuck;
 
         /// <summary>
         /// Sorteia um esquema que o jogador ainda não tem (nem em <paramref name="owner"/>, nem em nenhum PlayerStorage: porão,
@@ -94,7 +101,7 @@ namespace Pirates.Loot
         public ItemStack RollGear(Inventory owner)
         {
             if (guaranteedGear && !(owner && owner.Has(guaranteedGear)) && !PlayerStorage.Has(guaranteedGear)) return new ItemStack(guaranteedGear, 1);
-            if (gear == null || gear.Length == 0 || Random.value >= gearChance) return default;
+            if (gear == null || gear.Length == 0 || Random.value >= gearChance * TreasureLuck) return default;
             float total = 0f;
             foreach (var g in gear)
                 if (IsAvailable(g, owner)) total += g.weight;

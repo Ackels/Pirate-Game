@@ -19,7 +19,7 @@ namespace Pirates.Controls
     /// nem com a mochila cheia; perde para qualquer outra interação do F disponível ali (baú, bote, alavanca), como a pesca.
     /// Fica no capitão (só liga em terra).
     /// </summary>
-    public class Gatherer : MonoBehaviour, IInteraction
+    public class Gatherer : MonoBehaviour, IInteraction, INoWindowInteraction
     {
         /// <summary>Ferramenta de um tipo de nó: o item que libera e o visual na mão (desligado fora da coleta).</summary>
         [Serializable]

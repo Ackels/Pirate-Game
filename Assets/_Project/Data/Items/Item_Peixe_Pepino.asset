@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Peixe_Pepino
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Pepino-do-mar
+  category: 0
+  rarity: 0
+  group: 0
+  color: {r: 0.55, g: 0.45, b: 0.35, a: 1}
+  spacePerUnit: 0.3
+  description: Mole e feio, mas os cozinheiros do oriente pagam por ele seco. Cozido, mata a fome.
+  icon: {fileID: 2800000, guid: 05abfb74f2f678747947ebffb6d4c61c, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 10
+  equipSlot: 0
+  equipment: {fileID: 0}

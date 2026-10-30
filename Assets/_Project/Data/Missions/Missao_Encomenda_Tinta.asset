@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Tinta
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_tinta
+  title: Tinta para as cartas
+  giver: Iara
+  description: "O escriv\xE3o do almirantado ficou sem tinta. Tinta boa vem da siba. Tr\xEAs delas, capit\xE3o."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: 957f2f0b55fb0f74f8cfae39c47ca803, type: 2}
+    amount: 3
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 60
+  - item: {fileID: 11400000, guid: 66627b120ac430b41be2b3d1069a48ea, type: 2}
+    amount: 4
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 600
+  requiredRank: 0
+  fameReward: 6
+  givenByNpc: 1
+  offerLines:
+  - "O escriv\xE3o do almirantado ficou sem tinta para as cartas do Teodoro. Tinta boa \xE9 a da siba."
+  - "Tr\xEAs sibas, capit\xE3o. Elas gostam de \xE1gua mais funda."
+  acceptLine: "Boa! Na entrega ainda tem iscas de camar\xE3o: ajudam a siba a morder."
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Tr\xEAs sibas para a tinta, capit\xE3o."
+  doneLines:
+  - "Tr\xEAs sibas inteirinhas, com a tinta e tudo."
+  - O almirantado agradece. E eu pago.
+  restingLine: "O escriv\xE3o tem tinta para um m\xEAs. Por enquanto, nada."

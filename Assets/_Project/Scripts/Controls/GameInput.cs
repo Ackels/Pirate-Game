@@ -49,6 +49,14 @@ namespace Pirates.Controls
         public InputAction Equipment { get; }
         /// <summary>Diário de missões (21/10): J (aba Missões da tela do capitão).</summary>
         public InputAction Journal { get; }
+        /// <summary>Diário do pescador (30/10): P (aba Pesca da tela do capitão).</summary>
+        public InputAction FishLog { get; }
+        /// <summary>Bomba de fumaça a pé (30/10): B.</summary>
+        public InputAction Smoke { get; }
+        /// <summary>Navio: 4 = carga incendiária (30/10).</summary>
+        public InputAction Weapon4 { get; }
+        /// <summary>A pé: segurar T abre a roda de comando dos marujos (30/10).</summary>
+        public InputAction CrewWheel { get; }
 
         public InputAction CameraOrbitKeys { get; }
 
@@ -169,6 +177,10 @@ namespace Pirates.Controls
             Fame.AddBinding("<Gamepad>/select");
             Equipment = sailing.AddAction("Equipment", InputActionType.Button, binding: "<Keyboard>/i");
             Journal = sailing.AddAction("Journal", InputActionType.Button, binding: "<Keyboard>/j");
+            FishLog = sailing.AddAction("FishLog", InputActionType.Button, binding: "<Keyboard>/p");
+            Smoke = sailing.AddAction("Smoke", InputActionType.Button, binding: "<Keyboard>/b");
+            Weapon4 = sailing.AddAction("Weapon4", InputActionType.Button, binding: "<Keyboard>/4");
+            CrewWheel = sailing.AddAction("CrewWheel", InputActionType.Button, binding: "<Keyboard>/t");
 
             sailing.Enable();
         }

@@ -92,6 +92,9 @@ namespace Pirates.EditorTools
             var debug = new GameObject("DebugTools");
             debug.AddComponent<DebugSceneReset>();
             debug.AddComponent<HealthBarsHUD>().Ignore(foot.health);
+            AddFishJournal(hold);
+            AddMeals(ship, foot.character.gameObject);
+            if (!hud.GetComponent<CrewEscortHUD>()) hud.AddComponent<CrewEscortHUD>();
             AddSandbox(ship);
             AddAudio(camera, ship);
             AddVfx();
@@ -221,6 +224,8 @@ namespace Pirates.EditorTools
             var unloader = switcher.gameObject.AddComponent<BackpackUnloader>();
             unloader.Configure(switcher);
             AddFoodEater(character.gameObject, switcher);
+            // Dois marujos descem com o capitão nas ilhas e lutam junto (D3, 30/10).
+            AddCrewEscort(switcher, character, m.iron, m.wood, m.brass);
             // A pé, F abre o baú, cava o tesouro ou volta ao navio (perto do bote).
             character.gameObject.AddComponent<BoatBoarding>().Configure(switcher);
             character.gameObject.AddComponent<PlayerInteractInput>();

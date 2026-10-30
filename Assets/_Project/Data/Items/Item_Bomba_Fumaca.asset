@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Bomba_Fumaca
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: "Bomba de fuma\xE7a"
+  category: 0
+  rarity: 1
+  group: 2
+  color: {r: 0.45, g: 0.4, b: 0.55, a: 1}
+  spacePerUnit: 0.3
+  description: "P\xF3lvora fraca com a tinta da siba. A p\xE9, B estoura no seu p\xE9 uma nuvem escura: ningu\xE9m v\xEA quem est\xE1 dentro, e os piratas pegos nela ficam cegos e tossindo. Boa para fugir ou para chegar pelas costas (a adaga dobra o dano). O capit\xE3o leva 3 do por\xE3o ao desembarcar."
+  icon: {fileID: 2800000, guid: 794c0dbea6811be4a956885762d36f83, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  relicEffect: 0
+  relicAmount: 0
+  mealEffect: 7
+  mealAmount: 0
+  mealMinutes: 0
+  equipSlot: 0
+  equipment: {fileID: 0}

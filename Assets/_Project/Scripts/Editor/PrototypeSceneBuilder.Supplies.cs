@@ -23,8 +23,8 @@ namespace Pirates.EditorTools
 
         sealed class SupplyAssets
         {
-            public ItemDefinition chainItem, grapeItem;
-            public AmmoDefinition chain, grape;
+            public ItemDefinition chainItem, grapeItem, fireItem;
+            public AmmoDefinition chain, grape, fire;
         }
 
         static SupplyAssets LoadSupplies()
@@ -38,9 +38,10 @@ namespace Pirates.EditorTools
                 grapeItem = Item("Item_CargaMetralha", "Carga de metralha", ItemCategory.Resource, ItemRarity.Uncommon, new Color(0.9f, 0.62f, 0.45f), 1f,
                     "Saco de balinhas de ferro: espalha muito e alcança pouco (60 m), mas de perto faz mais dano e abate a tripulação " +
                     "inimiga (ela recarrega mais devagar). Uma carga por bordada (tecla 3 no navio)."),
+                fireItem = IncendiaryItem(),
             };
             // Munição fica a bordo ao desembarcar no porto (o "descarregar tudo" não leva).
-            foreach (var item in new[] { s.chainItem, s.grapeItem })
+            foreach (var item in new[] { s.chainItem, s.grapeItem, s.fireItem })
                 if (item.keepAboard == 0)
                 {
                     item.keepAboard = 9999;
@@ -65,6 +66,14 @@ namespace Pirates.EditorTools
                 a.visualScale = 0.45f;
                 a.crewDamagePerHit = 0.02f;     // bordada de 16 balinhas acertando: recarga +32% (até +60%)
             });
+            // Incendiária (30/10, óleo de cavala): menos dano na hora, mas o navio acertado queima 4 por segundo por 8 s (um acerto novo
+            // recomeça; com 8/s por 10 s uma bordada quase afundava a chalupa sozinha). Refeita a cada geração (a tabela manda).
+            s.fire = LoadOrCreateAsset<AmmoDefinition>(AmmoFolder + "/Ammo_Incendiaria.asset", a => a.displayName = "Incendiária");
+            s.fire.damageMultiplier = 0.8f;
+            s.fire.spreadMultiplier = 1.1f;
+            s.fire.burnPerSecond = 4f;
+            s.fire.burnSeconds = 8f;
+            EditorUtility.SetDirty(s.fire);
             return s;
         }
 
@@ -75,6 +84,7 @@ namespace Pirates.EditorTools
             {
                 new ShipAmmo.Slot { ammo = s.chain, item = s.chainItem },
                 new ShipAmmo.Slot { ammo = s.grape, item = s.grapeItem },
+                new ShipAmmo.Slot { ammo = s.fire, item = s.fireItem },
             });
             var crew = player.GetComponent<ShipCrew>();
             if (crew && crew.Settings)
@@ -129,7 +139,11 @@ namespace Pirates.EditorTools
             AddCartridgeTrade(settings, i, forge);
             AddBlunderbussTrade(settings, i, forge);
             AddBombTrade(settings, i, forge);
+            AddPreparationRecipes(settings, i, forge);
             AddFishingMarket(settings);
+            AddNetMarket(settings);
+            AddKitchenRecipes(settings);
+            AddBaitRecipe(settings);
             AddGatheringMarket(settings);
             // Forja com tempo (05/10): receitas de antes nasceram com o padrão (90 s); a metralha leva 2 min. Só troca o padrão.
             foreach (var recipe in settings.smithy)

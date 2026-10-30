@@ -7,18 +7,18 @@ namespace Pirates.UI
 {
     /// <summary>
     /// O "livro do capitão" (21/10, pedido do Jhonata: tirar missões, História e fama da tela e pôr numa tela com abas): as janelas de
-    /// inventário (I), missões (J) e fama (C) viram abas de uma tela só. Cada janela continua sendo do seu HUD; aqui só se registram e
+    /// inventário (I), missões (J), fama (C) e o diário do pescador (P, 30/10) viram abas de uma tela só. Cada janela continua sendo do seu HUD; aqui só se registram e
     /// trocam (fecha a aberta, abre a outra) e se monta a fileira de abas no alto de cada uma. A tecla de uma aba aberta fecha; a de outra
     /// aba troca; com outro painel na frente (fora do livro), espera.
     /// </summary>
     static class CaptainBook
     {
-        public enum Tab { Inventory, Missions, Fame }
+        public enum Tab { Inventory, Missions, Fame, Fishing }
 
-        static readonly string[] Labels = { "Inventário", "Missões", "Fama" };
-        static readonly string[] Keys = { "I", "J", "C" };
-        static readonly Func<bool>[] isOpen = new Func<bool>[3];
-        static readonly Action<bool>[] setOpen = new Action<bool>[3];
+        static readonly string[] Labels = { "Inventário", "Missões", "Fama", "Pesca" };
+        static readonly string[] Keys = { "I", "J", "C", "P" };
+        static readonly Func<bool>[] isOpen = new Func<bool>[4];
+        static readonly Action<bool>[] setOpen = new Action<bool>[4];
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()

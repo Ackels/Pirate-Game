@@ -31,6 +31,15 @@ namespace Pirates.EditorTools
             /// <summary>Segundo contrato do mesmo NPC (o do Barba-Negra, com o Teodoro), com as falas dele.</summary>
             public string extraMissionId;
             public System.Action<MissionDefinition> extraDialogue;
+            /// <summary>Mais contratos (as encomendas de peixe da Iara, 30/10), depois dos dois de cima.</summary>
+            public (string id, System.Action<MissionDefinition> dialogue)[] more;
+        }
+
+        static (string, System.Action<MissionDefinition>)[] IaraOrders()
+        {
+            var list = new System.Collections.Generic.List<(string, System.Action<MissionDefinition>)>();
+            foreach (var o in OrderSpecs) list.Add((o.id, OrderDialogue(o)));
+            return list.ToArray();
         }
 
         static NpcSpec[] VillageNpcs => new[]
@@ -103,6 +112,7 @@ namespace Pirates.EditorTools
                 name = "Iara", role = "a pescadora", missionId = SquidId, spot = new(-41f, 40f), yaw = 110f,
                 model = KitCharacters.Anne, palette = 7, dialogue = IaraDialogue,
                 extraMissionId = MegalodonId, extraDialogue = MegalodonDialogue,
+                more = IaraOrders(),
                 smallTalk = new[]
                 {
                     "Peixe bom não se pega com pressa, capitão.",
@@ -136,7 +146,9 @@ namespace Pirates.EditorTools
             foreach (var npc in VillageNpcs)
             {
                 var given = new System.Collections.Generic.List<MissionDefinition>();
-                foreach (var (id, dialogue) in new[] { (npc.missionId, npc.dialogue), (npc.extraMissionId, npc.extraDialogue) })
+                var all = new System.Collections.Generic.List<(string, System.Action<MissionDefinition>)> { (npc.missionId, npc.dialogue), (npc.extraMissionId, npc.extraDialogue) };
+                if (npc.more != null) all.AddRange(npc.more);
+                foreach (var (id, dialogue) in all)
                 {
                     if (string.IsNullOrEmpty(id)) continue;
                     var mission = System.Array.Find(missions, m => m && m.missionId == id);

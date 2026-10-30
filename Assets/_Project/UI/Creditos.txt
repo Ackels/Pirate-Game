@@ -8,7 +8,7 @@ Jhonata Caetano
 Jhonata Caetano, com a ajuda do Claude (Anthropic)
 
 <size=24><b>Modelos 3D</b></size>
-Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Castle Kit, Graveyard Kit — CC0
+Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Castle Kit, Graveyard Kit, Food Kit — CC0
 Quaternius (quaternius.com): Pirate Kit, Ultimate Modular Ruins, Ultimate Monsters, Animated Monster Pack — CC0
 Pixit3D - Fish Free Pack — Pixit Games (Unity Asset Store)
 Quirky Series - FREE Animals Pack — Omabuarts Studio (Unity Asset Store)

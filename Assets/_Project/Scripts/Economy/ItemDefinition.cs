@@ -1,4 +1,5 @@
 using System;
+using Pirates.Core;
 using UnityEngine;
 
 namespace Pirates.Economy
@@ -39,6 +40,16 @@ namespace Pirates.Economy
         [Min(0f)] public float backpackCapacity;
         [Tooltip("Comida (peixe, D2): vida que cura ao comer com R quando a mochila não tem ração. 0 = não se come.")]
         [Min(0f)] public float foodHeal;
+        [Header("Relíquia (30/10): equipada no encaixe Relíquia da tela I")]
+        public RelicEffect relicEffect;
+        [Tooltip("Fração: 0,15 = +15% de ouro; 0,5 = +50% de chance de baú e de equipamento.")]
+        public float relicAmount;
+        [Header("Prato da taverna (D2, 30/10)")]
+        [Tooltip("Comido pela tela I: bônus por alguns minutos (fôlego, recarga, casco, furtividade, dano). None = não é prato.")]
+        public MealEffect mealEffect;
+        [Tooltip("Quanto: fôlego a mais (pontos), casco por segundo, ou fração (0,1 = 10%) nos outros.")]
+        public float mealAmount;
+        [Min(0f)] public float mealMinutes = 8f;
         [Header("Equipamento (E1)")]
         [Tooltip("Onde o capitão usa este item (lâmina, arma de fogo, traje, relíquia). None = não se equipa.")]
         public EquipSlot equipSlot;

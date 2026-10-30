@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Prato_Atum
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Atum grelhado
+  category: 0
+  rarity: 1
+  group: 3
+  color: {r: 0.75, g: 0.5, b: 0.35, a: 1}
+  spacePerUnit: 0.3
+  description: "Posta grossa na grelha, para a tripula\xE7\xE3o inteira. Artilheiro bem alimentado carrega o canh\xE3o mais depressa."
+  icon: {fileID: 2800000, guid: 8a5e2b767d33527459a243932559f1d8, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  relicEffect: 0
+  relicAmount: 0
+  mealEffect: 2
+  mealAmount: 0.1
+  mealMinutes: 8
+  equipSlot: 0
+  equipment: {fileID: 0}

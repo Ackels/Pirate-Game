@@ -17,4 +17,9 @@ namespace Pirates.Core
     {
         void Advance();
     }
+
+    /// <summary>
+    /// Interação sem janela (pescar, cortar árvore, a rede do navio): aberta, a roda do mouse continua sendo do zoom da câmera.
+    /// </summary>
+    public interface INoWindowInteraction { }
 }

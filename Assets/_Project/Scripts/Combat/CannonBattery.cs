@@ -271,7 +271,7 @@ namespace Pirates.Combat
                         ballYaw + Random.Range(-spread, spread));
                     cannonballs?.Fire(muzzle.position, pelletDirection * stats.muzzleVelocity + InheritedVelocity,
                         damage, stats.ballMass / pellets, stats.ballLifetime, shipBody, sail, crew, scale, withEffects: p == 0,
-                        chain: ammo && ammo.chainVisual);
+                        chain: ammo && ammo.chainVisual, burnPerSecond: ammo ? ammo.burnPerSecond : 0f, burnSeconds: ammo ? ammo.burnSeconds : 0f);
                 }
                 effects?.MuzzleBlast(muzzle.position, direction);
 

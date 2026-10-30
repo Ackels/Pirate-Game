@@ -26,6 +26,7 @@ namespace Pirates.Controls
                 if (input.Weapon1.WasPressedThisFrame()) ammo.Select(0);
                 if (input.Weapon2.WasPressedThisFrame()) ammo.Select(1);
                 if (input.Weapon3.WasPressedThisFrame()) ammo.Select(2);
+                if (input.Weapon4.WasPressedThisFrame()) ammo.Select(3);
                 if (input.NextWeapon.WasPressedThisFrame()) ammo.Cycle();
             }
             if (carpenter && input.Repair.WasPressedThisFrame()) carpenter.Toggle();

@@ -68,6 +68,8 @@ namespace Pirates.Base
         public event Action<ItemStack> Crafted;
         /// <summary>Ferreiro: encomenda feita (o que vai sair).</summary>
         public event Action<ItemStack> CraftOrdered;
+        /// <summary>Cozinha da taverna: prato feito (já no porão).</summary>
+        public event Action<ItemStack> Cooked;
         /// <summary>Atracou e saiu do porto. O jogo salva nos dois.</summary>
         public event Action<HarborDock> Docked, Undocked;
 
@@ -354,6 +356,8 @@ namespace Pirates.Base
                 ? $"precisa de {recipe.requiredBuilding.displayName} nível {recipe.requiredLevel}"
                 : $"precisa de {recipe.requiredBuilding.displayName}";
             if (Current.Smithy != null) return Current.Smithy.Ready ? "retire a encomenda pronta" : "ferreiro ocupado";
+            // Peça única (relíquia): uma só.
+            if (recipe.result.item.IsUnique && PlayerStorage.Count(recipe.result.item) > 0) return "você já tem";
             foreach (var c in recipe.cost)
                 if (c.item && Available(c.item) < c.amount) return $"falta {c.item.displayName.ToLowerInvariant()}";
             return null;
@@ -365,8 +369,8 @@ namespace Pirates.Base
         public int MaxCraft(HarborSettings.Recipe recipe)
         {
             if (!Current || recipe?.result.item == null || !HasBuilding(recipe) || Current.Smithy != null) return 0;
-            // Até 10 receitas por encomenda (sem isso, "Fazer máx." com o armazém cheio virava horas de forja).
-            int n = MaxCraftOrder;
+            // Até 10 receitas por encomenda (sem isso, "Fazer máx." com o armazém cheio virava horas de forja); peça única, uma.
+            int n = recipe.result.item.IsUnique ? (PlayerStorage.Count(recipe.result.item) > 0 ? 0 : 1) : MaxCraftOrder;
             foreach (var c in recipe.cost)
                 if (c.item && c.amount > 0) n = Mathf.Min(n, Available(c.item) / c.amount);
             return n;
@@ -421,6 +425,40 @@ namespace Pirates.Base
         {
             if (toHold) amount -= hold.Add(item, amount);
             if (amount > 0) Current.Warehouse.Add(item, amount);
+        }
+
+        // ---------- Cozinha (taverna, D2 30/10) ----------
+
+        /// <summary>Por que não dá para cozinhar agora (null = pode).</summary>
+        public string CookBlockReason(HarborSettings.Recipe recipe)
+        {
+            if (!Current) return "atraque no porto";
+            if (recipe?.result.item == null) return "indisponível";
+            foreach (var c in recipe.cost)
+                if (c.item && Available(c.item) < c.amount) return $"falta {c.item.displayName.ToLowerInvariant()}";
+            return null;
+        }
+
+        /// <summary>Quantos pratos dá para fazer com o que há (armazém + porão), até 10 de uma vez.</summary>
+        public int MaxCook(HarborSettings.Recipe recipe)
+        {
+            if (!Current || recipe?.result.item == null) return 0;
+            int n = MaxCraftOrder;
+            foreach (var c in recipe.cost)
+                if (c.item && c.amount > 0) n = Mathf.Min(n, Available(c.item) / c.amount);
+            return n;
+        }
+
+        /// <summary>Cozinha na hora até <paramref name="times"/> receitas (paga do armazém e do porão); o prato vai para o porão. Devolve quantas.</summary>
+        public int Cook(HarborSettings.Recipe recipe, int times)
+        {
+            times = Mathf.Min(times, MaxCook(recipe));
+            if (times <= 0) return 0;
+            foreach (var c in recipe.cost) Spend(c.item, c.amount * times);
+            var result = new ItemStack(recipe.result.item, recipe.result.amount * times);
+            Deliver(result.item, result.amount, true);
+            Cooked?.Invoke(result);
+            return times;
         }
 
         // ---------- Tripulação (taverna) ----------

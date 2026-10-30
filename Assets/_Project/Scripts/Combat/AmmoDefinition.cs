@@ -28,5 +28,8 @@ namespace Pirates.Combat
         [Min(0f)] public float sailDamagePerHit;
         [Tooltip("Fração da tripulação abatida por projétil que acerta (somada até o limite do ShipDebuffs).")]
         [Min(0f)] public float crewDamagePerHit;
+        [Tooltip("Incendiária (30/10): o navio atingido queima isto de casco por segundo, por burnSeconds (um acerto novo recomeça o tempo).")]
+        [Min(0f)] public float burnPerSecond;
+        [Min(0f)] public float burnSeconds;
     }
 }

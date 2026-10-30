@@ -70,7 +70,7 @@ namespace Pirates.Progression
         static readonly int YesId = Animator.StringToHash("Sim");
         static readonly int NoId = Animator.StringToHash("Nao");
 
-        enum Task { Idle, Wander, Rigging, Gun }
+        enum Task { Idle, Wander, Rigging, Gun, Net }
 
         sealed class Sailor
         {
@@ -284,7 +284,7 @@ namespace Pirates.Progression
                 float bestDistance = float.MaxValue;
                 foreach (var s in crewOnDeck)
                 {
-                    if (!s.shown || s.dying || s.task == Task.Rigging || s.task == Task.Gun || ZoneOf(s) != mainZone) continue;
+                    if (!s.shown || s.dying || s.task == Task.Rigging || s.task == Task.Gun || s.task == Task.Net || ZoneOf(s) != mainZone) continue;
                     float d = (s.transform.localPosition - layout.rigging[r].position).sqrMagnitude;
                     if (d < bestDistance) { bestDistance = d; best = s; }
                 }
@@ -293,6 +293,46 @@ namespace Pirates.Progression
                 best.taskUntil = float.PositiveInfinity;
                 sent++;
             }
+        }
+
+        /// <summary>
+        /// Rede de pesca (D2, passo 2): os dois marujos mais perto vão à amurada do bordo <paramref name="side"/> (−1 bombordo, 1 estibordo:
+        /// os lugares dos canhões do meio desse lado) e puxam o cabo até <see cref="StopNet"/>.
+        /// </summary>
+        public void WorkNet(int side)
+        {
+            if (layout == null || InCombat) return;
+            int sent = 0;
+            while (sent < 2)
+            {
+                int station = -1;
+                float bestMiddle = float.MaxValue;
+                for (int g = 0; g < layout.guns.Length; g++)
+                {
+                    if (layout.guns[g].side != side || Taken(g, Task.Net)) continue;
+                    float middle = Mathf.Abs(layout.guns[g].position.z);
+                    if (middle < bestMiddle) { bestMiddle = middle; station = g; }
+                }
+                if (station < 0) break;
+                Sailor best = null;
+                float bestDistance = float.MaxValue;
+                foreach (var s in crewOnDeck)
+                {
+                    if (!s.shown || s.dying || s.task == Task.Net || s.task == Task.Gun || ZoneOf(s) != mainZone) continue;
+                    float d = (s.transform.localPosition - layout.guns[station].position).sqrMagnitude;
+                    if (d < bestDistance) { bestDistance = d; best = s; }
+                }
+                if (best == null) break;
+                Assign(best, Task.Net, station, true);
+                sent++;
+            }
+        }
+
+        /// <summary>Rede recolhida: quem estava nela volta a passear.</summary>
+        public void StopNet()
+        {
+            foreach (var s in crewOnDeck)
+                if (s.shown && !s.dying && s.task == Task.Net) Idle(s, Random.Range(0.5f, 2f));
         }
 
         void OnPortFired() => OnFired(-1);
@@ -497,6 +537,12 @@ namespace Pirates.Progression
                     case Task.Gun:
                         Gunner(s, now, dt);
                         break;
+                    case Task.Net:
+                        // De frente para fora, puxando o cabo da rede.
+                        SetSpeed(s, 0f, dt);
+                        Turn(s, layout.guns[s.station].yaw, dt);
+                        Repeat(s, PullId);
+                        break;
                 }
             }
         }
@@ -614,7 +660,7 @@ namespace Pirates.Progression
 
         void Assign(Sailor s, Task task, int station, bool run)
         {
-            var target = task == Task.Gun ? layout.guns[station].position : layout.rigging[station].position;
+            var target = task == Task.Rigging ? layout.rigging[station].position : layout.guns[station].position;
             s.task = task;
             s.station = station;
             s.running = run;

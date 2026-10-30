@@ -56,5 +56,9 @@ namespace Pirates.Base
 
         [Header("Ferreiro da Forja")]
         public Recipe[] smithy = Array.Empty<Recipe>();
+
+        [Header("Cozinha da taverna (D2, 30/10)")]
+        [Tooltip("Pratos feitos na hora com peixe (e um pouco de ouro); vão para o porão. Construção e tempo não valem aqui.")]
+        public Recipe[] kitchen = Array.Empty<Recipe>();
     }
 }

@@ -16,6 +16,9 @@ namespace Pirates.Controls
             if (!captain || !item) return false;
             if (captain.TryGetComponent(out FoodEater food) && food.Food == item) return true;
             if (captain.TryGetComponent(out BombThrower bombs) && bombs.Bomb == item) return true;
+            if (captain.TryGetComponent(out FishingRod rod) && (rod.ShrimpBait == item || rod.GoldenBait == item)) return true;
+            if (captain.TryGetComponent(out SmokeBomb smoke) && smoke.Item == item) return true;
+            if (item.mealEffect == Pirates.Core.MealEffect.Poison) return true;
             return captain.TryGetComponent(out PistolAmmo ammo) && ammo.Uses(item);
         }
 

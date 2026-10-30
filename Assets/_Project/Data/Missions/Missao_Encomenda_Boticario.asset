@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93de303936cbe94da1706226d9b9d52, type: 3}
+  m_Name: Missao_Encomenda_Boticario
+  m_EditorClassIdentifier: Pirates.Missions::Pirates.Missions.MissionDefinition
+  missionId: encomenda_boticario
+  title: "O rem\xE9dio do botic\xE1rio"
+  giver: Iara
+  description: "O botic\xE1rio faz rem\xE9dio com o veneno do baiacu e os espinhos do ouri\xE7o. Dois de cada."
+  type: 2
+  count: 1
+  targetId: 
+  targetName: 
+  delivery:
+  - item: {fileID: 11400000, guid: a0a7d525ad56f0145af65b31946de843, type: 2}
+    amount: 2
+  - item: {fileID: 11400000, guid: 5011cf52f1e652c4992aa4d5acb0df9f, type: 2}
+    amount: 2
+  rewards:
+  - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
+    amount: 80
+  objectiveText: 
+  doneText: 
+  repeatable: 1
+  cooldownSeconds: 900
+  requiredRank: 0
+  fameReward: 6
+  givenByNpc: 1
+  offerLines:
+  - "O botic\xE1rio me pediu peixe esquisito: baiacu, pelo veneno, e ouri\xE7o, pelos espinhos."
+  - "Dois de cada, capit\xE3o. Cuidado com o baiacu: n\xE3o coma, por nada."
+  acceptLine: "Combinado. E n\xE3o me apare\xE7a inchado!"
+  declineLine: "Tudo bem, capit\xE3o. Tenho outras encomendas, se quiser."
+  waitingLine: "Dois baiacus e dois ouri\xE7os para o botic\xE1rio, capit\xE3o."
+  doneLines:
+  - "Veneno e espinho, tudo certo. O botic\xE1rio vai ficar feliz."
+  - Tome o pagamento dele, e o meu obrigado.
+  restingLine: "O botic\xE1rio tem rem\xE9dio para a vila inteira. Volte depois."

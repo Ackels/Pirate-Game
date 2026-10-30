@@ -55,7 +55,7 @@ namespace Pirates.EditorTools
         /// grades, colunas) com paleta, e Ruins (Ultimate Modular Ruins do Quaternius: paredes com arco gótico, colunas, pisos,
         /// estátuas, versões com mato; grade de 1 m) com cor por material, nas cópias M_R_*.
         /// </summary>
-        enum Kit { Pirate, Town, Survival, Nature, Castle, Graveyard, Ruins }
+        enum Kit { Pirate, Town, Survival, Nature, Castle, Graveyard, Ruins, Food }
 
         static string KitFolder(Kit kit) => kit switch
         {
@@ -65,6 +65,8 @@ namespace Pirates.EditorTools
             Kit.Castle => "Assets/ThirdParty/Kenney_CastleKit/Models",
             Kit.Graveyard => "Assets/ThirdParty/Kenney_GraveyardKit/Models",
             Kit.Ruins => "Assets/ThirdParty/Quaternius_ModularRuins/Models",
+            // Food Kit 2.0 do Kenney (CC0, 30/10): pratos, tigelas, panelas e comida (ícones dos pratos da taverna).
+            Kit.Food => "Assets/ThirdParty/Kenney_FoodKit/Models",
             _ => KenneyFolder,
         };
 
@@ -72,7 +74,7 @@ namespace Pirates.EditorTools
         {
             Kit.Pirate => KenneyMaterial,
             Kit.Nature or Kit.Ruins => null,
-            _ => GetTexturedMaterial(kit switch { Kit.Town => "M_KenneyTown", Kit.Castle => "M_KenneyCastle", Kit.Graveyard => "M_KenneyGraveyard", _ => "M_KenneySurvival" },
+            _ => GetTexturedMaterial(kit switch { Kit.Town => "M_KenneyTown", Kit.Castle => "M_KenneyCastle", Kit.Graveyard => "M_KenneyGraveyard", Kit.Food => "M_KenneyFood", _ => "M_KenneySurvival" },
                 AssetDatabase.LoadAssetAtPath<Texture2D>(KitFolder(kit) + "/Textures/colormap.png"), 0.12f),
         };
 

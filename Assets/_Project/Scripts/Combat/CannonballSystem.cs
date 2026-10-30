@@ -14,7 +14,7 @@ namespace Pirates.Combat
         struct Ball
         {
             public Vector3 position, velocity;
-            public float age, lifetime, damage, mass, sailDamage, crewDamage;
+            public float age, lifetime, damage, mass, sailDamage, crewDamage, burnPerSecond, burnSeconds;
             public Rigidbody shooter;
             /// <summary>Respingo ao cair na água (na metralha, só um projétil por canhão: senão são 16 de uma vez). Acerto sempre tem
             /// efeito; balinhas sem respingo (metralha) respeitam um intervalo curto entre um e outro.</summary>
@@ -59,7 +59,8 @@ namespace Pirates.Combat
         /// <param name="scale">Tamanho na tela (metralha: projéteis pequenos).</param>
         /// <param name="withEffects">Respingo e lascas (efeito e som) quando cai ou acerta.</param>
         public void Fire(Vector3 position, Vector3 velocity, float damage, float mass, float lifetime, Rigidbody shooter,
-            float sailDamage = 0f, float crewDamage = 0f, float scale = 1f, bool withEffects = true, bool chain = false)
+            float sailDamage = 0f, float crewDamage = 0f, float scale = 1f, bool withEffects = true, bool chain = false,
+            float burnPerSecond = 0f, float burnSeconds = 0f)
         {
             Transform visual;
             if (chain)
@@ -84,7 +85,7 @@ namespace Pirates.Combat
             {
                 position = position, velocity = velocity, damage = damage, mass = mass,
                 lifetime = lifetime, shooter = shooter, visual = visual, sailDamage = sailDamage, crewDamage = crewDamage,
-                effects = withEffects, chain = chain, spin = Random.Range(0f, 360f),
+                effects = withEffects, chain = chain, spin = Random.Range(0f, 360f), burnPerSecond = burnPerSecond, burnSeconds = burnSeconds,
             });
         }
 
@@ -172,6 +173,8 @@ namespace Pirates.Combat
                 sailDamage = b.sailDamage,
                 crewDamage = b.crewDamage,
                 ignites = true,
+                burnPerSecond = b.burnPerSecond,
+                burnSeconds = b.burnSeconds,
             });
 
             if (b.effects || Time.time >= nextPelletImpact)

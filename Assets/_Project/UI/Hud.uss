@@ -3485,3 +3485,177 @@
 .hud-loot__cell--blocked {
     opacity: 0.5;
 }
+
+/* ---------- Diário do pescador (D2, 30/10): aba Pesca da tela do capitão (P) ---------- */
+
+.hud-fishlog__top {
+    margin-bottom: 8px;
+}
+
+.hud-fishlog__count {
+    font-size: 20px;
+    color: rgb(74, 46, 24);
+}
+
+.hud-fishlog__prizes {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.hud-fishlog__prize {
+    width: 32.6%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.hud-fishlog__prize--done {
+    border-color: rgb(196, 152, 58);
+    background-color: rgba(214, 178, 92, 0.22);
+}
+
+.hud-fishlog__prize-head {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-fishlog__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hud-fishlog__card {
+    width: 19.4%;
+    margin-top: 0;
+    margin-bottom: 6px;
+    padding: 6px;
+}
+
+.hud-fishlog__card--unknown {
+    opacity: 0.72;
+}
+
+.hud-fishlog__card--legend {
+    border-color: rgb(214, 168, 52);
+    border-width: 2px;
+}
+
+.hud-fishlog__head {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.hud-fishlog__head .hud-item__slot--big {
+    width: 54px;
+    height: 54px;
+    margin-right: 8px;
+}
+
+.hud-fishlog__where {
+    font-size: 14px;
+    color: rgb(107, 74, 43);
+    flex-grow: 1;
+}
+
+.hud-fishlog__stat {
+    margin-top: 3px;
+    color: rgb(74, 46, 24);
+}
+
+/* ---------- Pratos da taverna (D2, 30/10): o que está valendo, embaixo do relógio ---------- */
+
+.hud-meals {
+    min-width: 230px;
+    max-width: 330px;
+    padding: 6px 14px 8px 14px;
+    margin-top: 6px;
+}
+
+.hud-meals__title {
+    font-size: 15px;
+    color: rgb(255, 209, 107);
+    -unity-font-style: bold;
+}
+
+.hud-meals__lines {
+    font-size: 15px;
+    color: rgb(240, 226, 196);
+    white-space: normal;
+}
+
+/* Roda de comando dos marujos (30/10): segurar T. */
+.hud-crew-wheel {
+    position: absolute;
+}
+
+.hud-crew-wheel__slice {
+    position: absolute;
+    width: 140px;
+    height: 36px;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 23px;
+    color: rgb(247, 233, 201);
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.9);
+}
+
+.hud-crew-wheel__slice--hover {
+    color: rgb(255, 238, 190);
+    font-size: 26px;
+}
+
+.hud-crew-wheel__middle {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-crew-wheel__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 27px;
+    color: rgb(255, 211, 107);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.hud-crew-wheel__now {
+    -unity-font-definition: url("Fonts/Alegreya Italic SDF.asset");
+    font-size: 15px;
+    color: rgb(214, 196, 160);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.hud-crew-wheel__desc {
+    position: absolute;
+    padding: 6px 12px;
+    background-color: rgba(26, 14, 8, 0.85);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(240, 190, 90, 0.7);
+    font-size: 17px;
+    color: rgb(247, 233, 201);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.hud-crew-hint {
+    position: absolute;
+    top: 12%;
+    left: 0;
+    right: 0;
+    align-items: center;
+}
+
+.hud-crew-hint > Label {
+    padding: 8px 18px;
+    background-color: rgba(26, 14, 8, 0.88);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(240, 190, 90, 0.75);
+    font-size: 19px;
+    color: rgb(247, 233, 201);
+}

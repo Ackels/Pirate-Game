@@ -6,6 +6,9 @@ namespace Pirates.Economy
     /// <summary>Onde o capitão usa um item de equipamento (E1, 19/10). Traje e relíquia ficam para os passos E4/E5.</summary>
     public enum EquipSlot { None, Blade, Firearm, Outfit, Relic }
 
+    /// <summary>O que uma relíquia equipada dá (30/10): mais ouro (missões e saque) ou mais tesouro (baús e equipamento nos destroços e baús).</summary>
+    public enum RelicEffect { None, Gold, Treasure }
+
     /// <summary>Nome e cor de cada raridade (baús, janelas, tela de equipamento).</summary>
     public static class Rarity
     {
@@ -61,6 +64,13 @@ namespace Pirates.Economy
         {
             var item = Get(slot);
             return item && PlayerStorage.Has(item) ? item : null;
+        }
+
+        /// <summary>Quanto a relíquia equipada dá daquele tipo (0 = nenhuma ou de outro tipo).</summary>
+        public static float RelicBonus(RelicEffect effect)
+        {
+            var relic = Active(EquipSlot.Relic);
+            return relic && relic.relicEffect == effect ? relic.relicAmount : 0f;
         }
 
         public static bool IsEquipped(ItemDefinition item) => item && item.equipSlot != EquipSlot.None && equipped[(int)item.equipSlot] == item;

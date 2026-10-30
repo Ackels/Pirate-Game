@@ -110,6 +110,7 @@ namespace Pirates.UI
             hash = Win.Mix(hash, OnFoot ? 1 : 2);
             hash = Win.Mix(hash, Win.Of(Bag));
             if (gear) hash = Win.Mix(hash, gear.CurrentBlade);
+            if (Meals.Current) hash = Win.Mix(hash, Meals.Current.Version);
             return Win.Mix(hash, filter.Signature);
         }
 
@@ -262,7 +263,9 @@ namespace Pirates.UI
                     has ? Icon(item, w) : null, has && item ? item.rarity : ItemRarity.Common, has);
             }
             Slot(rightSlots, "Traje", null, null, null, ItemRarity.Common, false, "em breve");
-            Slot(rightSlots, "Relíquia", null, null, null, ItemRarity.Common, false, "em breve");
+            // Relíquia (30/10): colar de pérolas, cavalo-marinho seco.
+            var relic = PlayerLoadout.Active(EquipSlot.Relic);
+            Slot(rightSlots, "Relíquia", relic, relic, relic ? Icon(relic, null) : null, relic ? relic.rarity : ItemRarity.Common, relic, "vazio");
             var pack = gear ? gear.GetComponent<BackpackGear>() : null;
             var packItem = pack ? pack.Current : null;
             Slot(rightSlots, "Mochila", packItem, packItem, packItem ? Icon(packItem, null) : starterPackIcon,
@@ -334,7 +337,8 @@ namespace Pirates.UI
             string kind = item && item.equipSlot != EquipSlot.None ? Rarity.SlotName(item.equipSlot)
                 : weapon ? (weapon.kind == WeaponKind.Melee ? "Lâmina" : "Arma de fogo")
                 : item && item.category == ItemCategory.Gear ? "Equipamento"
-                : item && item.category == ItemCategory.Schematic ? "Esquema" : "Recurso";
+                : item && item.category == ItemCategory.Schematic ? "Esquema"
+                : Meals.IsMeal(item) ? "Prato da taverna" : "Recurso";
             head.Add(Hud.Text($"{Rarity.NameOf(rarity)} · {kind}", "hud-equip__rarity"));
 
             var current = EquippedBlade();
@@ -356,6 +360,17 @@ namespace Pirates.UI
                 string shots = weapon.pellets > 1 ? $"{weapon.pellets} chumbos × {weapon.damage:0}" : $"dano <b>{weapon.damage:0}</b>";
                 Win.Text(box, $"{shots} · alcance {weapon.range:0} m · recarga {weapon.reloadTime:0.0} s", "hud-window__small", "hud-window__text");
             }
+            if (item && item.equipSlot == EquipSlot.Relic)
+            {
+                Win.Text(box, $"<b>Efeito:</b> {RelicText(item)}", "hud-window__small", "hud-window__text");
+                if (!string.IsNullOrEmpty(item.description)) Win.Text(box, $"<i>{item.description}</i>", "hud-window__small", "hud-window__muted");
+                var actions = Win.Row(box);
+                Win.Spacer(actions);
+                bool on = PlayerLoadout.Active(EquipSlot.Relic) == item;
+                actions.Add(on ? Win.Button("Tirar", () => PlayerLoadout.Unequip(EquipSlot.Relic), true, "hud-button--small")
+                    : Win.Button("Equipar", () => EquipRelic(item), true, "hud-button--small"));
+                return;
+            }
             if (item && item.backpackCapacity > 0f)
                 Win.Text(box, $"espaço da mochila: <b>{item.backpackCapacity:0}</b> (vale a maior que você tiver)", "hud-window__small", "hud-window__text");
             var bag = Bag;
@@ -363,6 +378,7 @@ namespace Pirates.UI
                 Win.Text(box, $"<b>{bag.Count(item)}</b> {(OnFoot ? "na mochila" : "no porão")} · {HudDraw.SpaceText(item)}", "hud-window__small", "hud-window__text");
             string text = item ? item.description : null;
             if (!string.IsNullOrEmpty(text)) Win.Text(box, $"<i>{text}</i>", "hud-window__small", "hud-window__muted");
+            if (Meals.IsMeal(item) && bag && bag.Count(item) > 0 && Meals.Current) AddEat(box, item, bag);
             var looter = OnFoot && gear ? gear.GetComponent<LandLooter>() : null;
             if (item && looter && looter.Backpack.Count(item) > 0) AddDrop(box, looter, item);
         }
@@ -380,6 +396,21 @@ namespace Pirates.UI
             if (reason != null) return;
             if (count > 1) row.Add(Win.Button("Largar 1", () => Drop(looter, item, 1), true, "hud-button--small"));
             row.Add(Win.Button(count > 1 ? $"Largar todos ({count})" : "Largar no chão", () => Drop(looter, item, count), true, "hud-button--small"));
+        }
+
+        /// <summary>Prato da taverna (D2, 30/10): o bônus, quanto falta do que está valendo e "Comer".</summary>
+        static void AddEat(VisualElement box, ItemDefinition dish, Inventory bag)
+        {
+            var meals = Meals.Current;
+            bool tool = Meals.IsTool(dish);
+            Win.Text(box, $"<b>{(tool ? "Ao usar" : "Ao comer")}:</b> {Meals.Describe(dish)}", "hud-window__small", "hud-window__text");
+            var row = Win.Row(box);
+            var now = meals.Dish(dish.mealEffect);
+            row.Add(Hud.Text(now && meals.Remaining(dish.mealEffect) > 0f
+                    ? $"valendo agora: {now.displayName} (comer de novo recomeça o tempo)"
+                    : "um prato de cada tipo vale ao mesmo tempo",
+                "hud-window__small", "hud-window__muted", "hud-grow"));
+            row.Add(Win.Button(tool ? "Usar" : "Comer", () => meals.Eat(dish, bag), true, "hud-button--buy"));
         }
 
         static void Drop(LandLooter looter, ItemDefinition item, int amount)
@@ -420,6 +451,20 @@ namespace Pirates.UI
             if (item && item.icon) return item.icon;
             if (item && item.equipment is WeaponDefinition w && w.icon) return w.icon;
             return weapon ? weapon.icon : null;
+        }
+
+        static string RelicText(ItemDefinition relic) => relic.relicEffect switch
+        {
+            RelicEffect.Gold => $"+{relic.relicAmount * 100f:0}% de ouro nas missões e no saque (baús, destroços, caixotes)",
+            RelicEffect.Treasure => $"+{relic.relicAmount * 100f:0}% de chance de baú nos destroços e de equipamento nos baús",
+            _ => "",
+        };
+
+        static void EquipRelic(ItemDefinition item)
+        {
+            if (!PlayerLoadout.Equip(item)) return;
+            var h = GameHud.Current;
+            if (h) h.Feed(GameHud.FeedKind.Notice, $"Relíquia equipada: {item.displayName}\n<size=75%>{RelicText(item)}</size>", Rarity.ColorOf(item.rarity));
         }
 
         void Equip(ItemDefinition item, WeaponDefinition weapon)

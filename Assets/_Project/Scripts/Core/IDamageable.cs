@@ -20,6 +20,10 @@ namespace Pirates.Core
         public bool blocked;
         /// <summary>Lâmina sagrada (Lâmina de São Telmo, C5): o morto amaldiçoado que ela derruba não levanta de novo.</summary>
         public bool holy;
+        /// <summary>Veneno (lâmina envenenada, 30/10): o dano que corre aos poucos (vem com blocked: sem tranco nem reação).</summary>
+        public bool poison;
+        /// <summary>Munição incendiária (30/10): o navio atingido pega fogo, perdendo isto de casco por segundo por <see cref="burnSeconds"/>.</summary>
+        public float burnPerSecond, burnSeconds;
     }
 
     /// <summary>Como o golpe derruba quem está a pé (pacote A, 09/10).</summary>

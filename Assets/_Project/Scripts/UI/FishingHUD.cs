@@ -23,18 +23,20 @@ namespace Pirates.UI
         WorldLabelPool bite;
         FishingMeter meter;
         float bannerUntil, facingWaterSince = -1f;
-        CachedText line;
+        CachedText line, castLine;
 
         public void Bind(FishingRod fishingRod) => rod = fishingRod;
 
         void OnEnable()
         {
+            FishingRod.BaitPacked += OnBaitPacked;
             FishingRod.Caught += OnCaught;
             FishingRod.Missed += OnMissed;
         }
 
         void OnDisable()
         {
+            FishingRod.BaitPacked -= OnBaitPacked;
             FishingRod.Caught -= OnCaught;
             FishingRod.Missed -= OnMissed;
             if (prompt == null) return;
@@ -112,7 +114,15 @@ namespace Pirates.UI
             }
             if (rod.CanOpen)
             {
-                prompt.Show("F", "Pescar");
+                var bait = rod.NextBait;
+                if (!bait)
+                {
+                    prompt.Show("F", "Pescar");
+                    return;
+                }
+                int n = rod.BaitCount(bait);
+                if (castLine.Stale(bait, n)) castLine.Text = $"Pescar  <size=80%>(com {bait.displayName.ToLowerInvariant()}: {n} na mochila)</size>";
+                prompt.Show("F", castLine.Text);
                 return;
             }
             // Sem vara: só avisa parado de frente para a água um instante (andando pela praia não fica piscando).
@@ -159,10 +169,20 @@ namespace Pirates.UI
         {
             if (who != rod || !item) return;
             var h = GameHud.Current;
-            if (h) h.Feed(GameHud.FeedKind.Pickup, $"Pescou: <b>{item.displayName}</b>  <size=80%>(+1 na mochila)</size>", item.color);
+            var last = who.LastCatch;
+            string size = last.size > 0f ? $" · {Pirates.Progression.FishJournal.FormatSize(last.size)}" : "";
+            string note = last.isNew ? "  <color=#FFD36B>espécie nova no diário!</color>" : last.isRecord ? "  <color=#FFD36B>novo recorde!</color>" : "";
+            if (h) h.Feed(GameHud.FeedKind.Pickup, $"Pescou: <b>{item.displayName}</b>{size}{note}  <size=80%>(+1 na mochila)</size>", item.color);
             if (item.rarity < ItemRarity.Rare || banner == null) return;
             banner.Show($"<color={Rarity.Hex(item.rarity)}>{Rarity.NameOf(item.rarity)}</color>: {item.displayName}!", "pescado");
             bannerUntil = Time.time + bannerSeconds;
+        }
+
+        void OnBaitPacked(FishingRod who, ItemDefinition bait, int amount)
+        {
+            if (who != rod) return;
+            var h = GameHud.Current;
+            if (h) h.Feed(GameHud.FeedKind.Pickup, $"Levou {amount}× {bait.displayName.ToLowerInvariant()} do porão para a mochila", bait.color);
         }
 
         void OnMissed(FishingRod who, string reason)

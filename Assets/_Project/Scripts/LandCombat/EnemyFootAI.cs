@@ -27,7 +27,93 @@ namespace Pirates.LandCombat
         public static bool Distracted { get; set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() => Distracted = false;
+        static void ResetStatics()
+        {
+            Distracted = false;
+            SmokeZones.Clear();
+        }
+
+        /// <summary>Nuvens de fumaça (bomba de fumaça de siba, 30/10): quem está dentro não é visto por ninguém enquanto a nuvem dura.</summary>
+        struct Smoke
+        {
+            public Vector3 center;
+            public float radius, until;
+        }
+
+        static readonly List<Smoke> SmokeZones = new();
+
+        /// <summary>Uma nuvem de fumaça: esconde quem está dentro; os piratas pegos nela ficam cegos e tossindo (<see cref="Blind"/>).</summary>
+        public static void AddSmoke(Vector3 center, float radius, float seconds, float blindSeconds)
+        {
+            SmokeZones.Add(new Smoke { center = center, radius = radius, until = Time.time + seconds });
+            for (int i = 0; i < Active.Count; i++)
+            {
+                var ai = Active[i];
+                if (ai && !ai.health.IsDead && Flat(ai.transform.position - center).sqrMagnitude <= radius * radius) ai.Blind(blindSeconds);
+            }
+        }
+
+        /// <summary>O ponto está dentro de uma nuvem de fumaça agora.</summary>
+        public static bool InSmoke(Vector3 point)
+        {
+            for (int i = SmokeZones.Count - 1; i >= 0; i--)
+            {
+                var z = SmokeZones[i];
+                if (Time.time >= z.until)
+                {
+                    SmokeZones.RemoveAt(i);
+                    continue;
+                }
+                if (Flat(point - z.center).sqrMagnitude <= z.radius * z.radius) return true;
+            }
+            return false;
+        }
+
+        float blindUntil = float.NegativeInfinity;
+
+        // Marujos do capitão (D3, 30/10): na briga, o pirata vai para quem estiver mais perto, o capitão ou um marujo.
+        CrewmateAI foe;
+        float nextFoePick;
+
+        /// <summary>O marujo com quem está brigando (null = o capitão).</summary>
+        public CrewmateAI Foe => foe;
+
+        /// <summary>Marujo de pé bem mais perto que o capitão (fica com o de agora, se ainda vale).</summary>
+        CrewmateAI NearestCrewmate()
+        {
+            var list = CrewmateAI.Active;
+            if (list.Count == 0) return null;
+            Vector3 me = transform.position;
+            float captain = TargetAvailable ? Flat(target.position - me).magnitude : float.MaxValue;
+            CrewmateAI best = null;
+            float bestD = float.MaxValue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var c = list[i];
+                if (!c || c.IsDown || !c.isActiveAndEnabled) continue;
+                float d = Flat(c.transform.position - me).magnitude;
+                if (c == foe) d -= 1.5f;
+                if (d < captain - 1f && d < bestD)
+                {
+                    bestD = d;
+                    best = c;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>Cego pela fumaça: não vê ninguém, não ataca, anda devagar e esquece onde o capitão estava.</summary>
+        public bool Blinded => Time.time < blindUntil;
+
+        public void Blind(float seconds)
+        {
+            if (seconds <= 0f || (health && health.IsDead)) return;
+            blindUntil = Mathf.Max(blindUntil, Time.time + seconds);
+            lastSeen = float.NegativeInfinity;
+            if (combat) combat.Interrupt(seconds);
+            if (character) character.SetSpeedMultiplier(0.35f, seconds);
+            if (camp) camp.ReleaseAttackSlot(this);
+        }
 
         [SerializeField] Transform target;
         [SerializeField] EnemyCamp camp;
@@ -497,8 +583,22 @@ namespace Pirates.LandCombat
             }
             // Provocado (levou tiro há pouco): sabe onde o jogador está mesmo sem ver (corre até ele; o atirador ainda precisa ver
             // para atirar) e não desiste por perder de vista.
-            bool provoked = camp && camp.IsProvoked && TargetAvailable;
+            bool provoked = camp && camp.IsProvoked && TargetAvailable && !Blinded && !InSmoke(target.position);
             if (provoked) lastKnown = target.position;
+            if (!Blinded)
+            {
+                if (Time.time >= nextFoePick)
+                {
+                    nextFoePick = Time.time + 0.6f;
+                    foe = NearestCrewmate();
+                }
+                if (foe && !foe.IsDown)
+                {
+                    lastKnown = foe.transform.position;
+                    lastSeen = Time.time;
+                }
+                else foe = null;
+            }
             bool tooFar = camp && Flat(target ? target.position - camp.Center : Vector3.zero).magnitude > camp.EffectiveLeash;
             if (!TargetAvailable || tooFar || (!provoked && Time.time - lastSeen > loseTargetAfter))
             {
@@ -1000,11 +1100,13 @@ namespace Pirates.LandCombat
         /// <summary>Vê o jogador: dentro do alcance, do ângulo de visão (ou bem perto) e sem nada no meio.</summary>
         bool CanSee()
         {
-            if (Distracted || !TargetAvailable) return false;
+            if (Distracted || !TargetAvailable || Blinded || InSmoke(target.position)) return false;
             Vector3 to = target.position - transform.position;
             float distance = Flat(to).magnitude;
             float range = sightRange;
             if (Services.TryGet(out ITimeOfDay time)) range *= Mathf.Lerp(1f, nightSight, time.Night);
+            // Sopa de siba (prato da taverna, 30/10): o capitão passa despercebido de mais longe.
+            if (Services.TryGet(out IMealBuffs meals)) range *= 1f - meals.Amount(MealEffect.Stealth);
             if (distance > Mathf.Max(range, hearRange)) return false;
             if (distance > hearRange && Vector3.Angle(transform.forward, Flat(to)) > sightAngle * 0.5f) return false;
 

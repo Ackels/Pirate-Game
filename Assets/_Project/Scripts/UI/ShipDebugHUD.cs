@@ -543,10 +543,11 @@ namespace Pirates.UI
             bool guns = ship.GetComponentsInChildren<CannonBattery>().Length > 0;
             return "<b>W / S</b>   subir / baixar velas\n<b>A / D</b>   leme\n<b>Botão direito ou do meio + mouse</b>   girar e inclinar câmera\n<b>Scroll</b>   zoom" +
                    (guns ? "\n<b>Q / E</b>   segurar mira, soltar dispara (bombordo / estibordo)" : "") +
-                   (ship.TryGetComponent(out ShipAmmo a) && a.Slots.Count > 0 ? "\n<b>1 / 2 / 3</b>   munição: comum / corrente (rasga velas) / metralha (de perto)" : "") +
+                   (ship.TryGetComponent(out ShipAmmo a) && a.Slots.Count > 0 ? "\n<b>1 / 2 / 3 / 4</b>   munição: comum / corrente (rasga velas) / metralha (de perto) / incendiária (põe fogo)" : "") +
                    (ship.TryGetComponent(out ShipCarpenter c) && c.Available ? "\n<b>R</b>   carpinteiro: conserta no mar, fora de combate, gastando madeira" : "") +
                    (CaptainFame.Current ? "\n<b>C</b>   fama do capitão: patente, bônus e o que falta para subir" : "") +
                    "\n<b>I</b>   inventário do capitão (lâminas achadas nos baús)     <b>J</b>   diário: missões e História" +
+                   (FishJournal.Current ? "\n<b>P</b>   diário do pescador: peixes pescados, recordes e onde achar os outros" : "") +
                    (guns ? "\n<b>F5</b>   reiniciar a cena" : "");
         }
     }
