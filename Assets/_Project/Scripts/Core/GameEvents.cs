@@ -12,6 +12,15 @@ namespace Pirates.Core
         public GameObject ship;
         public string targetId;
         public int fame;
+        /// <summary>Navio da Coroa (a Esquadra Real, G passo 3): dá fama, mas não conta para missões nem para a História (não é pirata).</summary>
+        public bool crown;
+    }
+
+    /// <summary>Um navio mercante afundou (G, 03/11): não conta para as missões de afundar piratas nem dá fama; byPlayer = o jogador atirou nele.</summary>
+    public struct MerchantSunkEvent
+    {
+        public GameObject ship;
+        public bool byPlayer;
     }
 
     /// <summary>O último pirata de um acampamento caiu (ou o forte calou: mesmo evento, com o id do forte).</summary>

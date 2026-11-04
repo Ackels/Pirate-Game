@@ -311,7 +311,7 @@ namespace Pirates.UI
                 "<b>G (segurar)</b>   mirar a bomba (arco e área da explosão): soltar lança, botão direito cancela     <b>B</b>   bomba de fumaça (no pé)\n" +
                 "<b>T (segurar)</b>   roda de comando dos marujos: o mouse escolhe a ordem, soltar dá (ir até lá / atacar: aponte e clique)\n" +
                 "<b>1 / 2 / 3</b>   cutelo / pistola / bacamarte (comprado no mercado)\n" +
-                "<b>Q / E</b>  ou  <b>botão do meio + mouse</b>   girar câmera     <b>Scroll</b>   zoom\n" +
+                "<b>Q / E</b>  ou  <b>Alt + mouse</b> (ou botão do meio + mouse)   girar câmera     <b>Scroll</b>   zoom\n" +
                 "<b>F</b>   entrar nas casas do porto · perto do bote, voltar ao navio\n" +
                 "<b>R</b>   comer uma ração (cura; o capitão leva 5 do porão ao desembarcar)" +
                 "\n<b>I</b>   inventário: trocar a lâmina     <b>J</b>   diário: missões e História" +
@@ -423,7 +423,7 @@ namespace Pirates.UI
             else banner.Hide();
 
             if (Time.time < cameraHintUntil)
-                cameraHint.Show(null, "<b>Botão do meio</b> + mouse: girar e inclinar a câmera   ·   <b>Q / E</b>: girar   ·   <b>H</b>: controles");
+                cameraHint.Show(null, "<b>Alt</b> + mouse: girar e inclinar a câmera   ·   <b>Q / E</b>: girar   ·   <b>H</b>: controles");
             else cameraHint.Hide();
 
             if (switcher.CanEmbark) prompt.Show("F", "Voltar ao navio");

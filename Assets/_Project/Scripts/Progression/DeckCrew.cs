@@ -199,7 +199,7 @@ namespace Pirates.Progression
         {
             UnhookBatteries();
             foreach (var b in GetComponentsInChildren<CannonBattery>())
-                batteries[b.Side == BroadsideSide.Port ? 0 : 1] = b;
+                if (!b.IsChaser) batteries[b.Side == BroadsideSide.Port ? 0 : 1] = b;
             if (batteries[0]) batteries[0].Fired += OnPortFired;
             if (batteries[1]) batteries[1].Fired += OnStarboardFired;
         }

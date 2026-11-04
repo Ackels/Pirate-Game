@@ -90,18 +90,103 @@ namespace Pirates.EditorTools
             return a;
         }
 
-        /// <summary>Saco de saque (prefab): o BreakableLoot solta um destes com o que sorteou.</summary>
+        /// <summary>
+        /// Saco de saque (prefab): o BreakableLoot solta um destes com o que sorteou. Desde 03/11 (pedido do Jhonata: a bola com a tampinha
+        /// estava feia) é o "saco de moedas" low-poly do N-Gon Forge (Loja), de juta com a boca amarrada e moedas caindo, numa cópia da paleta
+        /// do pacote repintada (<see cref="SackMaterial"/>). Sem o pacote, volta à bola de antes.
+        /// </summary>
         static LootSack SackPrefab(Material cloth, Material rope)
         {
             var root = new GameObject("Loot_Saco");
             var visual = new GameObject("Visual").transform;
             visual.SetParent(root.transform, false);
-            Part(PrimitiveType.Sphere, "Saco", visual, new Vector3(0f, 0.25f, 0f), new Vector3(0.5f, 0.42f, 0.5f), Quaternion.identity, cloth);
-            Part(PrimitiveType.Cylinder, "Boca", visual, new Vector3(0f, 0.5f, 0f), new Vector3(0.16f, 0.07f, 0.16f), Quaternion.identity, rope);
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(SackModelPath);
+            var material = model ? SackMaterial(model) : null;
+            if (model && material)
+            {
+                var mesh = model.GetComponentInChildren<MeshFilter>().sharedMesh;
+                var part = new GameObject("Saco");
+                part.transform.SetParent(visual, false);
+                // ~0,23 m no pacote: × 3,5 = ~0,8 m de largura (o saco antigo tinha 0,5) visto de cima; o pé no chão.
+                part.transform.localScale = Vector3.one * SackScale;
+                part.transform.localPosition = new Vector3(-mesh.bounds.center.x, -mesh.bounds.min.y, -mesh.bounds.center.z) * SackScale
+                    + Vector3.up * 0.04f;
+                part.AddComponent<MeshFilter>().sharedMesh = mesh;
+                part.AddComponent<MeshRenderer>().sharedMaterial = material;
+            }
+            else
+            {
+                Part(PrimitiveType.Sphere, "Saco", visual, new Vector3(0f, 0.25f, 0f), new Vector3(0.5f, 0.42f, 0.5f), Quaternion.identity, cloth);
+                Part(PrimitiveType.Cylinder, "Boca", visual, new Vector3(0f, 0.5f, 0f), new Vector3(0.16f, 0.07f, 0.16f), Quaternion.identity, rope);
+            }
             root.AddComponent<LootSack>().Configure(visual);
             var saved = PrefabUtility.SaveAsPrefabAsset(root, $"{LootPrefabsFolder}/Loot_Saco.prefab");
             Object.DestroyImmediate(root);
             return saved.GetComponent<LootSack>();
+        }
+
+        const string SackModelPath = "Assets/ThirdParty/Loja/NGonForge_Dungeon/URP/Prefabs/Misc/Item/NGF_Bag_of_coins.prefab";
+        const float SackScale = 3.5f;
+
+        /// <summary>
+        /// Paleta 16 × 16 do N-Gon Forge copiada com os tons do saco trocados: o cinza (pano do saco no pacote) vira juta e o vermelho-ferrugem
+        /// (a amarração) vira corda; o ouro das moedas fica. Filtro de ponto (a bilinear misturava as casas vizinhas). Feita uma vez
+        /// (<c>Textures/Saco_Paleta.png</c>); para refazer, apague o arquivo.
+        /// </summary>
+        static Material SackMaterial(GameObject model)
+        {
+            const string texturePath = Root + "/Textures/Saco_Paleta.png";
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            if (!texture)
+            {
+                var source = model.GetComponentInChildren<MeshRenderer>().sharedMaterial.mainTexture as Texture2D;
+                if (!source) return null;
+                var rt = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+                Graphics.Blit(source, rt);
+                var previous = RenderTexture.active;
+                RenderTexture.active = rt;
+                var copy = new Texture2D(source.width, source.height, TextureFormat.RGBA32, false);
+                copy.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+                var swaps = new (Color from, Color to)[]
+                {
+                    (Hex("797D79"), Hex("A8763F")),   // pano claro → juta
+                    (Hex("707370"), Hex("80582F")),   // pano na sombra → juta escura
+                    (Hex("793100"), Hex("4A2C18")),   // amarração → corda
+                };
+                var pixels = copy.GetPixels();
+                for (int i = 0; i < pixels.Length; i++)
+                    foreach (var (from, to) in swaps)
+                        if (Mathf.Abs(pixels[i].r - from.r) + Mathf.Abs(pixels[i].g - from.g) + Mathf.Abs(pixels[i].b - from.b) < 0.04f)
+                        {
+                            pixels[i] = to;
+                            break;
+                        }
+                copy.SetPixels(pixels);
+                System.IO.File.WriteAllBytes(texturePath, copy.EncodeToPNG());
+                Object.DestroyImmediate(copy);
+                AssetDatabase.ImportAsset(texturePath);
+                if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer)
+                {
+                    importer.filterMode = FilterMode.Point;
+                    importer.mipmapEnabled = false;
+                    importer.textureCompression = TextureImporterCompression.Uncompressed;
+                    importer.SaveAndReimport();
+                }
+                texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            }
+            var material = GetMaterial("M_Saco_Saque", Color.white, 0.12f);
+            if (material.GetTexture("_BaseMap") != texture)
+            {
+                material.SetTexture("_BaseMap", texture);
+                material.mainTexture = texture;
+                material.SetColor("_BaseColor", Color.white);
+                EditorUtility.SetDirty(material);
+            }
+            return material;
+
+            static Color Hex(string hex) => ColorUtility.TryParseHtmlString("#" + hex, out var c) ? c : Color.magenta;
         }
 
         /// <summary>Baú do tesouro nos fundos do acampamento, virado para o portão. A tranca (o acampamento) vem depois.</summary>

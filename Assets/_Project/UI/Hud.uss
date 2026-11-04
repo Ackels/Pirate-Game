@@ -3383,6 +3383,16 @@
     -unity-background-image-tint-color: rgb(255, 225, 160);
 }
 
+/* Canhões de caça (proa e popa, 03/11): cartões menores entre os dos bordos. */
+.hud-gun--chaser {
+    width: 116px;
+}
+
+.hud .hud-gun--chaser .hud-gun__icon {
+    width: 76px;
+    height: 42px;
+}
+
 .hud-gun__top {
     flex-direction: row;
     align-items: center;
@@ -3658,4 +3668,48 @@
     border-color: rgba(240, 190, 90, 0.75);
     font-size: 19px;
     color: rgb(247, 233, 201);
+}
+
+/* ---------- Procurado pela Coroa (G, passo 2) ---------- */
+
+/* Plaquinha embaixo do relógio: "Procurado" e as estrelas (vermelhas as que valem). */
+.hud-wanted {
+    min-width: 230px;
+    padding: 6px 14px 7px 14px;
+    margin-top: 6px;
+}
+
+.hud-wanted__row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-wanted__title {
+    -unity-font-definition: url("Fonts/PirataOne SDF.asset");
+    font-size: 22px;
+    color: rgb(255, 120, 95);
+    margin-right: 10px;
+    flex-grow: 1;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: rgba(30, 16, 6, 0.8);
+}
+
+.hud-wanted__star {
+    width: 20px;
+    height: 20px;
+    margin-left: 2px;
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_white.png");
+    -unity-background-image-tint-color: rgba(90, 70, 50, 0.85);
+    flex-shrink: 0;
+}
+
+.hud-wanted__star--on {
+    background-image: url("../../ThirdParty/UI/Kenney_UIAdventure/minimap_icon_star_red.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.hud-wanted__detail {
+    font-size: 13px;
+    color: rgb(230, 214, 180);
+    margin-top: 2px;
 }

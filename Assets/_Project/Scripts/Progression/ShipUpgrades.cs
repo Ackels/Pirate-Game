@@ -169,6 +169,11 @@ namespace Pirates.Progression
                 foreach (var battery in batteries) battery.SetStats(cannonCopy);
             }
 
+            // Canhões de caça (03/11): o nível 1 monta o da proa, o 2 o da popa.
+            int chasers = Mathf.RoundToInt(Total(UpgradeStat.Chasers));
+            foreach (var battery in batteries)
+                if (battery && battery.IsChaser) battery.SetMounted(chasers >= (battery.Side == BroadsideSide.Bow ? 1 : 2));
+
             health.SetMax((baseHull + Total(UpgradeStat.HullMax)) * (1f + Perk(PerkEffect.HullPercent)));
         }
 
@@ -188,6 +193,12 @@ namespace Pirates.Progression
                     ? $"recarga {ReloadTime(p):0.0} s (limite) · espalhamento -{CappedSpreadReduction(p) * 100f:0}%"
                     : $"recarga {ReloadTime(p):0.0} s",
                 UpgradeStat.AimAssistPercent => $"mira assistida {Total(UpgradeStat.AimAssistPercent, p):0}%",
+                UpgradeStat.Chasers => Mathf.RoundToInt(Total(UpgradeStat.Chasers, p)) switch
+                {
+                    <= 0 => "sem canhões de caça",
+                    1 => "canhão de caça na proa",
+                    _ => "canhões de caça na proa e na popa",
+                },
 
                 _ => "",
             };

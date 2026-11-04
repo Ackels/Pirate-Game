@@ -31,5 +31,8 @@ namespace Pirates.Combat
         [Tooltip("Incendiária (30/10): o navio atingido queima isto de casco por segundo, por burnSeconds (um acerto novo recomeça o tempo).")]
         [Min(0f)] public float burnPerSecond;
         [Min(0f)] public float burnSeconds;
+        [Tooltip("Os canhões de caça (proa e popa) também atiram esta munição (03/11, pedido do Jhonata: corrente no da proa para frear quem " +
+                 "foge e alcançar com os bordos). Cada tiro deles gasta uma carga.")]
+        public bool chasers;
     }
 }

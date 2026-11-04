@@ -96,9 +96,12 @@ namespace Pirates.UI
             var choice = last ? talker.PendingChoice : NpcTalker.Choice.None;
             var mission = talker.Mission;
             var board = talker.Board;
-            bool showReward = choice != NpcTalker.Choice.None && mission && board;
+            var wanted = choice == NpcTalker.Choice.Pardon ? talker.Wanted : null;
+            bool showReward = (choice != NpcTalker.Choice.None && mission && board) || wanted != null;
             Hud.Show(reward, showReward);
-            if (showReward)
+            if (wanted != null)
+                Hud.Set(reward, $"<b>Procurado: {wanted.Stars} {(wanted.Stars == 1 ? "estrela" : "estrelas")}</b>   ·   multa de {wanted.Fine} de ouro   ·   você tem {wanted.GoldOwned}");
+            else if (showReward)
                 Hud.Set(reward, $"<b>{mission.title}</b>   ·   paga {Win.Stacks(board.Rewards(mission))}   ·   +{mission.fameReward} de fama");
 
             switch (choice)
@@ -110,6 +113,11 @@ namespace Pirates.UI
                     break;
                 case NpcTalker.Choice.TurnIn:
                     footer.Add(Win.Button("Receber o pagamento  <size=75%>[F]</size>", talker.TurnIn));
+                    break;
+                case NpcTalker.Choice.Pardon when wanted != null:
+                    bool afford = wanted.GoldOwned >= wanted.Fine;
+                    footer.Add(Win.Button(afford ? $"Pagar a multa ({wanted.Fine} de ouro)  <size=75%>[F]</size>" : $"Faltam {wanted.Fine - wanted.GoldOwned} de ouro", talker.Pardon, afford));
+                    footer.Add(Win.Button("Agora não  <size=75%>[Esc]</size>", talker.Close, extraClass: "hud-button--small"));
                     break;
                 default:
                     var hint = Hud.Box("hud-dialogue__hint");

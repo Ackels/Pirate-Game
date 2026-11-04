@@ -173,6 +173,7 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial guide)) guide.Begin(tutorial);
             if (Services.TryGet(out IStory story)) story.Begin();
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(null);
+            if (Services.TryGet(out IWanted wanted)) wanted.Restore(0f, 0f);
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(null);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(null, null, null, 0);
             PlayerLoadout.Restore(null, null);
@@ -285,6 +286,11 @@ namespace Pirates.Save
             }
 
             if (Services.TryGet(out ITreasureMaps maps)) data.treasureMapId = maps.ActiveId;
+            if (Services.TryGet(out IWanted wanted))
+            {
+                data.wantedHeat = wanted.Heat;
+                data.wantedCalm = wanted.SecondsSinceCrime;
+            }
             if (Services.TryGet(out ICollectibles collectibles)) data.collectibles = collectibles.Found;
             if (Services.TryGet(out IFishJournal fishJournal))
                 fishJournal.Capture(out data.fishIds, out data.fishCounts, out data.fishBest, out data.fishPrizes);
@@ -507,6 +513,7 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial tutorial)) tutorial.Restore(data.hasTutorial ? data.tutorialStep : -1);
             if (Services.TryGet(out IStory story)) story.Restore(data.hasStory ? data.storyChapter : 0, data.hasStory ? data.storyProgress : null);
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(data.treasureMapId);
+            if (Services.TryGet(out IWanted wanted)) wanted.Restore(data.wantedHeat, data.wantedCalm);
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(data.collectibles);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(data.fishIds, data.fishCounts, data.fishBest, data.fishPrizes);
             PlayerLoadout.Restore(data.equipped, FindItem);

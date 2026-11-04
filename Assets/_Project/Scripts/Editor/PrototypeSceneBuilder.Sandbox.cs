@@ -28,6 +28,7 @@ namespace Pirates.EditorTools
                 .Concat(DishItems())
                 .Concat(BaitItems())
                 .Concat(PreparationItems())
+                .Concat(MaterialItems())
                 .Where(item => item)
                 .Distinct()
                 .OrderBy(item => item.category)

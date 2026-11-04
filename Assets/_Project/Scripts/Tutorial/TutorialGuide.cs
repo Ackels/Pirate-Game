@@ -124,11 +124,11 @@ namespace Pirates.Tutorial
                 guide = "Velas ao vento! E volte inteiro, que o armazém não se enche sozinho.",
                 objective = "<b>W</b> solta as velas (mais uma vez, mais rápido) e <b>A / D</b> mexem o leme. Saia do porto." },
             new() { part = 2, goal = Goal.FireCannons, title = "Os canhões",
-                guide = "Canhão só atira pelo costado: bombordo é a esquerda, estibordo a direita. Segure, e a mira vai para longe; solte, e fogo!",
-                objective = "Segure <b>Q</b> (bombordo) ou <b>E</b> (estibordo) para mirar e <b>solte</b> para disparar. Pode ser na água, é treino." },
+                guide = "Canhão atira pelo costado: bombordo é a esquerda, estibordo a direita. Arme o lado, aponte no mar e fogo!",
+                objective = "<b>Q</b> (bombordo) ou <b>E</b> (estibordo) arma a mira; o <b>mouse</b> aponta no mar e o <b>botão esquerdo</b> dispara. Pode ser na água, é treino." },
             new() { part = 2, goal = Goal.SinkShip, title = "Fogo nos piratas!",
                 guide = "Lá vem uma chalupa pirata atrás de você! Fique de lado para ela e mande bala. Casco feio? Volte ao porto: lá ninguém te segue.",
-                objective = "Afunde a <b>chalupa pirata</b> marcada. <b>W / S</b> soltam e recolhem as velas, <b>Q / E</b> disparam." },
+                objective = "Afunde a <b>chalupa pirata</b> marcada. <b>W / S</b> soltam e recolhem as velas, <b>Q / E</b> armam a mira e o <b>clique</b> dispara." },
             new() { part = 2, goal = Goal.Salvage, title = "O saque",
                 guide = "Navio no fundo, destroços na água: o que couber no porão é seu. Ouro, madeira, pólvora... às vezes até um baú!",
                 objective = "Pare ao lado dos <b>destroços</b> (<b>S</b> recolhe as velas), aperte <b>F</b> e pegue os itens." },
@@ -377,7 +377,10 @@ namespace Pirates.Tutorial
         }
 
         void OnCannonFired() => Count(Goal.FireCannons);
-        void OnShipSunk(ShipSunkEvent _) => Count(Goal.SinkShip);
+        void OnShipSunk(ShipSunkEvent e)
+        {
+            if (!e.crown) Count(Goal.SinkShip);
+        }
         void OnDocked(HarborDock _) => Count(Goal.Dock);
 
         void OnCampCleared(CampClearedEvent e)

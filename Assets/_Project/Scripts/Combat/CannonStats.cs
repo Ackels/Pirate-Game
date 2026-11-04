@@ -32,6 +32,8 @@ namespace Pirates.Combat
         [Range(0f, 1f)] public float aimAssist;
         [Tooltip("Quanto os canhões giram (graus) para o inimigo com mira assistida total.")]
         public float maxAssistTraverse = 12f;
+        [Tooltip("Mira do jogador pelo mouse (03/11): quanto os canhões giram para a frente e para trás do través.")]
+        public float maxAimTraverse = 35f;
 
         [Header("Projétil")]
         public float muzzleVelocity = 70f;

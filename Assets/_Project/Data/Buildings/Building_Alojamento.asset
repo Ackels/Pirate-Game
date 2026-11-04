@@ -24,6 +24,8 @@ MonoBehaviour:
       amount: 20
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 60
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 10
     buildSeconds: 25
   - value: 1.5
     cost:
@@ -33,6 +35,10 @@ MonoBehaviour:
       amount: 5
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 140
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 5
     buildSeconds: 50
   - value: 2
     cost:
@@ -42,6 +48,10 @@ MonoBehaviour:
       amount: 12
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 260
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 35
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 10
     buildSeconds: 90
   - value: 2.5
     cost:
@@ -51,4 +61,8 @@ MonoBehaviour:
       amount: 20
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 420
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 50
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 15
     buildSeconds: 130

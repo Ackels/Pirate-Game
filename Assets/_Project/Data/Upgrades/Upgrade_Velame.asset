@@ -22,6 +22,10 @@ MonoBehaviour:
       amount: 10
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 40
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 5
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 5
     crewRequired: 0
     buildSeconds: 20
     requiredBuilding: {fileID: 0}
@@ -32,6 +36,10 @@ MonoBehaviour:
       amount: 18
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 80
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 8
     crewRequired: 0
     buildSeconds: 40
     requiredBuilding: {fileID: 0}
@@ -42,6 +50,10 @@ MonoBehaviour:
       amount: 28
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 150
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 16
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 12
     crewRequired: 0
     buildSeconds: 75
     requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}
@@ -52,6 +64,10 @@ MonoBehaviour:
       amount: 48
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 255
+    - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+      amount: 25
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 20
     crewRequired: 0
     buildSeconds: 120
     requiredBuilding: {fileID: 11400000, guid: 6d743af481f97f74f96b0f55980601bb, type: 2}

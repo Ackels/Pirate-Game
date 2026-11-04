@@ -34,6 +34,8 @@ namespace Pirates.Combat
         [SerializeField] string targetId;
         [Tooltip("Fama do capitão ao afundar este navio (M10).")]
         [SerializeField, Min(0)] int fame = 6;
+        [Tooltip("Navio da Coroa (Esquadra Real): o afundamento não conta para missões nem para a História.")]
+        [SerializeField] bool crown;
 
         [Header("Percepção")]
         [SerializeField] float detectRange = 220f;
@@ -121,12 +123,21 @@ namespace Pirates.Combat
         /// <summary>Fama que afundar este navio dá (M10).</summary>
         public int Fame => fame;
         public void SetFame(int value) => fame = Mathf.Max(0, value);
+        public bool Crown => crown;
+        public void SetCrown(bool value) => crown = value;
 
         /// <summary>Caçador (<see cref="BountyHunters"/>): enxerga e persegue o alvo de qualquer lugar até <paramref name="range"/>.</summary>
         public void Hunt(float range)
         {
             detectRange = range;
             loseRange = range;
+        }
+
+        /// <summary>Esquadra Real (04/11): sem o alvo à vista, patrulha em volta deste ponto (onde ele foi visto por último).</summary>
+        public void SearchAround(Vector3 center)
+        {
+            patrolCenter = new Vector3(center.x, transform.position.y, center.z);
+            PickPatrolPoint();
         }
 
         public ShipCommand GetCommand() => command;
@@ -159,7 +170,7 @@ namespace Pirates.Combat
         }
 
         // Missões (afundar navios) ouvem isto.
-        void OnDied() => EventBus.Publish(new ShipSunkEvent { ship = gameObject, targetId = targetId, fame = fame });
+        void OnDied() => EventBus.Publish(new ShipSunkEvent { ship = gameObject, targetId = targetId, fame = fame, crown = crown });
 
         // Suporte a "Enter Play Mode" sem domain reload.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

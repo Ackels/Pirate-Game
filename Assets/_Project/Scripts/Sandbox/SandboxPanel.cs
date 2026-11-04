@@ -776,7 +776,43 @@ namespace Pirates.Sandbox
                 if (GUILayout.Button(hunters.HasHunter ? "Caçador de recompensas no mar" : "Chamar caçador de recompensas")) hunters.SpawnNow();
                 GUI.enabled = true;
             }
+            // Mercantes (G, 03/11): traz o mais perto para 70 m à frente do navio, navegando.
+            if (MerchantShip.Active.Count > 0 && GUILayout.Button("Mercante aqui (70 m à frente)")) MerchantHere();
+            // Procurado (G, passo 2): estrelas na mão.
+            var wanted = Pirates.Progression.WantedLevel.Current;
+            if (wanted)
+            {
+                GUILayout.Label($"Procurado: {wanted.Stars} estrela(s), procura {wanted.Heat:0}");
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("+1 estrela")) wanted.AddStar(1);
+                if (GUILayout.Button("−1 estrela")) wanted.AddStar(-1);
+                if (GUILayout.Button("Zerar")) wanted.Restore(0f, 0f);
+                GUILayout.EndHorizontal();
+                var navy = RoyalNavy.Current;
+                if (navy && GUILayout.Button($"Esquadra Real agora ({navy.Hunting} no mar)")) navy.SpawnNow();
+            }
             GUILayout.Space(8f);
+        }
+
+        void MerchantHere()
+        {
+            MerchantShip best = null;
+            float bestD = float.MaxValue;
+            for (int i = 0; i < MerchantShip.Active.Count; i++)
+            {
+                var m = MerchantShip.Active[i];
+                if (!m || m.IsDead) continue;
+                float d = (m.transform.position - player.transform.position).sqrMagnitude;
+                if (d < bestD)
+                {
+                    bestD = d;
+                    best = m;
+                }
+            }
+            if (!best || !best.TryGetComponent(out ShipController merchant)) return;
+            Vector3 forward = Vector3.ProjectOnPlane(player.transform.forward, Vector3.up).normalized;
+            Vector3 at = player.transform.position + forward * 70f;
+            merchant.Teleport(new Vector3(at.x, best.transform.position.y, at.z), Quaternion.LookRotation(Vector3.Cross(Vector3.up, forward)));
         }
 
         static string SharkState(Megalodon shark) => shark.Current switch

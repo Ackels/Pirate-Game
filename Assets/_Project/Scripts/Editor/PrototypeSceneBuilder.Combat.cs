@@ -164,6 +164,60 @@ namespace Pirates.EditorTools
                 return battery;
             }
 
+            var (line, marker) = AimPreview(go, assets);
+            battery.Configure(stats, side, muzzles, body, line, marker);
+            return battery;
+        }
+
+        /// <summary>
+        /// Canhão de caça (03/11): um canhão no meio do convés da proa ou da popa, virado para fora, com a mira do jogador; giro
+        /// próprio de 55° (cobre até onde começa o arco dos bordos). Vem desmontado: o upgrade "Canhões de caça" monta.
+        /// </summary>
+        static CannonBattery CreateChaser(BroadsideSide end, CannonStats stats, CombatAssets assets, Transform parent,
+            Rigidbody body, ShipHull hull, Transform hullModel)
+        {
+            float dir = end == BroadsideSide.Bow ? 1f : -1f;
+            var go = new GameObject(end == BroadsideSide.Bow ? "Battery_Bow" : "Battery_Stern");
+            go.transform.SetParent(parent, false);
+            // Do fim do casco para dentro, o primeiro ponto com convés largo o bastante para o canhão (o gurupés é fino).
+            using var deck = new DeckProbe(hullModel);
+            float tip = hull.colliderCenter.z + dir * hull.colliderSize.z * 0.5f;
+            float z = tip, deckY = float.NaN;
+            for (float k = 0f; k < hull.colliderSize.z * 0.45f; k += 0.1f)
+            {
+                z = tip - dir * k;
+                float y0 = deck.DeckHeight(0f, z);
+                if (float.IsNaN(y0)) continue;
+                float half = deck.HalfWidth(y0 + 0.3f, z);
+                if (float.IsNaN(half) || half < 0.55f) continue;
+                deckY = y0;
+                break;
+            }
+            if (float.IsNaN(deckY)) deckY = ShipDeckY - ShipModelKeel;
+            // O canhão inteiro sobre o convés: a culatra fica para dentro, a boca no ponto achado.
+            z -= dir * 0.6f;
+            float y = ShipModelKeel + deckY;
+            Kenney("cannon", go.transform, new Vector3(0f, y, z), end == BroadsideSide.Bow ? 0f : 180f, CannonScale,
+                end == BroadsideSide.Bow ? "Canhao_Proa" : "Canhao_Popa");
+            var muzzle = new GameObject("Muzzle_0").transform;
+            muzzle.SetParent(go.transform, false);
+            muzzle.localPosition = new Vector3(0f, y + 0.62f * CannonScale, z + dir * (0.99f * CannonScale + 0.1f));
+
+            var battery = go.AddComponent<CannonBattery>();
+            var (line, marker) = AimPreview(go, assets);
+            battery.Configure(stats, end, new[] { muzzle }, body, line, marker);
+            battery.SetTraverse(ChaserTraverse);
+            battery.SetRangeLimit(ChaserRange);
+            return battery;
+        }
+
+        const float ChaserTraverse = 55f;
+        /// <summary>Alcance dos canhões de caça (m): menos que os 120 dos bordos (03/11, pedido do Jhonata).</summary>
+        const float ChaserRange = 70f;
+
+        /// <summary>Linha do arco e marca do impacto da mira do jogador.</summary>
+        static (LineRenderer line, Transform marker) AimPreview(GameObject go, CombatAssets assets)
+        {
             var line = go.AddComponent<LineRenderer>();
             line.useWorldSpace = true;
             line.widthMultiplier = 0.3f;
@@ -184,9 +238,7 @@ namespace Pirates.EditorTools
             markerRenderer.sharedMaterial = assets.aimMarker;
             markerRenderer.shadowCastingMode = ShadowCastingMode.Off;
             marker.SetActive(false);
-
-            battery.Configure(stats, side, muzzles, body, line, marker.transform);
-            return battery;
+            return (line, marker.transform);
         }
 
         static void CreateTargets(CombatAssets assets, Material deck)

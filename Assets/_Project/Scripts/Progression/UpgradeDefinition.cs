@@ -16,6 +16,8 @@ namespace Pirates.Progression
         ReloadPercent,
         /// <summary>Mira assistida em % (100 = total, com antecipação); a dispersão cai metade disso.</summary>
         AimAssistPercent,
+        /// <summary>Canhões de caça (03/11): 1 = o da proa, 2 = proa e popa.</summary>
+        Chasers,
     }
 
     /// <summary>

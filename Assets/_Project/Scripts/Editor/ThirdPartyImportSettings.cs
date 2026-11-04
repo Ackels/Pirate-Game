@@ -140,6 +140,18 @@ namespace Pirates.EditorTools
         {
             if (!InFolder) return;
             var importer = (TextureImporter)assetImporter;
+            if (NormalizedPath.StartsWith(UiFolder + "/") && System.IO.Path.GetFileName(NormalizedPath).StartsWith("cursor"))
+            {
+                // Cursor do mouse (04/11): o Windows desenha a imagem como está (tipo Cursor, legível, sem compressão).
+                importer.textureType = TextureImporterType.Cursor;
+                importer.isReadable = true;
+                importer.mipmapEnabled = false;
+                importer.alphaIsTransparency = true;
+                importer.wrapMode = TextureWrapMode.Clamp;
+                importer.npotScale = TextureImporterNPOTScale.None;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                return;
+            }
             if (NormalizedPath.StartsWith(UiFolder + "/"))
             {
                 // Interface: peças desenhadas (painéis, faixas, ícones) com filtro, para escalar com a tela sem serrilhar.

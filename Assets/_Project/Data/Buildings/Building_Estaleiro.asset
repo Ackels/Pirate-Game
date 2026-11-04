@@ -26,6 +26,12 @@ MonoBehaviour:
       amount: 10
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 150
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 10
+    - item: {fileID: 11400000, guid: 8489fbbc499bf9d4db802d9962d57347, type: 2}
+      amount: 5
     buildSeconds: 60
   - value: 4
     cost:
@@ -35,4 +41,10 @@ MonoBehaviour:
       amount: 25
     - item: {fileID: 11400000, guid: f03ee975a2fb08742a0d154ca182578b, type: 2}
       amount: 400
+    - item: {fileID: 11400000, guid: 81cd2b1d90379d54c88cabd7de89c6f8, type: 2}
+      amount: 40
+    - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+      amount: 20
+    - item: {fileID: 11400000, guid: 8489fbbc499bf9d4db802d9962d57347, type: 2}
+      amount: 15
     buildSeconds: 120

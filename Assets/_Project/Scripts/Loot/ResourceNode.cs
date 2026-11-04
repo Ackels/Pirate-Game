@@ -27,6 +27,10 @@ namespace Pirates.Loot
         [Tooltip("Toco que fica no lugar (molde desligado na cena, copiado na primeira vez).")]
         [SerializeField] GameObject stumpTemplate;
         [SerializeField] float stumpScale = 1f;
+        [Tooltip("Achado a mais quando tomba (R3: fibra de palmeira = cordame, resina = breu, pedra do veio), com chance.")]
+        [SerializeField] ItemDefinition bonusItem;
+        [SerializeField, Range(0f, 1f)] float bonusChance;
+        [SerializeField] Vector2Int bonusAmount = new(1, 1);
         [Tooltip("O CameraOccluder da árvore (translúcida quando tapa o capitão): desligado enquanto ele corta e enquanto ela cai (28/10, " +
                  "pedido do Jhonata: \"não ficar estranho o capitão quebrando a árvore e ela translúcida\"); volta quando ela cresce de novo.")]
         [SerializeField] Behaviour occluder;
@@ -61,6 +65,16 @@ namespace Pirates.Loot
         /// <summary>Golpes que ainda faltam.</summary>
         public int HitsLeft => Mathf.Max(0, hits - taken);
         public int Hits => hits;
+        public ItemDefinition BonusItem => bonusItem;
+        /// <summary>Quanto do achado a mais saiu no último tombo (0 = nada).</summary>
+        public int LastBonus { get; private set; }
+
+        public void SetBonus(ItemDefinition extra, float chance, Vector2Int extraAmount)
+        {
+            bonusItem = extra;
+            bonusChance = chance;
+            bonusAmount = extraAmount;
+        }
 
         /// <summary>Golpe que pegou: onde e a direção de quem bateu (para as lascas e o som).</summary>
         public static event Action<ResourceNode, Vector3, Vector3> Struck;
@@ -122,6 +136,7 @@ namespace Pirates.Loot
         /// </summary>
         public int Strike(Vector3 from, Vector3 point)
         {
+            LastBonus = 0;
             if (state != State.Standing) return 0;
             if (taken > 0 && Time.time - lastStrike > forgetSeconds) taken = 0;
             taken++;
@@ -138,6 +153,7 @@ namespace Pirates.Loot
                 return 0;
             }
             Fell(dir);
+            LastBonus = bonusItem && UnityEngine.Random.value < bonusChance ? UnityEngine.Random.Range(bonusAmount.x, bonusAmount.y + 1) : 0;
             return item ? UnityEngine.Random.Range(amount.x, amount.y + 1) : 0;
         }
 

@@ -43,6 +43,7 @@ namespace Pirates.EditorTools
             hud.Configure(style);
             // Relógio do dia (M11): some sozinho na cena sem ciclo.
             go.AddComponent<ClockHUD>();
+            AttachGameCursor(go);
             // Aviso de golpe ("!"/"!!") dos inimigos de terra e das catacumbas (revisão das animações, 21/10).
             go.AddComponent<CryptWarningHUD>();
             // Tela de equipamento (E1): se o capitão já foi montado (cena 06; na 07 ele vem depois e põe ela).
@@ -52,6 +53,18 @@ namespace Pirates.EditorTools
             AttachGatheringHud();
             return hud;
         }
+
+        /// <summary>Cursor de espada dourada (04/11): a imagem do Kenney RPG UI, ponta da lâmina como ponto do clique.</summary>
+        static void AttachGameCursor(GameObject hud)
+        {
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(ThirdPartyImportSettings.UiFolder + "/Kenney_UIRPG/cursorSword_gold.png");
+            if (!texture) return;
+            if (!hud.TryGetComponent(out GameCursor cursor)) cursor = hud.AddComponent<GameCursor>();
+            cursor.Configure(texture, CursorHotspot);
+        }
+
+        // A ponta da lâmina na imagem (34 × 37): o primeiro pixel opaco fica em (0, 1).
+        static readonly Vector2 CursorHotspot = new(1f, 1f);
 
         static (PanelSettings panel, StyleSheet style) HudAssets()
         {

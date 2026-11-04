@@ -287,6 +287,7 @@ namespace Pirates.EditorTools
             BakeItemIcons();
             BakeFishIcons();
             BakeToolIcons();
+            BakeMaterialIcons();
             AssetDatabase.SaveAssets();
         }
 

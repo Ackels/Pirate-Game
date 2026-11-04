@@ -29,6 +29,8 @@ namespace Pirates.Missions
         [SerializeField] Animator animator;
         [Tooltip("O que ele faz parado (Townsperson): desligado enquanto conversa.")]
         [SerializeField] Behaviour idle;
+        [Tooltip("Perdoa o capitão procurado pela Coroa por uma multa (G, passo 2: o Almirante Teodoro).")]
+        [SerializeField] bool pardons;
 
         Quaternion faceTarget;
         WorldMarker marker;
@@ -45,6 +47,9 @@ namespace Pirates.Missions
         /// <summary>Id do WorldMarker dele (o HUD de missões aponta para cá quando a missão dele está pronta).</summary>
         public string MarkerId => MarkerIdFor(displayName);
         public WorldMarker Marker => marker;
+        public bool Pardons => pardons;
+
+        public void SetPardons(bool value) => pardons = value;
 
         public static string MarkerIdFor(string giverName) => "npc:" + giverName;
 

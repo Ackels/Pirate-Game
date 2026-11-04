@@ -186,6 +186,8 @@ namespace Pirates.EditorTools
             idle.Configure(animator, null);
             var giver = go.AddComponent<MissionGiver>();
             giver.Configure(npc.name, npc.role, given, npc.smallTalk, animator, idle);
+            // O almirantado perdoa quem a Coroa procura, por uma multa (G, passo 2).
+            giver.SetPardons(npc.name == "Almirante Teodoro");
             // Marcador acima do "!"/"?" da cabeça.
             go.AddComponent<WorldMarker>().Configure(MissionGiver.MarkerIdFor(npc.name), $"{npc.name}, {npc.role}", 4.3f);
             if (npc.shovel)

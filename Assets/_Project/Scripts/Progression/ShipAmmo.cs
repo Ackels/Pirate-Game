@@ -29,6 +29,7 @@ namespace Pirates.Progression
         Inventory hold;
         ShipController ship;
         CannonBattery[] batteries = Array.Empty<CannonBattery>();
+        CannonBattery[] chasers = Array.Empty<CannonBattery>();
         int seenVersion = -1;
 
         public IReadOnlyList<Slot> Slots => slots;
@@ -106,8 +107,11 @@ namespace Pirates.Progression
         void Bind()
         {
             Unbind();
-            batteries = GetComponentsInChildren<CannonBattery>();
+            // Os canhões de caça (proa/popa) atiram a bala comum, ou a munição marcada para eles (a corrente: AmmoDefinition.chasers).
+            batteries = Array.FindAll(GetComponentsInChildren<CannonBattery>(), b => !b.IsChaser);
+            chasers = Array.FindAll(GetComponentsInChildren<CannonBattery>(), b => b.IsChaser);
             foreach (var battery in batteries) battery.Fired += OnFired;
+            foreach (var battery in chasers) battery.Fired += OnChaserFired;
             Apply();
         }
 
@@ -115,6 +119,8 @@ namespace Pirates.Progression
         {
             foreach (var battery in batteries)
                 if (battery) battery.Fired -= OnFired;
+            foreach (var battery in chasers)
+                if (battery) battery.Fired -= OnChaserFired;
         }
 
         void Apply()
@@ -122,6 +128,16 @@ namespace Pirates.Progression
             var ammo = Current;
             foreach (var battery in batteries)
                 if (battery) battery.Ammo = ammo;
+            var chaserAmmo = ammo && ammo.chasers ? ammo : null;
+            foreach (var battery in chasers)
+                if (battery) battery.Ammo = chaserAmmo;
+        }
+
+        // Canhão de caça: só gasta se atirou a munição especial (a bala comum é de graça).
+        void OnChaserFired()
+        {
+            if (Selected <= 0 || !Current || !Current.chasers) return;
+            OnFired();
         }
 
         // A bateria já levou a munição para a salva antes de avisar: tirar a carga e trocar agora não muda o tiro.

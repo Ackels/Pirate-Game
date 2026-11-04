@@ -1022,7 +1022,11 @@ MonoBehaviour:
   radius: 0.25688615
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7310388
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 10833737}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -1810,7 +1814,11 @@ MonoBehaviour:
   radius: 0.23065469
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.554277
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 17116991}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -2309,7 +2317,11 @@ MonoBehaviour:
   radius: 0.2644222
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7818209
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 26980435}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -2410,7 +2422,11 @@ MonoBehaviour:
   radius: 0.27920154
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.881412
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 27338776}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -2610,6 +2626,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Pirates.Ambient::Pirates.Ambient.DayNightCycle
   settings: {fileID: 11400000, guid: b02bf3be6f1ce8d479cb199e13c8fa06, type: 2}
   sun: {fileID: 973657919}
+  sceneAmbient: []
 --- !u!4 &28521398
 Transform:
   m_ObjectHideFlags: 0
@@ -3668,7 +3685,11 @@ MonoBehaviour:
   radius: 0.2488005
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6765532
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 42824453}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -3801,7 +3822,11 @@ MonoBehaviour:
   radius: 0.22614838
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.523911
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 44781149}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -3992,7 +4017,11 @@ MonoBehaviour:
   radius: 0.27499717
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8530807
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 45212475}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -5114,7 +5143,11 @@ MonoBehaviour:
   radius: 0.26134938
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7611145
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 53987713}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -6062,7 +6095,11 @@ MonoBehaviour:
   radius: 0.22996724
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5496445
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 62703132}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -6163,7 +6200,11 @@ MonoBehaviour:
   radius: 0.2597897
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7506045
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 63084324}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -6997,7 +7038,11 @@ MonoBehaviour:
   radius: 0.30770677
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0734959
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 68987956}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -7309,7 +7354,11 @@ MonoBehaviour:
   radius: 0.26451063
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7824167
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 73097444}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -9400,7 +9449,11 @@ MonoBehaviour:
   radius: 0.25551802
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7218195
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 103958217}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -9714,7 +9767,11 @@ MonoBehaviour:
   radius: 0.27661988
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8640155
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 108172158}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -9987,7 +10044,11 @@ MonoBehaviour:
   radius: 0.22962809
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5473591
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 109721031}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -11118,7 +11179,11 @@ MonoBehaviour:
   radius: 0.28548163
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9237307
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 118852983}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -11307,7 +11372,11 @@ MonoBehaviour:
   radius: 0.26836282
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8083749
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 119074264}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -11499,7 +11568,11 @@ MonoBehaviour:
   radius: 0.28967252
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9519712
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 119815502}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -11813,7 +11886,11 @@ MonoBehaviour:
   radius: 0.22808813
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.536982
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 123084128}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -13108,7 +13185,11 @@ MonoBehaviour:
   radius: 0.31613344
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1302793
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 137034716}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -13848,7 +13929,11 @@ MonoBehaviour:
   radius: 0.265775
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7909367
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 143569840}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -14251,7 +14336,11 @@ MonoBehaviour:
   radius: 0.25806195
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7389619
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 151675085}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -15528,7 +15617,11 @@ MonoBehaviour:
   radius: 0.27389023
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8456215
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 162848297}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -15720,7 +15813,11 @@ MonoBehaviour:
   radius: 0.23114266
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5575651
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 164030919}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -16180,7 +16277,11 @@ MonoBehaviour:
   radius: 0.29274702
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9726889
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 169245429}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -17281,7 +17382,11 @@ MonoBehaviour:
   radius: 0.22329478
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5046818
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 178471990}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -17473,7 +17578,11 @@ MonoBehaviour:
   radius: 0.28406748
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9142014
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 179978941}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -17665,7 +17774,11 @@ MonoBehaviour:
   radius: 0.22875097
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5414486
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 180710965}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -17766,7 +17879,11 @@ MonoBehaviour:
   radius: 0.2356448
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.587903
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 181565871}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -17865,7 +17982,11 @@ MonoBehaviour:
   radius: 0.27341497
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.842419
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 182653815}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -19516,7 +19637,11 @@ MonoBehaviour:
   radius: 0.28587234
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9263635
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 194096662}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -19888,7 +20013,11 @@ MonoBehaviour:
   radius: 0.2840465
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.91406
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 199060293}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -21187,7 +21316,11 @@ MonoBehaviour:
   radius: 0.2858019
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9258888
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 209992567}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -23659,7 +23792,11 @@ MonoBehaviour:
   radius: 0.30388483
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0477414
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 232584734}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -24204,7 +24341,11 @@ MonoBehaviour:
   radius: 0.23165289
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5610033
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 237547727}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -24395,7 +24536,11 @@ MonoBehaviour:
   radius: 0.2082318
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4031793
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 238054111}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -24831,7 +24976,11 @@ MonoBehaviour:
   radius: 0.282671
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9047912
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 244271908}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -24931,6 +25080,8 @@ MonoBehaviour:
   aimFocusBlend: 0.5
   aimFramingMargin: 20
   maxAimDistance: 130
+  aimHeadingSharpness: 1.6
+  manualOrbitHold: 3
 --- !u!114 &245574478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25343,7 +25494,11 @@ MonoBehaviour:
   radius: 0.2616285
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7629954
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 248665673}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -25956,7 +26111,11 @@ MonoBehaviour:
   radius: 0.23276368
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5684885
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 252353346}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -26093,6 +26252,7 @@ MonoBehaviour:
   starboard: {fileID: 463197163}
   targetId: 
   fame: 6
+  crown: 0
   detectRange: 220
   loseRange: 320
   preferredRange: 70
@@ -26771,7 +26931,11 @@ MonoBehaviour:
   radius: 0.29248258
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.970907
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 260186843}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -27420,7 +27584,11 @@ MonoBehaviour:
   radius: 0.24721022
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.665837
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 267220142}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -27734,7 +27902,11 @@ MonoBehaviour:
   radius: 0.21533307
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4510316
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 269529957}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -29352,7 +29524,11 @@ MonoBehaviour:
   radius: 0.28658015
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9311332
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 283670778}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -30363,7 +30539,11 @@ MonoBehaviour:
   radius: 0.21622872
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4570669
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 288891697}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -30734,7 +30914,11 @@ MonoBehaviour:
   radius: 0.23513794
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5844874
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 291714123}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -31198,7 +31382,11 @@ MonoBehaviour:
   radius: 0.307574
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.072601
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 295413913}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -31299,7 +31487,11 @@ MonoBehaviour:
   radius: 0.24558003
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.654852
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 296083641}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -32008,7 +32200,11 @@ MonoBehaviour:
   radius: 0.28643003
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9301215
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 303200113}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -32649,7 +32845,11 @@ MonoBehaviour:
   radius: 0.25947437
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7484796
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 306790761}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -32750,7 +32950,11 @@ MonoBehaviour:
   radius: 0.24838331
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.673742
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 307183551}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -32942,7 +33146,11 @@ MonoBehaviour:
   radius: 0.24311161
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6382184
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 307611812}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -33650,7 +33858,11 @@ MonoBehaviour:
   radius: 0.24319382
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6387724
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 314323049}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -34596,7 +34808,11 @@ MonoBehaviour:
   radius: 0.27000055
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8194107
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 325257617}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -35072,7 +35288,11 @@ MonoBehaviour:
   radius: 0.29841635
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.010892
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 327160562}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -36206,7 +36426,11 @@ MonoBehaviour:
   radius: 0.2179779
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4688538
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 341299470}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -36429,7 +36653,11 @@ MonoBehaviour:
   radius: 0.22060473
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4865549
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 342865218}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -37466,7 +37694,11 @@ MonoBehaviour:
   radius: 0.22543302
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5190905
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 354003387}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -37690,7 +37922,11 @@ MonoBehaviour:
   radius: 0.32040006
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1590302
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 355785018}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -38572,7 +38808,11 @@ MonoBehaviour:
   radius: 0.22223547
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4975437
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 365116629}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -40046,7 +40286,11 @@ MonoBehaviour:
   radius: 0.2621446
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.766473
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 385075761}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -40695,7 +40939,11 @@ MonoBehaviour:
   radius: 0.32408124
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.183836
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 392146438}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -41130,7 +41378,11 @@ MonoBehaviour:
   radius: 0.24008636
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6178327
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 398561323}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -42145,7 +42397,11 @@ MonoBehaviour:
   radius: 0.2694242
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.815527
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 408606354}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -42368,7 +42624,11 @@ MonoBehaviour:
   radius: 0.24531636
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6530752
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 411864693}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -42773,7 +43033,11 @@ MonoBehaviour:
   radius: 0.3113544
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0980754
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 415795319}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -42964,7 +43228,11 @@ MonoBehaviour:
   radius: 0.27816218
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8744082
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 416591936}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -43480,7 +43748,11 @@ MonoBehaviour:
   radius: 0.32986718
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.2228248
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 422152300}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -43850,7 +44122,11 @@ MonoBehaviour:
   radius: 0.21959113
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4797246
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 428517308}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -44042,7 +44318,11 @@ MonoBehaviour:
   radius: 0.23663019
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5945431
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 429009801}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -44414,7 +44694,11 @@ MonoBehaviour:
   radius: 0.21574415
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4538016
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 430606673}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -44761,7 +45045,11 @@ MonoBehaviour:
   radius: 0.2146983
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4467541
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 436345279}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -45743,7 +46031,11 @@ MonoBehaviour:
   radius: 0.2207796
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4877331
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 442193297}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -46674,6 +46966,8 @@ MonoBehaviour:
   aimLine: {fileID: 448895862}
   impactMarker: {fileID: 1992529007}
   recoilScale: 1
+  rangeLimit: 0
+  traverseOverride: 0
 --- !u!1 &449868796
 GameObject:
   m_ObjectHideFlags: 0
@@ -47090,7 +47384,11 @@ MonoBehaviour:
   radius: 0.26188207
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.764704
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 453171583}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -47493,7 +47791,11 @@ MonoBehaviour:
   radius: 0.2991344
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0157306
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 456828810}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -47840,6 +48142,8 @@ MonoBehaviour:
   aimLine: {fileID: 0}
   impactMarker: {fileID: 0}
   recoilScale: 1
+  rangeLimit: 0
+  traverseOverride: 0
 --- !u!4 &463197164
 Transform:
   m_ObjectHideFlags: 0
@@ -49872,7 +50176,11 @@ MonoBehaviour:
   radius: 0.2647578
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7840823
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 487382343}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -50064,7 +50372,11 @@ MonoBehaviour:
   radius: 0.26484424
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7846648
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 489921734}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -50717,7 +51029,11 @@ MonoBehaviour:
   radius: 0.27517027
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8542471
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 497706049}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -51397,7 +51713,11 @@ MonoBehaviour:
   radius: 0.2955901
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.991847
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 502976392}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -52135,7 +52455,11 @@ MonoBehaviour:
   radius: 0.28425047
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9154345
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 509993805}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -53268,7 +53592,11 @@ MonoBehaviour:
   radius: 0.22154672
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4929025
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 520381717}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -53549,7 +53877,11 @@ MonoBehaviour:
   radius: 0.28307763
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9075313
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 521095558}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -53740,7 +54072,11 @@ MonoBehaviour:
   radius: 0.2670133
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7992811
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 524758189}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -54852,7 +55188,11 @@ MonoBehaviour:
   radius: 0.23643848
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5932512
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 540366300}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -55226,7 +55566,11 @@ MonoBehaviour:
   radius: 0.25910267
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7459749
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 542789117}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -56515,7 +56859,11 @@ MonoBehaviour:
   radius: 0.3002638
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.023341
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 554326283}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -56827,7 +57175,11 @@ MonoBehaviour:
   radius: 0.27245665
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8359612
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 556840578}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -58089,7 +58441,11 @@ MonoBehaviour:
   radius: 0.2351276
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5844178
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 567638462}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -58841,7 +59197,11 @@ MonoBehaviour:
   radius: 0.24464512
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6485521
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 577133325}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -59212,7 +59572,11 @@ MonoBehaviour:
   radius: 0.25533
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7205526
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 580785969}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -59829,7 +60193,11 @@ MonoBehaviour:
   radius: 0.22176768
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4943914
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 588667832}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -60255,7 +60623,11 @@ MonoBehaviour:
   radius: 0.24267955
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.635307
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 593379424}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -60495,7 +60867,11 @@ MonoBehaviour:
   radius: 0.3001246
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.022403
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 596446811}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -60686,7 +61062,11 @@ MonoBehaviour:
   radius: 0.28163674
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8978218
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 596716330}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -60992,7 +61372,11 @@ MonoBehaviour:
   radius: 0.26526847
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7875235
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 598574767}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -62759,7 +63143,11 @@ MonoBehaviour:
   radius: 0.2597791
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.750533
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 612284303}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -63611,7 +63999,11 @@ MonoBehaviour:
   radius: 0.22896513
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5428917
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 616897254}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -63840,7 +64232,11 @@ MonoBehaviour:
   radius: 0.2323297
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.565564
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 620178412}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -64913,7 +65309,11 @@ MonoBehaviour:
   radius: 0.28844085
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9436716
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 630291801}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -65501,7 +65901,11 @@ MonoBehaviour:
   radius: 0.24172384
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6288669
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 637538936}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -66331,7 +66735,11 @@ MonoBehaviour:
   radius: 0.23372135
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5749418
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 646149298}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -67104,7 +67512,11 @@ MonoBehaviour:
   radius: 0.21562682
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4530109
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 653034321}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -67924,7 +68336,11 @@ MonoBehaviour:
   radius: 0.2765804
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8637493
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 660848800}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -68116,7 +68532,11 @@ MonoBehaviour:
   radius: 0.28054494
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8904645
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 661691995}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -68372,7 +68792,11 @@ MonoBehaviour:
   radius: 0.3006503
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0259454
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 665015704}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -68473,7 +68897,11 @@ MonoBehaviour:
   radius: 0.2437797
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6427205
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 665409610}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -69410,7 +69838,11 @@ MonoBehaviour:
   radius: 0.28012338
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8876239
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 671149292}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -70169,7 +70601,11 @@ MonoBehaviour:
   radius: 0.2221093
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4966935
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 677638140}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -70392,7 +70828,11 @@ MonoBehaviour:
   radius: 0.28534257
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9227936
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 680536210}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -70885,7 +71325,11 @@ MonoBehaviour:
   radius: 0.23737203
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.599542
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 685391675}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -71165,7 +71609,11 @@ MonoBehaviour:
   radius: 0.26880166
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.811332
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 687305891}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -71738,7 +72186,11 @@ MonoBehaviour:
   radius: 0.27843517
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8762478
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 689961357}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -72410,7 +72862,11 @@ MonoBehaviour:
   radius: 0.2344165
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5796261
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 693353368}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -72651,7 +73107,11 @@ MonoBehaviour:
   radius: 0.224253
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5111388
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 695802011}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -73285,7 +73745,11 @@ MonoBehaviour:
   radius: 0.2764759
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8630452
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 698604435}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -73476,7 +73940,11 @@ MonoBehaviour:
   radius: 0.24707438
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6649218
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 703287497}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -73577,7 +74045,11 @@ MonoBehaviour:
   radius: 0.31097013
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0954862
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 703970616}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -74417,7 +74889,11 @@ MonoBehaviour:
   radius: 0.2713227
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8283201
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 711030604}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -74730,7 +75206,11 @@ MonoBehaviour:
   radius: 0.24547157
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6541212
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 713727346}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -74831,7 +75311,11 @@ MonoBehaviour:
   radius: 0.2881033
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9413971
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 714151885}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -76274,7 +76758,11 @@ MonoBehaviour:
   radius: 0.2771057
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8672891
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 726989660}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -77014,7 +77502,11 @@ MonoBehaviour:
   radius: 0.22183754
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4948621
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 729868645}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -77387,7 +77879,11 @@ MonoBehaviour:
   radius: 0.27357107
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8434709
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 735169405}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -78472,7 +78968,11 @@ MonoBehaviour:
   radius: 0.22684899
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.528632
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 747397596}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -78573,7 +79073,11 @@ MonoBehaviour:
   radius: 0.24100916
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.624051
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 747786554}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -78886,7 +79390,11 @@ MonoBehaviour:
   radius: 0.23636425
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.592751
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 749304483}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -79575,7 +80083,11 @@ MonoBehaviour:
   radius: 0.2838001
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9123996
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 755275056}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -80566,7 +81078,11 @@ MonoBehaviour:
   radius: 0.2787413
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8783107
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 766052275}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -80665,7 +81181,11 @@ MonoBehaviour:
   radius: 0.25444523
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7145905
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 767517770}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -81068,7 +81588,11 @@ MonoBehaviour:
   radius: 0.22396247
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5091811
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 771473796}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -81292,7 +81816,11 @@ MonoBehaviour:
   radius: 0.23138365
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5591891
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 773538717}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -82292,7 +82820,11 @@ MonoBehaviour:
   radius: 0.22616987
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5240557
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 788040429}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -83129,7 +83661,11 @@ MonoBehaviour:
   radius: 0.27624735
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8615052
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 802648932}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -83713,7 +84249,11 @@ MonoBehaviour:
   radius: 0.26284605
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7711998
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 807312319}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -83814,7 +84354,11 @@ MonoBehaviour:
   radius: 0.2896299
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.951684
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 809058411}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -84005,7 +84549,11 @@ MonoBehaviour:
   radius: 0.2216442
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4935592
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 809363063}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -84352,7 +84900,11 @@ MonoBehaviour:
   radius: 0.2845117
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9171947
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 816426644}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -84847,7 +85399,11 @@ MonoBehaviour:
   radius: 0.27881268
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8787917
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 819595517}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -85038,7 +85594,11 @@ MonoBehaviour:
   radius: 0.20863755
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4059135
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 819779670}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -85443,7 +86003,11 @@ MonoBehaviour:
   radius: 0.28230533
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9023271
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 821780512}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -86450,6 +87014,9 @@ MonoBehaviour:
   port: {fileID: 448895863}
   starboard: {fileID: 2111633291}
   holdFramingAfterFire: 1.5
+  framingReach: 0.8
+  edgeZone: 0.06
+  edgePanSpeed: 70
 --- !u!114 &829970876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86702,7 +87269,11 @@ MonoBehaviour:
   radius: 0.30638814
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0646102
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 831988102}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -87056,6 +87627,8 @@ MonoBehaviour:
   aimLine: {fileID: 0}
   impactMarker: {fileID: 0}
   recoilScale: 1
+  rangeLimit: 0
+  traverseOverride: 0
 --- !u!1 &837623494
 GameObject:
   m_ObjectHideFlags: 0
@@ -87264,7 +87837,11 @@ MonoBehaviour:
   radius: 0.22991522
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.549294
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 839868442}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -87635,7 +88212,11 @@ MonoBehaviour:
   radius: 0.25950593
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7486923
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 841961394}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -87828,7 +88409,11 @@ MonoBehaviour:
   radius: 0.28583676
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9261237
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 842528353}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -87929,7 +88514,11 @@ MonoBehaviour:
   radius: 0.24860595
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6752423
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 843961118}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -88211,7 +88800,11 @@ MonoBehaviour:
   radius: 0.22664411
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5272515
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 846759220}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -88525,7 +89118,11 @@ MonoBehaviour:
   radius: 0.2658852
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7916793
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 848230948}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -88716,7 +89313,11 @@ MonoBehaviour:
   radius: 0.28258255
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9041952
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 848648399}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -89332,7 +89933,11 @@ MonoBehaviour:
   radius: 0.21507344
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4492819
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 851680836}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -90170,7 +90775,11 @@ MonoBehaviour:
   radius: 0.26671794
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7972908
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 860393866}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -91619,7 +92228,11 @@ MonoBehaviour:
   radius: 0.28070056
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8915132
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 874638419}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -92745,7 +93358,11 @@ MonoBehaviour:
   radius: 0.22025752
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4842151
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 884914574}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -94060,7 +94677,11 @@ MonoBehaviour:
   radius: 0.29265484
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9720677
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 895036086}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -94345,7 +94966,11 @@ MonoBehaviour:
   radius: 0.26855028
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.809638
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 899210289}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -94833,7 +95458,11 @@ MonoBehaviour:
   radius: 0.27581146
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8585678
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 903416740}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -95809,7 +96438,11 @@ MonoBehaviour:
   radius: 0.25816834
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7396789
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 912950122}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -95940,7 +96573,11 @@ MonoBehaviour:
   radius: 0.21813115
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4698865
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 914625783}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -97462,7 +98099,11 @@ MonoBehaviour:
   radius: 0.24935855
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6803137
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 929912967}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -97924,7 +98565,11 @@ MonoBehaviour:
   radius: 0.25127247
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6932107
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 931328928}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -98785,7 +99430,11 @@ MonoBehaviour:
   radius: 0.2796159
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8842043
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 938302209}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -99520,7 +100169,11 @@ MonoBehaviour:
   radius: 0.27489272
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8523768
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 941064596}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -99893,7 +100546,11 @@ MonoBehaviour:
   radius: 0.26655963
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.796224
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 944791412}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -100082,7 +100739,11 @@ MonoBehaviour:
   radius: 0.26898742
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8125837
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 946458230}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -100274,7 +100935,11 @@ MonoBehaviour:
   radius: 0.2846962
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.918438
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 947374829}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -100709,7 +101374,11 @@ MonoBehaviour:
   radius: 0.26501328
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7858038
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 952422100}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -101426,7 +102095,11 @@ MonoBehaviour:
   radius: 0.24145241
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6270379
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 956826230}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -101707,7 +102380,11 @@ MonoBehaviour:
   radius: 0.23244071
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5663121
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 957853428}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -102284,7 +102961,11 @@ MonoBehaviour:
   radius: 0.22095779
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4889339
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 960390917}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -103253,7 +103934,11 @@ MonoBehaviour:
   radius: 0.3213847
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1656651
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 965232400}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -103794,7 +104479,11 @@ MonoBehaviour:
   radius: 0.24301372
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6375588
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 968268792}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -104735,7 +105424,11 @@ MonoBehaviour:
   radius: 0.21569836
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.453493
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 974638052}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -104836,7 +105529,11 @@ MonoBehaviour:
   radius: 0.31969568
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1542835
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 976476422}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -105725,7 +106422,11 @@ MonoBehaviour:
   radius: 0.2889473
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9470844
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 986616783}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -105824,7 +106525,11 @@ MonoBehaviour:
   radius: 0.29526526
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9896581
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 986775674}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -106613,7 +107318,11 @@ MonoBehaviour:
   radius: 0.252365
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7005727
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 989644129}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -106868,7 +107577,11 @@ MonoBehaviour:
   radius: 0.30556062
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0590339
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 991688387}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -107425,7 +108138,11 @@ MonoBehaviour:
   radius: 0.29382274
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9799377
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 993696219}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -107860,7 +108577,11 @@ MonoBehaviour:
   radius: 0.27449632
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8497057
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 997891849}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -107961,7 +108682,11 @@ MonoBehaviour:
   radius: 0.24142931
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6268822
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 998036958}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -108461,7 +109186,11 @@ MonoBehaviour:
   radius: 0.23987769
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6164265
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1004425948}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -109262,7 +109991,11 @@ MonoBehaviour:
   radius: 0.30002725
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.021747
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1010319511}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -110725,7 +111458,11 @@ MonoBehaviour:
   radius: 0.25411794
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.712385
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1021464688}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -110824,7 +111561,11 @@ MonoBehaviour:
   radius: 0.2882168
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9421618
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1022348155}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -111169,7 +111910,11 @@ MonoBehaviour:
   radius: 0.24898106
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.67777
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1027051840}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -111392,7 +112137,11 @@ MonoBehaviour:
   radius: 0.25551817
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7218206
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1029480963}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -111793,7 +112542,11 @@ MonoBehaviour:
   radius: 0.26386142
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.778042
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1036235272}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -112218,7 +112971,11 @@ MonoBehaviour:
   radius: 0.24570455
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.655691
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1043774997}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -113304,7 +114061,11 @@ MonoBehaviour:
   radius: 0.22271031
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5007434
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1054913025}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -113708,7 +114469,11 @@ MonoBehaviour:
   radius: 0.2729736
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8394448
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1057683512}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -114438,7 +115203,11 @@ MonoBehaviour:
   radius: 0.24862055
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6753407
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1064548030}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -114725,7 +115494,11 @@ MonoBehaviour:
   radius: 0.2819715
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9000776
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1068020626}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -114826,7 +115599,11 @@ MonoBehaviour:
   radius: 0.26331633
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7743689
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1068029314}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115260,7 +116037,11 @@ MonoBehaviour:
   radius: 0.26677203
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7976552
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1072659176}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115361,7 +116142,11 @@ MonoBehaviour:
   radius: 0.28284314
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9059511
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1073031552}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115618,7 +116403,11 @@ MonoBehaviour:
   radius: 0.2250882
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5167668
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1075647387}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115719,7 +116508,11 @@ MonoBehaviour:
   radius: 0.2572389
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7334157
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1076119055}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115818,7 +116611,11 @@ MonoBehaviour:
   radius: 0.26537073
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7882125
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1076845409}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -115951,7 +116748,11 @@ MonoBehaviour:
   radius: 0.28083694
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8924322
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1077477693}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -116508,7 +117309,11 @@ MonoBehaviour:
   radius: 0.24477012
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6493944
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1083589158}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -116609,7 +117414,11 @@ MonoBehaviour:
   radius: 0.29265195
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9720483
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1084129627}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -116968,7 +117777,11 @@ MonoBehaviour:
   radius: 0.2687329
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8108686
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1086978157}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -117339,7 +118152,11 @@ MonoBehaviour:
   radius: 0.23540463
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5862845
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1089523294}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -117924,7 +118741,11 @@ MonoBehaviour:
   radius: 0.3110843
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0962555
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1093701722}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -118386,7 +119207,11 @@ MonoBehaviour:
   radius: 0.2838924
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9130216
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1097786050}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -119286,7 +120111,11 @@ MonoBehaviour:
   radius: 0.23744002
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6000001
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1109355163}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -119752,7 +120581,11 @@ MonoBehaviour:
   radius: 0.26824656
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8075914
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1116512308}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -120587,7 +121420,11 @@ MonoBehaviour:
   radius: 0.32071656
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1611629
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1127731915}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -121252,7 +122089,11 @@ MonoBehaviour:
   radius: 0.2313615
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5590397
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1132853868}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -121353,7 +122194,11 @@ MonoBehaviour:
   radius: 0.31097445
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0955153
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1133312947}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -121454,7 +122299,11 @@ MonoBehaviour:
   radius: 0.23613706
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5912201
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1133453703}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -121555,7 +122404,11 @@ MonoBehaviour:
   radius: 0.2683481
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8082756
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1133937053}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -121656,7 +122509,11 @@ MonoBehaviour:
   radius: 0.28100803
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8935852
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1134195289}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -122730,7 +123587,11 @@ MonoBehaviour:
   radius: 0.2776342
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8708504
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1143839005}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -123370,7 +124231,11 @@ MonoBehaviour:
   radius: 0.22522952
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5177191
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1147353478}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -124259,7 +125124,11 @@ MonoBehaviour:
   radius: 0.23966266
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6149776
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1155456722}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -124360,7 +125229,11 @@ MonoBehaviour:
   radius: 0.27219188
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8341771
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1158123926}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -125966,7 +126839,11 @@ MonoBehaviour:
   radius: 0.2752896
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8550513
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1176706133}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -126730,7 +127607,11 @@ MonoBehaviour:
   radius: 0.32718202
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.2047307
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1180506908}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -126829,7 +127710,11 @@ MonoBehaviour:
   radius: 0.2092982
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4103652
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1181604061}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -127448,7 +128333,11 @@ MonoBehaviour:
   radius: 0.23289056
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5693434
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1188257650}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -127980,7 +128869,11 @@ MonoBehaviour:
   radius: 0.26599455
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7924161
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1192925919}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -128219,7 +129112,11 @@ MonoBehaviour:
   radius: 0.22763784
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5339477
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1193959790}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -128755,7 +129652,11 @@ MonoBehaviour:
   radius: 0.25820202
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7399058
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1198941047}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -128978,7 +129879,11 @@ MonoBehaviour:
   radius: 0.2743501
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8487204
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1200499725}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -129520,7 +130425,11 @@ MonoBehaviour:
   radius: 0.26458308
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7829049
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1204601808}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -129712,7 +130621,11 @@ MonoBehaviour:
   radius: 0.2632145
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7736826
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1205641523}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -130653,7 +131566,11 @@ MonoBehaviour:
   radius: 0.23453993
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5804578
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1214408489}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -130754,7 +131671,11 @@ MonoBehaviour:
   radius: 0.28249934
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9036344
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1216093771}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -131304,7 +132225,11 @@ MonoBehaviour:
   radius: 0.23686996
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5961587
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1217829947}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -131650,7 +132575,11 @@ MonoBehaviour:
   radius: 0.25389728
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7108982
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1222294041}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -132543,7 +133472,11 @@ MonoBehaviour:
   radius: 0.27848092
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.876556
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1229938026}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -132857,7 +133790,11 @@ MonoBehaviour:
   radius: 0.3076047
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.072808
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1231809096}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -133046,7 +133983,11 @@ MonoBehaviour:
   radius: 0.2618216
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7642965
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1233008977}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -133497,7 +134438,11 @@ MonoBehaviour:
   radius: 0.2574221
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7346503
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1244995481}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -133598,7 +134543,11 @@ MonoBehaviour:
   radius: 0.27762753
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8708055
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1245200206}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -134426,7 +135375,11 @@ MonoBehaviour:
   radius: 0.24832973
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.673381
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1253177190}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -134649,7 +135602,11 @@ MonoBehaviour:
   radius: 0.21660498
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4596024
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1257464643}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -134750,7 +135707,11 @@ MonoBehaviour:
   radius: 0.28839985
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9433953
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1257503433}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -134939,7 +135900,11 @@ MonoBehaviour:
   radius: 0.3154382
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1255944
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1258456233}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -135729,7 +136694,11 @@ MonoBehaviour:
   radius: 0.25619215
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7263622
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1264545151}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -136042,7 +137011,11 @@ MonoBehaviour:
   radius: 0.31708243
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1366742
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1268502561}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -136173,7 +137146,11 @@ MonoBehaviour:
   radius: 0.24789041
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6704206
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1269504247}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -136738,7 +137715,11 @@ MonoBehaviour:
   radius: 0.23230384
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5653898
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1276606819}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -137111,7 +138092,11 @@ MonoBehaviour:
   radius: 0.2591353
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7461948
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1279126976}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -137212,7 +138197,11 @@ MonoBehaviour:
   radius: 0.2969003
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.000676
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1279931120}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -137313,7 +138302,11 @@ MonoBehaviour:
   radius: 0.23503457
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5837909
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1280135759}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -137944,7 +138937,11 @@ MonoBehaviour:
   radius: 0.27253982
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8365217
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1288942854}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -139513,7 +140510,11 @@ MonoBehaviour:
   radius: 0.2717307
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8310694
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1307197470}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -139768,7 +140769,11 @@ MonoBehaviour:
   radius: 0.31818813
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.144125
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1311307376}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -140192,7 +141197,11 @@ MonoBehaviour:
   radius: 0.21281011
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4340304
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1314124764}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -142504,7 +143513,11 @@ MonoBehaviour:
   radius: 0.22281379
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5014406
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1333642325}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -143667,7 +144680,11 @@ MonoBehaviour:
   radius: 0.26275954
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7706169
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1343680994}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -145081,7 +146098,11 @@ MonoBehaviour:
   radius: 0.27139068
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8287781
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1358454591}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -145363,7 +146384,11 @@ MonoBehaviour:
   radius: 0.27425066
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8480502
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1362437365}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -145643,7 +146668,11 @@ MonoBehaviour:
   radius: 0.24382119
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.643
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1363984582}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -147267,7 +148296,11 @@ MonoBehaviour:
   radius: 0.2568788
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7309892
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1379042671}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -147703,7 +148736,11 @@ MonoBehaviour:
   radius: 0.22596537
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5226777
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1383243907}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -147868,7 +148905,11 @@ MonoBehaviour:
   radius: 0.2839736
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9135689
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1386037782}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -149376,7 +150417,11 @@ MonoBehaviour:
   radius: 0.2685934
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8099287
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1395667749}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -149568,7 +150613,11 @@ MonoBehaviour:
   radius: 0.25108117
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6919217
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1397869410}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -150552,7 +151601,11 @@ MonoBehaviour:
   radius: 0.22924973
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5448096
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1407138711}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -150987,7 +152040,11 @@ MonoBehaviour:
   radius: 0.28062683
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8910165
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1410971253}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -151382,7 +152439,11 @@ MonoBehaviour:
   radius: 0.23118612
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.557858
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1414589904}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -152030,7 +153091,11 @@ MonoBehaviour:
   radius: 0.29669642
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9993021
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1418405897}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -152647,7 +153712,11 @@ MonoBehaviour:
   radius: 0.21824905
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.470681
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1423945951}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -152840,7 +153909,11 @@ MonoBehaviour:
   radius: 0.2651029
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7864077
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1424971565}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -152941,7 +154014,11 @@ MonoBehaviour:
   radius: 0.22130027
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4912418
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1426948771}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -153042,7 +154119,11 @@ MonoBehaviour:
   radius: 0.25266793
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7026142
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1427512273}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -153324,7 +154405,11 @@ MonoBehaviour:
   radius: 0.23469837
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5815254
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1429390631}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -156843,7 +157928,11 @@ MonoBehaviour:
   radius: 0.22416073
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5105171
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1455621725}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -156944,7 +158033,11 @@ MonoBehaviour:
   radius: 0.22337258
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5052061
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1456262714}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -157415,7 +158508,11 @@ MonoBehaviour:
   radius: 0.227554
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5333828
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1458755969}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -157926,7 +159023,11 @@ MonoBehaviour:
   radius: 0.22886615
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5422248
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1465680073}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -158027,7 +159128,11 @@ MonoBehaviour:
   radius: 0.2744068
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8491024
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1467921961}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -158218,7 +159323,11 @@ MonoBehaviour:
   radius: 0.2673979
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8018727
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1469764377}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -159568,7 +160677,11 @@ MonoBehaviour:
   radius: 0.2824241
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9031273
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1483984710}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -160726,7 +161839,11 @@ MonoBehaviour:
   radius: 0.2616676
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7632588
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1492616895}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -160827,7 +161944,11 @@ MonoBehaviour:
   radius: 0.2795742
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8839232
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1492968931}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -161442,7 +162563,11 @@ MonoBehaviour:
   radius: 0.27622765
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8613724
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1496915991}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -161575,7 +162700,11 @@ MonoBehaviour:
   radius: 0.2846187
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9179158
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1498517233}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -162344,7 +163473,11 @@ MonoBehaviour:
   radius: 0.30956873
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0860426
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1505714477}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -163210,7 +164343,11 @@ MonoBehaviour:
   radius: 0.27119347
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8274493
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1511834586}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -163921,7 +165058,11 @@ MonoBehaviour:
   radius: 0.21568282
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4533883
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1521519121}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -164415,7 +165556,11 @@ MonoBehaviour:
   radius: 0.30654594
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0656736
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1523589634}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -164884,7 +166029,11 @@ MonoBehaviour:
   radius: 0.22350147
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5060747
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1525391841}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -165838,7 +166987,11 @@ MonoBehaviour:
   radius: 0.2282744
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5382372
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1539751542}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -166236,7 +167389,11 @@ MonoBehaviour:
   radius: 0.25557753
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7222207
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1542755752}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -166690,7 +167847,11 @@ MonoBehaviour:
   radius: 0.31919378
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1509016
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1545423924}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -166879,7 +168040,11 @@ MonoBehaviour:
   radius: 0.28378418
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9122924
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1547620396}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -166969,6 +168134,7 @@ GameObject:
   - component: {fileID: 1548764772}
   - component: {fileID: 1548764771}
   - component: {fileID: 1548764770}
+  - component: {fileID: 1548764775}
   m_Layer: 0
   m_Name: GameHUD
   m_TagString: Untagged
@@ -167056,6 +168222,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1548764775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548764769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c0ae909e7567f45a76357665af8017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.UI::Pirates.UI.GameCursor
+  cursor: {fileID: 2800000, guid: 88d535f51e862fc49938c9ed13daa241, type: 3}
+  hotspot: {x: 1, y: 1}
 --- !u!1 &1549151146
 GameObject:
   m_ObjectHideFlags: 0
@@ -168912,7 +170092,11 @@ MonoBehaviour:
   radius: 0.22954683
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5468116
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1564806946}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -169801,7 +170985,11 @@ MonoBehaviour:
   radius: 0.28017092
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8879442
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1573188920}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -169992,7 +171180,11 @@ MonoBehaviour:
   radius: 0.24813148
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6720451
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1574063448}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -170507,7 +171699,11 @@ MonoBehaviour:
   radius: 0.22351316
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5061533
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1578022182}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -171060,7 +172256,11 @@ MonoBehaviour:
   radius: 0.24681568
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6631784
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1580789126}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -171316,7 +172516,11 @@ MonoBehaviour:
   radius: 0.2582483
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7402177
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1584976538}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -172629,7 +173833,11 @@ MonoBehaviour:
   radius: 0.27858984
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8772901
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1593015773}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -173391,7 +174599,11 @@ MonoBehaviour:
   radius: 0.24423517
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6457896
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1602214005}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -174929,7 +176141,11 @@ MonoBehaviour:
   radius: 0.25345495
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7079176
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1623343413}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -175363,7 +176579,11 @@ MonoBehaviour:
   radius: 0.27937952
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8826114
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1625109297}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -176108,7 +177328,11 @@ MonoBehaviour:
   radius: 0.26216754
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7666277
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1637130206}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -176363,7 +177587,11 @@ MonoBehaviour:
   radius: 0.27525222
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8547994
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1641698776}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -177108,7 +178336,11 @@ MonoBehaviour:
   radius: 0.24427389
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6460505
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1646810982}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -178004,7 +179236,11 @@ MonoBehaviour:
   radius: 0.25324488
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.706502
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1657857997}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -178736,7 +179972,11 @@ MonoBehaviour:
   radius: 0.25407383
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7120879
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1661705611}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -179081,7 +180321,11 @@ MonoBehaviour:
   radius: 0.25958255
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7492086
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1668514722}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -179482,7 +180726,11 @@ MonoBehaviour:
   radius: 0.29873
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0130053
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1673843904}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -179581,7 +180829,11 @@ MonoBehaviour:
   radius: 0.26476926
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7841594
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1674632130}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -179954,7 +181206,11 @@ MonoBehaviour:
   radius: 0.23114944
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5576108
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1676008484}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -180327,7 +181583,11 @@ MonoBehaviour:
   radius: 0.27044678
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8224177
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1679927957}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -180550,7 +181810,11 @@ MonoBehaviour:
   radius: 0.2641243
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7798134
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1682368520}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -180742,7 +182006,11 @@ MonoBehaviour:
   radius: 0.25692528
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7313025
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1684748166}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -181724,7 +182992,11 @@ MonoBehaviour:
   radius: 0.26392177
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7784486
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1689356015}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -182389,7 +183661,11 @@ MonoBehaviour:
   radius: 0.26605034
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7927921
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1696736191}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -182490,7 +183766,11 @@ MonoBehaviour:
   radius: 0.28852716
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9442532
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1697071544}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -182591,7 +183871,11 @@ MonoBehaviour:
   radius: 0.25413567
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7125045
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1697463928}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -182692,7 +183976,11 @@ MonoBehaviour:
   radius: 0.2429043
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6368215
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1697940512}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -184642,7 +185930,11 @@ MonoBehaviour:
   radius: 0.24719658
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6657453
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1717327860}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -185131,7 +186423,11 @@ MonoBehaviour:
   radius: 0.2777431
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8715843
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1718757885}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -185534,7 +186830,11 @@ MonoBehaviour:
   radius: 0.27897912
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8799132
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1725781349}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -186088,7 +187388,11 @@ MonoBehaviour:
   radius: 0.29800177
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0080981
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1731118907}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -186920,7 +188224,11 @@ MonoBehaviour:
   radius: 0.28476536
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9189041
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1741768112}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -187021,7 +188329,11 @@ MonoBehaviour:
   radius: 0.26308954
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7728406
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1741783825}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -187459,7 +188771,11 @@ MonoBehaviour:
   radius: 0.21489584
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4480852
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1745973098}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -187836,7 +189152,11 @@ MonoBehaviour:
   radius: 0.28975925
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9525557
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1750158202}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -188255,7 +189575,11 @@ MonoBehaviour:
   radius: 0.21161176
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4259553
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1752390057}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -188601,7 +189925,11 @@ MonoBehaviour:
   radius: 0.32976806
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.2221568
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1757351343}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -188823,7 +190151,11 @@ MonoBehaviour:
   radius: 0.2733276
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8418301
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1758829900}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -189839,7 +191171,11 @@ MonoBehaviour:
   radius: 0.32927573
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.2188392
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1768364768}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -190274,7 +191610,11 @@ MonoBehaviour:
   radius: 0.24581626
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6564438
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1770576069}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -191403,7 +192743,11 @@ MonoBehaviour:
   radius: 0.26291767
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7716824
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1791135411}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -191928,7 +193272,11 @@ MonoBehaviour:
   radius: 0.2681038
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8066294
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1794094159}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -192422,7 +193770,11 @@ MonoBehaviour:
   radius: 0.27514306
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8540637
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1797346508}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -193479,7 +194831,11 @@ MonoBehaviour:
   radius: 0.29017022
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.955325
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1810261019}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -193760,7 +195116,11 @@ MonoBehaviour:
   radius: 0.25816935
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7396857
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1812094872}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -193861,7 +195221,11 @@ MonoBehaviour:
   radius: 0.22743092
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5325534
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1812613076}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -194297,7 +195661,11 @@ MonoBehaviour:
   radius: 0.2426346
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.635004
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1816529666}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -195031,7 +196399,11 @@ MonoBehaviour:
   radius: 0.29353505
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9779991
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1821571416}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -195823,7 +197195,11 @@ MonoBehaviour:
   radius: 0.21708305
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4628239
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1827600003}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -196642,7 +198018,11 @@ MonoBehaviour:
   radius: 0.2971121
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.002103
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1834741908}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -197306,7 +198686,11 @@ MonoBehaviour:
   radius: 0.27553138
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8566805
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1843488406}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -197620,7 +199004,11 @@ MonoBehaviour:
   radius: 0.25226882
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6999247
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1844856930}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -198023,7 +199411,11 @@ MonoBehaviour:
   radius: 0.2664264
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7953262
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1848623015}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -198124,7 +199516,11 @@ MonoBehaviour:
   radius: 0.25592676
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7245739
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1848695360}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -198559,7 +199955,11 @@ MonoBehaviour:
   radius: 0.20848404
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.404879
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1855021953}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -199660,7 +201060,11 @@ MonoBehaviour:
   radius: 0.24840407
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6738819
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1864651312}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -199883,7 +201287,11 @@ MonoBehaviour:
   radius: 0.26520056
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7870657
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1867641529}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -200170,7 +201578,11 @@ MonoBehaviour:
   radius: 0.2443114
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6463033
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1870916509}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -201681,7 +203093,11 @@ MonoBehaviour:
   radius: 0.30655506
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0657349
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1890942955}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -201963,7 +203379,11 @@ MonoBehaviour:
   radius: 0.27268353
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8374902
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1892986700}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -202246,7 +203666,11 @@ MonoBehaviour:
   radius: 0.2994313
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0177312
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1895784476}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -202715,7 +204139,11 @@ MonoBehaviour:
   radius: 0.26692343
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7986754
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1900250547}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -203004,7 +204432,11 @@ MonoBehaviour:
   radius: 0.27258646
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8368361
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1903944736}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -203341,7 +204773,11 @@ MonoBehaviour:
   radius: 0.25189307
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6973927
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1906971134}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -203802,7 +205238,11 @@ MonoBehaviour:
   radius: 0.2223928
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4986038
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1909024213}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -204115,7 +205555,11 @@ MonoBehaviour:
   radius: 0.23327316
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5719216
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1910043527}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -204673,7 +206117,11 @@ MonoBehaviour:
   radius: 0.28477877
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9189944
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1915838986}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -205328,7 +206776,11 @@ MonoBehaviour:
   radius: 0.21436577
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4445133
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1924310370}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -205551,7 +207003,11 @@ MonoBehaviour:
   radius: 0.29942724
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0177038
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1929726562}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -205684,7 +207140,11 @@ MonoBehaviour:
   radius: 0.27359983
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8436646
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1931633478}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -206483,7 +207943,11 @@ MonoBehaviour:
   radius: 0.23278385
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5686244
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1935790003}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -207465,7 +208929,11 @@ MonoBehaviour:
   radius: 0.2511522
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6924002
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1939514517}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -208335,7 +209803,11 @@ MonoBehaviour:
   radius: 0.23640499
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5930256
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1946855814}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -208436,7 +209908,11 @@ MonoBehaviour:
   radius: 0.22257215
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4998124
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1947006497}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -209288,7 +210764,11 @@ MonoBehaviour:
   radius: 0.25624678
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7267303
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1953995553}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -209568,7 +211048,11 @@ MonoBehaviour:
   radius: 0.27140376
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8288664
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1957764072}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -209850,7 +211334,11 @@ MonoBehaviour:
   radius: 0.26679265
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7977942
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1961544713}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -210288,7 +211776,11 @@ MonoBehaviour:
   radius: 0.2697837
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8179495
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1963742102}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -210969,7 +212461,11 @@ MonoBehaviour:
   radius: 0.29166853
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9654214
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1970996016}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -211968,7 +213464,11 @@ MonoBehaviour:
   radius: 0.26243475
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7684283
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1976496898}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -212191,7 +213691,11 @@ MonoBehaviour:
   radius: 0.26021695
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7534835
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1976920935}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -212292,7 +213796,11 @@ MonoBehaviour:
   radius: 0.24907357
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6783934
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1977694676}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -212573,7 +214081,11 @@ MonoBehaviour:
   radius: 0.26879528
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.811289
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1981810329}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -212944,7 +214456,11 @@ MonoBehaviour:
   radius: 0.23116109
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5576893
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1984227388}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -214395,7 +215911,11 @@ MonoBehaviour:
   radius: 0.24099101
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6239287
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1996349047}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -214857,7 +216377,11 @@ MonoBehaviour:
   radius: 0.2393363
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6127783
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 1999867363}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -215171,7 +216695,11 @@ MonoBehaviour:
   radius: 0.22837204
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5388951
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2002533652}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -215613,7 +217141,11 @@ MonoBehaviour:
   radius: 0.23632775
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5925051
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2007801567}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -215714,7 +217246,11 @@ MonoBehaviour:
   radius: 0.21643104
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4584302
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2008158044}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -216207,7 +217743,11 @@ MonoBehaviour:
   radius: 0.25469452
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7162704
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2011335956}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -216308,7 +217848,11 @@ MonoBehaviour:
   radius: 0.22079116
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4878111
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2012576786}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -216409,7 +217953,11 @@ MonoBehaviour:
   radius: 0.30123192
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0298648
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2012973586}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -217377,7 +218925,11 @@ MonoBehaviour:
   radius: 0.28698838
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.933884
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2019435091}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -218387,7 +219939,11 @@ MonoBehaviour:
   radius: 0.23252185
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5668589
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2032620885}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -218611,7 +220167,11 @@ MonoBehaviour:
   radius: 0.24353705
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6410853
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2035943452}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -218825,7 +220385,11 @@ MonoBehaviour:
   radius: 0.26756054
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8029686
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2036635689}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -219129,7 +220693,11 @@ MonoBehaviour:
   radius: 0.3240907
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1838996
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2037712555}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -219506,7 +221074,11 @@ MonoBehaviour:
   radius: 0.26069263
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.756689
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2041802872}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -220121,7 +221693,11 @@ MonoBehaviour:
   radius: 0.3101692
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0900888
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2047762827}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -220313,7 +221889,11 @@ MonoBehaviour:
   radius: 0.2254033
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5188901
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2047898591}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -220783,7 +222363,11 @@ MonoBehaviour:
   radius: 0.2513742
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6938964
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2052716913}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -221097,7 +222681,11 @@ MonoBehaviour:
   radius: 0.29255435
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9713905
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2055478109}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -221499,7 +223087,11 @@ MonoBehaviour:
   radius: 0.28006467
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8872283
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2060568081}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -221780,7 +223372,11 @@ MonoBehaviour:
   radius: 0.32115102
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.1640904
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2064620294}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -222704,7 +224300,11 @@ MonoBehaviour:
   radius: 0.2835979
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.911037
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2074583939}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -223110,7 +224710,11 @@ MonoBehaviour:
   radius: 0.2463055
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6597406
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2076723995}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -223333,7 +224937,11 @@ MonoBehaviour:
   radius: 0.24853028
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6747324
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2081053144}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -223434,7 +225042,11 @@ MonoBehaviour:
   radius: 0.22203892
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.4962192
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2081086718}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -223806,7 +225418,11 @@ MonoBehaviour:
   radius: 0.3030191
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.0419078
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2085091384}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -224028,7 +225644,11 @@ MonoBehaviour:
   radius: 0.22526413
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5179524
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2087489894}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -224554,7 +226174,11 @@ MonoBehaviour:
   radius: 0.26842391
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8087865
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2092983010}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -224794,7 +226418,11 @@ MonoBehaviour:
   radius: 0.2781969
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8746423
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2095487973}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -225151,7 +226779,11 @@ MonoBehaviour:
   radius: 0.22322357
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.504202
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2097796820}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -225406,7 +227038,11 @@ MonoBehaviour:
   radius: 0.26571444
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7905285
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2099766859}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -226773,6 +228409,8 @@ MonoBehaviour:
   aimLine: {fileID: 2111633290}
   impactMarker: {fileID: 1655983211}
   recoilScale: 1
+  rangeLimit: 0
+  traverseOverride: 0
 --- !u!1 &2112182784
 GameObject:
   m_ObjectHideFlags: 0
@@ -226917,7 +228555,11 @@ MonoBehaviour:
   radius: 0.23018345
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.5511014
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2112206894}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -227018,7 +228660,11 @@ MonoBehaviour:
   radius: 0.25007692
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6851544
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2113455061}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -227577,7 +229223,11 @@ MonoBehaviour:
   radius: 0.27169427
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.830824
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2119333989}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -227800,7 +229450,11 @@ MonoBehaviour:
   radius: 0.27037007
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.8219007
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2119601596}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -227931,7 +229585,11 @@ MonoBehaviour:
   radius: 0.2505898
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.6886104
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2121177164}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -229742,7 +231400,11 @@ MonoBehaviour:
   radius: 0.2878093
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.9394159
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2140292471}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -229841,7 +231503,11 @@ MonoBehaviour:
   radius: 0.3281849
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 2.2114887
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2140924382}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5
@@ -229940,7 +231606,11 @@ MonoBehaviour:
   radius: 0.26375544
   stumpTemplate: {fileID: 1295948878}
   stumpScale: 1.7773278
+  bonusItem: {fileID: 0}
+  bonusChance: 0
+  bonusAmount: {x: 1, y: 1}
   occluder: {fileID: 2143003736}
+  body: {fileID: 0}
   regrowSeconds: 480
   regrowDistance: 35
   fallSeconds: 1.5

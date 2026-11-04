@@ -45,10 +45,21 @@ MonoBehaviour:
     chance: 0.02
     minAmount: 1
     maxAmount: 1
+  - item: {fileID: 11400000, guid: 8489fbbc499bf9d4db802d9962d57347, type: 2}
+    chance: 0.12
+    minAmount: 1
+    maxAmount: 2
+  - item: {fileID: 11400000, guid: 3875602a25dc50a47a3764aaaca5ce36, type: 2}
+    chance: 0.08
+    minAmount: 1
+    maxAmount: 1
   chestChance: 0
   schematics: []
   chestFallback:
     item: {fileID: 0}
     amount: 0
+  gearChance: 0
+  gear: []
+  guaranteedGear: {fileID: 0}
   wreckPrefab: {fileID: 0}
   lifetime: 120

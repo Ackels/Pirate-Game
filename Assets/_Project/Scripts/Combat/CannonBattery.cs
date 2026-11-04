@@ -7,13 +7,15 @@ using Random = UnityEngine.Random;
 
 namespace Pirates.Combat
 {
-    public enum BroadsideSide { Port = -1, Starboard = 1 }
+    /// <summary>Para onde a bateria atira: os bordos (±1, o sinal do través) e os canhões de caça da proa e da popa (03/11).</summary>
+    public enum BroadsideSide { Port = -1, Starboard = 1, Bow = 2, Stern = -2 }
 
     public enum BatteryState { Ready, Aiming, Reloading }
 
     /// <summary>
-    /// Uma bateria lateral (bombordo ou estibordo). Segurar mira (a elevação sobe com o tempo),
-    /// soltar dispara a salva. Jogador e IA usam a mesma API: BeginAim / ReleaseAndFire.
+    /// Uma bateria lateral (bombordo ou estibordo). BeginAim mira, ReleaseAndFire dispara a salva; a distância vem da carga
+    /// (subindo com o tempo) ou, com <see cref="SetManualAim"/> (o jogador, pelo mouse), de um ponto no mar, com os canhões girando
+    /// até <see cref="CannonStats.maxAimTraverse"/> do través. A IA usa FireAtRange.
     /// Com mira assistida (CannonStats.aimAssist, upgrade de luneta) a distância gruda no inimigo daquele lado,
     /// a carga desacelera perto dele e os canhões giram um pouco na direção dele. Munição especial (<see cref="Ammo"/>, M9)
     /// muda dano, espalhamento, alcance e projéteis da bordada; navio com a tripulação abatida recarrega mais devagar
@@ -54,7 +56,19 @@ namespace Pirates.Combat
         /// <summary>Tempo de recarga × isto (tripulação abatida pela metralha: maior que 1).</summary>
         public float ReloadMultiplier { get; set; } = 1f;
         /// <summary>Alcance máximo com a munição atual (metralha alcança menos).</summary>
-        public float MaxRange => Ammo && Ammo.maxRange > 0f ? Mathf.Min(stats.maxRange, Ammo.maxRange) : stats.maxRange;
+        public float MaxRange
+        {
+            get
+            {
+                float range = Ammo && Ammo.maxRange > 0f ? Mathf.Min(stats.maxRange, Ammo.maxRange) : stats.maxRange;
+                return rangeLimit > 0f ? Mathf.Min(range, rangeLimit) : range;
+            }
+        }
+
+        [Tooltip("Alcance máximo próprio (m; 0 = o dos stats). Os canhões de caça alcançam menos (pedido do Jhonata: \"para não ficar tão forte\").")]
+        [SerializeField] float rangeLimit;
+
+        public void SetRangeLimit(float meters) => rangeLimit = meters;
         float SpreadDegrees => stats.spreadDegrees * (Ammo ? Ammo.spreadMultiplier : 1f) * StormSpread;
 
         /// <summary>Tempestade (M11): o convés jogando espalha a salva (vale para todos, IA e fortes também).</summary>
@@ -64,6 +78,55 @@ namespace Pirates.Combat
         public const float StormSpreadBonus = 0.5f;
 
         float assistedRange, assistYaw, assistCloseness;
+
+        // Mira do jogador pelo mouse (03/11, pedido do Jhonata: "só consegue atirar para a direita ou esquerda"): um ponto no mar dá
+        // a distância e o giro dos canhões (até maxAimTraverse do través); sem ele, a distância vem da carga (segurar), como a IA usa.
+        bool manual;
+        Vector3 manualPoint;
+        float manualYaw, manualRange;
+        Gradient lineGradient, outOfArcGradient;
+        bool lineRed;
+
+        /// <summary>Mira pelo mouse: o cursor passou do giro máximo (a mira para na borda; vire o navio).</summary>
+        public bool OutOfArc { get; private set; }
+        /// <summary>Giro (graus) da mira agora, horário visto de cima: positivo = para a popa no estibordo e para a proa no bombordo.</summary>
+        public float AimYaw => assistYaw;
+        public float MaxAimTraverse => traverseOverride > 0f ? traverseOverride : stats ? stats.maxAimTraverse : 35f;
+
+        [Tooltip("Giro máximo próprio (graus; 0 = o dos stats). Os canhões de caça giram mais (55°): cobrem a proa/popa até o arco dos bordos.")]
+        [SerializeField] float traverseOverride;
+
+        public void SetTraverse(float degrees) => traverseOverride = degrees;
+
+        /// <summary>Mira do jogador: os canhões apontam para <paramref name="worldPoint"/> (no mar), até o giro máximo.</summary>
+        public void SetManualAim(Vector3 worldPoint)
+        {
+            manual = true;
+            manualPoint = worldPoint;
+            UpdateManual();
+        }
+
+        /// <summary>Volta à mira pela carga (segurar).</summary>
+        public void ClearManualAim()
+        {
+            manual = false;
+            OutOfArc = false;
+        }
+
+        float BaseYaw => manual ? manualYaw : 0f;
+
+        void UpdateManual()
+        {
+            if (!manual || !stats) return;
+            Vector3 origin = MuzzleCenter();
+            Vector3 to = Flat(manualPoint - origin);
+            float signed = Vector3.SignedAngle(FireDirection(0f), to, Vector3.up);
+            float limit = MaxAimTraverse;
+            manualYaw = Mathf.Clamp(signed, -limit, limit);
+            OutOfArc = Mathf.Abs(signed) > limit + 0.5f;
+            // Fora do arco, a distância é a do ponto projetado na borda do giro.
+            manualRange = Mathf.Clamp(to.magnitude * Mathf.Cos((signed - manualYaw) * Mathf.Deg2Rad), stats.minRange, MaxRange);
+        }
 
         public void Configure(CannonStats cannonStats, BroadsideSide broadside, Transform[] muzzlePoints,
             Rigidbody body, LineRenderer line, Transform marker)
@@ -81,9 +144,41 @@ namespace Pirates.Combat
 
         void Start() => SetPreviewVisible(false);
 
+        /// <summary>Direção de tiro sem giro, no plano do mar: o través do bordo, ou a proa/popa nos canhões de caça.</summary>
+        public Vector3 Axis
+        {
+            get
+            {
+                Transform ship = shipBody ? shipBody.transform : transform;
+                Vector3 local = side switch
+                {
+                    BroadsideSide.Bow => ship.forward,
+                    BroadsideSide.Stern => -ship.forward,
+                    _ => ship.right * (int)side,
+                };
+                return Vector3.ProjectOnPlane(local, Vector3.up).normalized;
+            }
+        }
+
+        /// <summary>Canhão de caça (proa ou popa): sem munição especial, fora do tiro à queima-roupa e dos artilheiros do convés.</summary>
+        public bool IsChaser => side is BroadsideSide.Bow or BroadsideSide.Stern;
+
+        /// <summary>Montado no navio (os de caça vêm com o upgrade; sem ele o canhão some e não atira).</summary>
+        public bool Mounted { get; private set; } = true;
+
+        /// <summary>Liga ou tira o canhão (o modelo some junto).</summary>
+        public void SetMounted(bool mounted)
+        {
+            if (Mounted == mounted) return;
+            Mounted = mounted;
+            if (!mounted) CancelAim();
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+                if (r != aimLine) r.enabled = mounted;
+        }
+
         public bool BeginAim()
         {
-            if (State != BatteryState.Ready || !stats || !isActiveAndEnabled) return false;
+            if (State != BatteryState.Ready || !stats || !isActiveAndEnabled || !Mounted) return false;
             State = BatteryState.Aiming;
             AimCharge = 0f;
             UpdateAssist();
@@ -109,7 +204,7 @@ namespace Pirates.Combat
         /// <summary>Disparo direto a uma distância, sem fase de mira (usado pela IA).</summary>
         public bool FireAtRange(float range)
         {
-            if (State != BatteryState.Ready || !stats || !isActiveAndEnabled) return false;
+            if (State != BatteryState.Ready || !stats || !isActiveAndEnabled || !Mounted) return false;
             Fire(SolveElevation(range, MuzzleHeight()), 0f);
             return true;
         }
@@ -128,7 +223,7 @@ namespace Pirates.Combat
         }
 
         /// <summary>Alcance (m) só pela carga, sem a mira assistida.</summary>
-        float ChargedRange => Mathf.Lerp(stats.minRange, MaxRange, stats.aimRangeCurve.Evaluate(AimCharge));
+        float ChargedRange => manual ? manualRange : Mathf.Lerp(stats.minRange, MaxRange, stats.aimRangeCurve.Evaluate(AimCharge));
 
         /// <summary>Alcance desejado (m): o da carga, puxado para o inimigo pela mira assistida.</summary>
         public float AimRange => AssistTarget ? assistedRange : ChargedRange;
@@ -205,6 +300,7 @@ namespace Pirates.Combat
                     // Perto da distância do inimigo a carga desacelera: dá tempo de soltar na hora certa.
                     float slow = Mathf.Lerp(1f, 0.3f, stats.aimAssist * assistCloseness);
                     AimCharge = Mathf.Min(1f, AimCharge + slow * Time.deltaTime / Mathf.Max(0.05f, stats.aimChargeTime));
+                    UpdateManual();
                     UpdateAssist();
                     UpdatePreview();
                     break;
@@ -222,9 +318,7 @@ namespace Pirates.Combat
         /// <summary>Direção de disparo: perpendicular ao casco no plano horizontal, erguida pela elevação.</summary>
         Vector3 FireDirection(float elevationDegrees, float yawOffsetDegrees = 0f)
         {
-            Transform ship = shipBody ? shipBody.transform : transform;
-            Vector3 sideways = Vector3.ProjectOnPlane(ship.right * (int)side, Vector3.up).normalized;
-            sideways = Quaternion.AngleAxis(yawOffsetDegrees, Vector3.up) * sideways;
+            Vector3 sideways = Quaternion.AngleAxis(yawOffsetDegrees, Vector3.up) * Axis;
             float e = elevationDegrees * Mathf.Deg2Rad;
             return sideways * Mathf.Cos(e) + Vector3.up * Mathf.Sin(e);
         }
@@ -294,6 +388,21 @@ namespace Pirates.Combat
 
             if (aimLine)
             {
+                // Fora do giro dos canhões a linha fica vermelha (a mira para na borda: vire o navio).
+                if (lineGradient == null)
+                {
+                    lineGradient = aimLine.colorGradient;
+                    outOfArcGradient = new Gradient();
+                    outOfArcGradient.SetKeys(
+                        new[] { new GradientColorKey(new Color(1f, 0.35f, 0.25f), 0f), new GradientColorKey(new Color(0.9f, 0.1f, 0.08f), 1f) },
+                        lineGradient.alphaKeys);
+                }
+                // O getter do colorGradient cria um Gradient novo: troca só quando muda.
+                if (OutOfArc != lineRed)
+                {
+                    lineRed = OutOfArc;
+                    aimLine.colorGradient = lineRed ? outOfArcGradient : lineGradient;
+                }
                 aimLine.positionCount = arc.Count;
                 for (int i = 0; i < arc.Count; i++) aimLine.SetPosition(i, arc[i]);
             }
@@ -321,9 +430,12 @@ namespace Pirates.Combat
         {
             AssistTarget = null;
             AssistLocked = false;
-            assistYaw = 0f;
+            assistYaw = BaseYaw;
             assistCloseness = 0f;
         }
+
+        /// <summary>Mira pelo mouse: a assistência só pega inimigo perto da direção do cursor (não o mais alinhado com o través).</summary>
+        const float ManualAssistSearchAngle = 12f;
 
         /// <summary>
         /// Acha o inimigo mais alinhado com o través e puxa a distância e o giro para ele. Força = aimAssist:
@@ -336,10 +448,11 @@ namespace Pirates.Combat
             if (assist <= 0f || muzzles.Length == 0) return;
 
             Vector3 origin = MuzzleCenter();
-            Vector3 beam = FireDirection(0f);
+            float baseYaw = BaseYaw;
+            Vector3 beam = FireDirection(0f, baseYaw);
             Transform own = shipBody ? shipBody.transform : transform.root;
             Transform best = null;
-            float bestAngle = AssistSearchAngle;
+            float bestAngle = manual ? ManualAssistSearchAngle : AssistSearchAngle;
             for (int i = 0; i < EnemyShipAI.Active.Count; i++)
             {
                 var ai = EnemyShipAI.Active[i];
@@ -378,8 +491,9 @@ namespace Pirates.Combat
             Vector3 toAim = Flat(aimPoint - origin);
             float signed = Vector3.SignedAngle(beam, toAim, Vector3.up);
             float traverse = stats.maxAssistTraverse * assist;
-            assistYaw = Mathf.Clamp(signed, -traverse, traverse);
-            float targetRange = toAim.magnitude * Mathf.Cos((signed - assistYaw) * Mathf.Deg2Rad);
+            float limit = Mathf.Max(MaxAimTraverse, traverse);
+            assistYaw = Mathf.Clamp(baseYaw + Mathf.Clamp(signed, -traverse, traverse), -limit, limit);
+            float targetRange = toAim.magnitude * Mathf.Cos((signed - (assistYaw - baseYaw)) * Mathf.Deg2Rad);
 
             AssistTarget = best;
             float charged = ChargedRange;

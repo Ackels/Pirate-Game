@@ -329,6 +329,8 @@ namespace Pirates.Missions
                 // Missão com alvo (o brigue) só conta aquele navio. Sem alvo, qualquer um conta, mas só para uma delas (a
                 // aceita primeiro): com as três ativas, cada navio pagava três vezes.
                 bool targeted = !string.IsNullOrEmpty(m.definition.targetId);
+                // Navio da Coroa (Esquadra Real) não é pirata: só conta para missão que pede ele pelo id.
+                if (!targeted && evt.crown) continue;
                 if (targeted ? m.definition.targetId != evt.targetId : counted) continue;
                 if (!targeted) counted = true;
                 m.progress++;

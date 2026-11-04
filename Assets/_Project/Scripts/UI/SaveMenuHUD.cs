@@ -148,6 +148,8 @@ namespace Pirates.UI
             if (!who) return false;
             // Roda de comando dos marujos: o Esc cancela a ordem que está sendo apontada.
             if (switcher.IsOnFoot && who.TryGetComponent(out CrewCommander crew) && crew.Busy) return true;
+            // Mira dos canhões armada: o Esc desarma.
+            if (!switcher.IsOnFoot && who.TryGetComponent(out PlayerCannonInput guns) && guns.Armed) return true;
             foreach (var i in who.GetComponents<IInteraction>())
                 if (i.IsOpen) return true;
             return false;
@@ -602,7 +604,7 @@ namespace Pirates.UI
             var ship = Hud.Box("hud-section", "hud-options__keybox");
             ship.Add(Hud.Text("No navio", "hud-options__keytitle"));
             ship.Add(Hud.Text(
-                "<b>W / S</b>  velas · <b>A / D</b>  leme\n<b>Q / E</b>  segurar mira, soltar dispara\n<b>1 / 2 / 3</b>  munição\n" +
+                "<b>W / S</b>  velas · <b>A / D</b>  leme\n<b>Q / E</b>  armar a mira do bordo · <b>clique</b>  dispara\n<b>1 / 2 / 3</b>  munição\n" +
                 "<b>R</b>  carpinteiro · <b>F</b>  atracar, saquear\n<b>Botão direito/meio + mouse</b>  câmera\n<b>Scroll</b>  zoom",
                 "hud-options__keys-text"));
             var foot = Hud.Box("hud-section", "hud-options__keybox");
@@ -610,7 +612,7 @@ namespace Pirates.UI
             foot.Add(Hud.Text(
                 "<b>WASD</b>  andar · <b>Shift</b>  correr · <b>Espaço</b>  pular\n<b>Botão esquerdo</b>  atacar · <b>direito</b>  mirar/guarda\n" +
                 "<b>Ctrl</b>  rolar · <b>V</b>  chutar · <b>G</b>  bomba\n<b>1 / 2 / 3</b>  armas · <b>R</b>  comer · <b>F</b>  interagir\n" +
-                "<b>Q / E</b> ou <b>botão do meio</b>  câmera",
+                "<b>Q / E</b> ou <b>Alt + mouse</b>  câmera",
                 "hud-options__keys-text"));
             keys.Add(ship);
             keys.Add(foot);

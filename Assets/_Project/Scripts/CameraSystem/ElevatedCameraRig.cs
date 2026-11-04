@@ -48,10 +48,16 @@ namespace Pirates.CameraSystem
         [Tooltip("Margem (m) em volta do navio e do alvo ao enquadrar a mira.")]
         [SerializeField] float aimFramingMargin = 20f;
         [SerializeField] float maxAimDistance = 130f;
+        [Tooltip("Quão rápido a câmera gira para o rumo da mira (proa para cima) com a mira armada.")]
+        [SerializeField] float aimHeadingSharpness = 1.6f;
+        [Tooltip("Segundos sem girar a câmera na mão até ela voltar a seguir o rumo da mira.")]
+        [SerializeField] float manualOrbitHold = 3f;
 
         Rigidbody targetBody;
         bool hasAimPoint;
         Vector3 aimPoint;
+        float? aimHeading;
+        float manualOrbitUntil = -1f;
         Vector3 focus;
         float distance, targetDistance;
         float yaw, targetYaw;
@@ -117,6 +123,8 @@ namespace Pirates.CameraSystem
 
         public void ClearAimPoint() => hasAimPoint = false;
 
+        public void SetAimHeading(float? yaw) => aimHeading = yaw;
+
         void OnEnable()
         {
             Services.Register<ICameraAimFocus>(this);
@@ -146,6 +154,7 @@ namespace Pirates.CameraSystem
 
         void OnDisable()
         {
+            ReleasePointer();
             Services.Unregister<ICameraAimFocus>(this);
             Services.Unregister<ICameraFollow>(this);
             Services.Unregister<ICameraShake>(this);
@@ -165,7 +174,11 @@ namespace Pirates.CameraSystem
 
         void LateUpdate()
         {
-            if (!target) return;
+            if (!target)
+            {
+                ReleasePointer();
+                return;
+            }
             float dt = Time.deltaTime;
             ReadInput(dt);
 
@@ -179,13 +192,31 @@ namespace Pirates.CameraSystem
             float desiredDistance = targetDistance;
             if (hasAimPoint)
             {
+                // Mira armada (03/11, pedido do Jhonata: no meio da luta a câmera ficava longe e de lado do navio): gira devagar para o rumo
+                // pedido (a proa para cima, o través de lado na tela larga), a não ser que o jogador tenha girado na mão há pouco.
+                if (aimHeading.HasValue && Time.unscaledTime >= manualOrbitUntil)
+                    targetYaw += Mathf.DeltaAngle(targetYaw, aimHeading.Value) * (1f - Mathf.Exp(-aimHeadingSharpness * dt));
+
                 Vector3 toAim = aimPoint - target.position;
                 toAim.y = 0f;
-                desiredFocus = target.position + toAim * aimFocusBlend;
-                // Distância para caber navio e alvo: meia largura visível aproximada = distância * tan(meio FOV horizontal).
-                float halfSpan = Mathf.Max(aimFocusBlend, 1f - aimFocusBlend) * toAim.magnitude + aimFramingMargin;
-                float halfFovTan = Mathf.Tan(HorizontalHalfFov() * Mathf.Deg2Rad);
-                desiredDistance = Mathf.Clamp(Mathf.Max(targetDistance, halfSpan / halfFovTan), minDistance, maxAimDistance);
+                // Conta no referencial da câmera: de lado vale a largura da tela, em profundidade a altura (encurtada pela inclinação).
+                var frame = Quaternion.Euler(0f, yaw, 0f);
+                Vector3 local = Quaternion.Inverse(frame) * toAim;
+                float halfSide = Mathf.Max(aimFocusBlend, 1f - aimFocusBlend) * Mathf.Abs(local.x) + aimFramingMargin;
+                float halfDepth = Mathf.Max(aimFocusBlend, 1f - aimFocusBlend) * Mathf.Abs(local.z) + aimFramingMargin;
+                float tanH = Mathf.Tan(HorizontalHalfFov() * Mathf.Deg2Rad);
+                float tanV = Mathf.Tan(VerticalHalfFov() * Mathf.Deg2Rad);
+                float sinPitch = Mathf.Max(0.3f, Mathf.Sin(Mathf.Clamp(ZoomPitch(distance) + pitchOffset, pitchLimitMin, pitchLimitMax) * Mathf.Deg2Rad));
+                float need = Mathf.Max(halfSide / tanH, halfDepth * sinPitch / tanV);
+                desiredDistance = Mathf.Clamp(Mathf.Max(targetDistance, need), minDistance, maxAimDistance);
+                // O navio nunca sai da tela: se navio e alvo não cabem na distância máxima, o foco fica perto do navio (o alvo sai antes).
+                Vector3 offset = local * aimFocusBlend;
+                // 0,75: a perspectiva encurta o lado de perto da câmera; com a conta cheia o navio chegava a 6% da borda.
+                float maxSide = Mathf.Max(0f, 0.75f * desiredDistance * tanH - aimFramingMargin);
+                float maxDepth = Mathf.Max(0f, 0.75f * desiredDistance * tanV / sinPitch - aimFramingMargin);
+                offset.x = Mathf.Clamp(offset.x, -maxSide, maxSide);
+                offset.z = Mathf.Clamp(offset.z, -maxDepth, maxDepth);
+                desiredFocus = target.position + frame * offset;
             }
 
             focus = Vector3.Lerp(focus, desiredFocus, 1f - Mathf.Exp(-followSharpness * dt));
@@ -199,19 +230,33 @@ namespace Pirates.CameraSystem
         {
             var input = GameInput.Instance;
 
-            targetYaw += input.CameraOrbit.ReadValue<float>() * orbitSpeed * dt;
-            // Botão do meio + mouse gira em todo lugar. A pé o botão direito é da mira (no navio ele também gira) e Q/E
-            // giram a câmera (no navio são os canhões).
-            if (input.FootCameraControls) targetYaw += input.CameraOrbitKeys.ReadValue<float>() * keyOrbitSpeed * dt;
-            var mouse = Mouse.current;
-            if (mouse != null && (mouse.middleButton.isPressed || (!input.FootCameraControls && mouse.rightButton.isPressed)))
+            float stickOrbit = input.CameraOrbit.ReadValue<float>();
+            targetYaw += stickOrbit * orbitSpeed * dt;
+            bool manual = Mathf.Abs(stickOrbit) > 0.1f;
+            // Alt + mouse (03/11, pedido do Jhonata: girar segurando a rodinha incomodava) ou botão do meio + mouse giram em todo lugar.
+            // A pé o botão direito é da mira (no navio ele também gira) e Q/E giram a câmera (no navio são os canhões).
+            if (input.FootCameraControls)
             {
+                float keys = input.CameraOrbitKeys.ReadValue<float>();
+                targetYaw += keys * keyOrbitSpeed * dt;
+                manual |= Mathf.Abs(keys) > 0.1f;
+            }
+            var mouse = Mouse.current;
+            var keyboard = Keyboard.current;
+            bool altHeld = keyboard != null && keyboard.leftAltKey.isPressed;
+            bool mouseOrbit = mouse != null && !PointerBusy()
+                && (mouse.middleButton.isPressed || altHeld || (!input.FootCameraControls && mouse.rightButton.isPressed));
+            LockPointer(mouseOrbit, mouse);
+            if (mouseOrbit)
+            {
+                manual = true;
                 // Sensibilidade e inversão do menu Opções.
                 var options = GameOptions.Current;
                 Vector2 delta = mouse.delta.ReadValue() * options.cameraSensitivity;
                 targetYaw += delta.x * mouseOrbitSensitivity;
                 targetPitchOffset -= delta.y * mousePitchSensitivity * (options.invertCamera ? -1f : 1f);
             }
+            if (manual) manualOrbitUntil = Time.unscaledTime + manualOrbitHold;
             targetPitchOffset -= input.CameraPitch.ReadValue<float>() * stickPitchSpeed * dt;
 
             float scroll = PointerBusy() ? 0f : input.CameraZoomScroll.ReadValue<float>();
@@ -224,8 +269,41 @@ namespace Pirates.CameraSystem
             targetPitchOffset = Mathf.Clamp(targetPitchOffset, pitchLimitMin - basePitch, pitchLimitMax - basePitch);
         }
 
+        /// <summary>
+        /// Girando pelo mouse, o cursor some e fica travado (o mouse só mexe a câmera); ao soltar, volta onde estava. A mira continua no
+        /// ponto de antes pelo <see cref="PointerLock"/> (04/11, pedido do Jhonata).
+        /// </summary>
+        void LockPointer(bool on, Mouse mouse)
+        {
+            if (on == PointerLock.Frozen) return;
+            if (on)
+            {
+                PointerLock.Freeze(mouse.position.ReadValue());
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                return;
+            }
+            ReleasePointer();
+        }
+
+        static void ReleasePointer()
+        {
+            if (!PointerLock.Frozen) return;
+            Vector2 back = PointerLock.Position(default);
+            PointerLock.Release();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Mouse.current?.WarpCursorPosition(back);
+        }
+
         float ZoomPitch(float atDistance) =>
             Mathf.Lerp(minPitch, maxPitch, Mathf.InverseLerp(minDistance, maxDistance, atDistance));
+
+        float VerticalHalfFov()
+        {
+            var cam = GetComponent<Camera>();
+            return cam ? cam.fieldOfView * 0.5f : 25f;
+        }
 
         float HorizontalHalfFov()
         {

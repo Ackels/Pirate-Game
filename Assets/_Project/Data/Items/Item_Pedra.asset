@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36a214787318ea489048c1d2aa2f7ce, type: 3}
+  m_Name: Item_Pedra
+  m_EditorClassIdentifier: Pirates.Economy::Pirates.Economy.ItemDefinition
+  displayName: Pedra
+  category: 0
+  rarity: 0
+  group: 0
+  color: {r: 0.62, g: 0.6, b: 0.56, a: 1}
+  spacePerUnit: 2
+  description: "Pedra cortada das pedreiras das ilhas (picareta, numa pedra grande das matas) ou comprada no mercado. Para as constru\xE7\xF5es da base."
+  icon: {fileID: 2800000, guid: d092c59db3e61094eaf9607f64594286, type: 3}
+  keepAboard: 0
+  backpackCapacity: 0
+  foodHeal: 0
+  relicEffect: 0
+  relicAmount: 0
+  mealEffect: 0
+  mealAmount: 0
+  mealMinutes: 8
+  equipSlot: 0
+  equipment: {fileID: 0}

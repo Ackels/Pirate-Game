@@ -198,8 +198,12 @@ namespace Pirates.EditorTools
         static void Choppable(GameObject tree, float radius, bool palm)
         {
             var template = StumpTemplate();
-            tree.AddComponent<ResourceNode>().Configure(ResourceNode.Kind.Tree, WoodItem(), palm ? PalmWood : TreeWood, palm ? PalmHits : TreeHits,
+            var node = tree.AddComponent<ResourceNode>();
+            node.Configure(ResourceNode.Kind.Tree, WoodItem(), palm ? PalmWood : TreeWood, palm ? PalmHits : TreeHits,
                 radius, template, radius * 1.25f / stumpRadius, tree.GetComponent<Pirates.CameraSystem.CameraOccluder>());
+            // R3 (03/11, pedido do Jhonata: os materiais novos não só dos mercantes): fibra da palmeira vira cordame, a árvore solta resina (breu).
+            if (palm) node.SetBonus(RopeItem(), 0.7f, new Vector2Int(1, 2));
+            else node.SetBonus(TarItem(), 0.45f, new Vector2Int(1, 1));
         }
 
         // ---------- Veios de ferro (passo 2) ----------
@@ -298,8 +302,25 @@ namespace Pirates.EditorTools
         {
             var iron = IronItem();
             if (!iron) return;
-            var material = OreMaterial();
-            var rockMaterial = VeinRockMaterial();
+            int veins = AddVeins(iron, 0, OreMaterial(), VeinRockMaterial(), VeinIron, VeinHits);
+            Debug.Log($"[Pirates] Veios de ferro: {veins} pedras das matas.");
+            // Pedreiras (R1, 03/11): outra terça parte das pedras grandes dá pedra; a pedra fica com a cor dela e as lascas são cinza.
+            var stone = StoneItem();
+            int quarries = AddVeins(stone, 1, GetMaterial("M_Lasca_Pedra", new Color(0.72f, 0.7f, 0.66f), 0.15f), null, StoneYield, StoneHits, 0.65f);
+            Debug.Log($"[Pirates] Pedreiras: {quarries} pedras das matas.");
+        }
+
+        static readonly Vector2Int StoneYield = new(3, 5);
+        const int StoneHits = 5;
+
+        /// <summary>
+        /// Monta os veios de um minério nas pedras grandes das matas com índice % <see cref="VeinEvery"/> == <paramref name="remainder"/>:
+        /// as peças (cristais ou lascas) na face da pedra e no pé, o <see cref="ResourceNode"/> que dá <paramref name="item"/>.
+        /// <paramref name="rockMaterial"/> nulo = a pedra fica com o material dela. Devolve quantas pedras viraram veio.
+        /// </summary>
+        static int AddVeins(ItemDefinition item, int remainder, Material material, Material rockMaterial, Vector2Int yield, int hits,
+            float pieceScale = 1f)
+        {
             var crystals = new Mesh[CrystalVariants];
             for (int v = 0; v < crystals.Length; v++) crystals[v] = OreCrystalMesh(v);
             Physics.SyncTransforms();
@@ -307,19 +328,20 @@ namespace Pirates.EditorTools
             foreach (var rock in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
             {
                 if (!rock.name.StartsWith("Pedra_") || !rock.parent || rock.parent.name != "Mata") continue;
-                if (!int.TryParse(rock.name.Substring(6), out int index) || index % VeinEvery != 0) continue;
+                if (!int.TryParse(rock.name.Substring(6), out int index) || index % VeinEvery != remainder) continue;
                 if (rock.GetComponent<ResourceNode>()) continue;
                 var colliders = rock.GetComponentsInChildren<Collider>();
                 if (colliders.Length == 0) continue;
                 var renderers = rock.GetComponentsInChildren<Renderer>();
                 var bounds = renderers[0].bounds;
                 foreach (var r in renderers) bounds.Encapsulate(r.bounds);
-                foreach (var r in renderers)
-                {
-                    var slots = r.sharedMaterials;
-                    for (int i = 0; i < slots.Length; i++) slots[i] = rockMaterial;
-                    r.sharedMaterials = slots;
-                }
+                if (rockMaterial)
+                    foreach (var r in renderers)
+                    {
+                        var slots = r.sharedMaterials;
+                        for (int i = 0; i < slots.Length; i++) slots[i] = rockMaterial;
+                        r.sharedMaterials = slots;
+                    }
 
                 var rng = new System.Random(index * 7919 + Mathf.RoundToInt(rock.position.x * 13f + rock.position.z * 7f));
                 float R(float a, float b) => a + (float)rng.NextDouble() * (b - a);
@@ -364,7 +386,7 @@ namespace Pirates.EditorTools
 
                 // Na face da pedra, de lado até quase de cima, bem juntos como na referência: 4 grandes, 7 médios e o resto pequeno.
                 // Pedra grande = cristais maiores (num pedregulho de 4 m os de 1 m sumiam).
-                float grow = Mathf.Clamp(Mathf.Max(bounds.extents.x, bounds.extents.z) / 1.6f, 0.85f, 1.4f);
+                float grow = Mathf.Clamp(Mathf.Max(bounds.extents.x, bounds.extents.z) / 1.6f, 0.85f, 1.4f) * pieceScale;
                 int count = Mathf.Clamp(Mathf.RoundToInt(bounds.size.x * bounds.size.z * 1.1f), 16, 28);
                 int made = 0;
                 for (int attempt = 0; attempt < 200 && made < count; attempt++)
@@ -410,10 +432,13 @@ namespace Pirates.EditorTools
                     float stoneSize = Mathf.Max(stoneBounds.size.x, Mathf.Max(stoneBounds.size.y, stoneBounds.size.z));
                     stone.transform.localScale *= R(0.3f, 0.55f) / Mathf.Max(0.01f, stoneSize);
                     stone.transform.SetPositionAndRotation(spot, Quaternion.Euler(R(-15f, 15f), R(0f, 360f), R(-15f, 15f)));
+                    // Na pedreira (pedra com a cor dela) os pedregulhos ficam da cor das lascas: os do Nature Kit são laranja e
+                    // pareciam minério de ferro.
+                    var rubbleMaterial = rockMaterial ? rockMaterial : material;
                     foreach (var r in stone.GetComponentsInChildren<Renderer>())
                     {
                         var slots = r.sharedMaterials;
-                        for (int i = 0; i < slots.Length; i++) slots[i] = rockMaterial;
+                        for (int i = 0; i < slots.Length; i++) slots[i] = rubbleMaterial;
                         r.sharedMaterials = slots;
                     }
                 }
@@ -425,11 +450,14 @@ namespace Pirates.EditorTools
                 foreach (var t in rock.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = true;
                 // De novo: o translúcido da pedra passa a levar a pedra escura e o minério (o Occluder guarda os materiais da hora).
                 Occluder(rock.gameObject);
-                rock.gameObject.AddComponent<ResourceNode>().Configure(ResourceNode.Kind.Ore, iron, VeinIron, VeinHits,
+                var node = rock.gameObject.AddComponent<ResourceNode>();
+                node.Configure(ResourceNode.Kind.Ore, item, yield, hits,
                     Mathf.Max(bounds.extents.x, bounds.extents.z), null, 1f, rock.GetComponent<Pirates.CameraSystem.CameraOccluder>(), vein, VeinRegrow);
+                // R3: o veio de ferro também solta pedra.
+                if (item != StoneItem()) node.SetBonus(StoneItem(), 0.5f, new Vector2Int(1, 2));
                 veins++;
             }
-            Debug.Log($"[Pirates] Veios de ferro: {veins} pedras das matas.");
+            return veins;
         }
     }
 }

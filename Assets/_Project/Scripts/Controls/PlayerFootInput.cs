@@ -97,7 +97,7 @@ namespace Pirates.Controls
             var mouse = Mouse.current;
             var cam = Camera.main;
             if (mouse == null || !cam) return false;
-            var ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+            var ray = cam.ScreenPointToRay(PointerLock.Position(mouse.position.ReadValue()));
             // O acerto mais próximo que não seja o próprio personagem (o raio sai da câmera e pode passar por ele).
             float nearest = float.MaxValue;
             int count = Physics.RaycastNonAlloc(ray, aimHits, aimRayDistance, ~0, QueryTriggerInteraction.Ignore);

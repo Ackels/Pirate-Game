@@ -39,4 +39,10 @@ MonoBehaviour:
     amount: 60
   - item: {fileID: 11400000, guid: e58618e33f5f7114a93213b41c0916dd, type: 2}
     amount: 40
+  - item: {fileID: 11400000, guid: ce4a7cde8ef261d41b835f3f8497845b, type: 2}
+    amount: 60
+  - item: {fileID: 11400000, guid: 02868e744d96bc148bbaa73a53874ea2, type: 2}
+    amount: 60
+  - item: {fileID: 11400000, guid: 8489fbbc499bf9d4db802d9962d57347, type: 2}
+    amount: 30
   buildSeconds: 300

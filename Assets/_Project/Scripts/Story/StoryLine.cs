@@ -222,7 +222,11 @@ namespace Pirates.Story
             CheckComplete();
         }
 
-        void OnShipSunk(ShipSunkEvent e) => Count(Goal.SinkShips, e.targetId);
+        void OnShipSunk(ShipSunkEvent e)
+        {
+            // A Esquadra Real não é da Âncora Negra.
+            if (!e.crown) Count(Goal.SinkShips, e.targetId);
+        }
         void OnCampCleared(CampClearedEvent e) => Count(Goal.ClearCamp, e.campId);
         void OnEnemyDefeated(EnemyDefeatedEvent e) => Count(Goal.DefeatEnemy, e.targetId);
 

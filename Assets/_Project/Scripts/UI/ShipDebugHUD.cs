@@ -206,17 +206,34 @@ namespace Pirates.UI
         {
             artillery = Hud.Box("hud-loadout__box", "hud-guns");
             batteries = ship.GetComponentsInChildren<CannonBattery>();
-            // Bombordo à esquerda, estibordo à direita (como os lados do navio na tela).
-            System.Array.Sort(batteries, (a, b) => (a.Side == BroadsideSide.Port ? 0 : 1).CompareTo(b.Side == BroadsideSide.Port ? 0 : 1));
+            // Bombordo à esquerda, estibordo à direita (como os lados do navio na tela); os de caça (proa, popa) no meio.
+            System.Array.Sort(batteries, (a, b) => Order(a.Side).CompareTo(Order(b.Side)));
+            static int Order(BroadsideSide s) => s switch
+            {
+                BroadsideSide.Port => 0,
+                BroadsideSide.Bow => 1,
+                BroadsideSide.Stern => 2,
+                _ => 3,
+            };
             var row = Hud.Row("hud-guns__row");
             cards = new BatteryCard[batteries.Length];
             for (int i = 0; i < batteries.Length; i++)
             {
-                bool port = batteries[i].Side == BroadsideSide.Port;
+                var side = batteries[i].Side;
+                bool port = side == BroadsideSide.Port;
+                bool chaser = batteries[i].IsChaser;
                 var c = new BatteryCard { root = Hud.Box("hud-card", "hud-card--wood", "hud-gun") };
+                if (chaser) c.root.AddToClassList("hud-gun--chaser");
                 var top = Hud.Row("hud-gun__top");
-                top.Add(Hud.Key(port ? "Q" : "E"));
-                top.Add(Hud.Text(port ? "Bombordo" : "Estibordo", "hud-gun__name"));
+                // Os de caça não têm tecla: o cursor à frente/atrás do navio, com um bordo armado, usa eles.
+                if (!chaser) top.Add(Hud.Key(port ? "Q" : "E"));
+                top.Add(Hud.Text(side switch
+                {
+                    BroadsideSide.Port => "Bombordo",
+                    BroadsideSide.Bow => "Proa",
+                    BroadsideSide.Stern => "Popa",
+                    _ => "Estibordo",
+                }, "hud-gun__name"));
                 c.root.Add(top);
                 var icon = new ShipIcon(ShipIcon.Kind.Cannon, new Color(0.66f, 0.66f, 0.7f), mirrored: port);
                 icon.AddToClassList("hud-gun__icon");
@@ -513,11 +530,33 @@ namespace Pirates.UI
             if (hullHooked && ship) ship.HullChanged -= OnHullChanged;
         }
 
+        /// <summary>" · 20° à proa" (giro dos canhões; nada de través).</summary>
+        static string AngleText(CannonBattery battery)
+        {
+            int yaw = Mathf.RoundToInt(battery.AimYaw);
+            // O cartão dos canhões de caça é estreito: só a distância.
+            if (Mathf.Abs(yaw) < 3 || battery.IsChaser) return "";
+            // Giro positivo vai no sentido horário visto de cima: no estibordo para a popa, no bombordo para a proa; no canhão
+            // da proa para estibordo, no da popa para bombordo.
+            string toward = battery.Side switch
+            {
+                BroadsideSide.Bow => yaw > 0 ? "a estibordo" : "a bombordo",
+                BroadsideSide.Stern => yaw > 0 ? "a bombordo" : "a estibordo",
+                BroadsideSide.Starboard => yaw > 0 ? "à popa" : "à proa",
+                _ => yaw > 0 ? "à proa" : "à popa",
+            };
+            return $" · {Mathf.Abs(yaw)}° {toward}";
+        }
+
         static void RefreshBattery(CannonBattery battery, BatteryCard card)
         {
+            // Canhão de caça sem o upgrade: o cartão some.
+            Hud.Show(card.root, battery.Mounted);
+            if (!battery.Mounted) return;
             long detail = battery.State switch
             {
-                BatteryState.Aiming => HudDraw.Units(battery.AimRange) * 2 + HudDraw.Flag(battery.AssistLocked),
+                BatteryState.Aiming => HudDraw.Units(battery.AimRange) * 2 + HudDraw.Flag(battery.AssistLocked)
+                    + 10000L * (Mathf.RoundToInt(battery.AimYaw) + 1000) + (battery.OutOfArc ? 100000000L : 0L),
                 _ => 0,
             };
             if (card.text.Stale((long)battery.State, detail))
@@ -525,7 +564,9 @@ namespace Pirates.UI
                 card.text.Text = battery.State switch
                 {
                     BatteryState.Ready => "<color=#9be37f>pronto</color>",
-                    BatteryState.Aiming => $"<color=#ffd36b>mirando {battery.AimRange:0} m</color>" + (battery.AssistLocked ? "  <b>travado</b>" : ""),
+                    BatteryState.Aiming => battery.OutOfArc
+                        ? "<color=#ff7a5c>fora do ângulo: vire o navio</color>"
+                        : $"<color=#ffd36b>mirando {battery.AimRange:0} m{AngleText(battery)}</color>" + (battery.AssistLocked ? "  <b>travado</b>" : ""),
                     _ => "<color=#bdb6a8>recarregando</color>",
                 };
                 Hud.Set(card.state, card.text.Text);
@@ -542,7 +583,7 @@ namespace Pirates.UI
         {
             bool guns = ship.GetComponentsInChildren<CannonBattery>().Length > 0;
             return "<b>W / S</b>   subir / baixar velas\n<b>A / D</b>   leme\n<b>Botão direito ou do meio + mouse</b>   girar e inclinar câmera\n<b>Scroll</b>   zoom" +
-                   (guns ? "\n<b>Q / E</b>   segurar mira, soltar dispara (bombordo / estibordo)" : "") +
+                   (guns ? "\n<b>Q / E</b>   arma a mira do bombordo / estibordo (de novo desarma; Esc também)     <b>mouse</b>   distância e ângulo no mar (até 35° para a frente e para trás)     <b>botão esquerdo</b>   dispara" : "") +
                    (ship.TryGetComponent(out ShipAmmo a) && a.Slots.Count > 0 ? "\n<b>1 / 2 / 3 / 4</b>   munição: comum / corrente (rasga velas) / metralha (de perto) / incendiária (põe fogo)" : "") +
                    (ship.TryGetComponent(out ShipCarpenter c) && c.Available ? "\n<b>R</b>   carpinteiro: conserta no mar, fora de combate, gastando madeira" : "") +
                    (CaptainFame.Current ? "\n<b>C</b>   fama do capitão: patente, bônus e o que falta para subir" : "") +

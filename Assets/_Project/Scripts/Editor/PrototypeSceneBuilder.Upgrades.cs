@@ -67,6 +67,14 @@ namespace Pirates.EditorTools
                 Lvl(70f, 0, 35f, (i, 6), (p, 4), (g, 90)),
                 Lvl(100f, 0, 60f, (i, 10), (p, 6), (g, 160)));
 
+            // Canhões de caça (03/11, pedido do Jhonata: "esses tipos de canhões serem upgrades"): o nível 1 monta um canhão na proa e o
+            // 2 um na popa (um canhão cada, a bala comum, o dano e a recarga dos bordos), para perseguir e fugir atirando.
+            var chasers = Upgrade("Upgrade_CanhoesCaca", "Canhões de caça", UpgradeStat.Chasers,
+                "Um canhão na proa (nível 1) e outro na popa (nível 2): com um bordo armado (Q/E), apontar o cursor à frente ou atrás do " +
+                "navio usa eles. Alcance de 70 m (os bordos vão a 120). Bom para perseguir e para fugir atirando.",
+                Lvl(1f, 0, 45f, (i, 8), (p, 4), (g, 150)),
+                Lvl(2f, 0, 90f, (i, 12), (p, 6), (g, 260)));
+
             // Nível 4 (M9): pede o Estaleiro nível 2; custa ~1,7× o nível 3 e rende menos (rendimento decrescente). A mira já
             // chega a 100% no nível 3: não ganha nível 4. Assets preservados: só cresce quem ainda tem 3 níveis.
             AddUpgradeLevel(hull, Lvl(200f, 0, 120f, (w, 51), (i, 17), (g, 340)), topLevelBuilding);
@@ -87,7 +95,7 @@ namespace Pirates.EditorTools
             UnityEditor.EditorUtility.SetDirty(crew);
             player.gameObject.AddComponent<ShipCrew>().Configure(crew);
 
-            player.gameObject.AddComponent<ShipUpgrades>().Configure(new[] { aim, hull, cannons, sails, gunners });
+            player.gameObject.AddComponent<ShipUpgrades>().Configure(new[] { aim, hull, cannons, chasers, sails, gunners });
         }
 
         /// <summary>

@@ -124,7 +124,7 @@ namespace Pirates.Controls
             }
         }
 
-        static Vector2 MousePosition() => Mouse.current != null ? Mouse.current.position.ReadValue() : new Vector2(Screen.width, Screen.height) * 0.5f;
+        static Vector2 MousePosition() => Mouse.current != null ? Pirates.Core.PointerLock.Position(Mouse.current.position.ReadValue()) : new Vector2(Screen.width, Screen.height) * 0.5f;
 
         int MatesUp()
         {

@@ -291,6 +291,13 @@ namespace Pirates.Controls
             if (Target.Standing) return;
             int added = got > 0 && backpack ? backpack.Add(Target.Item, got) : 0;
             Gathered?.Invoke(this, Target.Item, added, got - added);
+            // Achado a mais (R3): fibra da palmeira, resina da árvore, pedra do veio.
+            int bonus = Target.LastBonus;
+            if (bonus > 0 && Target.BonusItem)
+            {
+                int extra = backpack ? backpack.Add(Target.BonusItem, bonus) : 0;
+                Gathered?.Invoke(this, Target.BonusItem, extra, bonus - extra);
+            }
             End();
         }
 

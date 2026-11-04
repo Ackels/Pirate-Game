@@ -68,7 +68,8 @@ namespace Pirates.UI
             }
             if (gatherer.CanOpen)
             {
-                prompt.Show("F", target.Type == Pirates.Loot.ResourceNode.Kind.Tree ? $"{tool.verb} a árvore" : $"{tool.verb} o veio de ferro");
+                prompt.Show("F", target.Type == Pirates.Loot.ResourceNode.Kind.Tree ? $"{tool.verb} a árvore"
+                    : target.Item && target.Item.name == "Item_Pedra" ? $"{tool.verb} a pedreira" : $"{tool.verb} o veio de ferro");
                 return;
             }
             if (gatherer.BlockReason.Length == 0)

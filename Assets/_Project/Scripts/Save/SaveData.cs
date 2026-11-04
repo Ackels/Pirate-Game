@@ -63,6 +63,10 @@ namespace Pirates.Save
         // Mapa do tesouro montado (C1, 16/10): id do tesouro com o X marcado (vazio = nenhum; os pedaços são itens comuns).
         public string treasureMapId;
 
+        // Procurado pela Coroa (G, passo 2, 03/11): procura (estrelas) e segundos desde o último crime. Save de antes: 0 (ninguém procura).
+        public float wantedHeat;
+        public float wantedCalm;
+
         // Coletáveis já pegos (C3, 19/10): ids das garrafas com mensagem e das moedas da Frota de Prata (somem do mundo para sempre).
         public string[] collectibles;
 

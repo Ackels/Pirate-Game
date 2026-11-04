@@ -13,7 +13,7 @@ namespace Pirates.Missions
     /// </summary>
     public class NpcTalker : MonoBehaviour, IPagedInteraction
     {
-        public enum Choice { None, Offer, TurnIn }
+        public enum Choice { None, Offer, TurnIn, Pardon }
 
         [Tooltip("Folga (m) além do alcance do NPC antes de a conversa fechar sozinha.")]
         [SerializeField] float closeMargin = 1.5f;
@@ -33,6 +33,8 @@ namespace Pirates.Missions
         /// <summary>A missão de que se fala (oferecida, em andamento ou entregue).</summary>
         public MissionDefinition Mission { get; private set; }
         public MissionBoard Board => board;
+        /// <summary>Procura da Coroa (para a multa do perdão; null se a cena não tem).</summary>
+        public IWanted Wanted => Services.TryGet(out IWanted w) ? w : null;
         /// <summary>Muda a cada página ou escolha (a caixa só se refaz aí).</summary>
         public int Version { get; private set; }
 
@@ -96,6 +98,7 @@ namespace Pirates.Missions
                 case Choice.Offer when board.CanAccept: Accept(); break;
                 case Choice.Offer: break;   // sem vaga: o botão mostra o limite; Esc fecha
                 case Choice.TurnIn: TurnIn(); break;
+                case Choice.Pardon: Pardon(); break;
                 default: Close(); break;
             }
         }
@@ -128,6 +131,15 @@ namespace Pirates.Missions
             Close();
         }
 
+        /// <summary>Paga a multa ao Almirante: a Coroa esquece o capitão (sem ouro bastante, nada: o botão diz quanto falta).</summary>
+        public void Pardon()
+        {
+            var wanted = Wanted;
+            if (!Current || PendingChoice != Choice.Pardon || wanted == null || !wanted.PayFine()) return;
+            Current.Gesture("Yes");
+            Say("Está feito. Seu nome sai da lista da Coroa, capitão. E que eu não ouça mais falar de mercantes no fundo do mar.");
+        }
+
         /// <summary>Monta as falas: entregar o que está pronto, esperar o que está em andamento, oferecer o que dá, ou conversa à toa.</summary>
         void Build()
         {
@@ -150,6 +162,17 @@ namespace Pirates.Missions
                 Mission = m;
                 AddPages(m.doneLines, "Feito! Aqui está o combinado.");
                 PendingChoice = Choice.TurnIn;
+                return;
+            }
+            // Procurado pela Coroa: quem perdoa (o Almirante) fala disso antes das missões. Esc = "agora não".
+            var wanted = Current.Pardons ? Wanted : null;
+            if (wanted != null && wanted.Stars > 0)
+            {
+                pages.Add(wanted.Stars >= 3
+                    ? "Capitão, a Coroa inteira fala do senhor. Mercantes no fundo do mar, cargas roubadas... Isso é pirataria."
+                    : "Chegou ao almirantado a notícia de um mercante atacado. A Coroa não gosta de piratas nas rotas dela.");
+                pages.Add("Mas eu sei quem protege Porto Alento. Pague a multa e eu risco o seu nome da lista. Do contrário, cuide-se no mar.");
+                PendingChoice = Choice.Pardon;
                 return;
             }
             for (int i = 0; i < list.Count; i++)

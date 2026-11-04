@@ -99,6 +99,10 @@ namespace Pirates.EditorTools
 
             // Casco da chalupa: o que a cena já montou (CreateShip + AddNavalCombat).
             var sloopHull = SloopHull(PlayerShipModel);
+            // Canhões de caça (03/11) na proa e na popa de cada casco, desmontados até o upgrade.
+            var sloopModel = root.Find("Visual/Casco");
+            CreateChaser(BroadsideSide.Bow, sloopCannons, combat, root.Find("Cannons"), body, sloopHull, sloopModel);
+            CreateChaser(BroadsideSide.Stern, sloopCannons, combat, root.Find("Cannons"), body, sloopHull, sloopModel);
             var sloopRig = Rig(sloop, sloopHull, SailsOf(player.GetComponent<SailVisual>()),
                 root.Find("Visual").gameObject, root.Find("Cannons").gameObject);
 
@@ -112,6 +116,8 @@ namespace Pirates.EditorTools
             cannons.SetParent(root, false);
             CreateBattery(BroadsideSide.Port, schoonerCannons, combat, cannons, body, schoonerHull, withAimPreview: true, hullModel: model.transform);
             CreateBattery(BroadsideSide.Starboard, schoonerCannons, combat, cannons, body, schoonerHull, withAimPreview: true, hullModel: model.transform);
+            CreateChaser(BroadsideSide.Bow, schoonerCannons, combat, cannons, body, schoonerHull, model.transform);
+            CreateChaser(BroadsideSide.Stern, schoonerCannons, combat, cannons, body, schoonerHull, model.transform);
             visual.gameObject.SetActive(false);
             cannons.gameObject.SetActive(false);
             var schoonerRig = Rig(schooner, schoonerHull, sails, visual.gameObject, cannons.gameObject);
@@ -192,6 +198,8 @@ namespace Pirates.EditorTools
             batteries.SetParent(root, false);
             CreateBattery(BroadsideSide.Port, cannons, combat, batteries, body, hull, withAimPreview: true, hullModel: model.transform);
             CreateBattery(BroadsideSide.Starboard, cannons, combat, batteries, body, hull, withAimPreview: true, hullModel: model.transform);
+            CreateChaser(BroadsideSide.Bow, cannons, combat, batteries, body, hull, model.transform);
+            CreateChaser(BroadsideSide.Stern, cannons, combat, batteries, body, hull, model.transform);
             visual.gameObject.SetActive(false);
             batteries.gameObject.SetActive(false);
             return Rig(galleon, hull, sails, visual.gameObject, batteries.gameObject);

@@ -145,6 +145,17 @@ namespace Pirates.EditorTools
             AddKitchenRecipes(settings);
             AddBaitRecipe(settings);
             AddGatheringMarket(settings);
+            // Recursos novos (R1, 03/11): pedra, cordame, lona, breu, rum e especiarias no mercado, na Forja e nos saques.
+            AddMaterialTrade(settings, i, forge);
+            AddMaterialLoot();
+            BakeMaterialIcons();
+            // R2 (03/11): obras, melhorias e navios pedem os materiais novos; a corrente também sai dos canhões de caça.
+            AddMaterialCosts();
+            if (s.chain && !s.chain.chasers)
+            {
+                s.chain.chasers = true;
+                EditorUtility.SetDirty(s.chain);
+            }
             // Forja com tempo (05/10): receitas de antes nasceram com o padrão (90 s); a metralha leva 2 min. Só troca o padrão.
             foreach (var recipe in settings.smithy)
                 if (recipe?.result.item == s.grapeItem && Mathf.Approximately(recipe.craftSeconds, 90f)) recipe.craftSeconds = 120f;
