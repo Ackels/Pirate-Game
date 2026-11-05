@@ -297,6 +297,15 @@ namespace Pirates.Combat
             timer = regroupSeconds;
         }
 
+        /// <summary>Sandbox (F1): um navio do tipo dado (0 corveta, 1 fragata, 2 nau) agora, mesmo sem estrelas (a abordagem de teste).</summary>
+        public GameObject SpawnTypeNow(int type)
+        {
+            if (!player || type < 0 || type >= shipTypes.Length) return null;
+            if (!hasLastKnown) Witness(player.position);
+            Spawn(type, fleet.Count);
+            return fleet[fleet.Count - 1].ship;
+        }
+
         void Spawn(int type, int slot)
         {
             var spec = shipTypes[type];

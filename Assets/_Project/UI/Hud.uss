@@ -3713,3 +3713,47 @@
     color: rgb(230, 214, 180);
     margin-top: 2px;
 }
+
+/* ---------- Abordagem (04/11): gancho sobre o navio inimigo ---------- */
+
+.hud-board-icon {
+    position: absolute;
+    align-items: center;
+    translate: -50% -100%;
+}
+
+.hud-board-icon__medal {
+    width: 62px;
+    height: 62px;
+}
+
+.hud-board-icon__text {
+    margin-top: 2px;
+    padding: 1px 8px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    background-color: rgba(26, 13, 8, 0.78);
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+/* ---------- Abordagem (04/11): rendição ---------- */
+
+.hud-window--surrender {
+    width: 640px;
+}
+
+.hud-surrender__option {
+    margin-top: 8px;
+    padding: 10px 14px;
+}
+
+.hud-surrender__title {
+    font-size: 20px;
+}
+
+.hud-surrender__note {
+    margin-top: 8px;
+    font-size: 15px;
+    opacity: 0.85;
+}

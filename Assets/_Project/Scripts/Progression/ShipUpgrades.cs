@@ -175,6 +175,19 @@ namespace Pirates.Progression
                 if (battery && battery.IsChaser) battery.SetMounted(chasers >= (battery.Side == BroadsideSide.Bow ? 1 : 2));
 
             health.SetMax((baseHull + Total(UpgradeStat.HullMax)) * (1f + Perk(PerkEffect.HullPercent)));
+
+            // Porão ampliado (04/11): quem põe a capacidade é o PlayerShipClass (classe × patente × este upgrade).
+            if (TryGetComponent(out PlayerShipClass classes)) classes.RefreshHold();
+        }
+
+        /// <summary>Porcentagem a mais no porão pelos upgrades comprados (Porão ampliado).</summary>
+        public float HoldPercent
+        {
+            get
+            {
+                EnsureInitialized();
+                return Total(UpgradeStat.HoldPercent);
+            }
         }
 
         float Perk(PerkEffect effect) => fame ? fame.PerkValue(effect) : 0f;
@@ -193,6 +206,9 @@ namespace Pirates.Progression
                     ? $"recarga {ReloadTime(p):0.0} s (limite) · espalhamento -{CappedSpreadReduction(p) * 100f:0}%"
                     : $"recarga {ReloadTime(p):0.0} s",
                 UpgradeStat.AimAssistPercent => $"mira assistida {Total(UpgradeStat.AimAssistPercent, p):0}%",
+                UpgradeStat.HoldPercent => shipClass
+                    ? $"porão {shipClass.holdCapacity * (1f + Total(UpgradeStat.HoldPercent, p) / 100f):0} (+{Total(UpgradeStat.HoldPercent, p):0}%)"
+                    : $"porão +{Total(UpgradeStat.HoldPercent, p):0}%",
                 UpgradeStat.Chasers => Mathf.RoundToInt(Total(UpgradeStat.Chasers, p)) switch
                 {
                     <= 0 => "sem canhões de caça",

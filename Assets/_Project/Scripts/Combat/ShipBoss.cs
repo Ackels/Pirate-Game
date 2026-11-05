@@ -38,7 +38,8 @@ namespace Pirates.Combat
         public Health Health => health;
         public bool EscortCalled { get; private set; }
         /// <summary>Lutando: vivo e perseguindo ou trocando tiros com o alvo.</summary>
-        public bool IsEngaged => health && !health.IsDead && ai &&
+        // IA desligada = preso nos ganchos da abordagem (04/11): a barra fica para o chefe do convés (o imediato).
+        public bool IsEngaged => health && !health.IsDead && ai && ai.enabled &&
                                  (ai.State == EnemyShipAI.AIState.Chase || ai.State == EnemyShipAI.AIState.Broadside);
 
         /// <summary>A escolta de algum chefe entrou na luta (o HUD avisa).</summary>

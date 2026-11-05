@@ -28,9 +28,20 @@ namespace Pirates.UI
 
         public void Hide() => Hud.Show(root, false);
 
+        /// <summary>
+        /// Esconde todos os marcadores (abordagem, 04/11: o palco fica a 2,4 km do mapa e as setas de tudo se empilhavam na mesma
+        /// borda). Posto pelo BoardingHUD.
+        /// </summary>
+        public static bool Suppressed;
+
         /// <summary>Põe o marcador sobre <paramref name="world"/> com "nome  N m".</summary>
         public void Place(GameHud hud, Camera cam, Vector3 world, string name, int meters)
         {
+            if (Suppressed)
+            {
+                Hide();
+                return;
+            }
             const float margin = 80f;
             Vector3 sp = cam.WorldToScreenPoint(world);
             bool behind = sp.z < 0f;

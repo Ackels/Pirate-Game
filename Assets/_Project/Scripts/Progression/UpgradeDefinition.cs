@@ -18,6 +18,8 @@ namespace Pirates.Progression
         AimAssistPercent,
         /// <summary>Canhões de caça (03/11): 1 = o da proa, 2 = proa e popa.</summary>
         Chasers,
+        /// <summary>Porão ampliado (04/11): porcentagem a mais no espaço do porão da classe do navio.</summary>
+        HoldPercent,
     }
 
     /// <summary>

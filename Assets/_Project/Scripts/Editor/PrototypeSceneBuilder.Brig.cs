@@ -73,7 +73,7 @@ namespace Pirates.EditorTools
             brig.gameObject.AddComponent<WorldMarker>().Configure(BrigMissionId, "Brigue Santa Clara", 12f);
 
             // Por último: o molde do respawner é uma cópia do brigue já completo.
-            AddRespawner("BrigueRespawner", brig.gameObject, player, BrigSpawnPoints, 150f, BrigMissionId);
+            AddRespawner("BrigueRespawner", brig.gameObject, player, BrigSpawnPoints, 480f, BrigMissionId);
         }
 
         static MissionDefinition BrigMission(LootItems i) => Mission("Missao_BrigueSantaClara", m =>

@@ -47,10 +47,10 @@ namespace Pirates.EditorTools
             {
                 var drops = new List<LootTable.Drop>
                 {
-                    Drop(items.gold, 1f, 50, 100), Drop(items.wood, 0.9f, 15, 30), Drop(items.iron, 0.8f, 6, 12),
-                    Drop(items.powder, 0.8f, 6, 14),
+                    Drop(items.gold, 1f, 50, 100), Drop(items.wood, 0.9f, 10, 21), Drop(items.iron, 0.8f, 4, 8),
+                    Drop(items.powder, 0.8f, 4, 10),
                 };
-                if (ration) drops.Add(Drop(ration, 0.6f, 3, 6));
+                if (ration) drops.Add(Drop(ration, 0.6f, 2, 4));
                 t.drops = drops.ToArray();
                 t.chestChance = 0.25f;
                 t.schematics = loot.schematics;

@@ -115,11 +115,11 @@ namespace Pirates.EditorTools
             var stone = StoneItem();
 
             var merchant = T("LootTable_Mercante");
-            AddLoot(merchant, canvas, 0.7f, 3, 6);
-            AddLoot(merchant, rope, 0.7f, 3, 7);
-            AddLoot(merchant, rum, 0.55f, 2, 5);
-            AddLoot(merchant, spice, 0.45f, 1, 3);
-            AddLoot(merchant, tar, 0.3f, 2, 4);
+            AddLoot(merchant, canvas, 0.7f, 2, 4);
+            AddLoot(merchant, rope, 0.7f, 2, 5);
+            AddLoot(merchant, rum, 0.55f, 1, 4);
+            AddLoot(merchant, spice, 0.45f, 1, 2);
+            AddLoot(merchant, tar, 0.3f, 1, 3);
 
             foreach (var file in new[] { "LootTable_ChalupaInimiga", "LootTable_Brigue", "LootTable_Cacador", "LootTable_Galeao" })
             {

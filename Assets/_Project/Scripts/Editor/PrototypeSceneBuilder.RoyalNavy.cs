@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Pirates.Combat;
 using Pirates.Economy;
 using Pirates.Loot;
@@ -64,10 +65,13 @@ namespace Pirates.EditorTools
             AddLoot(table, RumItem(), 0.3f, 1, 3);
             AddLoot(table, SpiceItem(), 0.25f, 1, 2);
             EditorUtility.SetDirty(table);
+            // 04/11 (revisão do chat de otimização): a mesma tabela pagava ~410 numa corveta de 180 de casco e numa nau de 850. A fragata
+            // fica com a tabela de cima; a corveta paga cerca de metade e a nau mais de 2× (perto do galeão chefe).
+            var (corvetteLoot, lineLoot) = CrownLootTiers(table, items.gold);
 
             var flag = GetMaterial("M_Bandeira_Mercante", new Color(0.12f, 0.27f, 0.62f), 0.2f);
             var group = new GameObject("EsquadraReal").transform;
-            GameObject Mold(string name, int slot, ShipStats stats, CannonStats cannons, ShipHull hull, float hullHealth)
+            GameObject Mold(string name, int slot, ShipStats stats, CannonStats cannons, ShipHull hull, float hullHealth, LootTable drops = null)
             {
                 var mold = CreateEnemy(name, new Vector3(2600f + slot * 60f, 0.3f, 2600f), Quaternion.identity, stats, cannons, hull,
                     hullHealth, combat, player.transform);
@@ -76,7 +80,7 @@ namespace Pirates.EditorTools
                 ai.SetTargetId("esquadra_real");
                 // A Marinha não foge.
                 ai.ConfigureGunnery(rangeErrorFraction: 0.05f, reaction: new Vector2(0.3f, 0.7f), fireArc: 16f, fleeAt: 0f, leadErrorFraction: 0.25f);
-                mold.gameObject.AddComponent<LootDropper>().Configure(table);
+                mold.gameObject.AddComponent<LootDropper>().Configure(drops ? drops : table);
                 foreach (var r in mold.GetComponentsInChildren<MeshRenderer>(true))
                     if (r.name.StartsWith("flag")) r.sharedMaterial = flag;
                 mold.transform.SetParent(group, true);
@@ -88,13 +92,13 @@ namespace Pirates.EditorTools
             {
                 new RoyalNavy.ShipType { label = "Corveta da Coroa", hull = 180f, fame = 8, cannons = corvetteCannons,
                     leadError = 0.35f, rangeError = 0.06f, reaction = new Vector2(0.35f, 0.8f),
-                    template = Mold("Corveta_Coroa_Molde", 0, corvetteStats, corvetteCannons, PirateMediumHull(HunterModel), 180f) },
+                    template = Mold("Corveta_Coroa_Molde", 0, corvetteStats, corvetteCannons, PirateMediumHull(HunterModel), 180f, corvetteLoot) },
                 new RoyalNavy.ShipType { label = "Fragata da Coroa", hull = 380f, fame = 15, cannons = frigateCannons,
                     leadError = 0.22f, rangeError = 0.05f, reaction = new Vector2(0.3f, 0.65f),
                     template = Mold("Fragata_Coroa_Molde", 1, frigateStats, frigateCannons, BrigHull(BrigModel), 380f) },
                 new RoyalNavy.ShipType { label = "Nau de guerra da Coroa", hull = 850f, fame = 30, cannons = shipOfLineCannons,
                     leadError = 0.15f, rangeError = 0.04f, reaction = new Vector2(0.2f, 0.5f),
-                    template = Mold("Nau_Coroa_Molde", 2, shipOfLineStats, shipOfLineCannons, BrigHull(BrigModel), 850f) },
+                    template = Mold("Nau_Coroa_Molde", 2, shipOfLineStats, shipOfLineCannons, BrigHull(BrigModel), 850f, lineLoot) },
             };
             // 04/11 (pedido do Jhonata: "pode ficar chato sempre ser perseguido"): 1 estrela não manda navio, e a escada desceu uma.
             var waves = new[]
@@ -109,6 +113,52 @@ namespace Pirates.EditorTools
 
             var hud = Object.FindAnyObjectByType<GameHud>(FindObjectsInactive.Include);
             if (hud && !hud.GetComponent<RoyalNavyHUD>()) hud.gameObject.AddComponent<RoyalNavyHUD>();
+        }
+
+        /// <summary>Corveta (ouro 30–70, carga × 0,7, baú 20%/150) e nau (ouro 160–320, carga × 1,8, baú 60%/400), a partir da tabela da fragata.</summary>
+        static (LootTable corvette, LootTable shipOfLine) CrownLootTiers(LootTable fleet, ItemDefinition gold)
+        {
+            LootTable Tier(string file, int goldMin, int goldMax, float cargo, float chest, int fallback) =>
+                LoadOrCreateAsset<LootTable>($"{DataFolder}/{file}.asset", t =>
+                {
+                    var list = new List<LootTable.Drop>();
+                    foreach (var d in fleet.drops)
+                    {
+                        bool isGold = d.item == gold;
+                        list.Add(new LootTable.Drop
+                        {
+                            item = d.item, chance = d.chance,
+                            minAmount = isGold ? goldMin : Mathf.Max(1, Mathf.RoundToInt(d.minAmount * cargo)),
+                            maxAmount = isGold ? goldMax : Mathf.Max(1, Mathf.RoundToInt(d.maxAmount * cargo)),
+                        });
+                    }
+                    t.drops = list.ToArray();
+                    t.chestChance = chest;
+                    t.schematics = fleet.schematics;
+                    t.chestFallback = new ItemStack(gold, fallback);
+                    t.wreckPrefab = fleet.wreckPrefab;
+                });
+            return (Tier("LootTable_Coroa_Corveta", 30, 70, 0.7f, 0.2f, 150), Tier("LootTable_Coroa_Nau", 160, 320, 1.8f, 0.6f, 400));
+        }
+
+        /// <summary>Na cena aberta (sem regerar): cria as duas tabelas e põe nos moldes da corveta e da nau.</summary>
+        public static string ApplyCrownLootTiers()
+        {
+            var fleet = AssetDatabase.LoadAssetAtPath<LootTable>(DataFolder + "/LootTable_EsquadraReal.asset");
+            var gold = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/Data/Items/Item_Ouro.asset");
+            if (!fleet || !gold) return "sem tabela ou ouro";
+            var (corvette, line) = CrownLootTiers(fleet, gold);
+            AssetDatabase.SaveAssets();
+            string r = "";
+            foreach (var d in Object.FindObjectsByType<LootDropper>(FindObjectsInactive.Include))
+            {
+                LootTable pick = d.name == "Corveta_Coroa_Molde" ? corvette : d.name == "Nau_Coroa_Molde" ? line : null;
+                if (!pick) continue;
+                d.Configure(pick);
+                EditorUtility.SetDirty(d);
+                r += d.name + "->" + pick.name + "; ";
+            }
+            return r;
         }
     }
 }

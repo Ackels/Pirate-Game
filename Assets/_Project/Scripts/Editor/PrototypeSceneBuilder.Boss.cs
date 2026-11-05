@@ -115,7 +115,7 @@ namespace Pirates.EditorTools
             boss.gameObject.AddComponent<WorldMarker>().Configure(BossMissionId, "Galeão Tormenta", 13f);
 
             // Por último: o molde do respawner é uma cópia do galeão já completo (aponta para o mesmo molde da escolta).
-            AddRespawner("GaleaoRespawner", boss.gameObject, player, BossSpawnPoints, 300f, BossMissionId);
+            AddRespawner("GaleaoRespawner", boss.gameObject, player, BossSpawnPoints, 1200f, BossMissionId);
 
             var hud = GameObject.Find("HUD");
             if (hud) hud.AddComponent<BossBarHUD>();

@@ -229,6 +229,15 @@ namespace Pirates.EditorTools
             (KitCharacters.Anne, 6) => new[] { (3, 9, "1E1A20"), (7, 9, "6E0E16"), (2, 9, "1A1616"), (5, 9, "5A1E14") },
             // Iara, a pescadora (NPC da missão da lula; não entra nos civis): camisa azul desbotada, colete de couro, calça cinza, cabelo branco.
             (KitCharacters.Anne, 7) => new[] { (3, 9, "7A9CB8"), (7, 9, "6A4A2A"), (2, 9, "5A5A5E"), (5, 9, "D8D4CC") },
+            // Tripulação da chalupa pirata na abordagem (04/11; pedido do Jhonata: os personagens do kit, como os marujos, com outra cor):
+            // cores sujas de pirata, longe das dos marujos e da Guarda Negra. Henry: bandana vermelho-escura com camisa carvão; bandana preta
+            // com listra dourada, mangas de couro e camisa vinho; bandana oliva com camisa verde-escura. Anne: camisa encardida com colete
+            // de couro escuro; camisa vinho com colete cinza e cabelo ruivo.
+            (KitCharacters.Henry, 10) => new[] { (2, 11, "7A2A22"), (9, 11, "2A2A2A"), (3, 11, "B8A888"), (6, 11, "3A3A34"), (8, 11, "4A3A2A") },
+            (KitCharacters.Henry, 11) => new[] { (2, 11, "1E1E1E"), (9, 11, "C8B040"), (3, 11, "8A6A4A"), (6, 11, "6A2A24"), (8, 11, "2E2A28") },
+            (KitCharacters.Henry, 12) => new[] { (2, 11, "4A5A2A"), (9, 11, "1E1E1E"), (3, 11, "D8CCB0"), (6, 11, "2E3A2A"), (8, 11, "3A3028") },
+            (KitCharacters.Anne, 8) => new[] { (3, 9, "C8B898"), (7, 9, "3A2A20"), (2, 9, "2A2A30"), (5, 9, "2A1A12") },
+            (KitCharacters.Anne, 9) => new[] { (3, 9, "6A2A24"), (7, 9, "4A4A50"), (2, 9, "4A3A2A"), (5, 9, "8A3A1A") },
             // Megalodonte (tubarão do kit, linha 8: 0 dorso, 1 barriga, 2 boca, 3 olhos, 4 dentes): cinza-ardósia escuro, barriga quase
             // branca, boca vermelho-escura e dentes amarelados (o azul do tubarão do kit parecia de desenho).
             ("Characters_Shark", 1) => new[] { (0, 8, "3A4349"), (1, 8, "CBC8BC"), (2, 8, "3E1012"), (3, 8, "0B0B0D"), (4, 8, "E2D6AE") },

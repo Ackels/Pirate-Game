@@ -18,12 +18,21 @@ namespace Pirates.Loot
         [Tooltip("Os destroços nascem abaixo da superfície e sobem boiando (m).")]
         [SerializeField] float spawnDepth = 1.5f;
 
+        const string WoodItemName = "Item_Madeira";
+
         Health health;
         bool dropped;
 
         public LootTable Table => table;
 
         public void Configure(LootTable lootTable) => table = lootTable;
+
+        /// <summary>
+        /// Já saqueado na abordagem (04/11, Jhonata: abordar, pegar o saque e depois afundar dava o saque duas vezes): afundado, solta só a
+        /// madeira do casco quebrado, sem baú. Uma cópia nova do navio (respawn) nasce sem isto.
+        /// </summary>
+        public bool Plundered { get; private set; }
+        public void MarkPlundered() => Plundered = true;
 
         void Awake() => health = GetComponent<Health>();
         void OnEnable() => health.Died += OnDied;
@@ -46,7 +55,9 @@ namespace Pirates.Loot
             pos.y = water - spawnDepth;
             var wreck = Instantiate(table.wreckPrefab, pos, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
             wreck.name = "Destrocos_" + name;
-            wreck.Setup(table.RollCargo(), table.RollChest() ? table : null, table.lifetime);
+            var cargo = table.RollCargo();
+            if (Plundered) cargo.RemoveAll(s => !s.item || s.item.name != WoodItemName);
+            wreck.Setup(cargo, !Plundered && table.RollChest() ? table : null, table.lifetime);
 
             // Não bater no casco que está afundando (senão os destroços ficam presos embaixo dele).
             var hullColliders = GetComponentsInChildren<Collider>();

@@ -303,7 +303,8 @@ namespace Pirates.EditorTools
             var controller = PlayerAnimator(character);
             if (!controller) return false;
             GameObject model;
-            if (kitModel != null && HasKitCharacter(kitModel))
+            if (IsKayKit(kitModel)) model = HumanoidKayKit(kitModel, parent);
+            else if (kitModel != null && HasKitCharacter(kitModel))
             {
                 model = HumanoidKitCharacter(kitModel, parent);
                 if (kitModel == KitCharacters.Captain) PinParrotToShoulder(model, kitModel);

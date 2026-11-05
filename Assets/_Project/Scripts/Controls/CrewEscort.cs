@@ -89,6 +89,10 @@ namespace Pirates.Controls
                 if (NavMesh.SamplePosition(at, out NavMeshHit hit, 3f, NavMesh.AllAreas)) at = hit.position;
                 else if (NavMesh.SamplePosition(cap.position, out hit, 3f, NavMesh.AllAreas)) at = hit.position;
                 mate.gameObject.SetActive(true);
+                // O capitão atravessa os marujos (04/11: na prancha da abordagem, parados atrás dele, trancavam a volta). O ignorar
+                // se desfaz quando o colisor desliga: refeito a cada desembarque.
+                if (cap.TryGetComponent(out CharacterController capBody) && mate.TryGetComponent(out CharacterController mateBody))
+                    Physics.IgnoreCollision(capBody, mateBody, true);
                 mate.Configure(cap, i);
                 mate.Arrive(at, cap.rotation);
                 Count++;

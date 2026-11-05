@@ -128,6 +128,7 @@ namespace Pirates.Sandbox
             GUILayout.Space(8f);
             DrawOnFoot();
             DrawEnemies();
+            DrawBoarding();
             DrawMissions();
             DrawFame();
             DrawDayNight();
@@ -694,6 +695,139 @@ namespace Pirates.Sandbox
         }
 
         // ---------- Inimigos ----------
+
+        // ---------- Abordagem (04/11, pedido do Jhonata: testar sem avariar e encostar no navio) ----------
+
+        ShipBoarding boarding;
+        [System.NonSerialized] string pendingBoard;
+        [System.NonSerialized] int pendingBoardFrame;
+        [System.NonSerialized] string boardNote;
+
+        void DrawBoarding()
+        {
+            if (!FindBoarding()) return;
+            GUILayout.Label("<b>Abordagem</b>", small);
+            var stage = boarding.Stage;
+            if (boarding.Active && stage)
+            {
+                GUILayout.Label($"<size=11>No convés: {boarding.TargetKind.label}, {stage.CrewAlive} de {stage.CrewTotal} de pé" +
+                                $"{(boarding.AwaitingChoice ? " · rendição aberta" : "")}.</size>", small);
+                GUILayout.BeginHorizontal();
+                GUI.enabled = !stage.CrewDefeated;
+                if (GUILayout.Button("Derrotar todos")) DefeatCrew(keepChief: false);
+                if (GUILayout.Button("Deixar só o primeiro (chefe)")) DefeatCrew(keepChief: true);
+                GUI.enabled = !boarding.IsTraveling && !boarding.AwaitingChoice;
+                if (GUILayout.Button("Voltar ao navio")) boarding.Return();
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+                return;
+            }
+            GUILayout.Label("<size=11>Traz o navio para o lado do seu (casco na metade) e lança os ganchos na hora. Brigue ou Tormenta " +
+                            "afundados voltam primeiro (aperte de novo se não abordar). Use no mar, com o capitão no navio.</size>", small);
+            if (!string.IsNullOrEmpty(boardNote)) GUILayout.Label($"<size=11><color=#ffcc66>{boardNote}</color></size>", small);
+            GUILayout.BeginHorizontal();
+            GUI.enabled = !boarding.IsTraveling && (modes == null || !modes.IsOnFoot);
+            if (GUILayout.Button("Chalupa")) BoardKind(ShipBoarding.SloopKind);
+            if (GUILayout.Button("Brigue Santa Clara")) BoardKind(ShipBoarding.BrigKind);
+            if (GUILayout.Button("Galeão Tormenta")) BoardKind(ShipBoarding.TormentaKind);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Caçador")) BoardKind(ShipBoarding.HunterKind);
+            if (GUILayout.Button("Corveta da Coroa")) BoardCrown(0);
+            if (GUILayout.Button("Fragata da Coroa")) BoardCrown(1);
+            if (GUILayout.Button("Nau de guerra")) BoardCrown(2);
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+            var hulks = FindObjectsByType<AdriftHulk>();
+            if (hulks.Length > 0 && GUILayout.Button($"Afundar o navio à deriva agora ({hulks[0].SecondsLeft:0} s)"))
+                foreach (var h in hulks) h.Begin(0.05f);
+        }
+
+        void LateUpdate()
+        {
+            // O brigue ou o Tormenta chamado de volta aparece no quadro seguinte: aborda nele.
+            if (pendingBoard == null || Time.frameCount < pendingBoardFrame) return;
+            string kind = pendingBoard;
+            pendingBoard = null;
+            BoardKind(kind, retry: false);
+        }
+
+        bool FindBoarding()
+        {
+            if (!boarding && player) player.TryGetComponent(out boarding);
+            return boarding;
+        }
+
+        void BoardKind(string kind, bool retry = true)
+        {
+            boardNote = null;
+            if (!FindBoarding()) return;
+            EnemyShipAI best = null;
+            float bestD = float.MaxValue;
+            var list = EnemyShipAI.Active;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var ai = list[i];
+                if (!ai || ShipBoarding.KindOf(ai) != kind || !ai.TryGetComponent(out Health h) || h.IsDead) continue;
+                float d = (ai.transform.position - player.transform.position).sqrMagnitude;
+                if (d < bestD) { bestD = d; best = ai; }
+            }
+            if (best)
+            {
+                if (!boarding.BoardNow(best)) boardNote = "Não deu para abordar agora.";
+                return;
+            }
+            if (kind == ShipBoarding.HunterKind && retry)
+            {
+                // Sem caçador no mar: chama um (o do F1 → Inimigos) e aborda no quadro seguinte.
+                if (hunters && hunters.SpawnNow())
+                {
+                    pendingBoard = kind;
+                    pendingBoardFrame = Time.frameCount + 2;
+                }
+                else boardNote = "Não deu para chamar um caçador agora.";
+                return;
+            }
+            string id = kind == ShipBoarding.BrigKind ? ShipBoarding.BrigTargetId : kind == ShipBoarding.TormentaKind ? ShipBoarding.TormentaTargetId : null;
+            if (id != null && retry)
+            {
+                // Afundado e esperando: a missão aceita com o id dele traz o navio na hora (o mesmo do quadro da taverna).
+                EventBus.Publish(new MissionStartedEvent { missionId = "sandbox", targetId = id });
+                pendingBoard = kind;
+                pendingBoardFrame = Time.frameCount + 2;
+                return;
+            }
+            boardNote = kind == ShipBoarding.SloopKind ? "Nenhuma chalupa pirata no mar agora (afundadas voltam em ~25 s)." : "O navio não voltou.";
+        }
+
+        /// <summary>Um navio da Coroa (0 corveta, 1 fragata, 2 nau) aparece e é abordado na hora (sem estrelas, vai embora depois).</summary>
+        void BoardCrown(int type)
+        {
+            boardNote = null;
+            if (!FindBoarding()) return;
+            var navy = FindAnyObjectByType<RoyalNavy>();
+            var ship = navy ? navy.SpawnTypeNow(type) : null;
+            if (!ship || !ship.TryGetComponent(out EnemyShipAI ai) || !boarding.BoardNow(ai)) boardNote = "Não deu para abordar um navio da Coroa agora.";
+        }
+
+        void DefeatCrew(bool keepChief)
+        {
+            var camp = FindBoarding() && boarding.Stage ? boarding.Stage.Crew : null;
+            if (!camp) return;
+            var members = camp.Members;
+            for (int i = 0; i < members.Count; i++)
+            {
+                var m = members[i];
+                if (!m || !m.gameObject.activeInHierarchy || m.IsDead || (keepChief && i == 0)) continue;
+                if (!m.TryGetComponent(out Health h)) continue;
+                // Chefe (imediato): o golpe pararia na marca da fúria (e ele fica invencível nela); sem o LandBoss no golpe final.
+                m.TryGetComponent(out LandBoss boss);
+                if (boss) boss.enabled = false;
+                h.Invulnerable = false;
+                h.TakeDamage(new DamageInfo { amount = h.Max * 10f, point = m.transform.position });
+                if (boss) boss.enabled = true;
+            }
+        }
 
         void DrawEnemies()
         {

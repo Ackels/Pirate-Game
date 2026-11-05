@@ -77,11 +77,18 @@ namespace Pirates.Progression
             if (fame) fame.PerksChanged -= ApplyHold;
         }
 
-        /// <summary>Porão da classe atual, com o bônus de patente "porão arrumado" (M10).</summary>
+        /// <summary>Upgrade "Porão ampliado" mudou: refaz a capacidade.</summary>
+        public void RefreshHold() => ApplyHold();
+
+        /// <summary>
+        /// Porão da classe atual, com o bônus de patente "porão arrumado" (M10) e o upgrade "Porão ampliado" do estaleiro (04/11).
+        /// </summary>
         void ApplyHold()
         {
             var shipClass = Current;
-            if (shipClass) GetComponent<Inventory>().Configure(shipClass.holdCapacity * (1f + CaptainFame.Bonus(PerkEffect.HoldPercent)));
+            if (!shipClass) return;
+            float upgrade = TryGetComponent(out ShipUpgrades upgrades) ? upgrades.HoldPercent / 100f : 0f;
+            GetComponent<Inventory>().Configure(shipClass.holdCapacity * (1f + CaptainFame.Bonus(PerkEffect.HoldPercent)) * (1f + upgrade));
         }
 
         /// <summary>

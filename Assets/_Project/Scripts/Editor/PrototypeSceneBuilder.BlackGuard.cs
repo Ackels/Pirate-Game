@@ -104,7 +104,7 @@ namespace Pirates.EditorTools
                 var ration = LoadItem("Item_Racao");
                 if (sack && ration) go.AddComponent<DropOnDeath>().Configure(sack, new[] { new ItemStack(ration, 1) });
             }
-            if (!model) return;
+            if (!model || keepKitLook) return;
             var outfit = CivilianMaterial(kitModel, kitModel == KitCharacters.Anne ? 6 : 9);
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {

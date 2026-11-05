@@ -87,7 +87,7 @@ namespace Pirates.EditorTools
             go.GetComponent<FootHealthReactions>().Configure(model, 0.35f);
             // E2, passo 2: a adaga dela cai uma vez (a épica das adagas do capitão).
             DropsBlade(go, "AdagaDuelista");
-            if (!model) return;
+            if (!model || keepKitLook) return;
             var outfit = CivilianMaterial(KitCharacters.Anne, DuelistPalette);
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {

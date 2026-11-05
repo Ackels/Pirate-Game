@@ -100,6 +100,9 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>Transforma o pirata recém-montado em brutamontes: tamanho, vida, velocidade, reações, IA e cor.</summary>
+        /// <summary>Inimigo com o modelo do KayKit (abordagem, 04/11): o MakeBrute/MakeDuelist/MakeBlackGuard não trocam a roupa.</summary>
+        static bool keepKitLook;
+
         static void MakeBrute(GameObject go, Transform model, EnemyFootAI ai)
         {
             // Escala na raiz: colisor, alcance visual da arma e o machado (filho da mão) crescem juntos.
@@ -121,7 +124,8 @@ namespace Pirates.EditorTools
             ai.ConfigureLunge(4.5f, 6.5f, 1);
             // E2: derrotado, deixa o machado dele (o "Machado do carrasco", épico), uma vez.
             DropsBlade(go, "MachadoCarrasco");
-            if (!model) return;
+            // Brutamontes com outro modelo (o bárbaro do KayKit, mestre do brigue): fica com a roupa dele.
+            if (!model || keepKitLook) return;
             var skin = BruteMaterial();
             foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {

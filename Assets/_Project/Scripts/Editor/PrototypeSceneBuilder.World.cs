@@ -130,6 +130,8 @@ namespace Pirates.EditorTools
             AddMerchants(ship, loot);
             // Esquadra Real (G, passo 3): navios de guerra da Coroa atrás do capitão procurado.
             AddRoyalNavy(ship, combat, loot);
+            // Abordagem (04/11): o palco com os dois conveses grandes, longe do mapa.
+            AddBoarding(foot.switcher);
             // Diário do pescador (30/10): depois de todas as ilhas (as regiões são achadas pelo nome).
             AddFishJournal(ship.GetComponent<Inventory>());
             // Pratos da taverna (30/10): os bônus e a plaquinha no HUD.

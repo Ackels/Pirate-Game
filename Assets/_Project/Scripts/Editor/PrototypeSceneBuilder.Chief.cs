@@ -327,10 +327,24 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>Transforma o pirata recém-montado no chefe: tamanho, vida, velocidade, reações, IA, roupa, olhos, aura e o LandBoss.</summary>
+        /// <summary>
+        /// Outro chefe com o mesmo jeito de lutar (04/11: o imediato do Tormenta, esqueleto do KayKit): nome, título, vida, tamanho; sem
+        /// missão nem o espadão épico do Barba-Negra, e com a roupa do modelo (sem o material do capitão). Posto antes do CreatePirate.
+        /// </summary>
+        sealed class ChiefSpec
+        {
+            public string name, title;
+            public float health = 600f, scale = 1.3f;
+        }
+
+        static ChiefSpec pendingChief;
+
         static void MakeChief(GameObject go, Transform model, EnemyFootAI ai)
         {
-            go.transform.localScale = Vector3.one * ChiefScale;
-            go.GetComponent<Health>().Configure(ChiefHealth);
+            var spec = pendingChief;
+            pendingChief = null;
+            go.transform.localScale = Vector3.one * (spec?.scale ?? ChiefScale);
+            go.GetComponent<Health>().Configure(spec?.health ?? ChiefHealth);
             // Anda devagar e corre abaixo do capitão (6): dá para fugir, e o salto pega quem foge para perto.
             go.GetComponent<FootCharacter>().ConfigureSpeeds(2f, 4.6f);
             go.GetComponent<FootCharacter>().ConfigureTurnRate(300f);
@@ -342,9 +356,12 @@ namespace Pirates.EditorTools
             ai.ConfigureMelee(2.7f, 4f, new Vector2(0.5f, 1.1f), 0.45f);
             ai.ConfigureLunge(11f, 5f, 2);
             ai.ConfigureTaunt(2.4f);
-            ai.ConfigureBounty(ChiefBounty);
-            // E2: derrotado, deixa o espadão dele (épico), uma vez.
-            DropsBlade(go, "EspadaoBarbaNegra");
+            if (spec == null)
+            {
+                ai.ConfigureBounty(ChiefBounty);
+                // E2: derrotado, deixa o espadão dele (épico), uma vez.
+                DropsBlade(go, "EspadaoBarbaNegra");
+            }
 
             var body = new List<Renderer>();
             if (model)
@@ -352,12 +369,15 @@ namespace Pirates.EditorTools
                 // Sem o papagaio do Barbarossa (no ombro e a malha original do kit).
                 foreach (var t in model.GetComponentsInChildren<Transform>(true))
                     if (t && (t.name == "Papagaio" || t.name == "Ernest")) Object.DestroyImmediate(t.gameObject);
-                var outfit = ChiefMaterial();
+                var outfit = spec == null ? ChiefMaterial() : null;
                 foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
                 {
-                    var slots = r.sharedMaterials;
-                    for (int i = 0; i < slots.Length; i++) slots[i] = outfit;
-                    r.sharedMaterials = slots;
+                    if (outfit)
+                    {
+                        var slots = r.sharedMaterials;
+                        for (int i = 0; i < slots.Length; i++) slots[i] = outfit;
+                        r.sharedMaterials = slots;
+                    }
                     body.Add(r);
                 }
             }
@@ -365,7 +385,7 @@ namespace Pirates.EditorTools
             var sword = go.GetComponentInChildren<CharacterCombat>().WeaponVisual(0);
             if (sword) blade.AddRange(sword.GetComponentsInChildren<MeshRenderer>(true));
             var boss = go.AddComponent<LandBoss>();
-            boss.Configure(ChiefName, ChiefTitle, ChiefMoves(), new[] { 0, 1 }, body.ToArray(), blade.ToArray(), ChiefBladeGlow(), ChiefAura(go.transform));
+            boss.Configure(spec?.name ?? ChiefName, spec?.title ?? ChiefTitle, ChiefMoves(), new[] { 0, 1 }, body.ToArray(), blade.ToArray(), ChiefBladeGlow(), ChiefAura(go.transform));
             // A Guarda Negra luta primeiro (passo 2): ele entra quando ela cai, quando o capitão chega a 3,5 m ou quando leva um golpe
             // (com 5 m, quem perseguia a mosqueteira passava perto e o acordava; revisão de 16/10).
             boss.SetWaitForGuards(true, 3.5f);

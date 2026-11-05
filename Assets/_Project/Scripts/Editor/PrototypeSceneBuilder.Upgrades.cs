@@ -75,6 +75,8 @@ namespace Pirates.EditorTools
                 Lvl(1f, 0, 45f, (i, 8), (p, 4), (g, 150)),
                 Lvl(2f, 0, 90f, (i, 12), (p, 6), (g, 260)));
 
+            var hold = HoldUpgrade(items, topLevelBuilding);
+
             // Nível 4 (M9): pede o Estaleiro nível 2; custa ~1,7× o nível 3 e rende menos (rendimento decrescente). A mira já
             // chega a 100% no nível 3: não ganha nível 4. Assets preservados: só cresce quem ainda tem 3 níveis.
             AddUpgradeLevel(hull, Lvl(200f, 0, 120f, (w, 51), (i, 17), (g, 340)), topLevelBuilding);
@@ -95,7 +97,63 @@ namespace Pirates.EditorTools
             UnityEditor.EditorUtility.SetDirty(crew);
             player.gameObject.AddComponent<ShipCrew>().Configure(crew);
 
-            player.gameObject.AddComponent<ShipUpgrades>().Configure(new[] { aim, hull, cannons, chasers, sails, gunners });
+            player.gameObject.AddComponent<ShipUpgrades>().Configure(new[] { aim, hull, cannons, chasers, sails, gunners, hold });
+        }
+
+        /// <summary>
+        /// Porão ampliado (04/11, pedido do Jhonata: "o porão só aumenta se mudarmos de navio, e tem tanto loot"): +15/30/50/75% no porão
+        /// da classe (chalupa 45 → 52/58/67/79; escuna 75 → 86/97/112/131; galeão 110 → 126/143/165/192); como os outros, zera no navio
+        /// novo e o nível 4 pede o Estaleiro 2. Paga em madeira, breu e lona (anteparas, calafeto e redes de carga).
+        /// </summary>
+        static UpgradeDefinition HoldUpgrade(LootItems items, BuildingDefinition shipyard)
+        {
+            var g = items.gold;
+            var w = items.wood;
+            var i = items.iron;
+            var tar = TarItem();
+            var canvas = CanvasItem();
+            var hold = Upgrade("Upgrade_Porao", "Porão ampliado", UpgradeStat.HoldPercent,
+                "Anteparas mudadas, cobertas calafetadas e redes de carga no teto: cabe mais coisa no porão. Fica com o navio: " +
+                "navio novo começa sem.",
+                Lvl(15f, 0, 30f, (w, 20), (tar, 5), (g, 80)),
+                Lvl(30f, 0, 60f, (w, 35), (tar, 10), (canvas, 5), (g, 160)),
+                Lvl(50f, 0, 90f, (w, 50), (tar, 15), (canvas, 10), (g, 280)));
+            // Nível 3 pede o Estaleiro na base, como os outros (chamado fora do AddUpgrades, o padrão não estaria posto).
+            if (hold.levels.Length >= 3 && !hold.levels[2].requiredBuilding) hold.levels[2].requiredBuilding = shipyard;
+            AddUpgradeLevel(hold, Lvl(75f, 0, 150f, (w, 80), (tar, 25), (canvas, 15), (i, 20), (g, 450)), shipyard);
+            return hold;
+        }
+
+        /// <summary>
+        /// Põe o "Porão ampliado" no ShipUpgrades da cena aberta sem regerar (cenas 05 e 07; 04/11). Pelo eval: abra a cena e chame.
+        /// </summary>
+        public static string AddHoldUpgradeToOpenScene()
+        {
+            var upgrades = Object.FindAnyObjectByType<ShipUpgrades>(FindObjectsInactive.Include);
+            if (!upgrades) return "sem ShipUpgrades";
+            var shipyard = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingDefinition>($"{DataFolder}/Buildings/Building_Estaleiro.asset");
+            var items = LoadItemsForUpgrades();
+            var hold = HoldUpgrade(items, shipyard);
+            var list = new System.Collections.Generic.List<UpgradeDefinition>(upgrades.Available);
+            if (!list.Contains(hold)) list.Add(hold);
+            upgrades.Configure(list.ToArray());
+            UnityEditor.EditorUtility.SetDirty(upgrades);
+            UnityEditor.EditorUtility.SetDirty(hold);
+            UnityEditor.AssetDatabase.SaveAssets();
+            var scene = upgrades.gameObject.scene;
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+            return $"{scene.name}: {list.Count} upgrades, porão com {hold.levels.Length} níveis";
+        }
+
+        static LootItems LoadItemsForUpgrades()
+        {
+            ItemDefinition Load(string file) => UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>($"{DataFolder}/Items/{file}.asset");
+            return new LootItems
+            {
+                gold = Load("Item_Ouro"), wood = Load("Item_Madeira"), powder = Load("Item_Polvora"), iron = Load("Item_Ferro"),
+                crew = Load("Item_Sobreviventes"),
+            };
         }
 
         /// <summary>
