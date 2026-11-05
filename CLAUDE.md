@@ -600,6 +600,7 @@ capitão; pescar e cortar/minerar não travam, a pedido) | ✅ aprovado (29/10) 
 (116 MB, sem a pasta BackUpThisFolder), versão 0.3.0, com tudo até as mochilas 25/37/50; aberto 50 s: menu, 0 exceções no `Player.log`.
 Commit 0512dbc enviado ao GitHub. **Próximos combinados (29/10): D2 passo 2 (rede do navio parado), D3 (dois marujos lutando junto a
 pé) e G (Esquadra Real + mercantes, procurado), nessa ordem** | ✅ testado (04/11; build nova com o que veio depois quando o Jhonata pedir) |
+| Build 0.5 (04/11, pedido do Jhonata): `Builds/ACoroaDePrata_0.5/` e `Builds/A_Coroa_de_Prata_0.5.zip` (131 MB, sem a pasta BackUpThisFolder), versão 0.5.0, com tudo do commit 2dd5adb: abordagem completa (chalupa, brigue, Tormenta, caçadores, Esquadra Real), KayKit, Esquadra Real com despistar, mercantes, procurado, recursos novos, canhões de caça, porão ampliado; build em ~13 min (a CLI desiste aos 5 min, a build continua no editor), 0 erros; aberto 50 s: menu, 0 exceções no `Player.log` | ✅ testado (04/11) |
 | Build 0.4 (30/10, pedido do Jhonata para ele e os amigos testarem): `Builds/ACoroaDePrata_0.4/` e `Builds/A_Coroa_de_Prata_0.4.zip`
 (119 MB, sem a pasta BackUpThisFolder), versão 0.4.0, com tudo do commit 22349d7 + a roda de comando: pesca completa (rede, diário, cozinha,
 encomendas e iscas, veneno, fumaça, incendiária, relíquias) e os marujos em terra; build em ~4 min, aberto 50 s: menu, 0 exceções no
