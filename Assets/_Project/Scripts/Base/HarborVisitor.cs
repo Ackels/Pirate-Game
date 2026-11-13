@@ -284,7 +284,8 @@ namespace Pirates.Base
         /// <summary>Preço que o mercado cobra agora (bônus de patente "negociante": metade do bônus de desconto; M10).</summary>
         public int BuyPrice(HarborSettings.MarketEntry entry) =>
             entry == null || entry.buyPrice <= 0 ? 0
-                : Mathf.Max(1, Mathf.RoundToInt(entry.buyPrice * (1f - 0.5f * CaptainFame.Bonus(PerkEffect.MarketPercent))));
+                : Mathf.Max(1, Mathf.RoundToInt(entry.buyPrice * (1f - 0.5f * CaptainFame.Bonus(PerkEffect.MarketPercent))
+                    * (1f - (Current && Current.Buildings ? Current.Buildings.MarketDiscount : 0f))));
 
         /// <summary>Quanto o mercado paga agora (bônus de patente "negociante": + o bônus; M10).</summary>
         public int SellPrice(HarborSettings.MarketEntry entry) =>

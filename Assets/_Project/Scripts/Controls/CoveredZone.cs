@@ -13,6 +13,9 @@ namespace Pirates.Controls
         [SerializeField] PlayerModeSwitcher switcher;
         [Tooltip("A caixa do lugar no mundo.")]
         [SerializeField] Bounds area;
+        [Tooltip("Lugar com luz e som próprios (interior de casa, 13/11). Desligado = o jeito das catacumbas.")]
+        [SerializeField] bool ownLook;
+        [SerializeField] CoveredLook look;
 
         public Bounds Area => area;
 
@@ -20,6 +23,22 @@ namespace Pirates.Controls
         {
             switcher = modeSwitcher;
             area = worldArea;
+        }
+
+        public void SetLook(CoveredLook indoor)
+        {
+            ownLook = true;
+            look = indoor;
+        }
+
+        void OnEnable()
+        {
+            if (!ownLook) return;
+            // A chuva cai em volta da sala, não dentro dela (interiores com o lado de fora visível).
+            look.center = area.center;
+            look.radius = new Vector2(area.extents.x, area.extents.z).magnitude;
+            look.extents = area.extents;
+            CoveredArea.SetLook(this, look);
         }
 
         void Update()

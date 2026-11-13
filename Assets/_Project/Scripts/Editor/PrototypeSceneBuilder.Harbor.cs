@@ -17,6 +17,12 @@ namespace Pirates.EditorTools
         // Ilha Sul: costa norte em z ≈ -181 (fixa desde o M3.1), chão da praia em y ≈ 0,8.
         static readonly Vector3 PierShore = new(40f, 0f, -184f);
         const float PierLength = 24f;
+        /// <summary>
+        /// Altura do tampo das tábuas no modelo structure-platform-dock do Kenney (0,89: as tábuas ficam em três alturas, 0,83/0,90/0,93; o 1,31 é o topo das
+        /// estacas). O chão de colisão dos píeres fica a 1,25 e as tábuas sobem até ele: com 1,31 ficavam 0,6 m abaixo e o capitão, os moradores
+        /// e o que está no píer (poste, caixotes) flutuavam (12/11; medido com raios contra a malha das tábuas).
+        /// </summary>
+        const float DockDeckTop = 0.89f;
         const float DockRadius = 20f;
         /// <summary>Raio da zona segura em volta do cais: inimigos não atacam e as obras do estaleiro andam.</summary>
         const float SafeZoneRadius = 60f;
@@ -94,7 +100,7 @@ namespace Pirates.EditorTools
 
             const float scale = 1.6f;
             for (int i = 0; i < Mathf.RoundToInt(PierLength / 4f); i++)
-                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - 1.31f * scale, 2f + i * 4f), 0f, scale, $"Tabuas_{i}");
+                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - DockDeckTop * scale, 2f + i * 4f), 0f, scale, $"Tabuas_{i}");
             var deck = pier.gameObject.AddComponent<BoxCollider>();
             deck.center = new Vector3(0f, 1.05f, PierLength * 0.5f);
             deck.size = new Vector3(4f, 0.4f, PierLength);

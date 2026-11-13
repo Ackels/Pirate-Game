@@ -14,6 +14,8 @@ namespace Pirates.Audio
         public SoundCue crateBreak, dummyHit, chestOpen, dig, pickup, backpackFull;
         // Coleta (D1): machadada no tronco.
         public SoundCue chop;
+        // Forja (13/11): martelada na bigorna (gravações de metal leve, baixinho).
+        public SoundCue anvil;
         // Catacumbas (C5): gemido das almas penadas e guincho dos morcegos (feitos pelo gerador).
         public SoundCue ghostMoan, batScreech;
         // Porto e interface
@@ -23,5 +25,7 @@ namespace Pirates.Audio
         public SoundCue fire, jungleBirds, seagulls, shoreWaves, wind, rain, storm, thunder, crypt;
         // Música
         public SoundCue musicTitle, musicPort, musicSea, musicIsland, musicCombat;
+        /// <summary>Taverna por dentro (13/11): músicas de taverna próprias (sem elas, a do menu).</summary>
+        public SoundCue musicTavern;
     }
 }

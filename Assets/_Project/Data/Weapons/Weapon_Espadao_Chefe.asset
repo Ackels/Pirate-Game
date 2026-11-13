@@ -52,6 +52,9 @@ MonoBehaviour:
   pelletSpread: 0
   twoHanded: 0
   supportOffset: 0.07
+  supportSlides: 0
+  supportSlideGap: 0.12
+  steerByHands: 1
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 3

@@ -67,6 +67,17 @@ procuravam juntos: a **Coroa de Prata**, que dorme no fundo das Águas Negras, g
 - **Zé Caolho e Rato Velho:** os malandros do porto; mapas e boatos.
 - **Capitã Rosa Negra:** capitã aposentada que paga para limpar as rotas; pode virar aliada no fim.
 
+## Epílogo (o fim, 09/11)
+
+Quando a Coroa de Prata sai do tesouro de Lázaro, o jogo para e toca o epílogo, no mesmo estilo da abertura (UI/Prologo/Fim_1..4):
+
+| # | Imagem | Texto |
+|---|---|---|
+| 1 | O templo do alto ao amanhecer: Lázaro caído diante do altar, a Coroa em cima dele, {nome} de pé | "No alto da Ilha Amaldiçoada, Lázaro Negro caiu. E a maldição da prata caiu com ele." |
+| 2 | A Coroa de Prata de perto, numa pedra contra o céu do amanhecer | "Cem anos de naufrágios, de capitães perdidos, de mortos que não dormiam... e a Coroa de Prata, enfim, nas mãos de {nome}." |
+| 3 | O cais de Porto Alento em festa, bandeirinhas, moradores acenando para o navio | "A névoa se abriu. Porto Alento viu chegar o navio que trazia a Coroa, e nunca mais pagou tributo a ninguém." |
+| 4 | O navio saindo para o mar aberto ao nascer do sol; "Fim" | "O nome de {nome} corre agora por todos os portos do Mar de Prata. E o mar... continua esperando." |
+
 ## Abertura (prólogo em quadros)
 
 Depois de digitar o nome no "Novo jogo": uma sequência de **quadros parados** (como nos jogos que contam a história com imagens), com
@@ -102,8 +113,8 @@ sistema de falas do M15 já serve). Cada capítulo usa o que já existe e pede u
 | **3. Carta de corso** | Corsário | Teodoro te nomeia Corsário (a patente vira um título de verdade); calar o Forte São Brás e afundar o Santa Clara; **Lázaro põe preço na sua cabeça** (os caçadores começam) | Forte, brigue e caçadores existem; falta a cena da carta e o aviso de Lázaro |
 | **4. Os tenentes de Lázaro** | Capitão Temido | Derrotar o Barba-Negra nas ruínas (**1º pedaço do mapa**); caçar o Tormenta no sudeste: afundado, Lázaro foge num bote jurando vingança (**2º pedaço** no baú do galeão) | Chefes existem; faltam os pedaços do mapa (pacote C) e a fuga de Lázaro |
 | **5. As Águas Negras** | Lenda dos Sete Mares | Com o mapa quase completo, ir às Águas Negras e vencer a lula gigante; no naufrágio da Coroa de Prata, o **último pedaço**: a rota para a Ilha Amaldiçoada | Lula existe; falta o mergulho/naufrágio e o pedaço final |
-| **6. A Ilha Amaldiçoada** | Lenda | Lázaro chegou antes e fez um trato com a maldição. Desembarque na ilha, mortos-vivos, e o duelo final com Lázaro (chefe a pé, amaldiçoado) | Tudo a criar (pacote H) |
-| **Fim** | — | A Coroa de Prata é sua; Porto Alento livre do tributo; o nome de {nome} corre por todos os portos. O jogo continua livre depois | A criar |
+| **6. A Ilha Amaldiçoada** | Lenda | Lázaro chegou antes e fez um trato com a maldição. Desembarque na ilha, mortos-vivos, e o duelo final com Lázaro (chefe a pé, amaldiçoado) | ✅ Pacote H (06–09/11): a ilha a noroeste, a névoa que só abre no capítulo 6, o Tobias, o desembarque, os mortos da trilha, o cerco do altar (3 ondas, com o ogro e os demônios da maldição), o duelo com Lázaro no templo do alto (fase 2 chama os mortos) e a Coroa de Prata no tesouro dele, atrás do altar |
+| **Fim** | — | A Coroa de Prata é sua; Porto Alento livre do tributo; o nome de {nome} corre por todos os portos. O jogo continua livre depois | ✅ (09/11): pegar a Coroa acaba o capítulo 6 e toca o epílogo (4 quadros pintados: Lázaro caído e a Coroa no altar, a Coroa de perto, Porto Alento em festa, o navio saindo ao nascer do sol com "Fim"); a Coroa vira relíquia lendária (ouro, fama, tesouro); os moradores falam da vila livre; o jogo continua |
 
 O meio da história continua aberto: contratos da taverna, NPCs, tesouros, upgrades e a base são o "caminho" entre os capítulos, e as
 patentes seguram o ritmo (o jogador precisa ganhar fama para o próximo capítulo).

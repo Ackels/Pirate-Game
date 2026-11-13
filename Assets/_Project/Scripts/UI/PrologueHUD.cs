@@ -30,6 +30,16 @@ namespace Pirates.UI
             "Agora, o Mar de Prata vai aprender o seu nome.",
         };
         [SerializeField] string gameTitle = "A Coroa de Prata";
+        [Header("Epílogo (o fim da História, pacote H, passo 4)")]
+        [SerializeField] Texture2D[] epilogueFrames = Array.Empty<Texture2D>();
+        [SerializeField, TextArea(2, 4)] string[] epilogueLines =
+        {
+            "No alto da Ilha Amaldiçoada, Lázaro Negro caiu. E a maldição da prata caiu com ele.",
+            "Cem anos de naufrágios, de capitães perdidos, de mortos que não dormiam... e a Coroa de Prata, enfim, nas mãos de {nome}.",
+            "A névoa se abriu. Porto Alento viu chegar o navio que trazia a Coroa, e nunca mais pagou tributo a ninguém.",
+            "O nome de {nome} corre agora por todos os portos do Mar de Prata. E o mar... continua esperando.",
+        };
+        [SerializeField] string epilogueTitle = "Fim";
         [Tooltip("Segundos mínimos de cada quadro; textos longos ficam mais (segundos por letra).")]
         [SerializeField] float minFrameSeconds = 6.5f, secondsPerLetter = 0.055f;
         [Tooltip("O último quadro (título) fica mais um pouco.")]
@@ -40,6 +50,8 @@ namespace Pirates.UI
         Label text, title, hint;
         Action done;
         string captain;
+        Texture2D[] playing = Array.Empty<Texture2D>();
+        string[] playingLines = Array.Empty<string>();
         int index = -1;
         float frameStart, frameLength, playStart;
 
@@ -48,22 +60,40 @@ namespace Pirates.UI
         /// <summary>Quadro mostrado agora (testes; −1 = parado).</summary>
         public int Frame => index;
 
-        public int FrameCount => frames.Length;
+        public int FrameCount => playing.Length > 0 ? playing.Length : frames.Length;
+
+        /// <summary>Está tocando o epílogo (não o prólogo).</summary>
+        public bool IsEpilogue { get; private set; }
+
+        public bool HasEpilogue => epilogueFrames.Length > 0;
 
         /// <summary>Quadros da abertura (o gerador põe os PNG de UI/Prologo).</summary>
         public void Configure(Texture2D[] prologueFrames) => frames = prologueFrames;
 
+        /// <summary>Quadros do fim (o gerador põe os PNG de UI/Prologo/Fim_*).</summary>
+        public void ConfigureEpilogue(Texture2D[] endFrames) => epilogueFrames = endFrames;
+
         /// <summary>Começa do primeiro quadro; <paramref name="onDone"/> roda no fim ou ao pular.</summary>
-        public void Play(string captainName, Action onDone)
+        public void Play(string captainName, Action onDone) => PlaySequence(frames, lines, gameTitle, false, captainName, onDone);
+
+        /// <summary>O epílogo: os quadros do fim, "Fim" no último.</summary>
+        public void PlayEpilogue(string captainName, Action onDone) =>
+            PlaySequence(epilogueFrames, epilogueLines, epilogueTitle, true, captainName, onDone);
+
+        void PlaySequence(Texture2D[] sequence, string[] narration, string heading, bool epilogue, string captainName, Action onDone)
         {
             done = onDone;
-            if (frames.Length == 0 || !Build())
+            playing = sequence ?? Array.Empty<Texture2D>();
+            playingLines = narration ?? Array.Empty<string>();
+            IsEpilogue = epilogue;
+            if (playing.Length == 0 || !Build())
             {
                 Finish();
                 return;
             }
             captain = string.IsNullOrWhiteSpace(captainName) ? "O capitão" : captainName.Trim();
             playStart = Time.unscaledTime;
+            Hud.Set(title, heading);
             Hud.Show(root, true);
             TitleScreen.Showing = true;
             Show(0);
@@ -73,7 +103,7 @@ namespace Pirates.UI
         public void Next()
         {
             if (!IsPlaying) return;
-            if (index + 1 >= frames.Length) Finish();
+            if (index + 1 >= playing.Length) Finish();
             else Show(index + 1);
         }
 
@@ -124,10 +154,10 @@ namespace Pirates.UI
         {
             index = i;
             frameStart = Time.unscaledTime;
-            image.style.backgroundImage = new StyleBackground(frames[i]);
-            string line = i < lines.Length ? lines[i].Replace("{nome}", captain) : "";
+            image.style.backgroundImage = new StyleBackground(playing[i]);
+            string line = i < playingLines.Length ? playingLines[i].Replace("{nome}", captain) : "";
             Hud.Set(text, line);
-            bool last = i == frames.Length - 1;
+            bool last = i == playing.Length - 1;
             frameLength = Mathf.Max(minFrameSeconds, 2.5f + line.Length * secondsPerLetter) + (last ? titleExtraSeconds : 0f);
             Animate();
         }
@@ -177,7 +207,7 @@ namespace Pirates.UI
             veil.style.opacity = 1f - Mathf.Min(fadeIn, fadeOut);
             text.style.opacity = Mathf.Clamp01((age - 0.6f) / 0.8f) * fadeOut;
 
-            bool last = index == frames.Length - 1;
+            bool last = index == playing.Length - 1;
             title.style.opacity = last ? Mathf.Clamp01((age - 1.2f) / 1.5f) * fadeOut : 0f;
             hint.style.opacity = Mathf.Clamp01((Time.unscaledTime - playStart - 1f) / 1f) * 0.8f;
         }

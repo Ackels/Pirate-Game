@@ -128,6 +128,9 @@ namespace Pirates.Progression
         public void Add(int amount, string reason)
         {
             if (amount <= 0) return;
+            // A Coroa de Prata (relíquia do fim da História) aumenta a fama de tudo.
+            float crown = Pirates.Economy.PlayerLoadout.RelicBonus(Pirates.Economy.RelicEffect.Fame);
+            if (crown > 0f) amount = Mathf.RoundToInt(amount * (1f + crown));
             Fame += amount;
             FameGained?.Invoke(amount, reason);
             UpdateRank(announce: true);

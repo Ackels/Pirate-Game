@@ -46,12 +46,17 @@ namespace Pirates.EditorTools
                 clip.name = clips.Length == 1 ? name : $"{name}_{i}";
                 // Ciclos (correr, pose parada, mira) repetem; golpes, tiros, sacar/guardar tocam uma vez.
                 string lower = name.ToLowerInvariant();
-                clip.loopTime = IsCycle(lower);
+                string sub = assetPath.Replace('\\', '/').Substring(Folder.Length + 1);
+                // Gente sentada (13/11, interiores): todas repetem menos sentar/levantar; nada sai do lugar (raiz inteira na pose).
+                bool seated = sub.StartsWith("Sentado/");
+                // O "Sitting Drinking" começa em pé, anda 1,4 m e senta (~5 s): só a parte sentada, bebendo, em loop.
+                if (seated && lower.Contains("sitting drinking")) clip.firstFrame = UnityEngine.Mathf.Max(clip.firstFrame, 6f * 30f);
+                clip.loopTime = seated ?!(lower.Contains(" to ") || lower.Contains("standing up")) : IsCycle(lower);
                 // "No lugar": giro, altura e posição da raiz ficam na pose (bake into pose), sem mover o objeto.
                 // Pacotes de 09/10 (subpastas Combate/Espadao/Machado): vários clipes andam e giram (rolamento 5,5 m, derrubado 1,8 m e 125°,
                 // ataques com salto 3 m). Com a raiz na pose o corpo sairia do lugar e voltaria num pulo; fora da pose, o Animator sem root
                 // motion descarta o deslocamento: a animação fica no lugar e o FootCharacter move o personagem. A altura fica na pose (pulos).
-                bool scriptMoves = assetPath.Replace('\\', '/').Substring(Folder.Length + 1).Contains("/");
+                bool scriptMoves = sub.Contains("/") && !seated;
                 // Giros de corpo inteiro (o "High Spin Attack" do chefe): o giro fica na pose, senão o Animator sem root motion o descarta e o
                 // golpe "de 360°" saía sem girar (revisão de 21/10). O deslocamento continua fora da pose.
                 bool spin = lower.Contains("spin") || lower.Contains("360");
@@ -60,7 +65,7 @@ namespace Pirates.EditorTools
                 clip.lockRootPositionXZ = !scriptMoves;
                 clip.keepOriginalOrientation = true;
                 clip.keepOriginalPositionY = true;
-                clip.keepOriginalPositionXZ = true;
+                clip.keepOriginalPositionXZ = !seated; // sentado: o corpo no lugar (o "Sitting Drinking" vem 1,5 m à frente)
                 // O gole do Mixamo é com a mão esquerda; no Barbarossa ela é o gancho, do lado do papagaio (a garrafa sumia atrás
                 // dele e da barba): espelhado, ele bebe com a direita, do lado livre (a arma some da mão durante o gole).
                 clip.mirror = lower.Contains("drinking");

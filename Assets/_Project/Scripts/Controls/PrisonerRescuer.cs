@@ -79,16 +79,16 @@ namespace Pirates.Controls
                 int extra = (p.Crew - joined) * goldPerExtraCrew;
                 if (extra > 0 && gold)
                 {
-                    hold.Add(gold, extra);
-                    parts.Add($"beliches cheios: +{extra} {gold.displayName} de gratidão");
+                    int got = PlayerStorage.Give(hold, gold, extra, out int stored);
+                    if (got > 0) parts.Add($"beliches cheios: {PlayerStorage.GiveText(gold, got, stored)} de gratidão");
                 }
             }
             if (hold)
                 foreach (var s in p.Reward)
                     if (s.item && s.amount > 0)
                     {
-                        hold.Add(s.item, s.amount);
-                        parts.Add($"+{s.amount} {s.item.displayName}");
+                        int got = PlayerStorage.Give(hold, s.item, s.amount, out int stored);
+                        if (got > 0) parts.Add(PlayerStorage.GiveText(s.item, got, stored));
                     }
             if (p.Fame > 0 && CaptainFame.Current) CaptainFame.Current.Add(p.Fame, "prisioneiro solto");
             return string.Join(" · ", parts);

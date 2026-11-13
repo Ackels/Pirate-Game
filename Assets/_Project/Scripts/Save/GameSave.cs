@@ -103,6 +103,11 @@ namespace Pirates.Save
 
         void OnEnable()
         {
+            Autosave.Requested += OnMilestone;
+            EventBus.Subscribe<StoryChapterEvent>(OnChapter);
+            EventBus.Subscribe<ShipSunkEvent>(OnShipSunk);
+            EventBus.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            EventBus.Subscribe<CampClearedEvent>(OnCampCleared);
             if (buildingVisitor) buildingVisitor.Left += OnBuildingLeft;
             if (!visitor) return;
             visitor.Docked += OnHarborChanged;
@@ -111,6 +116,11 @@ namespace Pirates.Save
 
         void OnDisable()
         {
+            Autosave.Requested -= OnMilestone;
+            EventBus.Unsubscribe<StoryChapterEvent>(OnChapter);
+            EventBus.Unsubscribe<ShipSunkEvent>(OnShipSunk);
+            EventBus.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            EventBus.Unsubscribe<CampClearedEvent>(OnCampCleared);
             if (buildingVisitor) buildingVisitor.Left -= OnBuildingLeft;
             if (!visitor) return;
             visitor.Docked -= OnHarborChanged;
@@ -133,6 +143,37 @@ namespace Pirates.Save
         void AutoSave()
         {
             if (Started && !suspended) SaveNow();
+        }
+
+        // ---------- Marcos (12/11) ----------
+        // Capítulo da História, chefe (navio, monstro do mar ou de terra) e coleção completa salvam sozinhos, quando der: fora da abordagem,
+        // com o navio inteiro, sem menu/epílogo na frente e no máximo a cada 30 s. Antes só salvava no porto, e fechar o jogo depois de vencer
+        // o Tormenta perdia a vitória.
+        const float MilestoneFame = 40f;
+        const float MilestoneGap = 30f;
+        bool milestonePending;
+        float nextMilestoneSave;
+
+        public string PendingMilestone { get; private set; }
+
+        void OnMilestone(string reason)
+        {
+            milestonePending = true;
+            PendingMilestone = reason;
+        }
+
+        void OnChapter(StoryChapterEvent e) => OnMilestone("capítulo " + e.chapter);
+        void OnShipSunk(ShipSunkEvent e) { if (!e.crown && e.fame >= 25) OnMilestone("navio afundado"); }
+        void OnEnemyDefeated(EnemyDefeatedEvent e) { if (e.fame >= MilestoneFame) OnMilestone("chefe derrotado"); }
+        void OnCampCleared(CampClearedEvent e) { if (e.fame >= MilestoneFame) OnMilestone("chefe derrotado"); }
+
+        void Update()
+        {
+            if (!milestonePending || !Started || suspended || TitleScreen.Showing) return;
+            if (Time.unscaledTime < nextMilestoneSave || Autosave.Blocked || (hull && hull.IsDead)) return;
+            nextMilestoneSave = Time.unscaledTime + MilestoneGap;
+            milestonePending = false;
+            SaveNow();
         }
 
         // ---------- Menu / sandbox ----------
@@ -173,8 +214,11 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial guide)) guide.Begin(tutorial);
             if (Services.TryGet(out IStory story)) story.Begin();
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(null);
+            if (Services.TryGet(out ISiegeCooldown siegeCd)) siegeCd.Restore(0f);
             if (Services.TryGet(out IWanted wanted)) wanted.Restore(0f, 0f);
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(null);
+            if (Services.TryGet(out ISeaChart chart)) chart.Restore(null);
+            if (Services.TryGet(out ICrewWages wages)) wages.Restore(false, 0f, 1f, 0f, 0f);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(null, null, null, 0);
             PlayerLoadout.Restore(null, null);
             LastSaved = null;
@@ -189,6 +233,40 @@ namespace Pirates.Save
             requestedStart = mode;
             suspended = true;
             SceneManager.LoadScene(gameObject.scene.buildIndex);
+        }
+
+        /// <summary>Navio afundado, o jogador escolheu "voltar ao porto" e não carregar o save.</summary>
+        public bool CanReturnToPort => Started && harbor && hull;
+
+        /// <summary>
+        /// Navio afundado → volta ao porto sem perder o que conquistou desde o último save (fama, missões, armazém, diário...): a carga
+        /// do porão vai para o fundo, metade da tripulação se salva e o navio volta consertado pela metade na vaga do porto (12/11; no lugar do
+        /// "F5 para recomeçar"). Grava e recarrega a cena continuando desse save.
+        /// </summary>
+        public bool ReturnToPortAfterSinking()
+        {
+            if (!CanReturnToPort) return false;
+            try
+            {
+                var data = Capture();
+                data.hull = hull.Max * 0.5f;
+                var kept = new List<ItemCount>();
+                foreach (var c in data.hold)
+                {
+                    var item = FindItem(c.id);
+                    if (item && item.category == ItemCategory.Crew && c.amount / 2 > 0) kept.Add(new ItemCount(c.id, c.amount / 2));
+                }
+                data.hold = kept.ToArray();
+                SaveFile.Write(data);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Save] Não deu para voltar ao porto: {e}");
+                Failed?.Invoke($"Não deu para salvar: {e.Message}");
+                return false;
+            }
+            ReloadScene(StartMode.Continue);
+            return true;
         }
 
         /// <summary>Grava o progresso agora. false (e o evento Failed) se não deu.</summary>
@@ -286,12 +364,22 @@ namespace Pirates.Save
             }
 
             if (Services.TryGet(out ITreasureMaps maps)) data.treasureMapId = maps.ActiveId;
+            if (Services.TryGet(out ISiegeCooldown siegeCd)) data.siegeCooldown = siegeCd.CooldownLeft;
             if (Services.TryGet(out IWanted wanted))
             {
                 data.wantedHeat = wanted.Heat;
                 data.wantedCalm = wanted.SecondsSinceCrime;
             }
             if (Services.TryGet(out ICollectibles collectibles)) data.collectibles = collectibles.Found;
+            if (Services.TryGet(out ISeaChart chart)) data.mapDiscovered = chart.Discovered;
+            if (Services.TryGet(out ICrewWages wages))
+            {
+                data.hasWages = true;
+                data.wageDebt = wages.Debt;
+                data.crewMorale = wages.Morale;
+                data.wageHoursToPayday = wages.HoursToPayday;
+                data.wageHoursLate = wages.HoursLate;
+            }
             if (Services.TryGet(out IFishJournal fishJournal))
                 fishJournal.Capture(out data.fishIds, out data.fishCounts, out data.fishBest, out data.fishPrizes);
             data.equipped = PlayerLoadout.Capture();
@@ -408,6 +496,14 @@ namespace Pirates.Save
                         progress = data.shipyardJob.progress,
                     };
                 harbor.RestoreJob(shipyard);
+                // Obra salva que não dá mais para continuar (o navio já é dessa classe, a melhoria já está no máximo ou o asset sumiu): antes o
+                // pagamento se perdia; agora volta para o armazém (12/11).
+                if (data.shipyardJob.Active && shipyard == null)
+                {
+                    var refund = Stacks(data.shipyardJob.paid, missing);
+                    foreach (var s in refund) harbor.Warehouse.Add(s.item, s.amount);
+                    if (refund.Count > 0) Debug.Log($"[Save] Obra do estaleiro '{data.shipyardJob.id}' não continua: pagamento devolvido ao armazém.");
+                }
                 var demandLeft = new List<KeyValuePair<ItemDefinition, float>>();
                 foreach (var d in data.marketDemand ?? Array.Empty<TimerEntry>())
                 {
@@ -513,8 +609,11 @@ namespace Pirates.Save
             if (Services.TryGet(out ITutorial tutorial)) tutorial.Restore(data.hasTutorial ? data.tutorialStep : -1);
             if (Services.TryGet(out IStory story)) story.Restore(data.hasStory ? data.storyChapter : 0, data.hasStory ? data.storyProgress : null);
             if (Services.TryGet(out ITreasureMaps maps)) maps.Restore(data.treasureMapId);
+            if (Services.TryGet(out ISiegeCooldown siegeCd)) siegeCd.Restore(data.siegeCooldown);
             if (Services.TryGet(out IWanted wanted)) wanted.Restore(data.wantedHeat, data.wantedCalm);
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(data.collectibles);
+            if (Services.TryGet(out ISeaChart chart)) chart.Restore(data.mapDiscovered);
+            if (Services.TryGet(out ICrewWages wages)) wages.Restore(data.hasWages, data.wageDebt, data.crewMorale, data.wageHoursToPayday, data.wageHoursLate);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(data.fishIds, data.fishCounts, data.fishBest, data.fishPrizes);
             PlayerLoadout.Restore(data.equipped, FindItem);
 

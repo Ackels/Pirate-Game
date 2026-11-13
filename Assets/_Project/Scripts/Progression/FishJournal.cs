@@ -256,7 +256,7 @@ namespace Pirates.Progression
             if (!item || amount <= 0) return;
             // Equipamento que o jogador já tem (F1, save antigo) não vem de novo.
             if (item.category == ItemCategory.Gear && PlayerStorage.Count(item) > 0) return;
-            if (hold) hold.Add(item, amount);
+            PlayerStorage.Give(hold, item, amount, out _);   // porão cheio: o resto no armazém
         }
 
         // ---------- Save ----------

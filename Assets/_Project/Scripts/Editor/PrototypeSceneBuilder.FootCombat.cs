@@ -30,10 +30,14 @@ namespace Pirates.EditorTools
         // Chute e quedas (pacote A, passo 3). Medidos no esqueleto do capitão: Mma Kick1 com o pé esticado de 0,6 a 0,8 s; Stunned
         // cambaleia e cai sentado (quadril no chão a ~0,9 s); Knocked Down arremessado de costas (de pé até ~0,6 s, no chão a ~1,1 s);
         // Getting Up começa deitado e fica de pé a ~1,9 s.
-        const string ClipKick = "Mma Kick1", ClipStumble = "Stunned", ClipBlast = "Knocked Down", ClipGetUp = "Getting Up";
+        // Chute (06/11, revisão das animações do chat "Animador", passo 4): o "Mma Kick1" era de lado e levava o pé só 0,10 m à frente do
+        // quadril (a perna curta do capitão sumia: parecia que ele se curvava). Medidos 9 chutes no capitão: o "Standing Melee Attack Kick
+        // Ver. 1" do pacote do machado estica a perna para a frente (0,33 m) e chega rápido; a 1,12× o pé esticado cai nos 0,45 s do
+        // kickImpact. (O "Kick" do espadão empurra mais, mas é o do Barba-Negra.)
+        const string ClipKick = "Standing Melee Attack Kick Ver. 1", ClipStumble = "Stunned", ClipBlast = "Knocked Down", ClipGetUp = "Getting Up";
         // Tempos (revisão de 09/10, para não travar o pirata no chão): chute ~1,5 s no chão (cai sentado 0,8 s + levanta rápido 0,77 s);
         // explosão nos piratas ~2,9 s (arremessado + levantar normal); no capitão ~1,3 s (arremessado rápido 0,47 s + levanta rápido).
-        const float KickSpeed = 1.4f, StumbleSpeed = 1.6f, StumbleExit = 0.6f, BlastSpeed = 1.4f, BlastStart = 0.18f, GetUpSpeed = 1.5f;
+        const float KickSpeed = 1.12f, StumbleSpeed = 1.6f, StumbleExit = 0.6f, BlastSpeed = 1.4f, BlastStart = 0.18f, GetUpSpeed = 1.5f;
         const string ClipThrow = "Throw Object";
         // Defesa (pacote A, passo 5): a guarda é o "Blocking" do espadão (0,5 s erguendo a lâmina na frente do rosto, segura o fim: a do
         // machado deixava o cutelo deitado na cintura); impacto = "Blocking 2"; quem é aparado cambaleia para trás ("React Large Gut" do
@@ -61,6 +65,11 @@ namespace Pirates.EditorTools
         // Clipes do Mixamo (arquivos "X Bot@<nome>.fbx") e como tocam. Medidos nos clipes: golpe para fora acerta em 0,87 s,
         // para dentro em 1,30 s; o saque pega a espada na cintura em 0,60 s; o guardar solta em 1,27 s; o tiro sai em ~0,37 s.
         const string ClipSlashOut = "Stable Sword Outward Slash", ClipSlashIn = "Stable Sword Inward Slash";
+        /// <summary>
+        /// Deslocamento do "Run With Sword" sobre o ciclo das pernas (fração). Os braços do próprio clipe já vêm fora de fase com as pernas dele
+        /// (pé esquerdo à frente em 0,25, mão esquerda em 0,54): medido no jogo em 12/11, a mão oposta ao pé (correlação −0,93) fica em 0,1–0,15.
+        /// </summary>
+        const float RunSwordLegPhase = 0.12f;
         const string ClipDraw = "Withdrawing Sword", ClipSheath = "Sheathing Sword", ClipRunSword = "Run With Sword";
         const string ClipShoot = "Shooting", ClipGunplay = "Gunplay", ClipPistolIdle = "Pistol Idle", ClipPistolAim = "Pistol Aim";
         const string ClipDrinking = "Drinking";
@@ -68,6 +77,22 @@ namespace Pirates.EditorTools
         const float EatSpeed = 2.15f;
         const float DrawGrabClipTime = 0.60f;
         const float SlashSpeed = 1.5f, DrawSpeed = 1.3f, SheathSpeed = 1.5f, ShootSpeed = 1.2f;
+        /// <summary>
+        /// 1º corte do cutelo (06/11, revisão das animações do chat "Animador", passo 3): o "Stable Sword Outward Slash" dava uma volta inteira
+        /// no corpo (peito 355°: ficava de costas para o inimigo). Filmados no jogo 10 candidatos (Sword and Shield do Mixamo, Kevin Iglesias,
+        /// os cortes de espada do Universal Animation Library 2, que giram ~130° e terminam de costas). Também conta o pé de trás: os cortes que
+        /// plantam o pé esquerdo virado para trás ("Attack 2": −135°) fazem ele girar ~180° na emenda com o corte para dentro (+35°).
+        /// <b>Capitão:</b> o combo começa pelo corte forte do Kevin Iglesias ("Golpe4", <see cref="EnemySlashVariant"/>: de frente, pés para a frente
+        /// do começo ao fim, a mão passa a 25 m/s no impacto), depois o corte para dentro e a finalização de cima (<see cref="CutlassFinisher"/>).
+        /// <b>Piratas e Guarda Negra:</b> o "Golpe1" passa a ser o corte de cima do Sword and Shield ("Slash", impacto aos 0,60 s de 1,50 s; de
+        /// frente, pés para a frente, nenhum osso virando mais de 33° num quadro), sorteado com o corte para dentro e o do Kevin. Começa
+        /// adiantado e na velocidade em que o impacto cai nos mesmos <see cref="SlashHitTime"/> 0,3 s (× a velocidade da lâmina).
+        /// </summary>
+        const string ClipSlashRise = "Sword And Shield Slash";
+        /// <summary>Impacto dos cortes do cutelo em velocidade 1 (o <c>hitDelay</c> do Weapon_Cutelo).</summary>
+        const float SlashHitTime = 0.3f;
+        const float SlashRiseImpact = 0.60f, SlashRiseStart = 0.24f, SlashRiseExit = 0.85f;
+        const float SlashRiseSpeed = (SlashRiseImpact - SlashRiseStart) / SlashHitTime;
         /// <summary>
         /// 3º golpe do cutelo do capitão (revisão das animações, 21/10): o golpe de cima do pacote do machado ("Standing Melee Attack
         /// Downward", impacto aos 0,70 s do clipe), 1,3× (× a velocidade da lâmina), começando <see cref="FinisherLead"/> s de clipe antes do
@@ -713,17 +738,28 @@ namespace Pirates.EditorTools
             var empty = sm.AddState("Vazio", new Vector3(300f, 0f));
             sm.defaultState = empty;
             var run = State(sm, "CorrerComEspada", ClipRunSword, 1f, new Vector3(300f, -120f));
+            // Braços no ritmo das pernas (12/11): o clipe do Mixamo tinha relógio próprio (0,8 s) e as pernas aceleram com a velocidade;
+            // correndo, o braço balançava na metade do ritmo e fora do passo. Agora o tempo dele é a fase das pernas (CharacterAnimatorDriver).
+            AddParameter(controller, "CicloPerna", AnimatorControllerParameterType.Float);
+            SetDefaultFloat(controller, "CicloPernaFase", RunSwordLegPhase);
+            run.timeParameterActive = true;
+            run.timeParameter = "CicloPerna";
             // Cutelo na mão, parado ou andando: pose de "pronto" congelada no fim do saque (lâmina baixa à frente).
             var ready = State(sm, "EspadaPronta", ClipDraw, 1f, new Vector3(0f, -60f));
             ready.timeParameterActive = true;
             ready.timeParameter = "PoseTime";
             // Human Melee Animations (27/10): postura de luta em loop no lugar do quadro congelado.
             UseMeleeReadyPose(ready);
-            var slash1 = State(sm, "Golpe1", ClipSlashOut, SlashSpeed, new Vector3(600f, -60f));
+            // 1º corte dos inimigos (06/11): o corte de cima do Sword and Shield no lugar do "Stable Sword Outward Slash" (dava uma volta inteira).
+            bool risingSlash = MixamoClip(ClipSlashRise);
+            var slash1 = risingSlash ? State(sm, "Golpe1", ClipSlashRise, SlashRiseSpeed, new Vector3(600f, -60f))
+                : State(sm, "Golpe1", ClipSlashOut, SlashSpeed, new Vector3(600f, -60f));
             var slash2 = State(sm, "Golpe2", ClipSlashIn, SlashSpeed, new Vector3(600f, 20f));
             var draw = State(sm, "Sacar", ClipDraw, DrawSpeed, new Vector3(600f, 100f));
             var sheath = State(sm, "Guardar", ClipSheath, SheathSpeed, new Vector3(600f, 180f));
-            var idle = State(sm, "PistolaParada", ClipPistolIdle, 1f, new Vector3(0f, 120f));
+            // Pistola baixa (12/11): sem clipe = os braços da locomoção (respira parado, balança no passo correndo); o "Pistol Idle" do
+            // Mixamo era uma pose congelada (mão 0,5 cm em 3 s) e, correndo, o braço ficava duro (4 cm de balanço).
+            var idle = sm.AddState("PistolaParada", new Vector3(0f, 120f));
             var aim = State(sm, "PistolaMirando", ClipPistolAim, 1f, new Vector3(0f, 220f));
             var shoot = State(sm, "Tiro", ClipShoot, ShootSpeed, new Vector3(300f, 300f));
             var reload = State(sm, "Recarga", ClipGunplay, 1f, new Vector3(0f, 320f));
@@ -741,7 +777,8 @@ namespace Pirates.EditorTools
 
             // Ataques e trocas: de qualquer estado, pelo trigger. O fim do golpe 1 é quase a pose do começo do golpe 2
             // (medido: quadril −6°/−17°, peito −96°/−100°), então o combo emenda com uma mistura curta.
-            Any(sm, slash1, 0.2f, 0.12f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, 0));
+            float slash1Start = risingSlash ? SlashRiseStart / MixamoClip(ClipSlashRise).length : 0.2f;
+            Any(sm, slash1, slash1Start, 0.12f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, 0));
             Any(sm, slash2, 0.4f, 0.12f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0), ("AttackVariant", AnimatorConditionMode.Equals, 1));
             var (finisherName, finisherImpact, _) = AxeAttacks[0];
             var finisherClip = MixamoClip(finisherName);
@@ -757,10 +794,11 @@ namespace Pirates.EditorTools
             }
             AddMeleeSlash(sm, ready);
             Any(sm, shoot, 0f, 0.1f, ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 1));
-            Any(sm, draw, 0f, 0.15f, ("Equip", AnimatorConditionMode.If, 0));
-            Any(sm, sheath, 0f, 0.15f, ("Holster", AnimatorConditionMode.If, 0));
+            // Só as lâminas de uma mão (WeaponType 0): pistola e armas das costas têm os próprios (AddDrawStates, 12/11).
+            Any(sm, draw, 0f, 0.15f, ("Equip", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0));
+            Any(sm, sheath, 0f, 0.15f, ("Holster", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0));
 
-            Exit(slash1, ready, 0.7f, 0.3f);
+            Exit(slash1, ready, risingSlash ? SlashRiseExit : 0.7f, 0.3f);
             Exit(slash2, ready, 0.85f, 0.3f);
             Exit(draw, ready, 0.85f, 0.25f);
             Exit(sheath, empty, 0.9f, 0.25f);
@@ -811,6 +849,7 @@ namespace Pirates.EditorTools
             AddRise(sm, empty);
             AddGreatsword(sm, empty);
             AddPlayerHeavyAttacks(sm);
+            AddDrawStates(sm, empty);
             ExitsToWeaponPose(sm, empty);
             AllowInterruptions(sm);
 
@@ -1186,8 +1225,10 @@ namespace Pirates.EditorTools
             w.attackVariants = 3;
             w.randomVariants = false;
             w.animatorVariantOffset = 0;
-            w.animatorVariants = new[] { 0, 1, CutlassFinisherVariant };
-            w.variantHitDelays = new[] { w.hitDelay, w.hitDelay, FinisherLead / FinisherSpeed / k };
+            // 1º golpe = o corte forte do Kevin Iglesias ("Golpe4"), 06/11: o "Golpe1" (dos inimigos) girava o corpo.
+            bool kevin = BasicMotion(MeleeSlash);
+            w.animatorVariants = new[] { kevin ? EnemySlashVariant : 0, 1, CutlassFinisherVariant };
+            w.variantHitDelays = new[] { kevin ? MeleeSlashImpact / (MeleeSlashSpeed * k) : w.hitDelay, w.hitDelay, FinisherLead / FinisherSpeed / k };
             // Empurrão (passo 5): o alvo recua um pouco a cada corte e bem mais na finalização.
             w.hitPush = 2.4f;
             w.variantStrikes = new[]
@@ -1235,9 +1276,17 @@ namespace Pirates.EditorTools
                     if (clip) clips.Add((clip, new Vector2(x, z)));
                 }
             if (clips.Count < 4) return;
+            // Passada pela velocidade (06/11): "PassoX/PassoZ" na escala humana, como o "Passo" da locomoção; o mais rápido no "PassoLateralMax".
+            AddParameter(controller, "PassoX", AnimatorControllerParameterType.Float);
+            AddParameter(controller, "PassoZ", AnimatorControllerParameterType.Float);
+            AddParameter(controller, "Cadencia", AnimatorControllerParameterType.Float);
+            float fastest = 0f;
+            foreach (var (_, at) in clips) fastest = Mathf.Max(fastest, at.magnitude);
+            SetDefaultFloat(controller, "PassoLateralMax", fastest);
+            SetDefaultFloat(controller, "Cadencia", 1f);
             var tree = new BlendTree
             {
-                name = "Lateral", blendType = BlendTreeType.FreeformDirectional2D, blendParameter = "MoveX", blendParameterY = "MoveZ",
+                name = "Lateral", blendType = BlendTreeType.FreeformDirectional2D, blendParameter = "PassoX", blendParameterY = "PassoZ",
                 hideFlags = HideFlags.HideInHierarchy,
             };
             AssetDatabase.AddObjectToAsset(tree, controller);
@@ -1246,6 +1295,8 @@ namespace Pirates.EditorTools
             foreach (var (clip, at) in clips) tree.AddChild(clip, at);
             var lateral = sm.AddState("Lateral", new Vector3(500f, 250f));
             lateral.motion = tree;
+            lateral.speedParameterActive = true;
+            lateral.speedParameter = "Cadencia";
             Go(locomotion, lateral, 0.2f, ("Strafe", AnimatorConditionMode.If, 0));
             Go(lateral, locomotion, 0.2f, ("Strafe", AnimatorConditionMode.IfNot, 0));
             foreach (var t in lateral.transitions) t.interruptionSource = TransitionInterruptionSource.Destination;
@@ -1271,7 +1322,7 @@ namespace Pirates.EditorTools
             foreach (var child in sm.states)
             {
                 var from = child.state;
-                if (from == empty || from.name == "Guardar") continue;
+                if (from == empty || from.name.StartsWith("Guardar")) continue;
                 var original = from.transitions;
                 var ordered = new System.Collections.Generic.List<AnimatorStateTransition>();
                 bool changed = false;

@@ -590,10 +590,10 @@ Avatar:
         - 0
         - 0
         m_Scale: 0.5459008
-        m_ArmTwist: 0.5
-        m_ForeArmTwist: 0.5
-        m_UpperLegTwist: 0.5
-        m_LegTwist: 0.5
+        m_ArmTwist: 0
+        m_ForeArmTwist: 0
+        m_UpperLegTwist: 0
+        m_LegTwist: 0
         m_ArmStretch: 0.05
         m_LegStretch: 0.05
         m_FeetSpacing: 0
@@ -975,10 +975,10 @@ Avatar:
       m_Position: {x: -0, y: 0, z: 0}
       m_Rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
       m_Scale: {x: 1, y: 1, z: 1}
-    m_ArmTwist: 0.5
-    m_ForeArmTwist: 0.5
-    m_UpperLegTwist: 0.5
-    m_LegTwist: 0.5
+    m_ArmTwist: 0
+    m_ForeArmTwist: 0
+    m_UpperLegTwist: 0
+    m_LegTwist: 0
     m_ArmStretch: 0.05
     m_LegStretch: 0.05
     m_FeetSpacing: 0

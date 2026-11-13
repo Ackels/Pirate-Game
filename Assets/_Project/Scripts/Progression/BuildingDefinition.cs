@@ -14,6 +14,8 @@ namespace Pirates.Progression
         ProduceItem,
         /// <summary>Canhões que defendem o porto. Valor = metros a mais na zona segura.</summary>
         CoastalDefense,
+        /// <summary>Porto Alento cresce (12/11: onde gastar o ouro). Valor = desconto (%) nas compras do mercado.</summary>
+        PortGrowth,
     }
 
     /// <summary>

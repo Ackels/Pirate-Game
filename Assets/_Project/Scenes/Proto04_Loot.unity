@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.64, g: 0.75, b: 0.83, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.0022
+  m_FogDensity: 0.0034
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -25134,7 +25134,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 2000
+  far clip plane: 1200
   field of view: 45
   orthographic: 0
   orthographic size: 5
@@ -69282,6 +69282,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Pirates.UI::Pirates.UI.EnemyStateLabels
   heightOffset: 9
+  showLabels: 0
+  showWithin: 250
 --- !u!114 &667401394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147280,6 +147282,7 @@ MonoBehaviour:
   followTarget: {fileID: 245574480}
   resolution: 128
   size: 500
+  farReach: 1500
   shoreMap: {fileID: 2800000, guid: 5f011f2f1f0c3f44fa11344abb24f03e, type: 2}
   shoreRect: {x: -458.4, y: -371.6, z: 732.9226, w: 895.6}
   shoreEncoding: {x: -6, y: 8, z: 64}
@@ -168135,6 +168138,8 @@ GameObject:
   - component: {fileID: 1548764771}
   - component: {fileID: 1548764770}
   - component: {fileID: 1548764775}
+  - component: {fileID: 1548764776}
+  - component: {fileID: 1548764777}
   m_Layer: 0
   m_Name: GameHUD
   m_TagString: Untagged
@@ -168236,6 +168241,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Pirates.UI::Pirates.UI.GameCursor
   cursor: {fileID: 2800000, guid: 88d535f51e862fc49938c9ed13daa241, type: 3}
   hotspot: {x: 1, y: 1}
+--- !u!114 &1548764776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548764769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f7b887b72e364c82f2dcd4d08460f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.UI::Pirates.UI.ShipSunkHUD
+  delay: 3
+--- !u!114 &1548764777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548764769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 089e439d7c3e7944fb5c93c870855f64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.UI::Pirates.UI.TipsHUD
 --- !u!1 &1549151146
 GameObject:
   m_ObjectHideFlags: 0

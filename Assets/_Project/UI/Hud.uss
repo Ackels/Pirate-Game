@@ -1363,6 +1363,22 @@
     align-items: center;
 }
 
+/* Rodapé dos cartões de obra (13/11): fichas que quebram pela largura do cartão e o botão embaixo, à direita. */
+.hud-work__buy {
+    flex-direction: column;
+    flex-shrink: 0;
+    padding-top: 4px;
+    margin-top: 2px;
+    border-top-width: 1px;
+    border-top-color: rgba(128, 86, 48, 0.25);
+}
+
+.hud-work__buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 3px;
+}
+
 .hud-repair__row {
     flex-wrap: wrap;
 }

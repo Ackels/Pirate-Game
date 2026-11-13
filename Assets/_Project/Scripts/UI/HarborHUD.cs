@@ -61,7 +61,8 @@ namespace Pirates.UI
             UpdateStatus();
             if (OnFoot)
             {
-                if (building.IsOpen) prompt.Hide();
+                if (Pirates.Controls.BarSeat.Seated) prompt.Show("F", "Levantar do balcão  <size=80%>(Esc ou andar também)</size>");
+                else if (building.IsOpen) prompt.Hide();
                 else UpdateBuildingPrompt();
             }
             else if (visitor.IsOpen) prompt.Hide();
@@ -195,7 +196,7 @@ namespace Pirates.UI
             }
             if (buildingPrompt.Stale(near, HudDraw.Flag(building.ShipDocked)))
                 buildingPrompt.Text = building.ShipDocked
-                    ? $"Entrar: {near.DisplayName}  <size=80%>({near.Purpose})</size>"
+                    ? $"{near.Action}: {near.DisplayName}  <size=80%>({near.Purpose})</size>"
                     : $"{near.DisplayName}  <size=80%>(atraque o navio no píer para usar)</size>";
             prompt.Show(building.ShipDocked ? "F" : null, buildingPrompt.Text);
         }

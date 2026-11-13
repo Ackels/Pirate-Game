@@ -6,6 +6,12 @@ namespace Pirates.Controls
     /// <summary>Traduz o input do jogador em ShipCommand. A IA inimiga (M2) implementa a mesma interface.</summary>
     public class PlayerShipInput : MonoBehaviour, IShipInput
     {
+        // O navio do jogador afundado não é apagado (a janela de navio afundado e o save leem ele).
+        void Awake()
+        {
+            if (TryGetComponent(out Pirates.Combat.SinkOnDeath sink)) sink.KeepWhenSunk();
+        }
+
         public ShipCommand GetCommand()
         {
             // Desligado quando o jogador está a pé: o ShipController continua pedindo comando.

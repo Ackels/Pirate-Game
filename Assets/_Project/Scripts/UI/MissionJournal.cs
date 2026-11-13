@@ -265,7 +265,7 @@ namespace Pirates.UI
                     board.Abandon(a);
                     confirmAbandon = null;
                     var h = GameHud.Current;
-                    if (h) h.Feed(GameHud.FeedKind.Notice, $"Contrato abandonado: <b>{m.title}</b>", HudColors.Muted);
+                    if (h) h.Feed(GameHud.FeedKind.Notice, $"Contrato abandonado: <b>{m.title}</b> (volta em {Mathf.CeilToInt(board.CooldownLeft(m) / 60f)} min)", HudColors.Muted);
                 }
                 else
                 {

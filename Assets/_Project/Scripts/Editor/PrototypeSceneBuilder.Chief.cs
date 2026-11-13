@@ -69,7 +69,14 @@ namespace Pirates.EditorTools
         static bool IsChief(string postName) => postName.StartsWith("Chefe");
 
         /// <summary>Espadão do chefe (Data/Weapons/Weapon_Espadao_Chefe; preservado se existe).</summary>
-        static WeaponDefinition ChiefSword() => WithSupportHand(ChiefSwordAsset(), GreatswordSupport);
+        static WeaponDefinition ChiefSword() => SteeredByHands(WithSupportHand(ChiefSwordAsset(), GreatswordSupport));
+
+        /// <summary>Arma guiada pelas duas mãos da animação (TwoHandSteer, 07/11): no Barba-Negra e no Lázaro a mão esquerda presa no cabo esticava o braço.</summary>
+        static WeaponDefinition SteeredByHands(WeaponDefinition w)
+        {
+            if (w && !w.steerByHands) { w.steerByHands = true; EditorUtility.SetDirty(w); }
+            return w;
+        }
 
         static WeaponDefinition ChiefSwordAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Espadao_Chefe.asset", w =>
         {
@@ -120,23 +127,29 @@ namespace Pirates.EditorTools
         /// </summary>
         static void GreatswordGrip(Transform model, out Vector3 blade, out Vector3 edge)
         {
-            blade = new Vector3(-0.72f, -0.67f, -0.18f).normalized;
-            edge = new Vector3(0.27f, -0.5f, 0.82f).normalized;
-            var temp = MeasureCopy(model);
-            if (!temp) return;
-            var anim = temp.GetComponent<Animator>();
             var samples = new (string clip, float t, bool impact)[]
             {
                 ("Idle", 0.5f, false), ("Idle 2", 1f, false), ("Walk", 0.4f, false), ("Run 2", 0.3f, false),
                 ("Slash", 0.57f, true), ("Slash 3", 0.8f, true), ("Slash 4", 0.63f, true), ("Slash 4", 1.43f, true), ("Attack", 0.47f, true),
                 ("High Spin Attack", 1.03f, true), ("Jump Attack", 1.1f, true), ("Slash 2", 0.73f, true), ("Slash 2", 2.57f, true),
             };
+            var list = new List<(AnimationClip, float, bool)>();
+            foreach (var (name, t, impact) in samples) list.Add((GreatswordClip(name), t, impact));
+            GreatswordGrip(model, list, out blade, out edge);
+        }
+
+        static void GreatswordGrip(Transform model, List<(AnimationClip clip, float t, bool impact)> samples, out Vector3 blade, out Vector3 edge)
+        {
+            blade = new Vector3(-0.72f, -0.67f, -0.18f).normalized;
+            edge = new Vector3(0.27f, -0.5f, 0.82f).normalized;
+            var temp = MeasureCopy(model);
+            if (!temp) return;
+            var anim = temp.GetComponent<Animator>();
             var rots = new List<Quaternion>();
             var wants = new List<Vector3>();
             var moves = new List<Vector3>();
-            foreach (var (name, t, impact) in samples)
+            foreach (var (clip, t, impact) in samples)
             {
-                var clip = GreatswordClip(name);
                 if (!clip) continue;
                 clip.SampleAnimation(temp, t - 0.03f);
                 var hand = anim.GetBoneTransform(HumanBodyBones.RightHand);
@@ -202,7 +215,10 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>
-        /// Espadão do chefe (WeaponType 4): "Espadao_Pronto" (Idle; corpo todo parado, só o tronco andando), "Espadao_Correndo" (Run 2),
+        /// Espadão do chefe e do capitão (WeaponType 4): "Espadao_Pronto" e "Espadao_Correndo" com as poses de duas mãos do Kevin Iglesias, as
+        /// mesmas do brutamontes (07/11, revisão das animações, passo 5: o "Idle" do Mixamo ficava congelado, a mão não mexia nem 1 cm, e o
+        /// "Run 2" levava a lâmina em pé na frente do rosto, entrando no chapéu; agora guarda atravessada respirando e corrida com o espadão
+        /// atravessado no peito; sem o pacote, os do Mixamo),
         /// os 8 golpes pelo AttackVariant (começam "lead" antes do impacto e voltam ao pronto ~0,6 s depois do último acerto) e
         /// "Espadao_Furia" (Power Up, tocado direto pelo CharacterAnimatorDriver.PlayPowerUp, no tempo do LandBoss).
         /// </summary>
@@ -210,6 +226,8 @@ namespace Pirates.EditorTools
         {
             if (!GreatswordClip("Idle")) return;
             var ready = GreatswordState(sm, "Espadao_Pronto", "Idle", 1f, new Vector3(-1500f, 60f));
+            var guardClip = BasicMotion(BruteGuard);
+            if (guardClip) ready.motion = guardClip;
             ready.tag = FullBodyTag;
             Go(empty, ready, 0.25f, ("WeaponType", AnimatorConditionMode.Equals, 4));
             Go(ready, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 4));
@@ -217,6 +235,8 @@ namespace Pirates.EditorTools
             if (GreatswordClip("Run 2"))
             {
                 run = GreatswordState(sm, "Espadao_Correndo", "Run 2", 1f, new Vector3(-1500f, 140f));
+                var holdClip = BruteRunClip();
+                if (holdClip) run.motion = holdClip;
                 Go(ready, run, 0.25f, ("Speed", AnimatorConditionMode.Greater, 3.2f));
                 Go(run, ready, 0.25f, ("Speed", AnimatorConditionMode.Less, 2.8f));
                 Go(run, empty, 0.2f, ("WeaponType", AnimatorConditionMode.NotEqual, 4));

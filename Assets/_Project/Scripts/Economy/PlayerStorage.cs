@@ -19,6 +19,29 @@ namespace Pirates.Economy
 
         public static void Unregister(Inventory inventory) => stores.Remove(inventory);
 
+        /// <summary>
+        /// Prêmio para o jogador (12/11): põe em <paramref name="first"/> o que couber e o resto no armazém (o lugar sem limite); antes o que
+        /// não cabia no porão cheio sumia. Tripulação não vai para o armazém. Devolve quantos entraram ao todo e quantos foram para o armazém.
+        /// </summary>
+        public static int Give(Inventory first, ItemDefinition item, int amount, out int toWarehouse)
+        {
+            toWarehouse = 0;
+            if (!item || amount <= 0) return 0;
+            int added = first ? first.Add(item, amount) : 0;
+            if (added >= amount || item.category == ItemCategory.Crew) return added;
+            for (int i = 0; i < stores.Count; i++)
+                if (stores[i] && stores[i] != first && stores[i].Unlimited)
+                {
+                    toWarehouse = stores[i].Add(item, amount - added);
+                    break;
+                }
+            return added + toWarehouse;
+        }
+
+        /// <summary>Texto do ganho: "+3 Ferro" ou "+3 Ferro (2 no armazém)".</summary>
+        public static string GiveText(ItemDefinition item, int added, int toWarehouse) =>
+            added <= 0 ? null : toWarehouse > 0 ? $"+{added} {item.displayName} ({toWarehouse} no armazém, porão cheio)" : $"+{added} {item.displayName}";
+
         /// <summary>O jogador já tem o item em algum lugar dele.</summary>
         public static bool Has(ItemDefinition item)
         {
@@ -33,6 +56,23 @@ namespace Pirates.Economy
             int n = 0;
             for (int i = 0; i < stores.Count; i++)
                 if (stores[i]) n += stores[i].Count(item);
+            return n;
+        }
+
+        /// <summary>Quantos o jogador tem do item com este nome de asset (a História não tem o asset na mão).</summary>
+        public static int CountByName(string assetName)
+        {
+            int n = 0;
+            for (int i = 0; i < stores.Count; i++)
+            {
+                var store = stores[i];
+                if (!store) continue;
+                for (int k = 0; k < store.Items.Count; k++)
+                {
+                    var item = store.Items[k];
+                    if (item && item.name == assetName) n += store.Count(item);
+                }
+            }
             return n;
         }
 

@@ -177,6 +177,15 @@ namespace Pirates.Controls
             if (switcher && switcher.Character) captainHealth = switcher.Character.GetComponent<Health>();
         }
 
+        // A abordagem não é salva no meio (12/11: salvar sozinho nos marcos). No Awake/OnDestroy: em terra o navio fica desligado.
+        System.Func<bool> autosaveBlocker;
+
+        void Start()
+        {
+            autosaveBlocker = () => this && (Active || IsTraveling || AwaitingChoice);
+            Autosave.AddBlocker(autosaveBlocker);
+        }
+
         void OnEnable()
         {
             if (captainHealth) captainHealth.Died += OnCaptainDied;
@@ -399,7 +408,7 @@ namespace Pirates.Controls
                 yield break;
             }
             Freeze();
-            switcher.Disembark(point);
+            switcher.Disembark(point, anchored: false);
             if (Services.TryGet(out ICameraFollow cam)) cam.SnapToTarget();
             Active = true;
             yield return new WaitForSeconds(holdSeconds);
@@ -524,6 +533,7 @@ namespace Pirates.Controls
 
         void OnDestroy()
         {
+            Autosave.RemoveBlocker(autosaveBlocker);
             if (Active) Release();
         }
     }

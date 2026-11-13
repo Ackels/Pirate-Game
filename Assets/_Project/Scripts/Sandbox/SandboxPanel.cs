@@ -417,9 +417,30 @@ namespace Pirates.Sandbox
         /// <summary>Põe o personagem a ~20 m ao norte do acampamento ou posto, virado para ele (os guardas já te veem).</summary>
         void GoToCamp(EnemyCamp camp)
         {
+            // 20 m em volta do acampamento, começando pela frente dele, num ponto de chão firme do NavMesh (o ponto fixo ao norte caía
+            // no mar nos contrabandistas e o capitão ficava preso na água funda, 09/11).
+            Vector3 center = camp.Center;
             Vector3 entrance = camp.transform.forward;
-            Vector3 pos = camp.Center + entrance * 20f;
-            modes.Character.Teleport(pos, Quaternion.LookRotation(-entrance));
+            Vector3 pos = center + entrance * 20f;
+            float startYaw = Mathf.Atan2(entrance.x, entrance.z) * Mathf.Rad2Deg;
+            bool found = false;
+            foreach (float distance in new[] { 20f, 14f, 9f })
+            {
+                for (int i = 0; i < 16 && !found; i++)
+                {
+                    float yaw = (startYaw + (i % 2 == 0 ? 1 : -1) * ((i + 1) / 2) * 22.5f) * Mathf.Deg2Rad;
+                    var probe = center + new Vector3(Mathf.Sin(yaw), 0f, Mathf.Cos(yaw)) * distance;
+                    if (UnityEngine.AI.NavMesh.SamplePosition(probe, out var hit, 2.5f, UnityEngine.AI.NavMesh.AllAreas) && hit.position.y > 0.4f)
+                    {
+                        pos = hit.position;
+                        found = true;
+                    }
+                }
+                if (found) break;
+            }
+            Vector3 face = center - pos;
+            face.y = 0f;
+            modes.Character.Teleport(pos, Quaternion.LookRotation(face.sqrMagnitude > 0.01f ? face : -entrance));
         }
 
         // ---------- Missões ----------
@@ -605,7 +626,68 @@ namespace Pirates.Sandbox
             if (story.Chapter < story.ChapterCount && GUILayout.Button("Pular capítulo")) story.Restore(story.Chapter + 1, null);
             if (GUILayout.Button("Recomeçar")) story.Begin();
             GUILayout.EndHorizontal();
+            // Ilha Amaldiçoada (pacote H, 06/11): abrir a névoa (capítulo 6), levar o navio até a praia, perder-se na névoa.
+            var fog = CursedFog.Current;
+            if (fog)
+            {
+                GUILayout.Label($"<size=11>Ilha Amaldiçoada: névoa {(fog.IsOpen ? "aberta" : "fechada (abre no capítulo 6)")}.</size>", small);
+                GUILayout.BeginHorizontal();
+                if (!fog.IsOpen && story.ChapterCount >= 6 && GUILayout.Button("Abrir (ir ao capítulo 6)")) story.Restore(5, null);
+                GUI.enabled = modes == null || !modes.IsOnFoot;
+                if (GUILayout.Button("Ir à ilha (navio)")) GoToCursedIsle(fog);
+                if (!fog.IsOpen && GUILayout.Button("Perder-se na névoa")) fog.LoseNow();
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+            // Cerco do altar (pacote H, passo 2): começar, derrubar a onda de agora, voltar todos para a terra.
+            var siege = Pirates.LandCombat.AltarSiege.Current;
+            if (siege)
+            {
+                string s = siege.IsActive ? $"onda {siege.WaveIndex + 1} de {siege.WaveCount}, {siege.Standing} de pé" : siege.IsWon ? "quebrado" : "quieto";
+                GUILayout.Label($"<size=11>Cerco do altar: {s}.</size>", small);
+                GUILayout.BeginHorizontal();
+                if (!siege.IsActive && GUILayout.Button("Começar")) siege.BeginNow();
+                if (siege.IsActive && GUILayout.Button("Derrubar a onda")) siege.ClearWaveNow();
+                if (GUILayout.Button("Mortos para a terra")) siege.ResetNow();
+                GUILayout.EndHorizontal();
+            }
+            // Lázaro Negro (pacote H, passo 3): erguer agora (sem o cerco), enfurecer, sumir.
+            var lazarus = Pirates.LandCombat.LazarusCurse.Current;
+            if (lazarus)
+            {
+                GUILayout.BeginHorizontal();
+                if (!lazarus.IsShown && GUILayout.Button("Lázaro agora")) lazarus.AppearNow();
+                if (lazarus.IsShown && lazarus.Boss && lazarus.Boss.Phase == 1 && GUILayout.Button("Enfurecer Lázaro")) lazarus.Boss.EnrageNow();
+                if (lazarus.IsShown && GUILayout.Button("Sumir com Lázaro")) lazarus.HideNow();
+                GUILayout.EndHorizontal();
+            }
+            // O fim (pacote H, passo 4): rever os quadros do epílogo.
+            if (Pirates.Core.Epilogue.Play != null && GUILayout.Button("Ver o epílogo")) Pirates.Core.Epilogue.Play();
             GUILayout.Space(8f);
+        }
+
+        /// <summary>Navio parado a ~35 m da praia de desembarque da Ilha Amaldiçoada, de proa para ela (névoa fechada: ele se perde).</summary>
+        void GoToCursedIsle(CursedFog fog)
+        {
+            if (!player) return;
+            Pirates.OnFoot.LandingPoint best = null;
+            float bestDistance = float.MaxValue;
+            foreach (var l in FindObjectsByType<Pirates.OnFoot.LandingPoint>(FindObjectsInactive.Exclude))
+            {
+                float d = Vector3.Distance(l.transform.position, fog.transform.position);
+                if (d < bestDistance)
+                {
+                    bestDistance = d;
+                    best = l;
+                }
+            }
+            if (!best) return;
+            Vector3 seaward = best.transform.position - fog.transform.position;
+            seaward.y = 0f;
+            seaward.Normalize();
+            var pos = best.transform.position + seaward * 35f;
+            player.Teleport(new Vector3(pos.x, player.transform.position.y, pos.z), Quaternion.LookRotation(-seaward));
+            if (Services.TryGet(out ICameraFollow cam)) cam.SnapToTarget();
         }
 
         /// <summary>Tutorial (11/10): etapa atual; pular a etapa, recomeçar ou encerrar.</summary>

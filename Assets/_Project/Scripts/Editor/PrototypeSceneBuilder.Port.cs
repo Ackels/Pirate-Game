@@ -142,7 +142,7 @@ namespace Pirates.EditorTools
                 float size = R(0f, 1f);
                 double roll = rng.NextDouble();
                 var v = DeadTreeZone != null && DeadTreeZone(new Vector2(local.x, local.z))
-                    ? roll < 0.75 ? PickVeg(DeadTrees, roll / 0.75) : PickVeg(ForestTrees, (roll - 0.75) / 0.25)
+                    ? roll < DeadTreeShare ? PickVeg(DeadTrees, roll / DeadTreeShare) : PickVeg(ForestTrees, (roll - DeadTreeShare) / (1.0 - DeadTreeShare))
                     : PickVeg(ForestTrees, roll);
                 float scale = Size(v, size);
                 var tree = PlaceVeg(v, root, local + Vector3.down * 0.1f, R(0f, 360f), scale, $"Arvore_{k}");
@@ -481,7 +481,7 @@ namespace Pirates.EditorTools
             const float length = 16f;
             const float scale = 1.6f;   // peças de 2,5 m → 4 m
             for (int k = 0; k < 4; k++)
-                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - 1.31f * scale, 2f + k * 4f), 0f, scale, $"Tabuas_{k}");
+                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - DockDeckTop * scale, 2f + k * 4f), 0f, scale, $"Tabuas_{k}");
             var collider = pier.gameObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(0f, 1.05f, length * 0.5f);
             collider.size = new Vector3(4f, 0.4f, length);

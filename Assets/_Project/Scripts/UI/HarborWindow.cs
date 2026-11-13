@@ -21,7 +21,7 @@ namespace Pirates.UI
     /// </summary>
     class HarborWindow
     {
-        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy, Kitchen }
+        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy, Kitchen, Drinks }
 
         const string Bad = "#a8321f", Good = "#2f7a2a";
 
@@ -59,6 +59,8 @@ namespace Pirates.UI
             HarborService.Missions => "marinheiros e quadro de missões",
             HarborService.Market => "comprar e vender",
             HarborService.Smithy => "munições especiais",
+            HarborService.TavernBar => "cozinha e bebidas",
+            HarborService.TavernCrew => "marinheiros e salário",
             _ => "carga do porão",
         };
 
@@ -91,7 +93,7 @@ namespace Pirates.UI
 
             if (house)
             {
-                window.SetTitle(house.DisplayName, ServiceName(house.Service));
+                window.SetTitle(house.DisplayName, string.IsNullOrEmpty(house.Purpose) ? ServiceName(house.Service) : house.Purpose);
                 switch (house.Service)
                 {
                     case HarborService.Cargo:
@@ -113,6 +115,31 @@ namespace Pirates.UI
                     case HarborService.Smithy:
                         AddSmithy(body, dock);
                         break;
+                    // Interior da taverna (13/11): cada canto com a sua parte.
+                    case HarborService.TavernBar:
+                    {
+                        // Balcão (13/11): bebidas (rodada e boatos) e a cozinha.
+                        bool cooks = dock.Settings && dock.Settings.kitchen.Length > 0;
+                        if (tab != Tab.Kitchen || !cooks) tab = Tab.Drinks;
+                        if (cooks)
+                        {
+                            var barTabs = Hud.Row("hud-tabs");
+                            body.Add(barTabs);
+                            AddTab(barTabs, Tab.Drinks, "Bebidas");
+                            AddTab(barTabs, Tab.Kitchen, "Cozinha");
+                        }
+                        if (tab == Tab.Kitchen) AddKitchen(body, dock);
+                        else AddDrinks(body, dock);
+                        break;
+                    }
+                    case HarborService.TavernCrew:
+                        AddRecruit(body);
+                        AddWages(body);
+                        break;
+                    case HarborService.Missions when TavernHasInterior():
+                        if (board) AddMissions(body, board, dock.Warehouse);
+                        else Win.Text(body, "nenhum contrato neste porto", "hud-window__empty");
+                        break;
                     default:
                         // Taverna: contratos e marinheiros, ou a cozinha (D2, 30/10: pratos de peixe com bônus).
                         bool kitchen = dock.Settings && dock.Settings.kitchen.Length > 0;
@@ -130,6 +157,7 @@ namespace Pirates.UI
                             break;
                         }
                         AddRecruit(body);
+                        AddWages(body);
                         if (board) AddMissions(body, board, dock.Warehouse);
                         else Win.Text(body, "nenhum contrato neste porto", "hud-window__empty");
                         break;
@@ -176,11 +204,20 @@ namespace Pirates.UI
                     AddCargo(body, dock);
                     AddRepair(body, dock.Settings);
                     AddRecruit(body);
+                    AddWages(body);   // cena 05: não há taverna, o salário fica junto da tripulação
                     footer.Add(Win.Button("Descarregar tudo", visitor.UnloadAll));
                     break;
             }
             Win.Spacer(footer);
             footer.Add(Win.Button("Desatracar  <b>[F]</b>", visitor.Close));
+        }
+
+        /// <summary>A taverna tem o interior (13/11): o quadro só mostra os contratos (cozinha no balcão, marinheiros na mesa do contramestre).</summary>
+        static bool TavernHasInterior()
+        {
+            for (int i = 0; i < HarborBuilding.Active.Count; i++)
+                if (HarborBuilding.Active[i].Service == HarborService.TavernBar) return true;
+            return false;
         }
 
         void AddTab(VisualElement bar, Tab which, string text)
@@ -519,7 +556,7 @@ namespace Pirates.UI
                 var job = dock.Job;
                 if (job == null)
                 {
-                    Win.Text(b, $"<b>Estaleiro livre</b>   <size=85%>(uma obra por vez; trabalhadores {dock.BuildSpeed:0.##}×)</size>", "hud-window__small");
+                    Win.Text(b, "<b>Estaleiro livre</b>   <size=85%>(uma obra por vez)</size>", "hud-window__small");
                     return;
                 }
                 var row = Win.Row(b);
@@ -541,19 +578,16 @@ namespace Pirates.UI
                     if (!upgrade) continue;
                     int level = upgrades.Level(upgrade);
                     var next = upgrades.NextLevel(upgrade);
+                    // Sem a descrição (13/11, pedido do Jhonata: informação demais para quem joga); o efeito de agora → o próximo basta.
                     var card = WorkCard(grid, null, upgrade.displayName, level, upgrade.MaxLevel,
-                        upgrades.EffectText(upgrade, false), next != null ? upgrades.EffectText(upgrade, true) : null, upgrade.description);
+                        upgrades.EffectText(upgrade, false), next != null ? upgrades.EffectText(upgrade, true) : null, null);
                     if (next == null) continue;
-                    if (next.requiredBuilding && !(dock.Buildings && dock.Buildings.Level(next.requiredBuilding) >= next.requiredBuildingLevel))
-                        card.Add(Hud.Text($"precisa de {next.requiredBuilding.displayName}{(next.requiredBuildingLevel > 1 ? $" nível {next.requiredBuildingLevel}" : "")} na base",
-                            "hud-work__needs"));
-                    var bottom = Win.Row(card, "hud-work__bottom");
-                    bottom.Add(CostChips(upgrades.NextCost(upgrade), next.crewRequired));
-                    Win.Spacer(bottom);
+                    var (costs, buttons) = BuyArea(card);
+                    AddCostChips(costs, upgrades.NextCost(upgrade), next.crewRequired);
                     string reason = visitor.BuyBlockReason(upgrade);
                     string buy = $"Nível {level + 1}  <size=80%>({Win.Time(upgrades.NextBuildSeconds(upgrade) / dock.BuildSpeed)})</size>";
                     int nextLevel = level + 1;
-                    bottom.Add(Win.Button(reason ?? buy, () =>
+                    buttons.Add(Win.Button(reason ?? buy, () =>
                     {
                         if (visitor.BuyUpgrade(upgrade)) Feed($"Obra encomendada: {upgrade.displayName} nível {nextLevel}");
                     }, reason == null, "hud-button--small"));
@@ -589,52 +623,20 @@ namespace Pirates.UI
                 var top = Win.Row(card);
                 top.Add(Hud.Text($"<b>Navio novo: {target.displayName}</b>", "hud-window__label"));
                 top.Add(Hud.Text($"substitui o seu navio ({mine.displayName})", "hud-window__small", "hud-grow", "hud-align-right"));
-                Win.Text(card, $"<i>{target.description}</i>", "hud-window__small", "hud-window__muted");
+                // Curto (13/11, pedido do Jhonata): o que muda de verdade e o aviso dos upgrades; o que falta fica no botão.
                 Win.Text(card, Compare(mine, target), "hud-window__small");
-                Win.Text(card, $"<color={Bad}>Os upgrades voltam ao nível 0 no navio novo</color>: compre de novo. {UpgradeBonusText(target)}",
-                    "hud-window__small");
-                var bottom = Win.Row(card, "hud-work__bottom");
-                var needs = Hud.Row("hud-costs");
-                if (target.schematic) needs.Add(CostChip(target.schematic, 1, visitor.HasSchematic(target.schematic) ? 1 : 0, "esquema"));
-                if (target.requiredBuilding)
-                {
-                    bool built = dock.Buildings && dock.Buildings.Has(target.requiredBuilding);
-                    needs.Add(Hud.Text(built ? $"<color={Good}>{target.requiredBuilding.displayName} ✓</color>"
-                        : $"<color={Bad}>precisa de {target.requiredBuilding.displayName}</color>", "hud-cost__label"));
-                }
-                bottom.Add(needs);
-                bottom.Add(CostChips(target.cost, 0));
-                Win.Spacer(bottom);
+                Win.Text(card, $"<color={Bad}>Os upgrades do navio voltam ao nível 0.</color>", "hud-window__small");
+                var (costs, buttons) = BuyArea(card);
+                if (target.schematic) costs.Add(CostChip(target.schematic, 1, visitor.HasSchematic(target.schematic) ? 1 : 0, "esquema"));
+                AddCostChips(costs, target.cost, 0);
                 string reason = visitor.ShipBlockReason(target);
                 string buy = $"Construir  <size=80%>({Win.Time(target.buildSeconds / dock.BuildSpeed)})</size>";
                 var t = target;
-                bottom.Add(Win.Button(reason ?? buy, () =>
+                buttons.Add(Win.Button(reason ?? buy, () =>
                 {
                     if (visitor.BuyShip(t)) Feed($"Obra encomendada: {t.displayName}");
                 }, reason == null, "hud-button--small"));
             }
-        }
-
-        /// <summary>"Nele rendem mais: casco, velocidade e recarga ×1,2." (só os tipos com multiplicador diferente de 1, e o custo).</summary>
-        static string UpgradeBonusText(ShipClassDefinition c)
-        {
-            var groups = new Dictionary<float, List<string>>();
-            void Add(string name, float m)
-            {
-                if (Mathf.Approximately(m, 1f)) return;
-                if (!groups.TryGetValue(m, out var list)) groups[m] = list = new List<string>();
-                list.Add(name);
-            }
-            Add("casco", c.hullUpgradeMultiplier);
-            Add("dano", c.damageUpgradeMultiplier);
-            Add("velocidade", c.speedUpgradeMultiplier);
-            Add("recarga", c.reloadUpgradeMultiplier);
-            Add("mira", c.aimUpgradeMultiplier);
-            var parts = new List<string>();
-            foreach (var (m, names) in groups) parts.Add($"{string.Join(", ", names)} ×{m:0.##}");
-            string text = parts.Count > 0 ? $"Nele rendem mais: {string.Join("; ", parts)}." : "Nele rendem o mesmo que na chalupa.";
-            if (!Mathf.Approximately(c.upgradeCostMultiplier, 1f)) text += $" Custam ×{c.upgradeCostMultiplier:0.##}.";
-            return text;
         }
 
         /// <summary>"casco 150 → 260 · canhões 4 → 6 por bordo · ..." (valores base, sem upgrades).</summary>
@@ -643,12 +645,7 @@ namespace Pirates.UI
             var parts = new List<string> { $"casco {from.hullMax:0} → <b>{to.hullMax:0}</b>" };
             if (from.cannons && to.cannons) parts.Add($"canhões {from.cannons.cannonsPerSide} → <b>{to.cannons.cannonsPerSide}</b> por bordo");
             parts.Add($"porão {from.holdCapacity:0} → <b>{to.holdCapacity:0}</b>");
-            parts.Add($"beliches {from.crewBerths} → <b>{to.crewBerths}</b>");
-            if (from.stats && to.stats)
-            {
-                parts.Add($"velocidade {from.stats.maxSpeed:0.#} → <b>{to.stats.maxSpeed:0.#}</b>");
-                parts.Add($"giro {from.stats.turnRate:0} → <b>{to.stats.turnRate:0}</b>°/s");
-            }
+            parts.Add($"tripulação {from.crewBerths} → <b>{to.crewBerths}</b>");
             return string.Join("  ·  ", parts);
         }
 
@@ -665,7 +662,7 @@ namespace Pirates.UI
                 var job = buildings.Job;
                 if (job == null)
                 {
-                    Win.Text(b, $"<b>Obras da base livres</b>   <size=85%>(uma por vez; continuam mesmo com o navio longe; trabalhadores {buildings.WorkerSpeed:0.##}×)</size>",
+                    Win.Text(b, "<b>Obras da base livres</b>   <size=85%>(uma por vez, mesmo com o navio longe)</size>",
                         "hud-window__small");
                     return;
                 }
@@ -686,17 +683,16 @@ namespace Pirates.UI
                     int level = buildings.Level(b);
                     var next = buildings.NextLevel(b);
                     var card = WorkCard(grid, b.schematic, b.displayName, level, b.MaxLevel,
-                        level > 0 ? buildings.EffectText(b, false) : "não construído", next != null ? buildings.EffectText(b, true) : null, b.description);
+                        level > 0 ? buildings.EffectText(b, false) : "não construído", next != null ? buildings.EffectText(b, true) : null, null);
                     if (next == null) continue;
-                    var bottom = Win.Row(card, "hud-work__bottom");
-                    if (b.schematic && level == 0) bottom.Add(CostChip(b.schematic, 1, visitor.HasSchematic(b.schematic) ? 1 : 0, "esquema"));
-                    bottom.Add(CostChips(next.cost, 0));
-                    Win.Spacer(bottom);
+                    var (costs, buttons) = BuyArea(card);
+                    if (b.schematic && level == 0) costs.Add(CostChip(b.schematic, 1, visitor.HasSchematic(b.schematic) ? 1 : 0, "esquema"));
+                    AddCostChips(costs, next.cost, 0);
                     string reason = visitor.BuildingBlockReason(b);
                     string buy = $"{(level == 0 ? "Construir" : $"Nível {level + 1}")}  <size=80%>({Win.Time(next.buildSeconds / buildings.WorkerSpeed)})</size>";
                     int nextLevel = level + 1;
                     var target = b;
-                    bottom.Add(Win.Button(reason ?? buy, () =>
+                    buttons.Add(Win.Button(reason ?? buy, () =>
                     {
                         if (visitor.BuyBuilding(target)) Feed($"Obra iniciada: {target.displayName} nível {nextLevel}");
                     }, reason == null, "hud-button--small"));
@@ -741,6 +737,42 @@ namespace Pirates.UI
                 RecruitButton(buttons, 1, settings);
                 if (can > 5) RecruitButton(buttons, 5, settings);
                 if (can > 1) RecruitButton(buttons, can, settings, can < crew.FreeBerths ? null : $"Encher os beliches ({can})");
+            });
+        }
+
+        /// <summary>
+        /// Salário da tripulação (12/11, pago na taverna a pedido do Jhonata): moral, quanto custa cada pagamento, quando é o próximo, o que
+        /// está devido e o botão de pagar (armazém, depois porão).
+        /// </summary>
+        void AddWages(VisualElement body)
+        {
+            var wages = CrewWages.Current;
+            if (!wages) return;
+            var box = Win.Section(body);
+            window.AddPane(box, () => Win.Mix(Win.Mix(Mathf.CeilToInt(wages.Debt), Mathf.RoundToInt(wages.Morale * 100f)),
+                Win.Mix(Mathf.CeilToInt(wages.HoursToPayday), wages.CrewCount * 7919 + wages.GoldAvailable)), b =>
+            {
+                // Uma linha só (a taverna já tem tripulação e contratos: duas linhas espremiam a lista das missões).
+                var row = Win.Row(b);
+                int each = wages.CrewCount * wages.WagePerCrew, debt = Mathf.CeilToInt(wages.Debt);
+                float hours = wages.HoursToPayday;
+                string moraleText = wages.Morale < 0.5f ? $"<color=#b03020>moral {wages.Morale * 100f:0}%</color>" : $"moral {wages.Morale * 100f:0}%";
+                row.Add(Hud.Text($"<b>Salário</b>  {wages.CrewCount} × {wages.WagePerCrew} = {each} de ouro a cada {wages.PayEveryDays:0} dias · "
+                    + $"próximo em ~{Mathf.CeilToInt(hours * 50f / 60f)} min · {moraleText}", "hud-window__small"));
+                Win.Spacer(row);
+                if (debt <= 0)
+                {
+                    row.Add(Hud.Text("em dia", "hud-window__small", "hud-window__muted"));
+                    return;
+                }
+                row.Add(Hud.Text(wages.Late ? $"<color=#b03020><b>atrasado: {debt}</b></color>" : $"<b>devido: {debt}</b>", "hud-window__small"));
+                int have = wages.GoldAvailable;
+                if (have <= 0) row.Add(Hud.Text("sem ouro", "hud-market__blocked"));
+                else row.Add(Win.Button(have >= debt ? $"Pagar {debt}" : $"Pagar {have}", () =>
+                {
+                    int paid = wages.PayNow();
+                    if (paid > 0) Feed($"Salário pago: {paid} de ouro" + (wages.Debt > 0f ? $" · ainda deve {Mathf.CeilToInt(wages.Debt)}" : ""));
+                }, extraClass: "hud-button--small"));
             });
         }
 
@@ -920,8 +952,7 @@ namespace Pirates.UI
             window.AddPane(summary, StockSignature, b =>
             {
                 StockChips(b, false);
-                Win.Text(b, "<size=85%>Encomende e volte para retirar: o ferreiro trabalha mesmo com você no mar. No mar: <b>1</b> bala comum, " +
-                            "<b>2</b> corrente, <b>3</b> metralha; cada bordada gasta uma carga.</size>", "hud-window__small", "hud-window__muted");
+                Win.Text(b, "<size=85%>Encomende e volte para retirar: o ferreiro trabalha mesmo com você no mar.</size>", "hud-window__small", "hud-window__muted");
             });
 
             var orderBox = Win.Column(body, "hud-window__summary");
@@ -945,11 +976,9 @@ namespace Pirates.UI
                     top.Add(info);
                     info.Add(Hud.Text($"<b>{item.displayName}</b>{(r.result.amount > 1 ? $"  <size=85%>×{r.result.amount} por receita</size>" : "")}", "hud-work__name"));
                     info.Add(Hud.Text($"no porão: <b>{visitor.Hold.Count(item)}</b>   ·   {Win.Time(visitor.CraftSeconds(r, 1))} de forja", "hud-market__sub"));
-                    if (!string.IsNullOrEmpty(item.description))
-                        card.Add(Hud.Text($"<i>{item.description}</i>", "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
-                    var bottom = Win.Row(card, "hud-work__bottom");
-                    bottom.Add(CostChips(r.cost, 0));
-                    Win.Spacer(bottom);
+                    // Sem a descrição (13/11, como o estaleiro e o mestre de obras: o que sai, o custo e o botão).
+                    var (costs, bottom) = BuyArea(card);
+                    AddCostChips(costs, r.cost, 0);
                     string reason = visitor.CraftBlockReason(r);
                     int max = visitor.MaxCraft(r);
                     if (reason != null)
@@ -1015,6 +1044,162 @@ namespace Pirates.UI
                     if (max > 1) bottom.Add(Win.Button($"{max}", () => Cooked(visitor.Cook(r, max), r), true, "hud-button--small"));
                 }
             });
+        }
+
+        // ---------- Bebidas no balcão (13/11) ----------
+
+        const int RumorPrice = 15;
+        const int MugPrice = 2;
+
+        /// <summary>
+        /// Bebidas no balcão da taverna (13/11, pedido do Jhonata): <b>rodada para a tripulação</b> (ouro por tripulante a bordo: a moral sobe e
+        /// não cai por um dia de jogo, mesmo com o salário atrasado) e <b>grogue com um boato</b> (o taverneiro conta onde fica um lugar do
+        /// mar que a carta ainda não tem e ele é marcado na carta, tecla M).
+        /// </summary>
+        void AddDrinks(VisualElement body, HarborDock dock)
+        {
+            var wages = CrewWages.Current;
+            var chart = Pirates.Controls.SeaChart.Current;
+            var summary = Win.Column(body, "hud-window__summary");
+            window.AddPane(summary, StockSignature, b =>
+            {
+                StockChips(b, false);
+                Win.Text(b, "<size=85%>O taverneiro serve a sua tripulação e conhece todos os boatos do porto. Paga-se com o ouro do armazém e do porão.</size>",
+                    "hud-window__small", "hud-window__muted");
+            });
+            var scroll = Win.Scroll(body);
+            window.AddPane(scroll, () => Win.Mix(Win.Mix(StockSignature(), wages ? Mathf.CeilToInt(wages.CheerHoursLeft) * 131 + wages.CrewCount : 0),
+                Win.Mix(wages ? Mathf.RoundToInt(wages.Morale * 100f) : 0, chart ? chart.Version * 977 + UnknownPlaces(chart) : 0)), list =>
+            {
+                var grid = Hud.Box("hud-cards");
+                list.Add(grid);
+                var goldItem = wages ? wages.Gold : null;
+                var rum = MarketItem(dock, "Item_Rum");
+
+                // Uma caneca no balcão: o capitão senta e fica ali, ouvindo a taverna (13/11).
+                var seat = Pirates.Controls.BarSeat.Active.Count > 0 ? Pirates.Controls.BarSeat.Active[0] : null;
+                if (seat && wages)
+                {
+                    var card = Win.Section(grid, "hud-cards__card");
+                    var top = Win.Row(card, "hud-work__top");
+                    top.Add(Win.Icon(rum ? rum : goldItem, "hud-item__slot--big"));
+                    var info = Hud.Box("hud-work__info");
+                    top.Add(info);
+                    info.Add(Hud.Text("<b>Uma caneca de rum</b>", "hud-work__name"));
+                    info.Add(Hud.Text("para o capitão", "hud-market__sub"));
+                    card.Add(Hud.Text("senta no balcão e fica ali, ouvindo a taverna: <b>F</b>, <b>Esc</b> ou andar levantam", "hud-work__effect"));
+                    card.Add(Hud.Text("<i>Até capitão precisa de um descanso entre uma batalha e outra.</i>",
+                        "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    if (goldItem) bottom.Add(CostChip(goldItem, MugPrice, wages.GoldAvailable));
+                    Win.Spacer(bottom);
+                    if (wages.GoldAvailable < MugPrice) bottom.Add(Hud.Text($"faltam {MugPrice - wages.GoldAvailable} de ouro", "hud-market__blocked"));
+                    else bottom.Add(Win.Button("Sentar e beber", () =>
+                    {
+                        if (!wages.Spend(MugPrice)) return;
+                        building.Close();
+                        if (!seat.Sit()) Feed("Não deu para sentar agora");
+                    }, true, "hud-button--small"));
+                }
+
+                // Rodada para a tripulação.
+                if (wages)
+                {
+                    var card = Win.Section(grid, "hud-cards__card");
+                    var top = Win.Row(card, "hud-work__top");
+                    top.Add(Win.Icon(rum ? rum : goldItem, "hud-item__slot--big"));
+                    var info = Hud.Box("hud-work__info");
+                    top.Add(info);
+                    info.Add(Hud.Text("<b>Rodada para a tripulação</b>", "hud-work__name"));
+                    info.Add(Hud.Text($"{wages.CrewCount} a bordo · moral {wages.Morale * 100f:0}%", "hud-market__sub"));
+                    card.Add(Hud.Text($"moral +{wages.RoundMorale * 100f:0}% e a moral não cai por ~{Mathf.RoundToInt(wages.RoundCheerHours * 50f / 60f)} min (um dia de jogo), " +
+                                      "mesmo com o salário atrasado", "hud-work__effect"));
+                    card.Add(Hud.Text("<i>Rum para todo mundo, por conta do capitão. Marujo bem servido não fala em deserção.</i>",
+                        "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    if (goldItem && wages.CrewCount > 0) bottom.Add(CostChip(goldItem, wages.RoundCost, wages.GoldAvailable));
+                    Win.Spacer(bottom);
+                    string reason = wages.RoundBlockReason();
+                    if (reason != null) bottom.Add(Hud.Text(reason, "hud-market__blocked"));
+                    else bottom.Add(Win.Button("Pagar a rodada", () =>
+                    {
+                        if (wages.BuyRound()) Feed($"Rodada para a tripulação! Moral {wages.Morale * 100f:0}%");
+                    }, true, "hud-button--small"));
+                }
+
+                // Grogue com um boato.
+                if (chart)
+                {
+                    var card = Win.Section(grid, "hud-cards__card");
+                    var top = Win.Row(card, "hud-work__top");
+                    var mapPiece = MarketItem(dock, "Item_PedacoMapa");
+                    top.Add(Win.Icon(mapPiece ? mapPiece : rum ? rum : goldItem, "hud-item__slot--big"));
+                    var info = Hud.Box("hud-work__info");
+                    top.Add(info);
+                    info.Add(Hud.Text("<b>Grogue com um boato</b>", "hud-work__name"));
+                    int unknown = UnknownPlaces(chart);
+                    info.Add(Hud.Text(unknown > 0 ? $"{unknown} lugares fora da sua carta" : "a sua carta já tem tudo", "hud-market__sub"));
+                    card.Add(Hud.Text("o taverneiro conta onde fica um lugar do mar que você não conhece: fica marcado na carta (M)", "hud-work__effect"));
+                    card.Add(Hud.Text("<i>Um grogue solta a língua de qualquer taverneiro.</i>",
+                        "hud-window__small", "hud-window__muted", "hud-window__text", "hud-market__desc"));
+                    var bottom = Win.Row(card, "hud-work__bottom");
+                    int have = wages ? wages.GoldAvailable : 0;
+                    if (goldItem) bottom.Add(CostChip(goldItem, RumorPrice, have));
+                    Win.Spacer(bottom);
+                    var place = NextRumor(chart, dock.transform.position);
+                    if (!wages) bottom.Add(Hud.Text("o taverneiro não está", "hud-market__blocked"));
+                    else if (place == null) bottom.Add(Hud.Text("você já ouviu todos os boatos", "hud-market__blocked"));
+                    else if (have < RumorPrice) bottom.Add(Hud.Text($"faltam {RumorPrice - have} de ouro", "hud-market__blocked"));
+                    else bottom.Add(Win.Button("Pedir um grogue", () =>
+                    {
+                        if (!wages.Spend(RumorPrice)) return;
+                        Feed(RumorLine(place, dock.transform.position));
+                        chart.Discover(place);
+                    }, true, "hud-button--small"));
+                }
+            });
+        }
+
+        static ItemDefinition MarketItem(HarborDock dock, string assetName)
+        {
+            if (!dock || !dock.Settings) return null;
+            foreach (var e in dock.Settings.market)
+                if (e != null && e.item && e.item.name == assetName) return e.item;
+            return null;
+        }
+
+        static int UnknownPlaces(Pirates.Controls.SeaChart chart)
+        {
+            int n = 0;
+            foreach (var p in chart.Places) if (p != null && !chart.IsKnown(p)) n++;
+            return n;
+        }
+
+        /// <summary>O boato seguinte: o lugar desconhecido mais perto do porto (as ilhas antes dos covis).</summary>
+        static Pirates.Controls.SeaChart.Place NextRumor(Pirates.Controls.SeaChart chart, Vector3 from)
+        {
+            Pirates.Controls.SeaChart.Place best = null;
+            float bestScore = float.MaxValue;
+            foreach (var p in chart.Places)
+            {
+                if (p == null || chart.IsKnown(p)) continue;
+                float score = Vector2.Distance(new Vector2(p.position.x, p.position.z), new Vector2(from.x, from.z))
+                              + (p.kind == Pirates.Controls.SeaChart.PlaceKind.Lair ? 2000f : 0f);
+                if (score < bestScore) { bestScore = score; best = p; }
+            }
+            return best;
+        }
+
+        static string RumorLine(Pirates.Controls.SeaChart.Place p, Vector3 from)
+        {
+            float dx = p.position.x - from.x, dz = p.position.z - from.z;
+            float ang = Mathf.Repeat(Mathf.Atan2(dx, dz) * Mathf.Rad2Deg, 360f);
+            string[] dirs = { "ao norte", "a nordeste", "a leste", "a sudeste", "ao sul", "a sudoeste", "a oeste", "a noroeste" };
+            string dir = dirs[Mathf.RoundToInt(ang / 45f) % 8];
+            int dist = Mathf.RoundToInt(Mathf.Sqrt(dx * dx + dz * dz) / 50f) * 50;
+            return p.kind == Pirates.Controls.SeaChart.PlaceKind.Lair
+                ? $"Taverneiro: \"Não navegue {dir} do porto, a uns {dist} m. Chamam aquilo de {p.name}, e ninguém volta inteiro.\" (marcado na carta, M)"
+                : $"Taverneiro: \"Uns pescadores juraram ter visto terra {dir} do porto, a uns {dist} m: {p.name}.\" (marcado na carta, M)";
         }
 
         void Cooked(int times, HarborSettings.Recipe recipe)
@@ -1112,7 +1297,9 @@ namespace Pirates.UI
             });
 
             var right = Win.Column(columns);
-            window.AddPane(right, () => MissionsSignature(board), col =>
+            // Rola (12/11): com 3 contratos e a tripulação/salário em cima, os cartões se espremiam um por cima do outro.
+            var rightScroll = Win.Scroll(right);
+            window.AddPane(rightScroll.contentContainer, () => MissionsSignature(board), col =>
             {
                 Win.Text(col, $"Suas missões   <size=85%>({board.Active.Count}/{board.MaxActive})</size>", "hud-window__subtitle-strong");
                 if (board.Active.Count == 0) Win.Text(col, "nenhuma: aceite um contrato no quadro", "hud-window__empty");
@@ -1218,11 +1405,31 @@ namespace Pirates.UI
         VisualElement CostChips(ItemStack[] cost, int crewRequired)
         {
             var row = Hud.Row("hud-costs");
+            AddCostChips(row, cost, crewRequired);
+            return row;
+        }
+
+        void AddCostChips(VisualElement row, ItemStack[] cost, int crewRequired)
+        {
             foreach (var c in cost)
                 if (c.item) row.Add(CostChip(c.item, c.amount, visitor.Available(c.item)));
             var crewItem = visitor.Crew ? visitor.Crew.CrewItem : null;
             if (crewRequired > 0 && crewItem) row.Add(CostChip(crewItem, crewRequired, visitor.CrewAboard, "a bordo"));
-            return row;
+        }
+
+        /// <summary>
+        /// Rodapé dos cartões de obra (13/11): as fichas do custo numa linha só, que quebra pela largura do cartão, e o botão embaixo, à
+        /// direita. Com as fichas numa caixa dentro de uma linha que também quebra, o UI Toolkit errava a altura e elas vazavam do cartão.
+        /// </summary>
+        static (VisualElement costs, VisualElement buttons) BuyArea(VisualElement card)
+        {
+            var area = Hud.Box("hud-work__buy");
+            card.Add(area);
+            var costs = Hud.Box("hud-costs");
+            area.Add(costs);
+            var buttons = Hud.Box("hud-work__buttons");
+            area.Add(buttons);
+            return (costs, buttons);
         }
 
         static VisualElement CostChip(ItemDefinition item, int amount, int have, string label = null)
@@ -1246,10 +1453,11 @@ namespace Pirates.UI
         /// <summary>"Você tem": os recursos (ouro, madeira, pólvora, ferro) do armazém + porão em fichas; tripulantes a bordo, se pedido.</summary>
         void StockChips(VisualElement parent, bool crew)
         {
-            var row = Win.Row(parent, "hud-work__stock");
-            row.Add(Hud.Text("Você tem", "hud-cost__label"));
-            var chips = Hud.Row("hud-costs");
-            row.Add(chips);
+            // Uma linha só que quebra (13/11): "Você tem" e as fichas juntos. Com as fichas numa caixa dentro da linha, a segunda
+            // linha de fichas passava por cima do título.
+            var chips = Hud.Box("hud-costs", "hud-work__stock");
+            parent.Add(chips);
+            chips.Add(Hud.Text("Você tem", "hud-cost__label"));
             var seen = new HashSet<ItemDefinition>();
             foreach (var inventory in new[] { visitor.Current.Warehouse, visitor.Hold })
             {

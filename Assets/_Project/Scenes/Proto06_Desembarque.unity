@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.64, g: 0.75, b: 0.83, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.0022
+  m_FogDensity: 0.0034
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -630,6 +630,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -7574,8 +7575,8 @@ Transform:
   m_GameObject: {fileID: 43928335}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -0, y: -0, z: -0.095}
-  m_LocalScale: {x: 0.95, y: 0.95, z: 0.95}
+  m_LocalPosition: {x: -0, y: -0, z: -0.115}
+  m_LocalScale: {x: 1.15, y: 1.15, z: 1.15}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1609593212}
@@ -23333,6 +23334,8 @@ GameObject:
   - component: {fileID: 130141971}
   - component: {fileID: 130141970}
   - component: {fileID: 130141980}
+  - component: {fileID: 130141981}
+  - component: {fileID: 130141982}
   m_Layer: 0
   m_Name: GameHUD
   m_TagString: Untagged
@@ -23503,6 +23506,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Pirates.UI::Pirates.UI.GameCursor
   cursor: {fileID: 2800000, guid: 88d535f51e862fc49938c9ed13daa241, type: 3}
   hotspot: {x: 1, y: 1}
+--- !u!114 &130141981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130141969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f7b887b72e364c82f2dcd4d08460f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.UI::Pirates.UI.ShipSunkHUD
+  delay: 3
+--- !u!114 &130141982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130141969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 089e439d7c3e7944fb5c93c870855f64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.UI::Pirates.UI.TipsHUD
 --- !u!1 &130261443
 GameObject:
   m_ObjectHideFlags: 0
@@ -28647,7 +28675,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 2000
+  far clip plane: 1200
   field of view: 45
   orthographic: 0
   orthographic size: 5
@@ -34631,6 +34659,7 @@ MonoBehaviour:
   kegs: []
   sleepDistance: 180
   wakeDistance: 160
+  hiddenFromHud: 0
 --- !u!4 &200983840
 Transform:
   m_ObjectHideFlags: 0
@@ -37651,96 +37680,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218320797}
   m_Mesh: {fileID: 2163022072983001361, guid: e994f596a01c7da449a67285fc4afbf8, type: 3}
---- !u!1 &218327104
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 218327105}
-  - component: {fileID: 218327107}
-  - component: {fileID: 218327106}
-  m_Layer: 0
-  m_Name: Papagaio
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &218327105
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218327104}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.3205496, y: 0.48120505, z: 0.34611753, w: 0.7388453}
-  m_LocalPosition: {x: -0.0022782553, y: 0.004096008, z: 0.0006442337}
-  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 930680889348277895}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &218327106
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218327104}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d77e9e73335fa134fabfb30d199a2322, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &218327107
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218327104}
-  m_Mesh: {fileID: 4300000, guid: f3e1a98d3da33a24b8df228738a8117b, type: 2}
 --- !u!1 &219784186
 GameObject:
   m_ObjectHideFlags: 0
@@ -43592,6 +43531,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -68521,6 +68461,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -82952,6 +82893,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -94374,6 +94316,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -104607,6 +104550,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 300
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -118305,6 +118249,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -133328,6 +133273,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -134073,6 +134019,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -137992,6 +137939,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -151482,6 +151430,7 @@ MonoBehaviour:
   - {fileID: 67261634}
   sleepDistance: 180
   wakeDistance: 160
+  hiddenFromHud: 0
 --- !u!4 &874863805
 Transform:
   m_ObjectHideFlags: 0
@@ -155859,6 +155808,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -157555,6 +157505,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -158712,6 +158663,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -162799,6 +162751,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -171923,6 +171876,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -181591,6 +181545,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 260
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -194037,6 +193992,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -196489,6 +196445,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -207568,6 +207525,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -219798,6 +219756,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -228643,7 +228602,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 629494231}
-  - {fileID: 1656329650}
   m_Father: {fileID: 499714328}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1320187030
@@ -229686,6 +229644,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -242370,6 +242329,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -252331,6 +252291,7 @@ MonoBehaviour:
   kegs: []
   sleepDistance: 180
   wakeDistance: 160
+  hiddenFromHud: 0
 --- !u!114 &1443727632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252358,6 +252319,9 @@ MonoBehaviour:
   crumbleDelay: 0.6
   reviveSeconds: 2.5
   reviveHealth: 0.7
+  anyHour: 0
+  resetRadius: 0
+  publishCleared: 1
 --- !u!4 &1443727633
 Transform:
   m_ObjectHideFlags: 0
@@ -253237,6 +253201,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -255726,6 +255691,7 @@ MonoBehaviour:
   kegs: []
   sleepDistance: 180
   wakeDistance: 160
+  hiddenFromHud: 0
 --- !u!4 &1465619533
 Transform:
   m_ObjectHideFlags: 0
@@ -268124,6 +268090,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -270669,6 +270636,7 @@ MonoBehaviour:
   kegs: []
   sleepDistance: 180
   wakeDistance: 160
+  hiddenFromHud: 0
 --- !u!4 &1574491068
 Transform:
   m_ObjectHideFlags: 0
@@ -278776,6 +278744,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -280363,6 +280332,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -284512,96 +284482,6 @@ Transform:
   - {fileID: 1636890707}
   m_Father: {fileID: 244658761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1656329649
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1656329650}
-  - component: {fileID: 1656329652}
-  - component: {fileID: 1656329651}
-  m_Layer: 0
-  m_Name: Papagaio
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1656329650
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656329649}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.3205496, y: 0.48120505, z: 0.34611753, w: 0.7388453}
-  m_LocalPosition: {x: -0.0022782553, y: 0.004096008, z: 0.0006442337}
-  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1319263459}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1656329651
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656329649}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d77e9e73335fa134fabfb30d199a2322, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1656329652
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1656329649}
-  m_Mesh: {fileID: 4300000, guid: f3e1a98d3da33a24b8df228738a8117b, type: 2}
 --- !u!1 &1656727809
 GameObject:
   m_ObjectHideFlags: 0
@@ -297318,6 +297198,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -309502,6 +309383,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -317381,6 +317263,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -320773,6 +320656,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -338322,6 +338206,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -344243,6 +344128,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -347482,6 +347368,7 @@ MonoBehaviour:
   followTarget: {fileID: 171010882}
   resolution: 128
   size: 500
+  farReach: 1500
   shoreMap: {fileID: 2800000, guid: 03d99cdd43848e04b8a29cf555f48b71, type: 2}
   shoreRect: {x: -217.92, y: -392.56, z: 435.84, w: 381.36}
   shoreEncoding: {x: -6, y: 8, z: 64}
@@ -349739,6 +349626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2039341013}
   - component: {fileID: 2039341012}
+  - component: {fileID: 2039341014}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -349826,6 +349714,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2039341014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039341011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &2039541909
 GameObject:
   m_ObjectHideFlags: 0
@@ -352145,6 +352062,7 @@ MonoBehaviour:
   airControl: 0.35
   turnSharpness: 12
   maxTurnSpeed: 0
+  moveTurnSpeed: 720
   attackBrake: 3
   maxAimTwist: 60
   guardTwist: 30
@@ -371910,6 +371828,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &774893752818654255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371925,6 +371867,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &774893752818654256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371940,6 +371924,7 @@ MonoBehaviour:
   character: {fileID: 1065169398}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -372068,6 +372053,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &780072798449513674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372083,6 +372092,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &780072798449513675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372098,6 +372149,7 @@ MonoBehaviour:
   character: {fileID: 917382567}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -373110,7 +373162,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7898601676311011493}
-  - {fileID: 218327105}
   m_Father: {fileID: 6744622064640329792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &932983629262096562
@@ -373667,6 +373718,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &1007632871282005180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373682,6 +373757,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &1007632871282005181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373697,6 +373814,7 @@ MonoBehaviour:
   character: {fileID: 943838787}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -382185,6 +382303,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &2074797569263677477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382200,6 +382342,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &2074797569263677478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382215,6 +382399,7 @@ MonoBehaviour:
   character: {fileID: 1447809749}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -382505,6 +382690,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &2091328107250581276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382520,6 +382729,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &2091328107250581277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382535,6 +382786,7 @@ MonoBehaviour:
   character: {fileID: 784825045}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -383892,6 +384144,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &2271155451884428047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -383907,6 +384183,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &2271155451884428048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -383922,6 +384240,7 @@ MonoBehaviour:
   character: {fileID: 906817017}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -391562,6 +391881,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &3265973509255115773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391577,6 +391920,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &3265973509255115774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391592,6 +391977,7 @@ MonoBehaviour:
   character: {fileID: 1977844140}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -392481,6 +392867,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &3390911057932362176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392496,6 +392906,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &3390911057932362177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392511,6 +392963,7 @@ MonoBehaviour:
   character: {fileID: 775545141}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -397342,6 +397795,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &4064745479038080898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397357,6 +397834,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &4064745479038080899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397372,6 +397891,7 @@ MonoBehaviour:
   character: {fileID: 1191207474}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -397989,6 +398509,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &4117268568744206911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398004,6 +398548,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &4117268568744206912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398019,6 +398605,7 @@ MonoBehaviour:
   character: {fileID: 1124009138}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -399313,6 +399900,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &4260755857055053517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399328,6 +399939,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &4260755857055053518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399343,6 +399996,7 @@ MonoBehaviour:
   character: {fileID: 1840334906}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -399511,6 +400165,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &4275816125594396145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399526,6 +400204,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &4275816125594396146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399541,6 +400261,7 @@ MonoBehaviour:
   character: {fileID: 1614160544}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -399929,6 +400650,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &4343175017289081266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399944,6 +400689,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &4343175017289081267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399959,6 +400746,7 @@ MonoBehaviour:
   character: {fileID: 518185698}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -407002,6 +407790,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5222296972816883658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407017,6 +407829,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5222296972816883659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407032,6 +407886,7 @@ MonoBehaviour:
   character: {fileID: 695403369}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -407191,6 +408046,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5232690056377696462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407206,6 +408085,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5232690056377696463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407221,6 +408142,7 @@ MonoBehaviour:
   character: {fileID: 920735128}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -407338,6 +408260,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5252119881164399643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407353,6 +408299,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5252119881164399644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407368,6 +408356,7 @@ MonoBehaviour:
   character: {fileID: 1273464794}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -407476,6 +408465,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5254285891018188736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407491,6 +408504,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5254285891018188737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407506,6 +408561,7 @@ MonoBehaviour:
   character: {fileID: 802945944}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -408623,6 +409679,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5410340893302215264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408638,6 +409718,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5410340893302215265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408653,6 +409775,7 @@ MonoBehaviour:
   character: {fileID: 2052745348}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -409058,6 +410181,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5431096314378936614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409073,6 +410220,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5431096314378936615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409088,6 +410277,7 @@ MonoBehaviour:
   character: {fileID: 1798802598}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -410833,6 +412023,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5660757716955155375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410848,6 +412062,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5660757716955155376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410863,6 +412119,7 @@ MonoBehaviour:
   character: {fileID: 1141062577}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -411060,6 +412317,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5677492766393738758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411075,6 +412356,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5677492766393738759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411090,6 +412413,7 @@ MonoBehaviour:
   character: {fileID: 636137762}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -411177,6 +412501,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &5678405349297574296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411192,6 +412540,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &5678405349297574297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411207,6 +412597,7 @@ MonoBehaviour:
   character: {fileID: 1737955343}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -417506,6 +418897,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &6637381523825299097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417559,6 +418974,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &6637381523825299099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417574,6 +419031,7 @@ MonoBehaviour:
   character: {fileID: 1396538444}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -426219,6 +427677,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &7625623309485424096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426234,6 +427716,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &7625623309485424097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426249,6 +427773,7 @@ MonoBehaviour:
   character: {fileID: 453007563}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -427649,6 +429174,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &7831503196720703169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427664,6 +429213,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &7831503196720703170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427679,6 +429270,7 @@ MonoBehaviour:
   character: {fileID: 568484364}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -427829,6 +429421,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &7848611175856835058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427844,6 +429460,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &7848611175856835059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427859,6 +429517,7 @@ MonoBehaviour:
   character: {fileID: 1005964462}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -428633,6 +430292,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &7997984039981399249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428648,6 +430331,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &7997984039981399250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428663,6 +430388,7 @@ MonoBehaviour:
   character: {fileID: 1558339252}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -434253,6 +435979,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &8852609961361721515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434268,6 +436018,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &8852609961361721516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434283,6 +436075,7 @@ MonoBehaviour:
   character: {fileID: 3261382}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -435457,6 +437250,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &8995419028000661991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435472,6 +437289,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &8995419028000661992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435487,6 +437346,7 @@ MonoBehaviour:
   character: {fileID: 1327232949}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -435675,6 +437535,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &9019758519232644321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435690,6 +437574,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &9019758519232644322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435705,6 +437631,7 @@ MonoBehaviour:
   character: {fileID: 1623443658}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -436444,6 +438371,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &9124908706606456454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436459,6 +438410,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &9124908706606456455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436474,6 +438467,7 @@ MonoBehaviour:
   character: {fileID: 1862491439}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -437078,6 +439072,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &9195596979970330120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437093,6 +439111,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &9195596979970330121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437108,6 +439168,7 @@ MonoBehaviour:
   character: {fileID: 257059483}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3
@@ -437261,6 +439322,30 @@ MonoBehaviour:
   - Machado_Golpe
   - Espadao_Golpe
   - Adaga_Golpe
+  stabilizeSeconds: 0.1
+  stabilizeAmount:
+  - 0.35
+  - 0.5
+  - 0.6
+  - 0.8
+  - 1
+  stabilizeSpeed: {x: 1.5, y: 4}
+  steadyStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Correndo
+  steadySeconds: 0.35
+  bladeLiftStates: []
+  bladeMinY: -0.2
+  straightWristStates:
+  - Golpe4
+  - Adaga_Golpe0
+  - Adaga_Golpe1
+  - Adaga_Golpe2
+  straightWristAim: {x: 0.6, y: 0.2}
+  straightWristBend: 35
+  flipDegrees: 80
+  flipCatchUp: 45
 --- !u!114 &9203599802357774635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437276,6 +439361,48 @@ MonoBehaviour:
   blendSeconds: 0.15
   gripMirror: {x: -1, y: -1, z: 1}
   palmMirror: {x: -0.4, y: -0.4, z: 0.4}
+  supportReach: 0.92
+  supportMinGap: 0.1
+  fullReach: 0.98
+  guardHand: {x: 0.16, y: -0.18, z: 0.38}
+  guardBlade: {x: 0.25, y: 0.5, z: 0.85}
+  guardBlendSeconds: 0.18
+  headVolumes:
+  - avatar: Characters_Captain_Barbarossa_Humano
+    center: {x: 0, y: 0.27, z: -0.07}
+    radii: {x: 0.39, y: 0.35, z: 0.52}
+  - avatar: Characters_Henry_Humano
+    center: {x: -0.07, y: 0.18, z: -0.02}
+    radii: {x: 0.43, y: 0.26, z: 0.37}
+  - avatar: Characters_Anne_Humano
+    center: {x: 0, y: 0.21, z: -0.09}
+    radii: {x: 0.36, y: 0.29, z: 0.39}
+  - avatar: Characters_Sharky_Humano
+    center: {x: 0.01, y: 0.17, z: 0.07}
+    radii: {x: 0.26, y: 0.25, z: 0.31}
+  - avatar: Characters_Mako_Humano
+    center: {x: 0, y: 0.15, z: 0.1}
+    radii: {x: 0.25, y: 0.22, z: 0.37}
+  - avatar: Characters_Skeleton_Humano
+    center: {x: 0, y: 0.14, z: 0.01}
+    radii: {x: 0.25, y: 0.22, z: 0.26}
+  clearMaxDegrees: 70
+  clearSpeed: 600
+  clearMargin: 1.15
+  bladeFloorY: -0.35
+  bladeTipClearance: 0.08
+  bladeFloorMaxDegrees: 75
+  posedStates:
+  - BacamarteParado
+  - BacamarteCorrendo
+  - Espadao_Pronto
+  - Espadao_Correndo
+  posedGripSign: -1
+  posedPalm: 0.6
+  carryDirection: {x: -0.88, y: 0.36, z: 0.3}
+  carryHandFromChest: {x: 0.17, y: -0.24, z: 0.2}
+  carryRoll: 0
+  carryUnderGap: 0.05
 --- !u!114 &9203599802357774636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437291,6 +439418,7 @@ MonoBehaviour:
   character: {fileID: 2002502461}
   speedDamp: 0.1
   freeFallDelay: 0.15
+  maxCadence: 2
   upperLayer: Tronco
   fullBodyLayer: CorpoInteiro
   fullBodyUntilSpeed: 0.3

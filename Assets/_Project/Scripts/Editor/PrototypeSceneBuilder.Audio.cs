@@ -117,6 +117,49 @@ namespace Pirates.EditorTools
             return cue;
         }
 
+        const string TavernPack = "Musica/Taverna";
+
+        /// <summary>
+        /// Músicas da taverna por dentro (13/11, baixadas pelo Jhonata do OpenGameArt, CC0): Crowded Pub (Bobjt), The Old Tower Inn e Minstrel
+        /// Dance (RandomMind). Volumes pelo RMS medido (−15,7 / −20,3 / −15,3 dB) para ficarem a ~−28 dB, como o porto e o menu.
+        /// </summary>
+        static SoundCue TavernMusic() =>
+            Playlist(Cue("MusicaTaverna", Clips(TavernPack, "crowded_pub_2025.mp3"), SoundChannel.Music, new Vector2(1f, 1f), new Vector2(1f, 1f), false, 1f, 2f),
+                (TavernPack, "crowded_pub_2025.mp3", 0.24f), (TavernPack, "The_Old_Tower_Inn.mp3", 0.41f), (TavernPack, "Minstrel_Dance.mp3", 0.23f));
+
+        /// <summary>Põe a música da taverna no MusicDirector da cena aberta e salva (sem regerar).</summary>
+        public static string AddTavernMusicToOpenScene()
+        {
+            var cue = TavernMusic();
+            AssetDatabase.SaveAssets();
+            var director = Object.FindAnyObjectByType<MusicDirector>(FindObjectsInactive.Include);
+            if (!director) return "sem MusicDirector na cena";
+            director.SetTavern(cue);
+            EditorUtility.SetDirty(director);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(director.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(director.gameObject.scene);
+            return $"ok: {cue.name} com {cue.clips.Length} faixas";
+        }
+
+        /// <summary>Martelada na bigorna (13/11): metal leve do Kenney Impact Sounds, baixo e ouvido só perto.</summary>
+        static SoundCue AnvilCue() => Cue("Bigorna", Numbered("Kenney_ImpactSounds", "impactMetal_light_{0:000}.ogg", 0, 4), SoundChannel.Effects,
+            new Vector2(0.3f, 0.38f), new Vector2(0.92f, 1.04f), true, 2f, 18f);
+
+        /// <summary>Põe a martelada da bigorna no GameAudio da cena aberta e salva (sem regerar o som todo).</summary>
+        public static string AddAnvilSoundToOpenScene()
+        {
+            var cue = AnvilCue();
+            AssetDatabase.SaveAssets();
+            var audio = Object.FindAnyObjectByType<Pirates.Audio.GameAudio>(FindObjectsInactive.Include);
+            if (!audio) return "sem GameAudio na cena";
+            var so = new SerializedObject(audio);
+            so.FindProperty("sounds.anvil").objectReferenceValue = cue;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(audio.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(audio.gameObject.scene);
+            return $"ok: {cue.name} com {cue.clips.Length} clipes";
+        }
+
         static GameSounds LoadSounds()
         {
             EnsureFolder(DataFolder, "Audio");
@@ -178,6 +221,7 @@ namespace Pirates.EditorTools
                 dummyHit = Cue("BonecoAcerto", Numbered(imp, "impactSoft_medium_{0:000}.ogg", 0, 4), fx, V(0.45f, 0.55f), V(0.9f, 1.05f), true, 2f, 30f),
                 chestOpen = Cue("BauAbre", Clips(rpg, "doorOpen_2.ogg", "creak2.ogg"), fx, V(0.65f, 0.75f), V(0.9f, 1f), true, 2f, 25f),
                 dig = Cue("Cavar", Numbered(imp, "impactMining_{0:000}.ogg", 0, 4), fx, V(0.7f, 0.8f), V(0.85f, 1f), true, 2f, 30f),
+                anvil = AnvilCue(),
                 chop = Cue("Machadada", Join(Clips(rpg, "chop.ogg"), Numbered(imp, "impactWood_medium_{0:000}.ogg", 0, 4)), fx,
                     V(0.7f, 0.85f), V(0.9f, 1.08f), true, 2f, 30f),
                 pickup = Cue("Saque", Clips(rpg, "handleCoins.ogg", "handleCoins2.ogg", "handleSmallLeather.ogg", "dropLeather.ogg"), ui,
@@ -226,6 +270,7 @@ namespace Pirates.EditorTools
                     ("Musica", "Exploration Theme.ogg", 0.9f), (PiratePack, "Pirate 5.wav", 0.84f)),
                 musicCombat = Playlist(Cue("MusicaCombate", Clips("Musica", "Battle.mp3"), music, V(0.8f, 0.8f), V(1f, 1f), false, 1f, 2f),
                     ("Musica", "Battle.mp3", 0.29f), (PiratePack, "Pirate 8.wav", 0.75f), (PiratePack, "Pirate 4.wav", 1f)),
+                musicTavern = TavernMusic(),
             };
         }
 
@@ -242,6 +287,7 @@ namespace Pirates.EditorTools
             root.AddComponent<WeatherAudio>().Configure(sounds.rain, sounds.storm, sounds.thunder, sounds.crypt);
             root.AddComponent<MusicDirector>().Configure(sounds.musicTitle, sounds.musicPort, sounds.musicSea, sounds.musicIsland, sounds.musicCombat,
                 Object.FindAnyObjectByType<PlayerModeSwitcher>(), playerShip ? playerShip.transform : null);
+            root.GetComponent<MusicDirector>().SetTavern(sounds.musicTavern);
 
             // Um ouvido só: sai da câmera e passa a seguir o navio/personagem.
             if (camera.TryGetComponent(out AudioListener old)) Object.DestroyImmediate(old);
@@ -257,7 +303,7 @@ namespace Pirates.EditorTools
             var ambience = new GameObject("Ambiente_Sons").transform;
 
             // Ondas quebrando nas praias de cada ilha (a cada ~24 m de litoral).
-            foreach (var name in new[] { "IlhaGrande", "Ilha_Sul", "Ilha_Norte", "Ilha_Oeste" })
+            foreach (var name in new[] { "IlhaGrande", "Ilha_Sul", "Ilha_Norte", "Ilha_Oeste", "Ilha_Amaldicoada" })
             {
                 var island = GameObject.Find(name)?.transform;
                 if (!island) continue;
@@ -301,6 +347,8 @@ namespace Pirates.EditorTools
             if (north)
                 foreach (var p in new[] { new Vector2(-15f, 12f), new Vector2(22f, 18f), new Vector2(-34f, -10f), new Vector2(5f, 28f) })
                     Birds(ambience, sounds, north, p, "Norte");
+            // Ilha Amaldiçoada (pacote H): vento uivante, corvos, gemidos, rangidos e os braseiros verdes; sem pássaros.
+            CursedAmbience(ambience, sounds);
         }
 
         static void Birds(Transform parent, GameSounds sounds, Transform island, Vector2 local, string where)

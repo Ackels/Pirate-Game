@@ -46,6 +46,10 @@ namespace Pirates.Ambient
             nextSleepCheck = Time.unscaledTime + Random.value * SleepCheckInterval;
             if (animator)
             {
+                // Olha para o capitão quando ele passa perto (12/11).
+                var look = animator.GetComponent<Pirates.Core.HeadLook>();
+                if (!look) look = animator.gameObject.AddComponent<Pirates.Core.HeadLook>();
+                look.SetAutoRadius(4.5f);
                 animator.speed = Random.Range(0.9f, 1.1f);
                 animator.Play(0, 0, Random.value);
             }

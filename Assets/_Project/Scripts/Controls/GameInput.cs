@@ -51,6 +51,8 @@ namespace Pirates.Controls
         public InputAction Journal { get; }
         /// <summary>Diário do pescador (30/10): P (aba Pesca da tela do capitão).</summary>
         public InputAction FishLog { get; }
+        /// <summary>M: a carta náutica (aba Mapa da tela do capitão, 12/11).</summary>
+        public InputAction Map { get; }
         /// <summary>Bomba de fumaça a pé (30/10): B.</summary>
         public InputAction Smoke { get; }
         /// <summary>Navio: 4 = carga incendiária (30/10).</summary>
@@ -178,6 +180,7 @@ namespace Pirates.Controls
             Equipment = sailing.AddAction("Equipment", InputActionType.Button, binding: "<Keyboard>/i");
             Journal = sailing.AddAction("Journal", InputActionType.Button, binding: "<Keyboard>/j");
             FishLog = sailing.AddAction("FishLog", InputActionType.Button, binding: "<Keyboard>/p");
+            Map = sailing.AddAction("Map", InputActionType.Button, binding: "<Keyboard>/m");
             Smoke = sailing.AddAction("Smoke", InputActionType.Button, binding: "<Keyboard>/b");
             Weapon4 = sailing.AddAction("Weapon4", InputActionType.Button, binding: "<Keyboard>/4");
             CrewWheel = sailing.AddAction("CrewWheel", InputActionType.Button, binding: "<Keyboard>/t");

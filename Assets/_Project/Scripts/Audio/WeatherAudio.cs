@@ -79,7 +79,10 @@ namespace Pirates.Audio
                 hooked.LightningStruck += OnStrike;
             }
             bool under = CoveredArea.Inside;
-            float wet = has && !under ? weather.Rain : 0f, heavy = has && !under ? weather.Storm : 0f;
+            // Interior de casa (13/11): a chuva de fora no telhado, abafada; sem o ar das catacumbas.
+            bool house = CoveredArea.TryGetLook(out var look);
+            float roof = under ? (house ? look.rainOnRoof : 0f) : 1f;
+            float wet = has ? weather.Rain * roof : 0f, heavy = has ? weather.Storm * roof : 0f;
             // Passando pelo alçapão a troca é rápida (a tela escurece ~1 s); o clima lá fora muda devagar.
             float fade = Time.unscaledDeltaTime * (under ? 2f : 0.4f);
             if (rainSource)
@@ -96,7 +99,7 @@ namespace Pirates.Audio
             }
             if (coveredSource)
             {
-                float target = under ? coveredVolume * covered.volume.y * SoundMix.Volume(covered.channel) : 0f;
+                float target = under && (!house || look.air) ? coveredVolume * covered.volume.y * SoundMix.Volume(covered.channel) : 0f;
                 coveredLevel = Mathf.MoveTowards(coveredLevel, target, Time.unscaledDeltaTime * 1.5f);
                 coveredSource.volume = coveredLevel;
             }

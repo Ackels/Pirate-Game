@@ -26,6 +26,9 @@ namespace Pirates.OnFoot
         [SerializeField] float turnSharpness = 12f;
         [Tooltip("Giro máximo (°/s; 0 = sem limite). Os grandes (brutamontes, chefe) viram mais devagar: davam meia-volta em 0,16 s.")]
         [SerializeField] float maxTurnSpeed;
+        [Tooltip("Giro máximo andando/correndo para onde anda (°/s). O amortecido sozinho dava meia-volta com 1.920°/s no primeiro quadro " +
+                 "(32° de uma vez: o corpo \"estalava\") e uma cauda longa (12/11, revisão das animações, passo 5). O giro do golpe e da mira não usa.")]
+        [SerializeField] float moveTurnSpeed = 720f;
         [Tooltip("Atacando: o freio fica estas vezes mais forte (o golpe não sai deslizando).")]
         [SerializeField] float attackBrake = 3f;
 
@@ -228,13 +231,39 @@ namespace Pirates.OnFoot
             }
             // Desliga o colisor antes: senão o raio pode bater no próprio personagem.
             controller.enabled = false;
-            if (Physics.Raycast(position + Vector3.up * 20f, Vector3.down, out RaycastHit hit, 60f, ~0, QueryTriggerInteraction.Ignore))
-                position = hit.point + Vector3.up * 0.05f;
+            bool onGround = Physics.Raycast(position + Vector3.up * 20f, Vector3.down, out RaycastHit hit, 60f, ~0, QueryTriggerInteraction.Ignore);
+            if (onGround) position = hit.point + Vector3.up * 0.05f;
             transform.SetPositionAndRotation(position, Quaternion.Euler(0f, rotation.eulerAngles.y, 0f));
             controller.enabled = !Incapacitated;
             planarVelocity = pushVelocity = Vector3.zero;
             verticalVelocity = 0f;
-            lastSafePosition = position;
+            // Só vira "lugar seguro" se não for água funda (o F1 punha o capitão no mar ao lado das palafitas e o resgate
+            // devolvia para o mesmo lugar: ficava preso, 09/11).
+            if (ocean == null) Services.TryGet(out ocean);
+            if (onGround && (ocean == null || ocean.SeaLevel - position.y < maxWadeDepth * 0.5f)) lastSafePosition = position;
+        }
+
+        /// <summary>Chão seco mais perto (NavMesh, acima do mar) de <paramref name="from"/>; falso se não achar.</summary>
+        bool TryDryGround(Vector3 from, out Vector3 ground)
+        {
+            float sea = ocean != null ? ocean.SeaLevel : 0f;
+            foreach (float radius in new[] { 8f, 25f, 60f, 120f })
+            {
+                // Procura em volta em vários pontos (o SamplePosition devolve o mais perto do centro, que pode ser o raso).
+                for (int i = 0; i < 12; i++)
+                {
+                    float a = i * 30f * Mathf.Deg2Rad;
+                    var probe = from + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * radius * 0.6f;
+                    if (UnityEngine.AI.NavMesh.SamplePosition(probe, out var hit, radius, UnityEngine.AI.NavMesh.AllAreas)
+                        && sea - hit.position.y < maxWadeDepth * 0.5f)
+                    {
+                        ground = hit.position;
+                        return true;
+                    }
+                }
+            }
+            ground = from;
+            return false;
         }
 
         void Update()
@@ -314,7 +343,7 @@ namespace Pirates.OnFoot
                     var look = Quaternion.LookRotation(facing ? faceDirection : planarVelocity.normalized, Vector3.up);
                     // Atacando gira mais rápido: o golpe sai virado para o cursor.
                     float sharpness = facing ? turnSharpness * 2f : turnSharpness;
-                    Turn(look, sharpness, dt);
+                    Turn(look, sharpness, dt, facing ? 0f : moveTurnSpeed);
                 }
             }
 
@@ -445,10 +474,11 @@ namespace Pirates.OnFoot
         }
 
         /// <summary>Gira para <paramref name="look"/> (amortecido), sem passar de <see cref="maxTurnSpeed"/>.</summary>
-        void Turn(Quaternion look, float sharpness, float dt)
+        void Turn(Quaternion look, float sharpness, float dt, float cap = 0f)
         {
             var next = Quaternion.Slerp(transform.rotation, look, 1f - Mathf.Exp(-sharpness * dt));
-            if (maxTurnSpeed > 0f) next = Quaternion.RotateTowards(transform.rotation, next, maxTurnSpeed * dt);
+            if (maxTurnSpeed > 0f) cap = cap > 0f ? Mathf.Min(cap, maxTurnSpeed) : maxTurnSpeed;
+            if (cap > 0f) next = Quaternion.RotateTowards(transform.rotation, next, cap * dt);
             transform.rotation = next;
         }
 
@@ -468,7 +498,12 @@ namespace Pirates.OnFoot
             // Volta ao último lugar seguro.
             if (depth > drownDepth || (IsGrounded && depth > maxWadeDepth + 0.15f))
             {
-                Teleport(lastSafePosition, transform.rotation);
+                var to = lastSafePosition;
+                // O lugar seguro também é água funda (teleporte para o mar): vai para o chão seco mais perto.
+                bool groundThere = Physics.Raycast(to + Vector3.up * 2f, Vector3.down, out RaycastHit below, 3f, ~0, QueryTriggerInteraction.Ignore)
+                    && below.collider.transform != transform;
+                if ((!groundThere || ocean.SeaLevel - to.y > maxWadeDepth * 0.5f) && TryDryGround(feet, out var dry)) to = dry;
+                Teleport(to, transform.rotation);
                 RescuedFromWater?.Invoke();
                 return;
             }

@@ -607,7 +607,7 @@ namespace Pirates.UI
             {
                 var camp = EnemyCamp.Active[i];
                 // Só os grupos por perto (o mundo tem vários: Caveira, postos, Ilha Oeste, forte da Norte).
-                bool near = (camp.Center - me).sqrMagnitude <= CampListRange * CampListRange;
+                bool near = !camp.HiddenFromHud && (camp.Center - me).sqrMagnitude <= CampListRange * CampListRange;
                 Hud.Show(campLabels[i], near);
                 if (!near) continue;
                 if (campLines[i].Stale(camp, camp.Alive * 1000L + camp.Total, HudDraw.Flag(camp.IsCleared) * 2 + HudDraw.Flag(camp.InCombat)))

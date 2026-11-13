@@ -63,12 +63,20 @@ namespace Pirates.Save
         // Mapa do tesouro montado (C1, 16/10): id do tesouro com o X marcado (vazio = nenhum; os pedaços são itens comuns).
         public string treasureMapId;
 
+        // Descanso do cerco do altar amaldiçoado (s de jogo que faltam; save de antes: 0 = pronto).
+        public float siegeCooldown;
+
         // Procurado pela Coroa (G, passo 2, 03/11): procura (estrelas) e segundos desde o último crime. Save de antes: 0 (ninguém procura).
         public float wantedHeat;
         public float wantedCalm;
 
         // Coletáveis já pegos (C3, 19/10): ids das garrafas com mensagem e das moedas da Frota de Prata (somem do mundo para sempre).
         public string[] collectibles;
+        /// <summary>Lugares descobertos na carta náutica (mapa no M, 12/11). null = save antigo (nada).</summary>
+        public string[] mapDiscovered;
+        /// <summary>Salário da tripulação (12/11): ouro devido, moral (0–1), horas de jogo até o próximo pagamento e de atraso. hasWages falso = save antigo.</summary>
+        public bool hasWages;
+        public float wageDebt, crewMorale = 1f, wageHoursToPayday, wageHoursLate;
 
         // Equipamento do capitão (E1, 19/10): ids (nome do asset) dos itens equipados, um por lugar (lâmina...). Save de antes não tem
         // (null): nada equipado, o cutelo de começo.

@@ -8,8 +8,8 @@ Jhonata Caetano
 Jhonata Caetano, com a ajuda do Claude (Anthropic)
 
 <size=24><b>Modelos 3D</b></size>
-Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Castle Kit, Graveyard Kit, Food Kit — CC0
-Quaternius (quaternius.com): Pirate Kit, Ultimate Modular Ruins, Ultimate Monsters, Animated Monster Pack — CC0
+Kenney (kenney.nl): Pirate Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Castle Kit, Graveyard Kit, Food Kit, Furniture Kit — CC0
+Quaternius (quaternius.com): Pirate Kit, Ultimate Modular Ruins, Ultimate Monsters, Animated Monster Pack, Universal Animation Library 2, Fantasy Props MegaKit — CC0
 Kay Lousberg (kaylousberg.com): KayKit Skeletons, KayKit Adventurers — CC0
 Pixit3D - Fish Free Pack — Pixit Games (Unity Asset Store)
 Quirky Series - FREE Animals Pack — Omabuarts Studio (Unity Asset Store)
@@ -31,6 +31,8 @@ Fonte Alegreya — The Alegreya Project Authors, Huerta Tipográfica (SIL Open F
 Pirate Music Pack (Unity Asset Store)
 Adventure Inn, do FC Pirate Music Pack [Lite] — Fabrice, FC Audio (fcaudio.co.uk)
 Town Theme RPG — cynicmusic (OpenGameArt, CC0)
+Crowded Pub — Bobjt (OpenGameArt, CC0)
+The Old Tower Inn e Minstrel Dance — RandomMind (OpenGameArt, CC0)
 Pirate Game Tune — Tozan (OpenGameArt, CC0)
 Battle Theme — Wolfgang_ (OpenGameArt, CC0)
 Exploration Theme — Cleyton Kauffman (OpenGameArt, CC0)

@@ -139,6 +139,18 @@ namespace Pirates.UI
             OpenPause();
         }
 
+        /// <summary>
+        /// Alt+Tab (ou outra janela na frente) no jogo compilado: pausa sozinho. O projeto roda em segundo plano (os testes pela CLI precisam),
+        /// e sem isto o capitão morria com o jogador fora da janela. No editor não faz nada.
+        /// </summary>
+        void OnApplicationFocus(bool focus)
+        {
+            if (focus || Application.isEditor || inGamePause) return;
+            if (!save || !save.Started || TitleScreen.Showing) return;
+            OpenPause();
+            dirty = true;
+        }
+
         /// <summary>Alguma interação aberta no navio ou no capitão (casa, baú, destroços, pesca, conversa): o Esc é dela.</summary>
         bool SomethingOpen()
         {
@@ -158,6 +170,7 @@ namespace Pirates.UI
         void OpenPause()
         {
             inGamePause = paused = true;
+            HitStop.Cancel();   // senão guardaria a velocidade da parada de impacto (×0,05) e o jogo voltaria preso nela
             pausedScale = Time.timeScale;
             Time.timeScale = 0f;
             GameInput.Instance.GameplayEnabled = false;

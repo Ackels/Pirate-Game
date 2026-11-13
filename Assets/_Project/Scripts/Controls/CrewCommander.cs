@@ -297,7 +297,9 @@ namespace Pirates.Controls
 
         void SlowDown()
         {
-            if (slowedFrom >= 0f || Time.timeScale <= slowMotion) return;
+            if (slowedFrom >= 0f) return;
+            Pirates.Core.HitStop.Cancel();
+            if (Time.timeScale <= slowMotion) return;
             slowedFrom = Time.timeScale;
             Time.timeScale = slowMotion;
         }
@@ -306,6 +308,7 @@ namespace Pirates.Controls
         void SpeedUp()
         {
             if (slowedFrom < 0f) return;
+            Pirates.Core.HitStop.Cancel();   // a parada no meio da roda guardou 0,3 como "antes": devolve agora, para a comparação abaixo valer
             if (Mathf.Approximately(Time.timeScale, slowMotion)) Time.timeScale = slowedFrom;
             slowedFrom = -1f;
         }

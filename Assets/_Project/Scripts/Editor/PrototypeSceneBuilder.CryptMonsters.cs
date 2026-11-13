@@ -297,7 +297,8 @@ namespace Pirates.EditorTools
         static AnimationClip MonsterClip(string path, string clip)
         {
             foreach (var o in AssetDatabase.LoadAllAssetsAtPath(path))
-                if (o is AnimationClip c && c.name.EndsWith("|" + clip)) return c;
+                // O FBX também traz cópias "__preview__..." escondidas que não repetem (12/11: as feras ficavam paradas depois de 1 s).
+                if (o is AnimationClip c && !c.name.StartsWith("__preview__") && c.name.EndsWith("|" + clip)) return c;
             Debug.LogWarning($"[Pirates] Clipe {clip} não encontrado em {path}");
             return null;
         }

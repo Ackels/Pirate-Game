@@ -19,6 +19,8 @@ namespace Pirates.Audio
         public enum Mood { Title, Port, Sea, Island, Combat, Covered }
 
         [SerializeField] SoundCue title, port, sea, island, combat;
+        [Tooltip("Música dentro da taverna (13/11); vazio = a do menu.")]
+        [SerializeField] SoundCue tavern;
         [SerializeField] PlayerModeSwitcher switcher;
         [Tooltip("Navio do jogador (cenas sem personagem a pé).")]
         [SerializeField] Transform playerShip;
@@ -55,6 +57,9 @@ namespace Pirates.Audio
             playerShip = ship;
         }
 
+        /// <summary>Música da taverna por dentro (13/11).</summary>
+        public void SetTavern(SoundCue cue) => tavern = cue;
+
         void Awake()
         {
             for (int i = 0; i < 2; i++)
@@ -81,7 +86,7 @@ namespace Pirates.Audio
             var want = Current switch
             {
                 // Debaixo da terra, sem música: só o ar das catacumbas (WeatherAudio).
-                Mood.Title => title, Mood.Combat => combat, Mood.Port => port, Mood.Island => island, Mood.Covered => null, _ => sea,
+                Mood.Title => title, Mood.Combat => combat, Mood.Port => port, Mood.Island => island, Mood.Covered => !CoveredArea.TryGetLook(out var look) ? null : look.music ? (tavern ? tavern : title) : look.portMusic ? port : null, _ => sea,
             };
             if (want != playing || Ending()) Switch(want);
 

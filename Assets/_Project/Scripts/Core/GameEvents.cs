@@ -38,6 +38,14 @@ namespace Pirates.Core
         public int fame;
     }
 
+    /// <summary>
+    /// O capitão chegou a pé num lugar da história (pacote H, 06/11: a Ilha Amaldiçoada). placeId = o mesmo do marcador no mapa.
+    /// </summary>
+    public struct PlaceReachedEvent
+    {
+        public string placeId;
+    }
+
     /// <summary>O jogador desenterrou um tesouro.</summary>
     public struct TreasureFoundEvent
     {

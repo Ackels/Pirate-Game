@@ -30,11 +30,12 @@ MonoBehaviour:
   randomVariants: 0
   variantHitDelays: []
   comboWindow: 1
-  animatedDraw: 0
-  drawGrabTime: 0.45
-  drawDuration: 0.95
-  holsterReleaseTime: 0.85
-  holsterDuration: 1
+  animatedDraw: 1
+  instantHolster: 0
+  drawGrabTime: 0.275
+  drawDuration: 0.67499995
+  holsterReleaseTime: 0.34999996
+  holsterDuration: 0.74999994
   aimPoseSeconds: 1.5
   aimedShotDelay: 0.06
   aimedSpread: 0.5
@@ -46,6 +47,7 @@ MonoBehaviour:
   supportOffset: 0.3
   supportSlides: 0
   supportSlideGap: 0.12
+  steerByHands: 0
   moveSpeedWhileAttacking: 0.25
   knockdown: 0
   guardCost: 1

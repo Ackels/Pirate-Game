@@ -31,14 +31,14 @@ namespace Pirates.EditorTools
         };
 
         // Adaga do capitão (E2, passo 2, 23/10): WeaponType 0 (pose, corrida, guarda, sacar e bainha do cutelo) com golpes próprios,
-        // AttackVariant 7–9 ("Adaga_Golpe2..4"; 2 e 3 são as estocadas da duelista). Estocada rápida ("Stabbing" do Mixamo, a mesma
-        // da duelista), corte curto ("Sword And Shield Attack 4") e o bote com dois cortes ("Sword And Shield Attack 2", mão rápida aos 0,33 e
+        // AttackVariant 7–9 ("Adaga_Golpe2..4"; 2 e 3 são as estocadas da duelista). Estocada rápida (a estocada de lança do Kevin Iglesias,
+        // a mesma da duelista desde 07/11; o "Stabbing" do Mixamo passava a adaga por cima do rosto com a mão a 0,25 m à frente), corte curto ("Sword And Shield Attack 4") e o bote com dois cortes ("Sword And Shield Attack 2", mão rápida aos 0,33 e
         // 0,63 s). Medidos no esqueleto do capitão: tronco ≤ 38°, torção −57..55° (fora a estocada, que o PostureLimiter segura).
         const int PlayerDaggerVariant = 7;
 
         static readonly (string clip, float impact, float lead)[] PlayerDaggerAttacks =
         {
-            ("Stabbing", 0.42f, 0.35f),
+            ("Kevin:" + DaggerThrust, 0.45f, 0.35f),
             ("Sword And Shield Attack 4", 0.42f, 0.42f),
             ("Sword And Shield Attack 2", 0.33f, 0.33f),
         };
@@ -76,7 +76,7 @@ namespace Pirates.EditorTools
                     var (clipName, impact, lead) = PlayerDaggerAttacks[i];
                     // O bote volta à pose depois do segundo corte.
                     float last = i == PlayerDaggerAttacks.Length - 1 ? impact + DaggerFinisherSecondCut : impact;
-                    PlayerSwing(sm, bladeReady, $"Adaga_Golpe{2 + i}", MixamoClip(clipName), impact, lead, 0, PlayerDaggerVariant + i,
+                    PlayerSwing(sm, bladeReady, $"Adaga_Golpe{2 + i}", DaggerClip(clipName), impact, lead, 0, PlayerDaggerVariant + i,
                         new Vector3(900f, 140f + 80f * i), last + 0.45f - impact);
                 }
             if (axeReady)

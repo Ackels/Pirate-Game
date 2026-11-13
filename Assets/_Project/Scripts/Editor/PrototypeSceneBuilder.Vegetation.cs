@@ -92,6 +92,8 @@ namespace Pirates.EditorTools
 
         /// <summary>Perto daqui (XZ local da ilha) as árvores da mata nascem secas (75%). Posto só durante o plantio da Caveira.</summary>
         static Func<Vector2, bool> DeadTreeZone;
+        /// <summary>Fração de árvores secas dentro da <see cref="DeadTreeZone"/> (a Ilha Amaldiçoada põe 1: só secas).</summary>
+        static double DeadTreeShare = 0.75;
 
         /// <summary>Escolhe pelo peso com um sorteio só (0–1): a mata gasta o mesmo número de sorteios e as posições não mudam.</summary>
         static Veg PickVeg(Veg[] list, double roll)

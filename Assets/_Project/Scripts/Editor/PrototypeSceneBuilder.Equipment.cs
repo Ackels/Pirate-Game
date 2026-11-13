@@ -206,7 +206,7 @@ namespace Pirates.EditorTools
             w.hitDelay = w.variantHitDelays[0];
             w.cooldown = spec.cooldown;
             w.comboWindow = 1.8f;
-            w.animatedDraw = false;
+            SetDrawTimings(w, false);
             w.moveSpeedWhileAttacking = 0.25f;
             w.breaksGuard = spec.breaksGuard;
             PlayerHeavyMoves(w, axe);

@@ -107,7 +107,7 @@ namespace Pirates.Ambient
                 // Dois clarões: um curto, um respiro e um maior (o raio "pisca").
                 bool lit = strikeAge < 0.07f || (strikeAge > 0.13f && strikeAge < 0.26f);
                 // Debaixo da terra o raio não aparece (o trovão continua, abafado).
-                if (flash) flash.enabled = lit && !CoveredArea.Inside;
+                if (flash) flash.enabled = lit && (!CoveredArea.Inside || CoveredArea.OutsideVisible(out _));
                 if (bolt) bolt.enabled = strikeAge < 0.28f && !CoveredArea.Inside;
             }
             if (Storm < 0.5f || !settings)

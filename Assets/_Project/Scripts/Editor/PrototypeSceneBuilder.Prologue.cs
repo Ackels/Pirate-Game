@@ -48,12 +48,14 @@ namespace Pirates.EditorTools
         };
 
         /// <summary>Gera um quadro só (1 a 9): para ajustar uma cena sem refazer todas.</summary>
-        public static void BuildPrologueFrame(int number)
+        public static void BuildPrologueFrame(int number) => BuildPaintedFrame(PrologueFrames[number - 1], $"{PrologueFolder}/Quadro_{number}.png");
+
+        /// <summary>Monta a cena de um quadro, fotografa e pinta (abertura e fim).</summary>
+        static void BuildPaintedFrame(Action<Stage> build, string path)
         {
             EnsureFolder(Root + "/UI", "Prologo");
             var stage = new Stage { scene = EditorSceneManager.NewPreviewScene() };
             var rt = new RenderTexture(PrologueWidth, PrologueHeight, 24, RenderTextureFormat.ARGB32) { antiAliasing = 8 };
-            string path = $"{PrologueFolder}/Quadro_{number}.png";
             try
             {
                 var holder = new GameObject("Quadro");
@@ -70,7 +72,7 @@ namespace Pirates.EditorTools
                 cam.targetTexture = rt;
                 stage.cam = cam;
 
-                PrologueFrames[number - 1](stage);
+                build(stage);
 
                 var black = Render(cam, rt, Color.black);
                 var white = Render(cam, rt, Color.white);

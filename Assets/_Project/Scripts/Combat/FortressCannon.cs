@@ -95,7 +95,8 @@ namespace Pirates.Combat
             for (int i = 0; i < EnemyShipAI.Active.Count; i++)
             {
                 var ai = EnemyShipAI.Active[i];
-                if (!ai || ai.IsDead) continue;
+                // Navio da Coroa (12/11): a Fortaleza não briga com ele (afundado, contava como crime do jogador: +20 de procura).
+                if (!ai || ai.IsDead || ai.Crown) continue;
                 float d = Flat(ai.transform.position - transform.position).magnitude;
                 if (d > bestDistance) continue;
                 best = ai;

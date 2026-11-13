@@ -167,8 +167,15 @@ namespace Pirates.Controls
             if (CursorOnSea) active.SetManualAim(point);
             if (active.State == BatteryState.Ready) active.BeginAim();
             // O clique do quadro que armou não dispara (no controle o gatilho é o mesmo).
-            if (input.Attack.WasPressedThisFrame() && Time.frameCount != armedFrame && active.State == BatteryState.Aiming)
+            if (input.Attack.WasPressedThisFrame() && Time.frameCount != armedFrame && active.State == BatteryState.Aiming && !ClickOnHud())
                 active.ReleaseAndFire();
+        }
+
+        // Clique em cima de um botão ou janela do HUD não dispara (12/11).
+        bool ClickOnHud()
+        {
+            var mouse = Mouse.current;
+            return mouse != null && !CursorOverride.HasValue && PointerOverUI.At(mouse.position.ReadValue());
         }
 
         /// <summary>Q/E: arma aquele bordo; o mesmo de novo desarma; o outro troca.</summary>

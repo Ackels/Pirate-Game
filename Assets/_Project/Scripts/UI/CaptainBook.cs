@@ -13,12 +13,13 @@ namespace Pirates.UI
     /// </summary>
     static class CaptainBook
     {
-        public enum Tab { Inventory, Missions, Fame, Fishing }
+        public enum Tab { Inventory, Missions, Fame, Fishing, Map, Tips }
 
-        static readonly string[] Labels = { "Inventário", "Missões", "Fama", "Pesca" };
-        static readonly string[] Keys = { "I", "J", "C", "P" };
-        static readonly Func<bool>[] isOpen = new Func<bool>[4];
-        static readonly Action<bool>[] setOpen = new Action<bool>[4];
+        // Dicas (12/11) não tem tecla: abre pela aba, com o livro aberto.
+        static readonly string[] Labels = { "Inventário", "Missões", "Fama", "Pesca", "Mapa", "Dicas" };
+        static readonly string[] Keys = { "I", "J", "C", "P", "M", "" };
+        static readonly Func<bool>[] isOpen = new Func<bool>[6];
+        static readonly Action<bool>[] setOpen = new Action<bool>[6];
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -100,7 +101,7 @@ namespace Pirates.UI
             for (int i = 0; i < Labels.Length; i++)
             {
                 var tab = (Tab)i;
-                var button = Win.Button($"{Labels[i]}  <size=75%>[{Keys[i]}]</size>", () => Open(tab), true, "hud-book-tab");
+                var button = Win.Button(Keys[i].Length > 0 ? $"{Labels[i]}  <size=75%>[{Keys[i]}]</size>" : Labels[i], () => Open(tab), true, "hud-book-tab");
                 if (tab == current) button.AddToClassList("hud-book-tab--on");
                 row.Add(button);
             }

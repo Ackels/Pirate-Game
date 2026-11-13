@@ -44,6 +44,10 @@ namespace Pirates.EditorTools
             // Relógio do dia (M11): some sozinho na cena sem ciclo.
             go.AddComponent<ClockHUD>();
             AttachGameCursor(go);
+            // Navio afundado: carregar o último save ou voltar ao porto (12/11).
+            go.AddComponent<ShipSunkHUD>();
+            // Diário de dicas (12/11): aba "Dicas" na tela do capitão.
+            go.AddComponent<TipsHUD>();
             // Aviso de golpe ("!"/"!!") dos inimigos de terra e das catacumbas (revisão das animações, 21/10).
             go.AddComponent<CryptWarningHUD>();
             // Tela de equipamento (E1): se o capitão já foi montado (cena 06; na 07 ele vem depois e põe ela).

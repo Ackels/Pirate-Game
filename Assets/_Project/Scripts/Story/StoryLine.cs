@@ -35,6 +35,10 @@ namespace Pirates.Story
             /// (a mesma do tutorial); conta ao chegar na última fala.
             /// </summary>
             Talk,
+            /// <summary>Chegar a pé num lugar (id = o do lugar e do marcador no mapa; PlaceReachedEvent). Pacote H: a Ilha Amaldiçoada.</summary>
+            Reach,
+            /// <summary>Estado: ter o item (id = nome do asset) em qualquer lugar do jogador (porão, mochila, armazém). Pacote H: a Coroa de Prata.</summary>
+            Have,
         }
 
         [Serializable]
@@ -48,12 +52,17 @@ namespace Pirates.Story
             [Min(1)] public int count = 1;
             [Tooltip("Conversa: as falas do NPC ({nome} = o nome do capitão).")]
             [TextArea] public string[] lines = Array.Empty<string>();
+            [Tooltip("Marcador no mapa de um objetivo de estado (o item a pegar): o id do WorldMarker do lugar. Vazio = sem marcador.")]
+            public string marker;
 
-            public bool IsState => goal is Goal.Building or Goal.Crew;
+            public bool IsState => goal is Goal.Building or Goal.Crew or Goal.Have;
+
+            /// <summary>Tem lugar no mapa (o marcador da História aponta para ele).</summary>
+            public bool HasMarker => IsState ? !string.IsNullOrEmpty(marker) : !string.IsNullOrEmpty(id);
 
             [NonSerialized] string talkMarker;
             /// <summary>Id do marcador no mapa (conversa = o marcador do NPC), sem alocar a cada quadro.</summary>
-            public string MarkerId => goal == Goal.Talk ? talkMarker ??= MissionGiver.MarkerIdFor(id) : id;
+            public string MarkerId => goal == Goal.Talk ? talkMarker ??= MissionGiver.MarkerIdFor(id) : IsState ? marker : id;
         }
 
         [Serializable]
@@ -120,6 +129,7 @@ namespace Pirates.Story
             EventBus.Subscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Subscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            EventBus.Subscribe<PlaceReachedEvent>(OnPlaceReached);
             MissionGiver.TalkStarted += OnTalkStarted;
         }
 
@@ -129,6 +139,7 @@ namespace Pirates.Story
             EventBus.Unsubscribe<ShipSunkEvent>(OnShipSunk);
             EventBus.Unsubscribe<CampClearedEvent>(OnCampCleared);
             EventBus.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            EventBus.Unsubscribe<PlaceReachedEvent>(OnPlaceReached);
             MissionGiver.TalkStarted -= OnTalkStarted;
             ReleaseTalk();
         }
@@ -172,6 +183,7 @@ namespace Pirates.Story
             {
                 Goal.Building => BuildingLevel(o.id),
                 Goal.Crew => crew ? crew.Count : 0,
+                Goal.Have => Pirates.Economy.PlayerStorage.CountByName(o.id),
                 _ => i < progress.Length ? progress[i] : 0,
             };
         }
@@ -190,7 +202,7 @@ namespace Pirates.Story
                 var c = CurrentChapter;
                 if (c == null || !IsOpen) return null;
                 for (int i = 0; i < c.objectives.Length; i++)
-                    if (!c.objectives[i].IsState && !string.IsNullOrEmpty(c.objectives[i].id) && !IsDone(i)) return c.objectives[i].MarkerId;
+                    if (c.objectives[i].HasMarker && !IsDone(i)) return c.objectives[i].MarkerId;
                 return null;
             }
         }
@@ -229,6 +241,7 @@ namespace Pirates.Story
         }
         void OnCampCleared(CampClearedEvent e) => Count(Goal.ClearCamp, e.campId);
         void OnEnemyDefeated(EnemyDefeatedEvent e) => Count(Goal.DefeatEnemy, e.targetId);
+        void OnPlaceReached(PlaceReachedEvent e) => Count(Goal.Reach, e.placeId);
 
         // ---------- Andamento ----------
 
@@ -236,6 +249,8 @@ namespace Pirates.Story
 
         void Update()
         {
+            // Depois do fim, os moradores falam da vila livre (MissionGiver.endingTalk).
+            MissionGiver.StoryEnded = Finished;
             if (Finished) return;
             bool open = IsOpen;
             if (!initialized)
@@ -495,16 +510,28 @@ namespace Pirates.Story
             {
                 title = "A Ilha Amaldiçoada",
                 requiredRank = 4,
-                intro = "Lázaro fez um trato com a maldição da prata. A ilha envolta em névoa espera por você.",
-                outro = "",
-                comingSoon = true,
+                intro = "Lázaro fez um trato com a maldição da prata. A ilha envolta em névoa, a noroeste, espera por você.",
+                outro = "Lázaro caiu, e a maldição da prata caiu com ele. A Coroa de Prata é sua: Porto Alento nunca mais paga tributo.",
+                // Pacote H (06–09/11): a ilha, a névoa, os mortos da ilha (o cerco do altar), o duelo com Lázaro e a Coroa de Prata no
+                // baú dele. O fim (os quadros do epílogo) toca quando este capítulo acaba (EpilogueDirector).
+                comingSoon = false,
                 objectives = new[]
                 {
                     Talk("Fale com Tobias, o coveiro", "Tobias",
                         "Você voltou das Águas Negras. Poucos voltam. E viu a névoa, não viu? Subindo do naufrágio, rumo ao noroeste.",
                         "Eu avisei: a prata da Frota é amaldiçoada. É por causa dela que os mortos do meu cemitério levantam.",
                         "Lázaro chegou antes de você. Fez um trato com a maldição, e agora a ilha na névoa é dele.",
-                        "Ainda não há mapa que leve até lá. Mas quando houver, capitão... leve sal, pólvora e coragem."),
+                        "Por anos aquela névoa fez navio rodar em círculos até voltar de onde saiu. Mas você trouxe a rota da Coroa: com ela, a " +
+                        "névoa abre caminho.",
+                        "Navegue para o noroeste, {nome}. Desembarque na praia do sul e suba até o alto. Leve sal, pólvora e coragem."),
+                    Obj("Desembarque na Ilha Amaldiçoada, a noroeste", Goal.Reach, "ilha_amaldicoada"),
+                    Obj("Quebre o cerco dos mortos no altar, no alto da ilha", Goal.DefeatEnemy, "altar_amaldicoado"),
+                    Obj("Derrote Lázaro Negro no templo do alto", Goal.DefeatEnemy, "lazaro_negro"),
+                    new Objective
+                    {
+                        text = "Pegue a Coroa de Prata no tesouro de Lázaro, atrás do altar", goal = Goal.Have, id = "Equip_CoroaDePrata",
+                        marker = "tesouro_lazaro",
+                    },
                 },
             },
         };

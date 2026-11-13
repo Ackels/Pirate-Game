@@ -27,6 +27,12 @@ namespace Pirates.Core
 
         void OnDisable() => Restore();
 
+        public void Cancel()
+        {
+            Restore();
+            until = 0f;
+        }
+
         void Restore()
         {
             if (appliedScale < 0f) return;

@@ -7,7 +7,11 @@ namespace Pirates.Economy
     public enum EquipSlot { None, Blade, Firearm, Outfit, Relic }
 
     /// <summary>O que uma relíquia equipada dá (30/10): mais ouro (missões e saque) ou mais tesouro (baús e equipamento nos destroços e baús).</summary>
-    public enum RelicEffect { None, Gold, Treasure }
+    /// <remarks>
+    /// Crown (a Coroa de Prata, pacote H, passo 4): vale para os três ao mesmo tempo (ouro = valor, tesouro = 2 × valor, fama = valor).
+    /// Fame é só a pergunta (ninguém tem "Fame" como efeito próprio).
+    /// </remarks>
+    public enum RelicEffect { None, Gold, Treasure, Crown, Fame }
 
     /// <summary>Nome e cor de cada raridade (baús, janelas, tela de equipamento).</summary>
     public static class Rarity
@@ -70,7 +74,15 @@ namespace Pirates.Economy
         public static float RelicBonus(RelicEffect effect)
         {
             var relic = Active(EquipSlot.Relic);
-            return relic && relic.relicEffect == effect ? relic.relicAmount : 0f;
+            if (!relic) return 0f;
+            if (relic.relicEffect == RelicEffect.Crown)
+                return effect switch
+                {
+                    RelicEffect.Gold or RelicEffect.Fame => relic.relicAmount,
+                    RelicEffect.Treasure => relic.relicAmount * 2f,
+                    _ => 0f,
+                };
+            return relic.relicEffect == effect ? relic.relicAmount : 0f;
         }
 
         public static bool IsEquipped(ItemDefinition item) => item && item.equipSlot != EquipSlot.None && equipped[(int)item.equipSlot] == item;

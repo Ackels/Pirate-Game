@@ -149,6 +149,13 @@ namespace Pirates.Ambient
         {
             if (!cam) cam = Camera.main;
             if (!cam || !Services.TryGet(out IWeather weather)) return;
+            // Interior que mostra o lado de fora (13/11): chove em volta da sala (anel), não dentro dela; sem respingos (cairiam no chão de dentro).
+            if (CoveredArea.OutsideVisible(out var house))
+            {
+                RainAround(weather, house);
+                return;
+            }
+            if (ringShape) BoxShape();
             if (CoveredArea.Inside)
             {
                 // Debaixo da terra não chove (as gotas que estavam no ar ficaram lá fora).
@@ -195,6 +202,58 @@ namespace Pirates.Ambient
             }
 
             if (rain > 0.01f) Splash(rain, weather.Storm);
+        }
+
+        bool ringShape;
+        ParticleSystem.Particle[] ringBuffer;
+
+        /// <summary>
+        /// Chuva em volta de um interior (13/11): a mesma caixa, caindo reto, cobrindo a sala e a volta dela; em cima da sala as gotas somem
+        /// na altura do topo das paredes (como se batessem no telhado), então a chuva aparece na frente da câmera e o chão de dentro fica seco.
+        /// </summary>
+        void RainAround(IWeather weather, CoveredLook house)
+        {
+            splashDebt = 0f;
+            float rain = weather.Rain;
+            emission.rateOverTime = rain <= 0.01f ? 0f : rainRate * rain + stormExtra * weather.Storm;
+            float outer = house.radius + 4f;   // caixa de ~27 m: o que a câmera vê em volta da sala (maior, as gotas ficavam ralas)
+            // A caixa da zona vai do chão −2 m a +6 m: o topo das paredes (3 m) fica 1 m acima do meio dela.
+            float roof = house.center.y + 1.2f;
+            var t = drops.transform;
+            if (!ringShape)
+            {
+                ringShape = true;
+                drops.Clear();
+                var shape = drops.shape;
+                shape.scale = new Vector3(outer * 2f, outer * 2f, 0.5f);
+                shownWind = new Vector3(999f, 0f, 0f);
+                shownReach = -999f;
+                t.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
+            }
+            t.position = house.center + Vector3.up * dropHeight;
+
+            int n = drops.particleCount;
+            if (n == 0) return;
+            if (ringBuffer == null || ringBuffer.Length < drops.main.maxParticles) ringBuffer = new ParticleSystem.Particle[drops.main.maxParticles];
+            n = drops.GetParticles(ringBuffer);
+            bool changed = false;
+            for (int k = 0; k < n; k++)
+            {
+                var pos = ringBuffer[k].position;
+                if (pos.y >= roof || ringBuffer[k].remainingLifetime <= 0f) continue;
+                if (Mathf.Abs(pos.x - house.center.x) > house.extents.x - 0.7f || Mathf.Abs(pos.z - house.center.z) > house.extents.z - 0.7f) continue;
+                ringBuffer[k].remainingLifetime = 0f;
+                changed = true;
+            }
+            if (changed) drops.SetParticles(ringBuffer, n);
+        }
+
+        void BoxShape()
+        {
+            ringShape = false;
+            drops.Clear();
+            shownReach = -999f;
+            shownWind = new Vector3(999f, 0f, 0f);
         }
 
         // ---------- Respingos ----------

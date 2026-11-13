@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_MusicaTaverna
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: 46d0565d06327bf47863011596ab5fa7, type: 3}
+  - {fileID: 8300000, guid: 7ff286b60e997c9499eb44881e5c1eb7, type: 3}
+  - {fileID: 8300000, guid: 4bca3aa9e0a766c469fda754520de1ef, type: 3}
+  clipVolumes:
+  - 0.24
+  - 0.41
+  - 0.23
+  channel: 0
+  volume: {x: 1, y: 1}
+  pitch: {x: 1, y: 1}
+  spatial: 0
+  minDistance: 1
+  maxDistance: 2
+  cooldown: 0

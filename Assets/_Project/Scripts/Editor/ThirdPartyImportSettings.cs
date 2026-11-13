@@ -41,8 +41,18 @@ namespace Pirates.EditorTools
         /// <summary>Animações do RPG Character Mecanim Animation Pack FREE (Explosive, Asset Store; espadão de duas mãos do capitão).</summary>
         public const string ExplosiveFolder = Folder + "/ExplosiveRPG";
         bool Explosive => NormalizedPath.StartsWith(ExplosiveFolder + "/");
+        /// <summary>
+        /// Universal Animation Library 2 [Standard] do Quaternius (06/11, CC0; baixado pelo Jhonata para a revisão das animações do chat
+        /// "Animador", revisado: só FBX/GLB/.blend, imagens e textos). No projeto fica só o FBX da Unity (manequim + todos os clipes). Pelo
+        /// guia do pacote: humanoide, "Bake Axis Conversion", raiz do movimento no osso "root" e loop nos clipes "_Loop"; como os pacotes do
+        /// Mixamo e da Explosive, o giro da raiz fica fora da pose (o FootCharacter move o personagem); o passo fica dentro.
+        /// </summary>
+        public const string Ual2Folder = Folder + "/Quaternius_UAL2";
+        bool Ual2 => NormalizedPath.StartsWith(Ual2Folder + "/");
         bool UsesColorMaterials => NormalizedPath.StartsWith(ColorMaterialFolder + "/") || NormalizedPath.StartsWith(RuinsFolder + "/")
-            || NormalizedPath.StartsWith(AnimatedMonstersFolder + "/");
+            || NormalizedPath.StartsWith(AnimatedMonstersFolder + "/")
+            // Interiores (13/11): móveis do Kenney (cor por material) e objetos do Quaternius (trim sheets): o gerador troca pelos nossos.
+            || NormalizedPath.StartsWith(Folder + "/Kenney_FurnitureKit/") || NormalizedPath.StartsWith(Folder + "/Quaternius_FantasyProps/");
 
         void OnPreprocessModel()
         {
@@ -54,6 +64,14 @@ namespace Pirates.EditorTools
             importer.importCameras = false;
             importer.importLights = false;
             importer.addCollider = false;
+            if (Ual2)
+            {
+                importer.animationType = ModelImporterAnimationType.Human;
+                importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+                importer.bakeAxisConversion = true;
+                foreach (var path in importer.transformPaths)
+                    if (path.EndsWith("/root") || path == "root") { importer.motionNodeName = path; break; }
+            }
         }
 
         /// <summary>Personagens do Quaternius trazem as animações no FBX: os ciclos (parado, andar, correr, nadar) em loop.</summary>
@@ -66,7 +84,8 @@ namespace Pirates.EditorTools
             foreach (var clip in clips)
             {
                 string n = clip.name.ToLowerInvariant();
-                clip.loopTime = n.EndsWith("idle") || n.EndsWith("walk") || n.EndsWith("run") || n.Contains("swim");
+                // Voo também é ciclo (12/11: Bat_Flying e Fast_Flying perdiam o loop a cada reimportação e as asas congelavam).
+                clip.loopTime = n.EndsWith("idle") || n.EndsWith("walk") || n.EndsWith("run") || n.Contains("swim") || n.EndsWith("flying");
                 if (Explosive)
                 {
                     // RPG Character da Explosive (23/10): como os pacotes do Mixamo, giro e deslocamento da raiz fora da pose (o Animator sem
@@ -75,6 +94,18 @@ namespace Pirates.EditorTools
                     clip.loopTime = !n.Contains("attack") && (n.Contains("idle") || n.Contains("walk") || n.Contains("run") || n.Contains("strafe"));
                     clip.lockRootRotation = false;
                     clip.lockRootPositionXZ = false;
+                    clip.lockRootHeightY = true;
+                    clip.keepOriginalOrientation = true;
+                    clip.keepOriginalPositionY = true;
+                    clip.keepOriginalPositionXZ = true;
+                }
+                if (Ual2)
+                {
+                    // Giro fora da pose, como o Mixamo e a Explosive; o passo fica DENTRO (06/11, medido no capitão: os clipes do UAL2 dão um
+                    // passo, e fora da pose o pé escorregava ~4 m/s parado).
+                    clip.loopTime = n.EndsWith("_loop");
+                    clip.lockRootRotation = false;
+                    clip.lockRootPositionXZ = true;
                     clip.lockRootHeightY = true;
                     clip.keepOriginalOrientation = true;
                     clip.keepOriginalPositionY = true;
@@ -173,6 +204,17 @@ namespace Pirates.EditorTools
                 importer.alphaIsTransparency = true;
                 importer.wrapMode = TextureWrapMode.Clamp;
                 importer.maxTextureSize = 256;
+                importer.textureCompression = TextureImporterCompression.Compressed;
+                return;
+            }
+            if (NormalizedPath.StartsWith(Folder + "/Quaternius_FantasyProps/"))
+            {
+                // Trim sheets dos objetos de interior (13/11): textura de verdade (madeira, metal, pano), com filtro e mipmap; normal como normal.
+                importer.textureType = NormalizedPath.Contains("_Normal") ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                importer.sRGBTexture = !NormalizedPath.Contains("_ORM");
+                importer.filterMode = FilterMode.Bilinear;
+                importer.mipmapEnabled = true;
+                importer.maxTextureSize = 1024;
                 importer.textureCompression = TextureImporterCompression.Compressed;
                 return;
             }

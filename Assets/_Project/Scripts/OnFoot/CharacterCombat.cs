@@ -15,7 +15,7 @@ namespace Pirates.OnFoot
     /// Serve ao jogador e aos piratas da IA (o comando vem do FootCharacter). A animação é avisada pelos eventos.
     /// </summary>
     [RequireComponent(typeof(FootCharacter))]
-    public class CharacterCombat : MonoBehaviour
+    public class CharacterCombat : MonoBehaviour, Core.ITeamMember
     {
         [Tooltip("Time: golpes e tiros não acertam personagens do mesmo time (0 = jogador, 1 = piratas inimigos).")]
         [SerializeField] int team;
@@ -122,6 +122,9 @@ namespace Pirates.OnFoot
         public WeaponDefinition Current => CurrentIndex >= 0 && CurrentIndex < weapons.Length ? weapons[CurrentIndex] : null;
         public bool IsSwapping => swapping;
         public bool IsAttacking => Time.time < busyUntil;
+        /// <summary>No meio de um chute (para quem mexe na arma na mão: o chute não é golpe).</summary>
+        public bool IsKicking => Time.time < kickUntil;
+        float kickUntil = -1f;
         /// <summary>Um ataque agora sairia na hora (sem ficar guardado esperando a arma): a IA do chefe só escolhe o golpe assim.</summary>
         public bool ReadyToAttack => !swapping && !IsAttacking && !IsBlocking && Time.time >= nextAttackTime;
         public bool IsReloading => Current && Time.time < reloadUntil[CurrentIndex];
@@ -240,6 +243,9 @@ namespace Pirates.OnFoot
 
         /// <summary>Capitão do jogador: o golpe procura o inimigo mais perto e dá um passo até ele.</summary>
         public void SetMeleeAssist(bool value) => meleeAssist = value;
+
+        /// <summary>Só o capitão do jogador tem a assistência do golpe (o gerador liga): serve para saber quem é o jogador.</summary>
+        public bool MeleeAssist => meleeAssist;
         float blockStart = float.NegativeInfinity, blockEnd = float.NegativeInfinity;
         bool parryArmed;
 
@@ -318,6 +324,9 @@ namespace Pirates.OnFoot
             if (locked[index] == !available) return;
             locked[index] = !available;
             if (!available && CurrentIndex == index && isActiveAndEnabled) Equip(0);
+            // Trancada não aparece (12/11, Jhonata: o bacamarte ficava nas costas antes de ser comprado).
+            var visual = WeaponVisual(index);
+            if (visual) visual.gameObject.SetActive(available);
         }
 
         IAmmoSupply ammo;
@@ -515,7 +524,7 @@ namespace Pirates.OnFoot
             PauseReload(fromIndex);
             if (from)
             {
-                if (from.animatedDraw)
+                if (from.animatedDraw && !from.instantHolster)
                 {
                     Holstering?.Invoke(from);
                     yield return new WaitForSeconds(from.holsterReleaseTime);
@@ -614,7 +623,7 @@ namespace Pirates.OnFoot
                 toAim.y = 0f;
                 if (toAim.sqrMagnitude > 0.04f) direction = toAim.normalized;
             }
-            busyUntil = Time.time + kickBusy;
+            busyUntil = Time.time + kickBusy; kickUntil = busyUntil;
             nextAttackTime = Mathf.Max(nextAttackTime, Time.time + kickBusy);
             nextKickTime = Time.time + kickCooldown;
             bufferedUntil = float.NegativeInfinity;

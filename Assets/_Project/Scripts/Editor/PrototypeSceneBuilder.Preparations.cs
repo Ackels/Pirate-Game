@@ -49,6 +49,7 @@ namespace Pirates.EditorTools
             yield return IncendiaryItem();
             yield return PearlNecklaceItem();
             yield return SeahorseAmuletItem();
+            yield return CrownItem();
         }
 
         // ---------- 4b: munição incendiária e relíquias ----------

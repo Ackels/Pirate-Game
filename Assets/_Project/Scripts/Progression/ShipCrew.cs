@@ -30,10 +30,22 @@ namespace Pirates.Progression
         public int FreeBerths => Mathf.Max(0, Berths - Count);
         /// <summary>Quanto dos beliches está ocupado (0 a 1): o bônus é proporcional.</summary>
         public float Fraction => Berths > 0 ? Mathf.Clamp01((float)Count / Berths) : 0f;
+        /// <summary>Moral (0 a 1, salário de 12/11): sem pagamento ela cai e o bônus da tripulação também (até 30% dele com moral zero).</summary>
+        public float Morale { get; private set; } = 1f;
+        float MoraleFactor => Mathf.Lerp(0.3f, 1f, Morale);
         /// <summary>Multiplica o tempo de recarga (1 = sem bônus).</summary>
-        public float ReloadMultiplier => settings ? 1f - settings.reloadBonusAtFull * Fraction : 1f;
+        public float ReloadMultiplier => settings ? 1f - settings.reloadBonusAtFull * Fraction * MoraleFactor : 1f;
         /// <summary>Multiplica aceleração e giro (1 = sem bônus).</summary>
-        public float HandlingMultiplier => settings ? 1f + settings.handlingBonusAtFull * Fraction : 1f;
+        public float HandlingMultiplier => settings ? 1f + settings.handlingBonusAtFull * Fraction * MoraleFactor : 1f;
+
+        /// <summary>Muda a moral (o salário). Só avisa quem usa o bônus a cada 5% (o ShipUpgrades reaplica os números).</summary>
+        public void SetMorale(float value)
+        {
+            value = Mathf.Clamp01(value);
+            bool step = Mathf.Abs(Mathf.Round(value * 20f) - Mathf.Round(Morale * 20f)) >= 1f;
+            Morale = value;
+            if (step) Changed?.Invoke();
+        }
 
         /// <summary>O número a bordo mudou (resgate, contratação, baixa, jogo carregado).</summary>
         public event Action Changed;

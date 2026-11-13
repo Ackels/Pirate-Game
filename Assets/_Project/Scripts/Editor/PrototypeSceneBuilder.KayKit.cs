@@ -127,7 +127,7 @@ namespace Pirates.EditorTools
             var description = new HumanDescription
             {
                 human = human.ToArray(), skeleton = skeleton.ToArray(),
-                upperArmTwist = 0.5f, lowerArmTwist = 0.5f, upperLegTwist = 0.5f, lowerLegTwist = 0.5f,
+                upperArmTwist = AvatarTwistShare, lowerArmTwist = AvatarTwistShare, upperLegTwist = AvatarTwistShare, lowerLegTwist = AvatarTwistShare,
                 armStretch = 0.05f, legStretch = 0.05f, feetSpacing = 0f, hasTranslationDoF = false,
             };
             var built = AvatarBuilder.BuildHumanAvatar(go, description);

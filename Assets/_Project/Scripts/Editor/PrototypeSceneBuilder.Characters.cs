@@ -156,7 +156,7 @@ namespace Pirates.EditorTools
             var description = new HumanDescription
             {
                 human = human.ToArray(), skeleton = skeleton.ToArray(),
-                upperArmTwist = 0.5f, lowerArmTwist = 0.5f, upperLegTwist = 0.5f, lowerLegTwist = 0.5f,
+                upperArmTwist = AvatarTwistShare, lowerArmTwist = AvatarTwistShare, upperLegTwist = AvatarTwistShare, lowerLegTwist = AvatarTwistShare,
                 armStretch = 0.05f, legStretch = 0.05f, feetSpacing = 0f, hasTranslationDoF = false,
             };
             var built = AvatarBuilder.BuildHumanAvatar(go, description);
@@ -168,6 +168,14 @@ namespace Pirates.EditorTools
             if (!built.isValid || !built.isHuman) throw new System.Exception($"{model}: avatar humanoide inválido");
             return SaveAvatar(built);
         }
+
+        /// <summary>
+        /// Quanto do giro do pulso/pé o avatar repassa para o antebraço/canela e do antebraço/canela para o braço/coxa (06/11, revisão das
+        /// animações). Com o padrão do Unity (0,5) o antebraço e a canela viravam ~175° de um quadro para o outro quando o giro passava de
+        /// 180° (corte do cutelo do Mixamo, contra-ataque, Guarda Negra, rolamento: medido 4 e 8 viradas por golpe/rolamento; com 0,25 ainda
+        /// 2). Os personagens do kit e do KayKit não têm osso de torção, então o giro fica inteiro na mão e no pé: 0 viradas, sem pulso torcido.
+        /// </summary>
+        const float AvatarTwistShare = 0f;
 
         /// <summary>Grava o avatar em _Project/Characters, atualizando o que já existe (mesmo GUID nas outras cenas).</summary>
         static Avatar SaveAvatar(Avatar built)
@@ -302,7 +310,7 @@ namespace Pirates.EditorTools
         static AnimationClip KitClip(string model, string clip)
         {
             foreach (var o in AssetDatabase.LoadAllAssetsAtPath($"{QuaterniusFolder}/{model}.fbx"))
-                if (o is AnimationClip c && c.name.EndsWith("|" + clip)) return c;
+                if (o is AnimationClip c && !c.name.StartsWith("__preview__") && c.name.EndsWith("|" + clip)) return c;
             return null;
         }
 

@@ -34,7 +34,13 @@ namespace Pirates.UI
         /// </summary>
         public static bool Suppressed;
 
-        /// <summary>Põe o marcador sobre <paramref name="world"/> com "nome  N m".</summary>
+        /// <summary>
+        /// Até aqui (m) o marcador fica sobre o lugar, com o nome (12/11, pedido do Jhonata: "como no Sea of Thieves", sem ver tudo de longe).
+        /// Mais longe = só a estrela e a seta na borda da tela, apontando o rumo, sem nome nem distância (o lugar fica escondido na névoa).
+        /// </summary>
+        public const int NearMeters = 300;
+
+        /// <summary>Põe o marcador sobre <paramref name="world"/> (perto: com o nome; longe: só a seta na borda).</summary>
         public void Place(GameHud hud, Camera cam, Vector3 world, string name, int meters)
         {
             if (Suppressed)
@@ -46,7 +52,8 @@ namespace Pirates.UI
             Vector3 sp = cam.WorldToScreenPoint(world);
             bool behind = sp.z < 0f;
             if (behind) sp = new Vector3(Screen.width - sp.x, Screen.height - sp.y, -sp.z);
-            bool inside = !behind && sp.x > margin && sp.x < Screen.width - margin && sp.y > margin && sp.y < Screen.height - margin;
+            bool far = meters > NearMeters;
+            bool inside = !far && !behind && sp.x > margin && sp.x < Screen.width - margin && sp.y > margin && sp.y < Screen.height - margin;
             float newAngle = float.NaN;
             if (!inside)
             {
@@ -57,14 +64,16 @@ namespace Pirates.UI
                 float scale = Mathf.Min((Screen.width * 0.5f - margin) / Mathf.Max(1f, Mathf.Abs(dir.x)),
                                         (Screen.height * 0.5f - margin) / Mathf.Max(1f, Mathf.Abs(dir.y)));
                 // Atrás da câmera: sempre na borda (a projeção invertida pode cair no meio da tela).
-                Vector2 edge = center + dir * (behind ? scale : Mathf.Min(1f, scale));
+                // Longe: sempre na borda (o lugar não aparece na névoa; a seta só mostra o rumo).
+                Vector2 edge = center + dir * (behind || far ? scale : Mathf.Min(1f, scale));
                 sp = new Vector3(edge.x, edge.y, 1f);
                 // A seta do pacote aponta para cima; a tela do painel tem y para baixo (girar positivo = horário).
                 newAngle = Mathf.Round(Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg);
             }
 
-            if (line.Stale(name, meters)) line.Text = $"{name}  <size=80%>{meters} m</size>";
+            if (line.Stale(name, far ? -1 : 0)) line.Text = far ? "" : name;
             Hud.Set(text, line.Text);
+            Hud.Show(text, !far);
             Vector2 p = RuntimePanelUtils.ScreenToPanel(hud.World.panel, new Vector2(sp.x, Screen.height - sp.y));
             // Preso na borda: o texto inteiro fica na tela (a largura é a do quadro anterior).
             Vector2 half = root.layout.size * 0.5f;

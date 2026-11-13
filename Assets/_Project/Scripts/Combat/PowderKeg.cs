@@ -27,6 +27,8 @@ namespace Pirates.Combat
 
         Collider[] colliders;
         float explodeAt = -1f;
+        // Quem acendeu (o tiro, a bomba, o barril vizinho já com o dono): a explosão sai no nome dele (12/11: os marujos do capitão não se ferem).
+        GameObject igniter;
 
         public bool IsSpent { get; private set; }
         public float Radius => explosion.radius;
@@ -40,6 +42,7 @@ namespace Pirates.Combat
         public void TakeDamage(in DamageInfo info)
         {
             if (!info.ignites || IsSpent || explodeAt >= 0f) return;
+            igniter = info.source;
             explodeAt = Time.time + Random.Range(fuseSeconds.x, fuseSeconds.y);
         }
 
@@ -58,7 +61,8 @@ namespace Pirates.Combat
             if (visual) visual.SetActive(false);
             foreach (var c in colliders) c.enabled = false;
 
-            Explosion.Detonate(transform.position + Vector3.up * 0.5f, explosion, gameObject, this);
+            Explosion.Detonate(transform.position + Vector3.up * 0.5f, explosion, igniter ? igniter : gameObject, this);
+            igniter = null;
         }
 
         /// <summary>Inteiro de novo, no lugar.</summary>
@@ -66,6 +70,7 @@ namespace Pirates.Combat
         {
             IsSpent = false;
             explodeAt = -1f;
+            igniter = null;
             if (visual) visual.SetActive(true);
             foreach (var c in colliders) c.enabled = true;
         }

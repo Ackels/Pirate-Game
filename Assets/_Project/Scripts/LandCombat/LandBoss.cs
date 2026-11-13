@@ -202,6 +202,9 @@ namespace Pirates.LandCombat
         void OnDisable()
         {
             Active.Remove(this);
+            // Desligado no meio da fúria (o acampamento dorme longe): não fica invencível guardado (12/11).
+            if (shielded) health.Invulnerable = false;
+            shielded = false;
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
             combat.Attacked -= OnAttacked;
@@ -279,7 +282,8 @@ namespace Pirates.LandCombat
         {
             Release();
             if (health.IsDead) return;
-            recentHits.Enqueue(Time.time);
+            // O veneno (pingo por segundo) não é golpe: contava para o "batendo sem parar" e o chefe girava à toa (12/11).
+            if (!info.poison) recentHits.Enqueue(Time.time);
             if (Phase == 1 && health.Normalized <= phaseTwoAt) BeginPowerUp();
         }
 
@@ -380,6 +384,12 @@ namespace Pirates.LandCombat
                 });
             if (target.TryGetComponent(out IPushable pushable)) pushable.Push(away * shockPush * (1f - 0.5f * t));
         }
+
+        /// <summary>Volta ao começo da luta (fase 1, vida cheia): Lázaro se erguendo de novo depois de uma luta.</summary>
+        public void ResetFightNow() => ResetFight();
+
+        /// <summary>Cor do brilho dos olhos (o Barba-Negra vermelho; Lázaro prata).</summary>
+        public void SetEyeColor(Color color) => eyeColor = color;
 
         void ResetFight()
         {

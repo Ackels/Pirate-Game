@@ -14,6 +14,13 @@ namespace Pirates.EditorTools
         /// <summary>Ajuste da posição no ombro (m, eixos do osso do ombro), medido em Play.</summary>
         static Vector3 ParrotNudge = new(0.181f, 0.002f, -0.153f);
 
+        /// <summary>Sem papagaio (07/11, pedido do Jhonata): a malha do kit ("Ernest") fica desligada e nada vai no ombro.</summary>
+        static void HideParrot(GameObject model)
+        {
+            foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                if (r.name == "Ernest") r.enabled = false;
+        }
+
         static void PinParrotToShoulder(GameObject model, string kitModel)
         {
             SkinnedMeshRenderer parrot = null;

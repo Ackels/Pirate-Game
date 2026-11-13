@@ -22,7 +22,16 @@ namespace Pirates.EditorTools
         // lado), sorteados: com só o rápido, rolar 0,2 s depois do começo sempre escapava (09/10, o Jhonata achou fácil rolando).
         const float DaggerSpeed = 1.15f;
         const int DaggerVariantOffset = 2;
-        static readonly (string clip, float impact, float lead)[] DaggerAttacks = { ("Stabbing", 0.42f, 0.35f), ("Stabbing1", 0.88f, 0.85f) };
+        // Estocadas novas (06/11, revisão das animações do chat "Animador", passo 4): as do Mixamo eram facadas de cima (a adaga passava pelo
+        // rosto e a mão ia só 0,25 m à frente, com a lâmina de lado). As duas agora são a estocada de lança do Kevin Iglesias ("Attack
+        // Polearm01", versão feminina pelo override "Humana"; mão 0,55 m à frente, bote aos ~0,40–0,54 s do clipe, impacto em 0,45 s), com a
+        // lâmina corrigida para a frente pelo PostureLimiter (bladeLiftStates). Mesmos tempos de jogo de antes ("lead"): a rápida começa perto do
+        // bote; a lenta toca o preparo inteiro, mais devagar (velocidade = impacto ÷ lead), bem avisada.
+        const string DaggerThrust = "Combat/Polearm/HumanM@AttackPolearm01";
+        static readonly (string clip, float impact, float lead)[] DaggerAttacks = { ("Kevin:" + DaggerThrust, 0.45f, 0.35f), ("Kevin:" + DaggerThrust, 0.45f, 0.85f) };
+
+        /// <summary>Clipe dos golpes da adaga: "Kevin:caminho" = Human Animations do Kevin Iglesias, senão Mixamo.</summary>
+        static AnimationClip DaggerClip(string name) => name.StartsWith("Kevin:") ? BasicMotion(name.Substring(6)) : MixamoClip(name);
 
         static bool IsDuelist(string postName) => postName.StartsWith("Duelista");
 
@@ -109,13 +118,17 @@ namespace Pirates.EditorTools
             for (int v = 0; v < DaggerAttacks.Length; v++)
             {
                 var (clipName, impact, lead) = DaggerAttacks[v];
-                var clip = MixamoClip(clipName);
+                var clip = DaggerClip(clipName);
                 if (!clip) continue;
-                var stab = State(sm, $"Adaga_Golpe{v}", clipName, 1f, new Vector3(900f, -60f + 80f * v));
+                var stab = sm.AddState($"Adaga_Golpe{v}", new Vector3(900f, -60f + 80f * v));
+                stab.motion = clip;
+                // Começo "lead" s de clipe antes do impacto; se o clipe não tem esse preparo, do começo e mais devagar (o impacto chega no mesmo tempo).
+                float start = Mathf.Max(0f, impact - lead);
+                stab.speed = impact - start < lead - 0.001f ? (impact - start) / lead : 1f;
                 stab.tag = FullBodyTag;
                 stab.speedParameterActive = true;
                 stab.speedParameter = "AttackSpeed";
-                Any(sm, stab, Mathf.Max(0f, impact - lead) / clip.length, 0.1f,
+                Any(sm, stab, start / clip.length, 0.1f,
                     ("Attack", AnimatorConditionMode.If, 0), ("WeaponType", AnimatorConditionMode.Equals, 0),
                     ("AttackVariant", AnimatorConditionMode.Equals, DaggerVariantOffset + v));
                 Exit(stab, ready, Mathf.Min(0.95f, (impact + 0.45f) / clip.length), 0.25f);

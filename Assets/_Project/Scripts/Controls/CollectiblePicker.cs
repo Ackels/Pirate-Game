@@ -124,8 +124,8 @@ namespace Pirates.Controls
                 foreach (var s in spec.reward)
                     if (s.item && s.amount > 0)
                     {
-                        int added = hold.Add(s.item, s.amount);
-                        if (added > 0) parts.Add($"+{added} {s.item.displayName}");
+                        int added = PlayerStorage.Give(hold, s.item, s.amount, out int stored);
+                        if (added > 0) parts.Add(PlayerStorage.GiveText(s.item, added, stored));
                     }
             if (spec.fame > 0 && CaptainFame.Current)
             {

@@ -45,6 +45,8 @@ namespace Pirates.EditorTools
             public (Vector2 pos, float radius, float blend, float height)[] flats = Array.Empty<(Vector2, float, float, float)>();
             /// <summary>Ruas e trilhas de terra batida (só a cor do chão): de, até (XZ local), largura. a = b faz uma praça redonda.</summary>
             public (Vector2 a, Vector2 b, float width)[] paths = Array.Empty<(Vector2, Vector2, float)>();
+            /// <summary>Ilha Amaldiçoada (pacote H, 06/11): sem grama, o chão é pedra cinza e terra escura.</summary>
+            public bool cursed;
         }
 
         /// <summary>Quadradinhos da paleta (colormap 16 × 4): coluna e a faixa de V da linha.</summary>
@@ -214,6 +216,7 @@ namespace Pirates.EditorTools
                 else if (slope > 30f) uv = Palette.Rock(t);
                 else if (OnPath(s, new Vector2(mid.x, mid.z))) uv = Palette.Dirt(t);
                 else if (inside < s.beachWidth * 0.95f) uv = Palette.Sand(t);
+                else if (s.cursed) uv = t < 0.62f ? Palette.Rock(t) : Palette.DarkRock(t);
                 else uv = Palette.Grass(t);
                 foreach (var v in new[] { a, b, c })
                 {

@@ -104,7 +104,11 @@ namespace Pirates.Loot
             int have = Count(c.Kind), total = Total(c.Kind);
             Collected?.Invoke(c, have, total);
             var spec = Spec(c.Kind);
-            if (have == total && spec != null) Completed?.Invoke(spec);
+            if (have == total && spec != null)
+            {
+                Completed?.Invoke(spec);
+                Autosave.Request("coleção completa");
+            }
             return true;
         }
 

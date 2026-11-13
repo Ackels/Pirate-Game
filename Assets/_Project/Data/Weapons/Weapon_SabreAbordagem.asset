@@ -26,10 +26,10 @@ MonoBehaviour:
   reloadTime: 2.5
   attackVariants: 3
   animatorVariantOffset: 0
-  animatorVariants: 000000000100000006000000i
+  animatorVariants: 1e0000000100000006000000i
   randomVariants: 0
   variantHitDelays:
-  - 0.24000001
+  - 0.232
   - 0.24000001
   - 0.33846158
   comboWindow: 0.88
@@ -49,6 +49,7 @@ MonoBehaviour:
   supportOffset: 0
   supportSlides: 0
   supportSlideGap: 0.12
+  steerByHands: 0
   moveSpeedWhileAttacking: 0.15
   knockdown: 0
   guardCost: 1

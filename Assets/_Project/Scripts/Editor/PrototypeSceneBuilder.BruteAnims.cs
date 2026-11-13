@@ -29,7 +29,11 @@ namespace Pirates.EditorTools
         static readonly (string clip, bool dwarf, float impact, float speed)[] BruteAttacks =
         {
             ("Combat/2H/DwarfM@Attack2H01", true, 0.56f, 0.8f),
-            ("Attack4", false, 0.52f, 0.87f),
+            // 07/11: era o "Attack4" (horizontal) da Explosive; no tubarão ele abria os braços depois do impacto e as mãos saíam do cabo
+            // (a arma girava 80° na mão em 42 de 52 quadros). O "Attack2" da Explosive tirava isso, mas na preparação erguia o machado reto
+            // atrás da cabeça e o corpo se encolhia com os braços para cima (Jhonata: "muito estranho"). Agora o golpe de duas mãos do Human
+            // Melee: prepara com o machado erguido do lado direito, de corpo em pé, e desce na diagonal ("Human:" = pasta do Human).
+            ("Human:Combat/2H/HumanM@Attack2H01", false, 0.56f, 0.94f),
             ("Attack6", false, 0.46f, 0.6f),
         };
 
@@ -42,7 +46,8 @@ namespace Pirates.EditorTools
         /// </summary>
         const float BruteSupport = -0.3f;
 
-        const float BruteAxeScale = 0.95f;
+        // 1,15 (era 0,95; 07/11): os golpes afastam as mãos até ~0,65 m e o cabo não chegava à mão esquerda (o TwoHandSteer escorrega o cabo nas mãos).
+        const float BruteAxeScale = 1.15f;
         /// <summary>Pegada da mão direita no cabo do kit (y −0,29 no fim do cabo, cabeças a partir de 0,2): logo abaixo das cabeças.</summary>
         static readonly Vector3 BruteAxeGripPoint = new(0f, 0.1f, 0f);
 
@@ -62,7 +67,8 @@ namespace Pirates.EditorTools
             return null;
         }
 
-        static AnimationClip BruteAttackClip(int v) => BruteAttacks[v].dwarf ? DwarfClip(BruteAttacks[v].clip) : ExplosiveClip(BruteAttacks[v].clip);
+        static AnimationClip BruteAttackClip(int v) => BruteAttacks[v].clip.StartsWith("Human:") ? BasicMotion(BruteAttacks[v].clip.Substring(6))
+            : BruteAttacks[v].dwarf ? DwarfClip(BruteAttacks[v].clip) : ExplosiveClip(BruteAttacks[v].clip);
 
         /// <summary>
         /// "Bruto_Pronto" (guarda), "Bruto_Correndo" e os golpes "Machado_Golpe6..8" (nome que o <see cref="PostureLimiter"/> conhece) pelo
@@ -117,6 +123,7 @@ namespace Pirates.EditorTools
             w.supportOffset = BruteSupport;
             w.supportSlides = true;
             w.supportSlideGap = 0.12f;
+            w.steerByHands = true;
             EditorUtility.SetDirty(w);
             return w;
         }

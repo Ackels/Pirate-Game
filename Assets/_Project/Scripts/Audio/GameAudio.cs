@@ -69,6 +69,27 @@ namespace Pirates.Audio
             ResourceNode.Struck += OnChopped;
             ResourceNode.Felled += OnTreeFelled;
             ResourceNode.Landed += OnTreeLanded;
+            // Marteladas dos carpinteiros do estaleiro (13/11).
+            WorkStrike.Struck += OnWorkStrike;
+        }
+
+        void OnWorkStrike(Vector3 point, bool heavy, WorkMaterial material)
+        {
+            if (material == WorkMaterial.Metal)
+            {
+                // Ferreiro na bigorna: metal leve gravado, baixinho (o tinido de lâmina sintetizado ficou artificial e irritante, 13/11).
+                if (sounds.anvil) SoundPlayer.At(sounds.anvil, point, heavy ? 1f : 0.75f, heavy ? 0.92f : 1.08f);
+                return;
+            }
+            if (material == WorkMaterial.Stone)
+            {
+                // Pedreiro: a pancada na pedra e o tinido curto do cinzel.
+                SoundPlayer.At(sounds.dig, point, heavy ? 0.75f : 0.5f, heavy ? 1f : 1.25f);
+                SoundPlayer.At(sounds.block, point, 0.22f, 1.8f);
+                return;
+            }
+            if (heavy) SoundPlayer.At(sounds.chop, point, 0.7f, 0.95f);
+            else SoundPlayer.At(sounds.chop, point, 0.45f, 1.45f);
         }
 
         void OnChopped(ResourceNode node, Vector3 point, Vector3 direction)
@@ -206,6 +227,7 @@ namespace Pirates.Audio
             ResourceNode.Struck -= OnChopped;
             ResourceNode.Felled -= OnTreeFelled;
             ResourceNode.Landed -= OnTreeLanded;
+            WorkStrike.Struck -= OnWorkStrike;
         }
 
         // Etapa do tutorial cumprida: a vinheta de missão aceita; o fim do tutorial, a de missão cumprida.

@@ -122,6 +122,13 @@ namespace Pirates.EditorTools
             AddCollectibles(foot.character, foot.switcher, hud, loot.items);
             // Ilha da Ermida (C4, 19/10): ruína com 3 alavancas atrás de armadilhas, no lugar vazio "A" (sudoeste).
             AddErmida(foot.character, materials, island.loot, loot.items, deck, hull, hud);
+            // Ilha Amaldiçoada (pacote H, passo 1, 06/11): no lugar vazio "D" (noroeste), atrás da muralha de névoa do capítulo 6.
+            AddCursedIsle(foot.switcher, deck, hull, hud, island.loot, loot.items);
+            // Borda do mundo (12/11): a névoa que devolve o navio.
+            AddWorldEdge(foot.switcher, hud);
+            // Carta náutica (mapa no M, 12/11): depois de todas as ilhas e da borda (a imagem vem do mapa da costa, feito no fim; refaça com
+            // AddSeaChartToOpenScene depois de gerar se as costas mudarem).
+            AddSeaChart(foot.switcher, hud);
             // Pesca com rede (D2, passo 2, 30/10): a rede no navio (depois das outras interações do F) e os cardumes no mar, depois de
             // todas as ilhas (os pontos de pesca ficam longe da terra).
             AddFishingNet(ship, loot.items);
@@ -136,6 +143,12 @@ namespace Pirates.EditorTools
             AddFishJournal(ship.GetComponent<Inventory>());
             // Pratos da taverna (30/10): os bônus e a plaquinha no HUD.
             AddMeals(ship, foot.character.gameObject);
+            // Interiores (13/11): a taverna e o armazém por dentro, longe do mapa (precisam das portas da vila e do PassageWalker da Ermida).
+            Debug.Log("[Pirates] " + AddTavernInterior());
+            Debug.Log("[Pirates] " + AddWarehouseInterior());
+            Debug.Log("[Pirates] " + AddShipyardInterior());
+            Debug.Log("[Pirates] " + AddBuilderInterior());
+            Debug.Log("[Pirates] " + AddForgeInterior());
             var gameHud = Object.FindAnyObjectByType<GameHud>(FindObjectsInactive.Include);
             if (gameHud && !gameHud.GetComponent<CrewEscortHUD>()) gameHud.gameObject.AddComponent<CrewEscortHUD>();
             // Tela de título (11/10): "A Coroa de Prata" sobre o último quadro do prólogo, opções, créditos; o prólogo toca no Novo jogo.
@@ -144,6 +157,11 @@ namespace Pirates.EditorTools
                 .Select(n => AssetDatabase.LoadAssetAtPath<Texture2D>($"{PrologueFolder}/Quadro_{n}.png")).Where(t => t).ToArray();
             if (frames.Length < 9) Debug.LogWarning("[Pirates] Faltam quadros do prólogo: rode Pirates → Prólogo → Gerar quadros.");
             prologue.Configure(frames);
+            // O fim (pacote H, passo 4): os quadros do epílogo e quem os toca quando o último capítulo acaba.
+            var endFrames = LoadEpilogueFrames();
+            if (endFrames.Length < EpilogueFrames.Length) Debug.LogWarning("[Pirates] Faltam quadros do fim: rode Pirates → Prólogo → Gerar quadros do fim.");
+            prologue.ConfigureEpilogue(endFrames);
+            hud.AddComponent<EpilogueDirector>().Bind(story, prologue, save);
             var menu = hud.AddComponent<SaveMenuHUD>();
             menu.Bind(save, "");
             menu.Configure(frames.Length > 0 ? frames[^1] : null, AssetDatabase.LoadAssetAtPath<TextAsset>(Root + "/UI/Creditos.txt"), prologue);

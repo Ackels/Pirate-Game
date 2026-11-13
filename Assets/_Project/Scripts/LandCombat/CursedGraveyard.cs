@@ -38,6 +38,13 @@ namespace Pirates.LandCombat
         [Tooltip("Caído pela primeira vez (sem pólvora no golpe final): levanta de novo depois destes segundos, com esta fração da vida.")]
         [SerializeField] float reviveSeconds = 2.5f;
         [SerializeField, Range(0f, 1f)] float reviveHealth = 0.7f;
+        [Header("Ilha Amaldiçoada (pacote H, passo 2)")]
+        [Tooltip("Levantam a qualquer hora (sem dia, sem amanhecer): os mortos da Ilha Amaldiçoada.")]
+        [SerializeField] bool anyHour;
+        [Tooltip("Jogador mais longe que isto (m) ou embarcado: voltam todos para a terra, vivos de novo (0 = nunca).")]
+        [SerializeField] float resetRadius;
+        [Tooltip("Publica o acampamento derrotado (fama, missões) quando todos caem de vez. As ondas do cerco do altar não publicam.")]
+        [SerializeField] bool publishCleared = true;
 
         enum Phase { Day, Buried, Risen }
 
@@ -57,6 +64,35 @@ namespace Pirates.LandCombat
         /// <summary>Os esqueletos estão fora das covas (levantando, lutando ou caídos).</summary>
         public bool IsRisen => phase == Phase.Risen;
         public float TriggerRadius => triggerRadius;
+        /// <summary>Levantaram e caíram todos de vez (nenhum para levantar de novo, nenhum saindo da terra).</summary>
+        public bool AllDown
+        {
+            get
+            {
+                if (phase != Phase.Risen || rising != null || !camp.IsCleared) return false;
+                foreach (bool p in pending) if (p) return false;
+                return true;
+            }
+        }
+        /// <summary>De pé agora (fora da terra e vivos).</summary>
+        public int Standing
+        {
+            get
+            {
+                int n = 0;
+                foreach (var m in camp.Members) if (m && m.gameObject.activeInHierarchy && !m.IsDead) n++;
+                return n;
+            }
+        }
+        public EnemyCamp Camp => camp;
+
+        /// <summary>Ilha Amaldiçoada: a qualquer hora, voltam para a terra com o jogador longe, e (ondas do altar) sem publicar.</summary>
+        public void ConfigureAnyHour(float reset, bool publish)
+        {
+            anyHour = true;
+            resetRadius = reset;
+            publishCleared = publish;
+        }
 
         public void Configure(Transform playerCharacter, float radius, RiseClip[] clips)
         {
@@ -80,7 +116,7 @@ namespace Pirates.LandCombat
             {
                 int index = i;
                 // Pólvora ou a Lâmina de São Telmo: fica no chão.
-                onDamaged[i] = info => lastIgnited[index] = info.ignites || info.holy;
+                onDamaged[i] = info => { if (!info.poison) lastIgnited[index] = info.ignites || info.holy; };   // o pingo do veneno não apaga o tiro (12/11)
                 onDied[i] = () => OnMemberDied(index);
             }
         }
@@ -145,7 +181,7 @@ namespace Pirates.LandCombat
         {
             if (!camp.IsCleared) return;
             foreach (bool p in pending) if (p) return;
-            camp.PublishCleared();
+            if (publishCleared) camp.PublishCleared();
         }
 
         void Start() => Bury();
@@ -154,6 +190,11 @@ namespace Pirates.LandCombat
         {
             if (Time.time < nextCheck) return;
             nextCheck = Time.time + CheckInterval;
+            if (anyHour)
+            {
+                UpdateAnyHour();
+                return;
+            }
             if (time == null && !Services.TryGet(out time)) return;
             float night = time.Night;
             switch (phase)
@@ -171,6 +212,27 @@ namespace Pirates.LandCombat
             }
         }
 
+        /// <summary>Ilha Amaldiçoada: sem dia nem noite; perto, levantam; longe (ou embarcado), voltam todos para a terra.</summary>
+        void UpdateAnyHour()
+        {
+            if (phase == Phase.Day) phase = Phase.Buried;
+            if (phase == Phase.Buried)
+            {
+                if (triggerRadius > 0f && PlayerNear()) rising = StartCoroutine(Rise());
+                return;
+            }
+            if (resetRadius <= 0f) return;
+            bool away = !player || !player.gameObject.activeInHierarchy || FlatDistance() > resetRadius;
+            if (away) Bury();
+        }
+
+        float FlatDistance()
+        {
+            Vector3 d = player.position - transform.position;
+            d.y = 0f;
+            return d.magnitude;
+        }
+
         bool PlayerNear()
         {
             if (!player || !player.gameObject.activeInHierarchy) return false;
@@ -184,8 +246,10 @@ namespace Pirates.LandCombat
         {
             if (rising != null) StopCoroutine(rising);
             rising = null;
+            StopAllCoroutines();
+            for (int i = 0; i < pending.Length; i++) pending[i] = false;
             foreach (var m in camp.Members) if (m) m.gameObject.SetActive(false);
-            phase = time != null && time.Night >= nightFrom ? Phase.Buried : Phase.Day;
+            phase = anyHour || (time != null && time.Night >= nightFrom) ? Phase.Buried : Phase.Day;
         }
 
         /// <summary>Um por um, mais perto do jogador primeiro: liga, volta à cova com a vida cheia e sai dela.</summary>

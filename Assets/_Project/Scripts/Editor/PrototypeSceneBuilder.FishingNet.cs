@@ -275,7 +275,8 @@ namespace Pirates.EditorTools
         static Vector3[] FishingPlaces()
         {
             Physics.SyncTransforms();
-            var avoid = new List<Vector3> { SquidLair, MegalodonLair };
+            // A Ilha Amaldiçoada (pacote H): longe da névoa (com ela fechada, o navio se perde a 215 m do centro).
+            var avoid = new List<Vector3> { SquidLair, MegalodonLair, CursedCenter };
             avoid.AddRange(BossSpawnPoints);
             var candidates = new List<Vector3>();
             for (float x = -800f; x <= 800f; x += 40f)

@@ -7,6 +7,10 @@ namespace Pirates.UI
     public class EnemyStateLabels : MonoBehaviour
     {
         [SerializeField] float heightOffset = 9f;
+        [Tooltip("Desligado (12/11): o texto aparecia sobre todo navio inimigo, a qualquer distância, também no jogo. Ligue para avaliar a IA.")]
+        [SerializeField] bool showLabels;
+        [Tooltip("Só navios até esta distância da câmera (m).")]
+        [SerializeField] float showWithin = 250f;
 
         static readonly Color LabelColor = new(1f, 0.62f, 0.52f);
         EnemyShipAI[] enemies = System.Array.Empty<EnemyShipAI>();
@@ -17,6 +21,11 @@ namespace Pirates.UI
 
         void LateUpdate()
         {
+            if (!showLabels)
+            {
+                labels?.HideAll();
+                return;
+            }
             if (labels == null)
             {
                 var hud = GameHud.Current;
@@ -32,6 +41,8 @@ namespace Pirates.UI
             foreach (var ai in enemies)
             {
                 if (!ai || !ai.isActiveAndEnabled) continue;
+                var cam = Camera.main;
+                if (cam && (ai.transform.position - cam.transform.position).sqrMagnitude > showWithin * showWithin) continue;
                 bool sinking = ai.TryGetComponent(out Health health) && health.IsDead;
                 string text = sinking ? "Afundando" : ai.State switch
                 {

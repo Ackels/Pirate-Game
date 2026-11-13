@@ -60,6 +60,8 @@ namespace Pirates.OnFoot
         [Header("Sacar / guardar")]
         [Tooltip("Tem animação de sacar e guardar (espada). Sem ela a troca é instantânea (pistola no cinto).")]
         public bool animatedDraw;
+        [Tooltip("Saque animado, mas guarda na hora (a pistola vai ao cinto sem animação).")]
+        public bool instantHolster;
         [Tooltip("Segundos do início do saque até a mão pegar a arma na bainha.")]
         public float drawGrabTime = 0.45f;
         [Tooltip("Duração do saque até poder atacar.")]
@@ -96,6 +98,11 @@ namespace Pirates.OnFoot
 
         [Tooltip("Com supportSlides: distância mínima da mão direita, em fração do comprimento da arma.")]
         [Range(0f, 0.5f)] public float supportSlideGap = 0.12f;
+
+        [Tooltip("Arma de duas mãos guiada pelas duas mãos da animação (TwoHandSteer): o cabo gira na mão direita até apontar para a mão " +
+                 "esquerda, e nenhuma das duas é puxada por IK (os braços ficam exatamente como na animação). Para personagens de braço curto " +
+                 "com golpes de humanos de braço comprido (o brutamontes), onde prender a mão esquerda num ponto do cabo esticava o braço.")]
+        public bool steerByHands;
 
         [Header("Movimento")]
         [Tooltip("Fração da velocidade enquanto ataca (1 = normal).")]

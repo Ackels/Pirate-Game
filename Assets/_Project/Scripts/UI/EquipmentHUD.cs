@@ -457,6 +457,7 @@ namespace Pirates.UI
         {
             RelicEffect.Gold => $"+{relic.relicAmount * 100f:0}% de ouro nas missões e no saque (baús, destroços, caixotes)",
             RelicEffect.Treasure => $"+{relic.relicAmount * 100f:0}% de chance de baú nos destroços e de equipamento nos baús",
+            RelicEffect.Crown => $"+{relic.relicAmount * 100f:0}% de ouro e de fama, +{relic.relicAmount * 200f:0}% de chance de baú e de equipamento",
             _ => "",
         };
 

@@ -26,12 +26,14 @@ MonoBehaviour:
   reloadTime: 2.5
   attackVariants: 1
   animatorVariantOffset: 0
+  animatorVariants: 
   randomVariants: 0
   variantHitDelays: []
   comboWindow: 1
-  animatedDraw: 0
-  drawGrabTime: 0.45
-  drawDuration: 0.95
+  animatedDraw: 1
+  instantHolster: 1
+  drawGrabTime: 0.18
+  drawDuration: 0.45
   holsterReleaseTime: 0.85
   holsterDuration: 1
   aimPoseSeconds: 1.5
@@ -42,7 +44,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
+  steerByHands: 0
   moveSpeedWhileAttacking: 0.3
   knockdown: 0
   guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
   variantStrikes: []

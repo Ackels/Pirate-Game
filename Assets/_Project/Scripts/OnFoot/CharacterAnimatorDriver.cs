@@ -23,6 +23,14 @@ namespace Pirates.OnFoot
         static readonly int MoveZ = Animator.StringToHash("MoveZ");
         static readonly int StrafeBool = Animator.StringToHash("Strafe");
         static readonly int MotionSpeed = Animator.StringToHash("MotionSpeed");
+        static readonly int Passo = Animator.StringToHash("Passo");
+        static readonly int PassoX = Animator.StringToHash("PassoX");
+        static readonly int PassoZ = Animator.StringToHash("PassoZ");
+        static readonly int Cadencia = Animator.StringToHash("Cadencia");
+        // Braços da corrida no ritmo das pernas (12/11): "CicloPerna" = fase do ciclo da locomoção (0–1) + "CicloPernaFase" (onde o pé
+        // esquerdo vai à frente no clipe do tronco); o "CorrerComEspada" toca pelo tempo dele em vez do relógio próprio.
+        static readonly int LegCycle = Animator.StringToHash("CicloPerna");
+        static readonly int LocomotionState = Animator.StringToHash("Idle Walk Run Blend");
         static readonly int Grounded = Animator.StringToHash("Grounded");
         static readonly int Jump = Animator.StringToHash("Jump");
         static readonly int FreeFall = Animator.StringToHash("FreeFall");
@@ -78,6 +86,13 @@ namespace Pirates.OnFoot
         static readonly int GuardState = Animator.StringToHash("Defesa");
         static readonly int GuardHitState = Animator.StringToHash("DefesaImpacto");
         static readonly int ParryState = Animator.StringToHash("Aparar");
+        static readonly int DrawState = Animator.StringToHash("Sacar");
+        static readonly int HolsterState = Animator.StringToHash("Guardar");
+        static readonly int DrawPistolState = Animator.StringToHash("SacarPistola");
+        static readonly int DrawBackState = Animator.StringToHash("SacarCostas");
+        static readonly int HolsterBackState = Animator.StringToHash("GuardarCostas");
+        static bool IsChange(int h) => h == DrawState || h == HolsterState || h == DrawPistolState || h == DrawBackState || h == HolsterBackState;
+        static readonly int EmptyState = Animator.StringToHash("Vazio");
         /// <summary>Segundo do corte para fora ("Stable Sword Outward Slash") em que o aparar começa (o mesmo ParrySwingStart do gerador).</summary>
         const float ParryClipStart = 0.72f;
 
@@ -86,6 +101,8 @@ namespace Pirates.OnFoot
         [SerializeField] float speedDamp = 0.1f;
         [Tooltip("Segundos no ar antes de tocar a animação de queda (degraus pequenos não contam).")]
         [SerializeField] float freeFallDelay = 0.15f;
+        [Tooltip("Mais rápido que o clipe mais rápido (a disparada), o ciclo das pernas acelera até este tanto (o pé continua no chão).")]
+        [SerializeField] float maxCadence = 2f;
 
         [Header("Corpo inteiro")]
         [SerializeField] string upperLayer = "Tronco";
@@ -105,10 +122,20 @@ namespace Pirates.OnFoot
         readonly HashSet<int> parameters = new();
         float airTime;
         int upperIndex = -1, fullIndex = -1;
+        float legPhase, legPhaseOffset;
+        /// <summary>Ritmo próprio da pose parada (12/11): os piratas de um acampamento respiravam todos no mesmo compasso.</summary>
+        float personalTempo = 1f;
         float fullWeight, fullWeightVelocity;
         bool stillPose = true;
         /// <summary>Escala do personagem (brutamontes 1,35, chefe 1,4): o passo da animação cresce junto, então o Speed vai dividido por ela.</summary>
         float strideScale = 1f;
+        /// <summary>
+        /// Passada que acompanha a velocidade (06/11): velocidade ÷ (escala do objeto × escala humana do avatar) = a velocidade na escala em que
+        /// os clipes foram medidos; os blend trees têm os limites na velocidade natural de cada clipe, então o pé apoiado fica parado no chão.
+        /// <see cref="passoMax"/> e <see cref="lateralMax"/> = o clipe mais rápido de cada um (valor padrão dos parâmetros "PassoMax" e
+        /// "PassoLateralMax", posto pelo gerador); acima disso o ciclo acelera (<see cref="maxCadence"/>).
+        /// </summary>
+        float strideNorm = 1f, passoMax, lateralMax;
         bool dead;
         int hitVariants, deathVariants, lastHit = -1, lastDeath = -1;
         float knockedAt = float.NegativeInfinity, knockFall;
@@ -135,10 +162,53 @@ namespace Pirates.OnFoot
         /// <summary>Numa ação de corpo inteiro em movimento (rolar, chutar, arremessar, alavanca, pesca, cair): sem a mão de apoio na arma.</summary>
         public bool InFullBodyMove => upperIndex >= 0 && TargetState().tagHash == MovingFullBodyTag;
 
+        /// <summary>
+        /// O tronco ainda está sacando, guardando ou sem a pose da arma (06/11): a troca de arma termina no combate antes de a animação de
+        /// guardar acabar, e a mão de apoio ia buscar o cano do bacamarte com a mão direita ainda nas costas (o braço esquerdo virava 150° num
+        /// quadro). A mão de apoio espera a pose da arma.
+        /// </summary>
+        /// <summary>O tronco está (ou está entrando) na guarda erguida ("Defesa", "DefesaImpacto"; o "Aparar" não conta).</summary>
+        public bool InGuardPose
+        {
+            get
+            {
+                if (upperIndex < 0) return false;
+                int target = TargetState().shortNameHash;
+                return target == GuardState || target == GuardHitState;
+            }
+        }
+
+        public bool InWeaponChange
+        {
+            get
+            {
+                if (upperIndex < 0) return false;
+                int current = animator.GetCurrentAnimatorStateInfo(upperIndex).shortNameHash;
+                int target = TargetState().shortNameHash;
+                return IsChange(current) || IsChange(target) || target == EmptyState;
+            }
+        }
+
         AnimatorStateInfo TargetState() =>
             animator.IsInTransition(upperIndex) ? animator.GetNextAnimatorStateInfo(upperIndex) : animator.GetCurrentAnimatorStateInfo(upperIndex);
 
         public void Configure(FootCharacter footCharacter) => character = footCharacter;
+
+        void Start()
+        {
+            // Variedade (12/11): quem não é o capitão começa a pose num ponto sorteado do ciclo e respira num ritmo um pouco diferente
+            // (±10%); antes um acampamento inteiro parado mexia junto, como robôs.
+            if (combat && combat.MeleeAssist)
+            {
+                // A cabeça do capitão é para onde NPCs e inimigos olham (HeadLook).
+                Pirates.Core.HeadLook.Player = animator && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Head) : transform;
+                return;
+            }
+            personalTempo = Random.Range(0.9f, 1.1f);
+            if (animator && animator.isActiveAndEnabled && animator.runtimeAnimatorController)
+                for (int l = 0; l < animator.layerCount; l++)
+                    if (l == 0 || l == upperIndex) animator.Play(0, l, Random.value);
+        }
 
         void Awake()
         {
@@ -146,7 +216,15 @@ namespace Pirates.OnFoot
             if (!character) character = GetComponentInParent<FootCharacter>();
             if (character) combat = character.GetComponent<CharacterCombat>();
             if (character) strideScale = Mathf.Max(0.1f, character.transform.lossyScale.y);
-            foreach (var p in animator.parameters) parameters.Add(p.nameHash);
+            foreach (var p in animator.parameters)
+            {
+                parameters.Add(p.nameHash);
+                if (p.name == "PassoMax") passoMax = p.defaultFloat;
+                else if (p.name == "PassoLateralMax") lateralMax = p.defaultFloat;
+                else if (p.name == "CicloPernaFase") legPhaseOffset = p.defaultFloat;
+            }
+            float human = animator.isHuman ? animator.humanScale : 1f;
+            strideNorm = strideScale * Mathf.Max(0.1f, human);
             upperIndex = animator.GetLayerIndex(upperLayer);
             fullIndex = animator.GetLayerIndex(fullBodyLayer);
             hitVariants = CountStates("Golpeado_");
@@ -457,13 +535,39 @@ namespace Pirates.OnFoot
 
             Vector3 velocity = character.AnimatedVelocity;
             if (parameters.Contains(Speed)) animator.SetFloat(Speed, velocity.magnitude / strideScale, speedDamp, dt);
-            if (parameters.Contains(MotionSpeed)) animator.SetFloat(MotionSpeed, character.WalkingBackward ? -1f : 1f);
+            float cadence = 1f;
+            if (parameters.Contains(Passo))
+            {
+                animator.SetFloat(Passo, velocity.magnitude / strideNorm, speedDamp, dt);
+                float passo = animator.GetFloat(Passo);
+                if (passoMax > 0.1f && passo > passoMax) cadence = Mathf.Min(maxCadence, passo / passoMax);
+                // Parado, cada um no seu ritmo; andando volta ao 1 (a passada acompanha a velocidade).
+                cadence *= Mathf.Lerp(personalTempo, 1f, Mathf.Clamp01(passo / 0.6f));
+            }
+            if (parameters.Contains(MotionSpeed)) animator.SetFloat(MotionSpeed, character.WalkingBackward ? -cadence : cadence);
+            if (parameters.Contains(LegCycle))
+            {
+                // Fase das pernas: o tempo da locomoção (um passo de cada pé por ciclo em todos os clipes dela); fora dela (pulo, de lado)
+                // segue no ritmo de uma corrida para não congelar.
+                var legs = animator.IsInTransition(0) ? animator.GetNextAnimatorStateInfo(0) : animator.GetCurrentAnimatorStateInfo(0);
+                legPhase = legs.shortNameHash == LocomotionState ? legs.normalizedTime - Mathf.Floor(legs.normalizedTime) : Mathf.Repeat(legPhase + dt / 0.6f, 1f);
+                animator.SetFloat(LegCycle, Mathf.Repeat(legPhase + legPhaseOffset, 1f));
+            }
             // Andar de lado/de ré (estado "Lateral" da camada de base): velocidade no espaço do personagem.
             if (parameters.Contains(MoveX))
             {
                 Vector3 local = character.transform.InverseTransformDirection(velocity) / strideScale;
                 animator.SetFloat(MoveX, local.x, speedDamp, dt);
                 animator.SetFloat(MoveZ, local.z, speedDamp, dt);
+                if (parameters.Contains(PassoX))
+                {
+                    Vector3 stride = character.transform.InverseTransformDirection(velocity) / strideNorm;
+                    animator.SetFloat(PassoX, stride.x, speedDamp, dt);
+                    animator.SetFloat(PassoZ, stride.z, speedDamp, dt);
+                    float side = new Vector2(animator.GetFloat(PassoX), animator.GetFloat(PassoZ)).magnitude;
+                    if (parameters.Contains(Cadencia))
+                        animator.SetFloat(Cadencia, lateralMax > 0.1f && side > lateralMax ? Mathf.Min(maxCadence, side / lateralMax) : 1f);
+                }
                 animator.SetBool(StrafeBool, character.IsStrafing && grounded && !dead);
             }
             if (parameters.Contains(Grounded)) animator.SetBool(Grounded, grounded || dead);

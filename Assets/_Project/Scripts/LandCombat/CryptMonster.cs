@@ -138,8 +138,22 @@ namespace Pirates.LandCombat
             if (!health.IsDead) Raise(Cue.Hurt);
         }
 
+        /// <summary>
+        /// A queda não conta (a fera da Ilha Amaldiçoada levanta de novo): sem fama nem feito, quem herda cuida de levantar
+        /// (<see cref="OnFalseDeath"/>).
+        /// </summary>
+        protected virtual bool DefersDeath() => false;
+        protected virtual void OnFalseDeath() { }
+
         void OnDied()
         {
+            if (DefersDeath())
+            {
+                if (Encounter) Encounter.EndAttack(this);
+                Raise(Cue.Die);
+                OnFalseDeath();
+                return;
+            }
             IsAwake = false;
             if (Encounter) Encounter.EndAttack(this);
             Raise(Cue.Die);
@@ -207,7 +221,11 @@ namespace Pirates.LandCombat
 
         protected void Play(string state, float fade = 0.12f)
         {
-            if (animator && animator.isActiveAndEnabled) animator.CrossFadeInFixedTime(state, fade);
+            if (!animator || !animator.isActiveAndEnabled) return;
+            // Ciclos (voar, flutuar, parado, andar, correr) entram num ponto sorteado (12/11): o bando de morcegos batia as asas junto.
+            bool cycle = state == "Voar" || state == "Flutuar" || state == "Idle" || state == "Walk" || state == "Run";
+            if (cycle) animator.CrossFadeInFixedTime(state, fade, 0, UnityEngine.Random.value * 2f);
+            else animator.CrossFadeInFixedTime(state, fade);
         }
 
         // Suporte a "Enter Play Mode" sem domain reload.

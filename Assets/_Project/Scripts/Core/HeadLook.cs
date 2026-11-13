@@ -1,0 +1,101 @@
+using UnityEngine;
+
+namespace Pirates.Core
+{
+    /// <summary>
+    /// Olhar (12/11, revisão das animações do chat "Animador", passo 4; Jhonata: animação "travada, estranha"): ninguém virava a cabeça
+    /// para o capitão. Depois da animação, o pescoço e a cabeça giram para um ponto (inimigo em alerta: quem ele persegue) ou, com
+    /// <see cref="autoRadius"/>, para o capitão quando ele chega perto (NPCs, moradores). Limitado para os lados e para cima/baixo,
+    /// suavizado, entra e sai aos poucos. Vale para humanoides e para os rigs genéricos do kit (ossos "Head" e "Neck" pelo nome).
+    /// Só trabalha com o Animator animando (parado, a pose não volta a cada quadro e a cabeça ficaria torta).
+    /// </summary>
+    [DefaultExecutionOrder(30)]
+    public class HeadLook : MonoBehaviour
+    {
+        /// <summary>A cabeça do capitão (posta pelo CharacterAnimatorDriver dele).</summary>
+        public static Transform Player { get; set; }
+
+        [Tooltip("Olha para o capitão quando ele chega a esta distância (m); 0 = só quando alguém mandar (SetTarget).")]
+        [SerializeField] float autoRadius;
+        [SerializeField] float maxYaw = 70f;
+        [SerializeField] float maxPitch = 35f;
+        [Tooltip("Parte do giro que fica no pescoço (o resto na cabeça).")]
+        [SerializeField, Range(0f, 1f)] float neckShare = 0.4f;
+        [Tooltip("Segundos para começar/parar de olhar.")]
+        [SerializeField] float blendSeconds = 0.35f;
+        [Tooltip("Rapidez com que o olhar segue o alvo (1/s).")]
+        [SerializeField] float followRate = 7f;
+
+        Transform head, neck;
+        Animator animator;
+        Vector3 headForwardLocal, neckForwardLocal;
+        Vector3 localDir = Vector3.forward;
+        Vector3 target;
+        bool hasTarget, ready;
+        float weight;
+
+        public float Weight => weight;
+        public void SetAutoRadius(float meters) => autoRadius = Mathf.Max(0f, meters);
+        public void SetTarget(Vector3 worldPoint) { target = worldPoint; hasTarget = true; }
+        public void ClearTarget() => hasTarget = false;
+
+        void Awake()
+        {
+            animator = GetComponent<Animator>();
+            if (animator && animator.isHuman)
+            {
+                head = animator.GetBoneTransform(HumanBodyBones.Head);
+                neck = animator.GetBoneTransform(HumanBodyBones.Neck);
+            }
+            if (!head) head = Find(transform, "Head");
+            if (!neck) neck = Find(transform, "Neck");
+            if (!head) { enabled = false; return; }
+            // Na pose do Awake a cabeça olha para a frente do personagem.
+            headForwardLocal = Quaternion.Inverse(head.rotation) * transform.forward;
+            if (neck) neckForwardLocal = Quaternion.Inverse(neck.rotation) * transform.forward;
+            ready = true;
+        }
+
+        static Transform Find(Transform root, string name)
+        {
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                if (string.Equals(t.name, name, System.StringComparison.OrdinalIgnoreCase)) return t;
+            return null;
+        }
+
+        void LateUpdate()
+        {
+            if (!ready || (animator && !animator.isActiveAndEnabled)) return;
+            Vector3 point = target;
+            bool want = hasTarget;
+            if (!want && autoRadius > 0f && Player && Player != head)
+            {
+                Vector3 d = Player.position - head.position;
+                if (d.sqrMagnitude < autoRadius * autoRadius) { point = Player.position; want = true; }
+            }
+            float dt = Time.deltaTime;
+            weight = Mathf.MoveTowards(weight, want ? 1f : 0f, dt / Mathf.Max(0.01f, blendSeconds));
+            if (want)
+            {
+                Vector3 local = transform.InverseTransformDirection(point - head.position);
+                if (local.sqrMagnitude > 1e-4f)
+                {
+                    local.Normalize();
+                    float yaw = Mathf.Clamp(Mathf.Atan2(local.x, local.z) * Mathf.Rad2Deg, -maxYaw, maxYaw);
+                    float pitch = Mathf.Clamp(Mathf.Asin(Mathf.Clamp(local.y, -1f, 1f)) * Mathf.Rad2Deg, -maxPitch, maxPitch);
+                    Vector3 clamped = Quaternion.Euler(-pitch, yaw, 0f) * Vector3.forward;
+                    localDir = Vector3.Slerp(localDir, clamped, 1f - Mathf.Exp(-dt * followRate));
+                }
+            }
+            if (weight <= 0.001f) { localDir = Vector3.forward; return; }
+            Vector3 aim = transform.TransformDirection(localDir);
+            if (neck)
+            {
+                Vector3 cur = neck.rotation * neckForwardLocal;
+                neck.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(cur, aim), neckShare * weight) * neck.rotation;
+            }
+            Vector3 headCur = head.rotation * headForwardLocal;
+            head.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(headCur, aim), weight) * head.rotation;
+        }
+    }
+}

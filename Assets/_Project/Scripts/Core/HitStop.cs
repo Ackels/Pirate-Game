@@ -27,6 +27,15 @@ namespace Pirates.Core
             runner.Begin(seconds, scale);
         }
 
+        /// <summary>
+        /// Encerra na hora a parada que estiver valendo e devolve a velocidade de antes. Quem mexe no <see cref="Time.timeScale"/> (pausa,
+        /// roda dos marujos, epílogo) chama isto antes de guardar a velocidade: senão guardaria a da parada (×0,05) e o jogo voltaria preso nela.
+        /// </summary>
+        public static void Cancel()
+        {
+            if (runner) runner.Cancel();
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
         {

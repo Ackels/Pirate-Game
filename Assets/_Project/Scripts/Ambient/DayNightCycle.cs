@@ -121,8 +121,11 @@ namespace Pirates.Ambient
         {
             var cam = Camera.main;
             if (!cam) return;
+            // Interior que mostra o lado de fora (13/11): o céu de verdade.
+            if (covered && CoveredArea.OutsideVisible(out _)) covered = false;
             cam.clearFlags = covered ? CameraClearFlags.SolidColor : CameraClearFlags.Skybox;
-            cam.backgroundColor = Color.black;
+            // Interior de casa (13/11): o fundo do lugar (a noite azulada atrás do cais da taverna).
+            cam.backgroundColor = covered && CoveredArea.TryGetLook(out var look) ? look.background : Color.black;
         }
 
         void OnDestroy()
@@ -224,15 +227,36 @@ namespace Pirates.Ambient
         /// <summary>Debaixo da terra: luz fraca e fria de cima com sombra, ambiente escuro, sem névoa nem reflexo, tochas acesas.</summary>
         void ApplyCovered()
         {
+            // Interior de casa com o lado de fora visível (13/11): fica a luz de fora (sol ou lua, céu fechado, névoa) e a do lugar só se
+            // mistura; as lanternas de dentro acesas e, de noite, um mínimo da luz quente do lugar (as lanternas não clareiam tudo).
+            if (CoveredArea.OutsideVisible(out var house))
+            {
+                // De noite a luz de dentro entra menos (senão a vila lá fora parecia fim de tarde): o lugar fica com as lanternas e um pouco
+                // do ambiente quente.
+                float mix = house.indoorMix * (1f - Night);
+                if (sun)
+                {
+                    sun.intensity = Mathf.Lerp(sun.intensity, house.intensity, mix);
+                    sun.color = Color.Lerp(sun.color, house.light, mix);
+                }
+                var mixed = RenderSettings.ambientProbe * (1f - mix);
+                mixed.AddAmbientLight(house.ambient * (mix + 0.18f * Night));
+                RenderSettings.ambientProbe = mixed;
+                NightLight.Level = 1f;
+                return;
+            }
+            // Interior de casa (13/11): luz e ambiente do próprio lugar (a taverna é quente).
+            bool own = CoveredArea.TryGetLook(out var look);
             if (sun)
             {
-                sun.transform.rotation = Quaternion.Euler(settings.coveredLightAngles.x, settings.coveredLightAngles.y, 0f);
-                sun.intensity = settings.coveredLightIntensity;
-                sun.color = settings.coveredLightColor;
-                sun.shadowStrength = settings.coveredShadow;
+                var angles = own ? look.angles : settings.coveredLightAngles;
+                sun.transform.rotation = Quaternion.Euler(angles.x, angles.y, 0f);
+                sun.intensity = own ? look.intensity : settings.coveredLightIntensity;
+                sun.color = own ? look.light : settings.coveredLightColor;
+                sun.shadowStrength = own ? look.shadow : settings.coveredShadow;
             }
             var ambient = new SphericalHarmonicsL2();
-            ambient.AddAmbientLight(settings.coveredAmbient);
+            ambient.AddAmbientLight(own ? look.ambient : settings.coveredAmbient);
             RenderSettings.ambientProbe = ambient;
             RenderSettings.fogDensity = 0f;
             RenderSettings.reflectionIntensity = 0.1f;

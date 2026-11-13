@@ -25,7 +25,7 @@ namespace Pirates.EditorTools
         const string PortraitPath = Root + "/UI/Retrato_Capitao.png";
         // Enquadramento do retrato: fração da altura do modelo na foto, giro da câmera em volta dele e altura do olhar.
         // O papagaio fica no ombro esquerdo do capitão: a câmera vem desse lado e o centro da foto anda um pouco para ele.
-        static float PortraitFrame = 0.78f, PortraitYaw = -25f, PortraitLookUp = 0.0f, PortraitShift = 0.12f;
+        static float PortraitFrame = 0.78f, PortraitYaw = -25f, PortraitLookUp = 0.0f, PortraitShift = 0f;
 
         static FameSettings LoadFameSettings() => LoadOrCreateAsset<FameSettings>(DataFolder + "/FameSettings_Capitao.asset", f =>
         {
@@ -204,11 +204,14 @@ namespace Pirates.EditorTools
                 var holder = new GameObject("Retrato");
                 SceneManager.MoveGameObjectToScene(holder, scene);
                 var model = KitCharacter(PlayerKitModel, holder.transform);
+                // Sem o papagaio (07/11, pedido do Jhonata: o capitão não tem mais papagaio no jogo).
+                foreach (var r in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                    if (r.name == "Ernest") r.enabled = false;
                 var idle = KitClip(PlayerKitModel, "Idle");
                 if (idle) idle.SampleAnimation(model, 0.4f);
 
                 var bounds = new Bounds(model.transform.position, Vector3.zero);
-                foreach (var r in model.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
+                foreach (var r in model.GetComponentsInChildren<Renderer>()) if (r.enabled) bounds.Encapsulate(r.bounds);
                 float height = bounds.size.y;
                 Transform head = null;
                 foreach (var t in model.GetComponentsInChildren<Transform>())

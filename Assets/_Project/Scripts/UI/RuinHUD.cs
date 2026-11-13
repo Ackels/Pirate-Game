@@ -18,6 +18,8 @@ namespace Pirates.UI
         [SerializeField] PassageWalker walker;
         [SerializeField] RuinPuzzle[] puzzles = System.Array.Empty<RuinPuzzle>();
         [SerializeField] float bannerSeconds = 4.5f;
+        [Tooltip("Faixa ao chegar por uma passagem (entrar numa casa, descer às catacumbas): curta, 13/11.")]
+        [SerializeField] float arrivalSeconds = 2.2f;
 
         GameHud hud;
         HudPrompt prompt;
@@ -180,7 +182,7 @@ namespace Pirates.UI
         {
             if (banner == null || string.IsNullOrEmpty(p.ArrivalTitle)) return;
             banner.Show(p.ArrivalTitle, p.ArrivalSubtitle);
-            bannerUntil = Time.time + bannerSeconds;
+            bannerUntil = Time.time + arrivalSeconds;
         }
 
         void OnOpened(RuinPuzzle p)

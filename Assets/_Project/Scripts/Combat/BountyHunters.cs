@@ -135,12 +135,14 @@ namespace Pirates.Combat
             back.y = 0f;
             back = back.sqrMagnitude > 0.01f ? back.normalized : Vector3.back;
             var fallback = player.position + back * spawnDistance;
-            for (int step = 0; step < 18; step++)
-            {
-                float angle = (step + 1) / 2 * 20f * (step % 2 == 0 ? 1f : -1f);
-                var p = player.position + Quaternion.AngleAxis(angle, Vector3.up) * back * spawnDistance;
-                if (!Land(p)) return p;
-            }
+            // Volta inteira em várias distâncias (12/11): perto das ilhas, o anel de uma distância só podia ser todo terra e o navio nascia nela.
+            for (int ring = 0; ring < 4; ring++)
+                for (int step = 0; step < 18; step++)
+                {
+                    float angle = (step + 1) / 2 * 20f * (step % 2 == 0 ? 1f : -1f);
+                    var p = player.position + Quaternion.AngleAxis(angle, Vector3.up) * back * (spawnDistance * (1f + 0.5f * ring));
+                    if (!Land(p)) return p;
+                }
             return fallback;
         }
 

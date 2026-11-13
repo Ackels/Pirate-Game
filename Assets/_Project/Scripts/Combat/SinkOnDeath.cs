@@ -31,6 +31,12 @@ namespace Pirates.Combat
 
         public bool IsSinking { get; private set; }
 
+        // Navio afundado é apagado (12/11): antes ficava desligado na cena para sempre, e cada reaparição deixava mais um. O do jogador fica
+        // (o PlayerShipInput chama KeepWhenSunk: a janela de navio afundado e o save leem ele).
+        bool keepWhenSunk;
+
+        public void KeepWhenSunk() => keepWhenSunk = true;
+
         /// <summary>Disparado quando o objeto terminou de afundar (M2.4 usa para soltar loot).</summary>
         public event Action<SinkOnDeath> Sunk;
 
@@ -106,6 +112,7 @@ namespace Pirates.Combat
 
             Sunk?.Invoke(this);
             gameObject.SetActive(false);
+            if (!keepWhenSunk) Destroy(gameObject);
         }
     }
 }

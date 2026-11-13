@@ -30,6 +30,9 @@ namespace Pirates.Loot
         [SerializeField] float checkSeconds = 0.5f;
 
         int active = -1, last = -1, pieces;
+        // Cavado mas o baú ainda fechado (12/11): o save guarda o X até o baú abrir; carregar antes disso enterra de novo (antes o mapa se
+        // perdia junto com o baú, que não é salvo).
+        int dug = -1;
         float nextCheck;
 
         public static TreasureMaps Current { get; private set; }
@@ -41,6 +44,7 @@ namespace Pirates.Loot
         public bool HasMap => active >= 0;
         public Spot ActiveSpot => active >= 0 ? spots[active] : null;
         public string ActiveId => active >= 0 && spots[active].treasure ? spots[active].treasure.TreasureId : null;
+        string ITreasureMaps.ActiveId => active >= 0 ? ActiveId : dug >= 0 && spots[dug].treasure ? spots[dug].treasure.TreasureId : null;
         /// <summary>Muda quando os pedaços ou o mapa mudam (o HUD só remonta nisso).</summary>
         public int Version { get; private set; }
 
@@ -76,6 +80,11 @@ namespace Pirates.Loot
 
         void Update()
         {
+            if (dug >= 0)
+            {
+                var chest = spots[dug].treasure ? spots[dug].treasure.Chest : null;
+                if (!chest || chest.IsOpened) dug = -1;
+            }
             if (!piece || Time.unscaledTime < nextCheck) return;
             nextCheck = Time.unscaledTime + checkSeconds;
             int n = PlayerStorage.Count(piece);
@@ -112,6 +121,7 @@ namespace Pirates.Loot
             if (active < 0 || e.treasureId != ActiveId) return;
             var spot = spots[active];
             last = active;
+            dug = active;
             active = -1;
             Version++;
             Found?.Invoke(spot);
@@ -120,7 +130,9 @@ namespace Pirates.Loot
         public void Restore(string activeId)
         {
             if (active >= 0 && spots[active].treasure) spots[active].treasure.Hide();
+            if (dug >= 0 && spots[dug].treasure) spots[dug].treasure.Hide();
             active = -1;
+            dug = -1;
             for (int i = 0; i < spots.Length; i++)
                 if (spots[i].treasure && !string.IsNullOrEmpty(activeId) && spots[i].treasure.TreasureId == activeId) Mark(i);
             Version++;

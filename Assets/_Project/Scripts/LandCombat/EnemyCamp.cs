@@ -52,6 +52,10 @@ namespace Pirates.LandCombat
         public bool IsAsleep { get; private set; }
 
         public string DisplayName => displayName;
+        /// <summary>Fora da lista de bandos do HUD a pé (os mortos da Ilha Amaldiçoada: o cerco do altar tem a linha dele).</summary>
+        public bool HiddenFromHud => hiddenFromHud;
+        [SerializeField] bool hiddenFromHud;
+        public void SetHiddenFromHud(bool hidden) => hiddenFromHud = hidden;
         public string CampId => campId;
         public Vector3 Center => transform.position;
         public float LeashRadius => leashRadius;

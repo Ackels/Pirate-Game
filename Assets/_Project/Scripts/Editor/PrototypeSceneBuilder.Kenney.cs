@@ -55,7 +55,7 @@ namespace Pirates.EditorTools
         /// grades, colunas) com paleta, e Ruins (Ultimate Modular Ruins do Quaternius: paredes com arco gótico, colunas, pisos,
         /// estátuas, versões com mato; grade de 1 m) com cor por material, nas cópias M_R_*.
         /// </summary>
-        enum Kit { Pirate, Town, Survival, Nature, Castle, Graveyard, Ruins, Food }
+        enum Kit { Pirate, Town, Survival, Nature, Castle, Graveyard, Ruins, Food, Furniture, Props }
 
         static string KitFolder(Kit kit) => kit switch
         {
@@ -67,13 +67,16 @@ namespace Pirates.EditorTools
             Kit.Ruins => "Assets/ThirdParty/Quaternius_ModularRuins/Models",
             // Food Kit 2.0 do Kenney (CC0, 30/10): pratos, tigelas, panelas e comida (ícones dos pratos da taverna).
             Kit.Food => "Assets/ThirdParty/Kenney_FoodKit/Models",
+            // Interiores (13/11, CC0): Furniture Kit do Kenney (cor por material) e Fantasy Props MegaKit do Quaternius (trim sheets).
+            Kit.Furniture => "Assets/ThirdParty/Kenney_FurnitureKit/Models",
+            Kit.Props => "Assets/ThirdParty/Quaternius_FantasyProps/Models",
             _ => KenneyFolder,
         };
 
         static Material KitMaterial(Kit kit) => kit switch
         {
             Kit.Pirate => KenneyMaterial,
-            Kit.Nature or Kit.Ruins => null,
+            Kit.Nature or Kit.Ruins or Kit.Furniture or Kit.Props => null,
             _ => GetTexturedMaterial(kit switch { Kit.Town => "M_KenneyTown", Kit.Castle => "M_KenneyCastle", Kit.Graveyard => "M_KenneyGraveyard", Kit.Food => "M_KenneyFood", _ => "M_KenneySurvival" },
                 AssetDatabase.LoadAssetAtPath<Texture2D>(KitFolder(kit) + "/Textures/colormap.png"), 0.12f),
         };
@@ -100,10 +103,82 @@ namespace Pirates.EditorTools
             {
                 var slots = renderer.sharedMaterials;
                 for (int i = 0; i < slots.Length; i++)
-                    slots[i] = material ? material : kit == Kit.Ruins ? RuinsMaterial(slots[i]) : NatureMaterial(slots[i]);
+                    slots[i] = material ? material : kit switch
+                    {
+                        Kit.Ruins => RuinsMaterial(slots[i]),
+                        Kit.Furniture => FurnitureMaterial(slots[i]),
+                        Kit.Props => PropsMaterial(slots[i]),
+                        _ => NatureMaterial(slots[i]),
+                    };
                 renderer.sharedMaterials = slots;
             }
             return go;
+        }
+
+        /// <summary>
+        /// Móveis do Kenney (13/11): uma cor por material ("wood", "carpet"...). A paleta puxa para taverna de pirata: madeira mais escura e
+        /// quente, tapete vermelho-vinho, metal de ferro velho.
+        /// </summary>
+        static readonly Dictionary<string, Color> FurniturePalette = new()
+        {
+            ["wood"] = new Color(0.52f, 0.33f, 0.19f), ["woodDark"] = new Color(0.33f, 0.21f, 0.13f),
+            ["carpet"] = new Color(0.5f, 0.13f, 0.1f), ["carpetDarker"] = new Color(0.36f, 0.09f, 0.08f), ["carpetWhite"] = new Color(0.78f, 0.7f, 0.55f),
+            ["carpetBlue"] = new Color(0.16f, 0.24f, 0.36f), ["metal"] = new Color(0.36f, 0.35f, 0.34f), ["metalDark"] = new Color(0.18f, 0.17f, 0.17f),
+            ["metalMedium"] = new Color(0.28f, 0.27f, 0.26f), ["metalLight"] = new Color(0.55f, 0.53f, 0.5f), ["lamp"] = new Color(1f, 0.82f, 0.5f),
+        };
+
+        static Material FurnitureMaterial(Material imported)
+        {
+            string name = imported ? imported.name : "wood";
+            var color = FurniturePalette.TryGetValue(name, out var c) ? c
+                : imported ? (imported.HasProperty("_BaseColor") ? imported.GetColor("_BaseColor") : imported.color) : Color.gray;
+            var mat = GetMaterial("M_F_" + name, color, 0.12f);
+            mat.SetColor("_BaseColor", color);
+            if (name == "lamp")
+            {
+                mat.SetColor("_EmissionColor", color * 1.6f);
+                Emissive(mat);
+            }
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        /// <summary>
+        /// Objetos do Quaternius (13/11): os materiais do FBX ("MI_Trim_Furniture", "MI_Trim_Metal_Vertex"...) apontam para quatro texturas
+        /// de recorte (trim sheets) do pacote; um material nosso por textura.
+        /// </summary>
+        static Material PropsMaterial(Material imported)
+        {
+            string name = imported ? imported.name : "MI_Trim_Props";
+            string trim = name.Contains("Metal") ? "Metal" : name.Contains("Furniture") ? "Furniture" : name.Contains("Cloth") || name.Contains("Banner") ? "Cloth"
+                : name.Contains("Page") ? "Page" : "Props";
+            if (trim == "Page") return GetMaterial("M_Props_Pagina", new Color(0.86f, 0.8f, 0.66f), 0.05f);
+            const string folder = "Assets/ThirdParty/Quaternius_FantasyProps/Textures";
+            // Peças pintadas por vértice (potes, vasos, poções, frutas, o pano dos estandartes): a cor está no vértice e a textura é quase
+            // branca. O URP Lit ignora a cor do vértice; o "Particles/Lit" da URP multiplica por ela, tem luz e sombra.
+            if (name.Contains("Vertex") || name.Contains("Banner"))
+            {
+                string vpath = $"{MaterialsFolder}/M_Props_{trim}_Vertice.mat";
+                var vmat = AssetDatabase.LoadAssetAtPath<Material>(vpath);
+                if (!vmat)
+                {
+                    vmat = new Material(Shader.Find("Universal Render Pipeline/Particles/Lit")) { name = $"M_Props_{trim}_Vertice" };
+                    vmat.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/T_Trim_{trim}_BaseColor.png"));
+                    vmat.SetColor("_BaseColor", Color.white);
+                    vmat.SetFloat("_Smoothness", 0.15f);
+                    AssetDatabase.CreateAsset(vmat, vpath);
+                }
+                return vmat;
+            }
+            var mat = GetTexturedMaterial("M_Props_" + trim, AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/T_Trim_{trim}_BaseColor.png"), trim == "Metal" ? 0.35f : 0.15f);
+            var normal = AssetDatabase.LoadAssetAtPath<Texture2D>($"{folder}/T_Trim_{trim}_Normal.png");
+            if (normal && mat.GetTexture("_BumpMap") != normal)
+            {
+                mat.SetTexture("_BumpMap", normal);
+                mat.EnableKeyword("_NORMALMAP");
+                EditorUtility.SetDirty(mat);
+            }
+            return mat;
         }
 
         /// <summary>Cópia compartilhada (em _Project/Materials) do material de cor do Nature Kit: um por cor, não um por modelo.</summary>
@@ -127,6 +202,8 @@ namespace Pirates.EditorTools
             ["Wood"] = new Color(0.5f, 0.34f, 0.2f), ["DarkWood"] = new Color(0.32f, 0.22f, 0.14f),
             ["Metal"] = new Color(0.32f, 0.33f, 0.36f), ["DarkMetal"] = new Color(0.16f, 0.16f, 0.18f), ["Metal_Light"] = new Color(0.55f, 0.57f, 0.6f),
             ["Gold"] = new Color(0.88f, 0.68f, 0.28f), ["Flag"] = new Color(0.55f, 0.12f, 0.08f),
+            // Bandeira de Lázaro no templo da Ilha Amaldiçoada (pacote H, passo 3): roxo-escuro com a prata.
+            ["Lazaro_Flag"] = new Color(0.24f, 0.1f, 0.3f), ["Lazaro_Gold"] = new Color(0.72f, 0.75f, 0.8f), ["Lazaro_Wood"] = new Color(0.2f, 0.16f, 0.14f),
             ["Pot_Main"] = new Color(0.66f, 0.43f, 0.26f), ["Pot_Detail"] = new Color(0.58f, 0.22f, 0.13f),
             ["Bone"] = new Color(0.86f, 0.81f, 0.69f), ["Candle"] = new Color(0.92f, 0.87f, 0.68f),
             ["Light"] = new Color(1f, 0.6f, 0.25f), ["Fire"] = new Color(1f, 0.5f, 0.15f),

@@ -68,6 +68,7 @@ namespace Pirates.Base
             for (int i = 0; i < HarborBuilding.Active.Count; i++)
             {
                 var building = HarborBuilding.Active[i];
+                if (building.SignOnly) continue;
                 float d = building.FlatDistance(transform.position);
                 if (d > building.Range || d > bestDistance) continue;
                 best = building;

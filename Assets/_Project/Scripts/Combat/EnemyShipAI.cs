@@ -83,6 +83,10 @@ namespace Pirates.Combat
         ShipCommand command;
         Vector3 patrolCenter, patrolPoint;
         float alignedTime = -1f, reactionDelay, leadBias;
+        // Encalhado (12/11, como o mercante): encostado numa pedra o desvio não enxerga mais nada e o navio ficava preso para sempre;
+        // parado com a vela aberta por StuckSeconds = ré com o leme todo por ReverseSeconds.
+        const float StuckSpeed = 1f, StuckSeconds = 4f, ReverseSeconds = 5f;
+        float stuckFor, reverseUntil, reverseSteer;
 
         public AIState State { get; private set; } = AIState.Patrol;
         public bool IsAvoiding { get; private set; }
@@ -239,6 +243,19 @@ namespace Pirates.Combat
             // Trocando tiros, leme mais firme: com o alvo girando em volta, o leme proporcional suave ficava ~12° atrás
             // do través e a IA nunca alinhava.
             float fullRudder = State == AIState.Broadside && !IsAvoiding && !zone ? broadsideRudderDegrees : 25f;
+            if (Time.time < reverseUntil)
+            {
+                command = new ShipCommand { steer = reverseSteer, sailDelta = System.Math.Sign(0 - ship.SailIndex) };
+                return;
+            }
+            if (body && !body.isKinematic && body.linearVelocity.magnitude < StuckSpeed && ship.SailIndex >= HalfSail) stuckFor += Time.deltaTime;
+            else stuckFor = 0f;
+            if (stuckFor > StuckSeconds)
+            {
+                stuckFor = 0f;
+                reverseUntil = Time.time + ReverseSeconds;
+                reverseSteer = angle >= 0f ? -1f : 1f;   // de ré, o leme ao contrário vira a proa para onde queria ir
+            }
             command = new ShipCommand
             {
                 steer = Mathf.Clamp(angle / fullRudder, -1f, 1f),

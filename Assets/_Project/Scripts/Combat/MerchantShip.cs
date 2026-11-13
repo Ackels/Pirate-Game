@@ -110,15 +110,16 @@ namespace Pirates.Combat
 
         void OnDamaged(DamageInfo info)
         {
-            if (health.IsDead) return;
-            Current = Mode.Fleeing;
-            fleeUntil = Time.time + fleeSeconds;
-            threat = info.source ? info.source.transform.position : transform.position - transform.forward * 50f;
+            // Antes de olhar se afundou: o tiro que afunda de uma vez também é do jogador (o naufrágio conta como crime dele).
             if (IsPlayer(info.source) && !hitByPlayer)
             {
                 hitByPlayer = true;
                 AttackedByPlayer?.Invoke(this);
             }
+            if (health.IsDead) return;
+            Current = Mode.Fleeing;
+            fleeUntil = Time.time + fleeSeconds;
+            threat = info.source ? info.source.transform.position : transform.position - transform.forward * 50f;
         }
 
         void OnDied()
@@ -147,6 +148,8 @@ namespace Pirates.Combat
                 if (Time.time > fleeUntil || away.magnitude > fleeDistance)
                 {
                     Current = Mode.Sailing;
+                    // Viagem nova (12/11): atacar de novo conta de novo (antes só o primeiro ataque da vida do navio dava procura).
+                    hitByPlayer = false;
                     PickDestination();
                 }
                 desired = away;

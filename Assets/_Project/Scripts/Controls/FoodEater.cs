@@ -82,9 +82,14 @@ namespace Pirates.Controls
             if (switcher) switcher.ModeChanged -= OnModeChanged;
         }
 
+        PlayerFootInput footInput;
+
         void Update()
         {
-            if (GameInput.Instance.Repair.WasPressedThisFrame()) TryEat();
+            // Pausa, menu ou janela aberta (casa do porto, baú, conversa, painel): o R não come (12/11).
+            var input = GameInput.Instance;
+            if (!footInput) footInput = GetComponent<PlayerFootInput>();
+            if (input.Repair.WasPressedThisFrame() && input.GameplayEnabled && !Pirates.Core.ScreenPanel.Open && !(footInput && footInput.IsWindowOpen)) TryEat();
             if (bottle && bottle.activeSelf && (!IsEating || health.IsDead)) EndEating();
         }
 

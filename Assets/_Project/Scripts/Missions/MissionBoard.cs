@@ -226,7 +226,17 @@ namespace Pirates.Missions
             return true;
         }
 
-        public void Abandon(ActiveMission mission) => active.Remove(mission);
+        /// <summary>
+        /// Descanso mínimo de um contrato abandonado (12/11): aceitar traz o alvo morto de volta (chefe, acampamento, lula), e desistir e aceitar
+        /// de novo dava o chefe e o saque de graça, sem limite. Agora o abandonado descansa o tempo dele (ou isto, o que for maior).
+        /// </summary>
+        public const float AbandonCooldownSeconds = 300f;
+
+        public void Abandon(ActiveMission mission)
+        {
+            if (mission == null || !active.Remove(mission) || !mission.definition) return;
+            cooldowns[mission.definition] = Mathf.Max(mission.definition.cooldownSeconds, AbandonCooldownSeconds);
+        }
 
         /// <summary>Pronta para entregar no porto.</summary>
         public bool IsComplete(ActiveMission mission) =>

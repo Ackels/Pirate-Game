@@ -80,7 +80,8 @@ namespace Pirates.CameraSystem
         /// <summary>Janela, painel ou menu na frente: a roda do mouse rola a janela e não mexe no zoom (29/10).</summary>
         bool PointerBusy()
         {
-            if (ScreenPanel.Open || TitleScreen.Showing) return true;
+            // Sentado no balcão da taverna (13/11): o painel esconde a HUD, mas a câmera continua girando e com zoom.
+            if ((ScreenPanel.Open && !BarSeat.Seated) || TitleScreen.Showing) return true;
             if (targetInteractions == null) return false;
             for (int i = 0; i < targetInteractions.Length; i++)
             {

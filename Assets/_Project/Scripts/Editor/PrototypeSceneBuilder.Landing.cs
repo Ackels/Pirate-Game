@@ -307,7 +307,7 @@ namespace Pirates.EditorTools
             else if (kitModel != null && HasKitCharacter(kitModel))
             {
                 model = HumanoidKitCharacter(kitModel, parent);
-                if (kitModel == KitCharacters.Captain) PinParrotToShoulder(model, kitModel);
+                if (kitModel == KitCharacters.Captain) HideParrot(model); // 07/11: o Jhonata pediu para tirar o papagaio ("mais atrapalha do que ajuda")
             }
             else
             {

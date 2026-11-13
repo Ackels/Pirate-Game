@@ -92,11 +92,22 @@ namespace Pirates.UI
         {
             current = this;
             searched = true;
+            Core.PointerOverUI.Check = PointerOver;
         }
 
         void OnDestroy()
         {
             if (current == this) current = null;
+            if (Core.PointerOverUI.Check == (System.Func<Vector2, bool>)PointerOver) Core.PointerOverUI.Check = null;
+        }
+
+        /// <summary>Algo clicável do HUD (botão, janela) embaixo do mouse (12/11: o clique nele não dispara os canhões).</summary>
+        bool PointerOver(Vector2 screen)
+        {
+            if (root == null || root.panel == null) return false;
+            var panelPoint = RuntimePanelUtils.ScreenToPanel(root.panel, new Vector2(screen.x, Screen.height - screen.y));
+            var picked = root.panel.Pick(panelPoint);
+            return picked != null && picked != root && root.Contains(picked);
         }
 
         /// <summary>Monta as regiões na primeira vez que alguém pede (o UIDocument cria a raiz no OnEnable dele).</summary>
@@ -140,7 +151,9 @@ namespace Pirates.UI
         void Update()
         {
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.hKey.wasPressedThisFrame && !TypingText) ToggleHelp();
+            // Na pausa e no menu o H não abre a ajuda por cima (12/11).
+            bool playing = Controls.GameInput.Instance == null || Controls.GameInput.Instance.GameplayEnabled;
+            if (keyboard != null && keyboard.hKey.wasPressedThisFrame && !TypingText && playing && !Pirates.Core.TitleScreen.Showing) ToggleHelp();
         }
 
         void LateUpdate()

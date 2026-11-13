@@ -300,7 +300,7 @@ namespace Pirates.EditorTools
             pier.SetParent(root, false);
             pier.position = new Vector3(pierStart.x, 0f, pierStart.z);
             for (int k = 0; k < 3; k++)
-                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - 1.31f * 1.6f, 2f + k * 4f), 0f, 1.6f, $"Tabuas_{k}");
+                Kenney("structure-platform-dock", pier, new Vector3(0f, 1.25f - DockDeckTop * 1.6f, 2f + k * 4f), 0f, 1.6f, $"Tabuas_{k}");
             NightLantern(Model(Kit.Town, "lantern", pier, new Vector3(-1.75f, 1.25f, 1.5f), 0f, 1.5f, "Lanterna_Cais"), range: 8f);
             var deckBox = pier.gameObject.AddComponent<BoxCollider>();
             deckBox.center = new Vector3(0f, 1.05f, 6f);
@@ -400,7 +400,9 @@ namespace Pirates.EditorTools
                 if (k % 4 == 0) PirateWindowGlow(piece, "castle-window", 0.2f + k * 0.01f);
                 var box = piece.AddComponent<BoxCollider>();
                 box.center = new Vector3(0f, 2.2f, 0f);
-                box.size = new Vector3(2.1f, 4.4f, 1.6f);
+                // Espessura inteira da peça (2,8 m no modelo): com 1,6 os piratas encostavam por dentro e meio corpo sumia na
+                // pedra (o atirador recua até a parede; Jhonata, 09/11).
+                box.size = new Vector3(2.1f, 4.4f, 2.8f);
                 Occluder(piece);
             }
             Kenney("castle-gate", g, new Vector3(FortRadius, -0.3f, 0f), -90f, FortWallScale, "Portao");
@@ -466,7 +468,7 @@ namespace Pirates.EditorTools
         }
 
         /// <summary>NavMesh de um volume (uma ilha), salvo ao lado da cena com o sufixo dado.</summary>
-        static void BakeNavMeshVolume(string objectName, string suffix, Vector3 center, Vector3 size)
+        static void BakeNavMeshVolume(string objectName, string suffix, Vector3 center, Vector3 size, float voxelSize = 0f)
         {
             string assetPath = System.IO.Path.ChangeExtension(generatingScenePath, null) + suffix + ".asset";
             var go = new GameObject(objectName);
@@ -476,6 +478,12 @@ namespace Pirates.EditorTools
             surface.size = size;
             surface.center = new Vector3(0f, size.y * 0.5f - 0.5f, 0f);
             surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            // Voxel menor = a malha mais perto do chão de verdade (no armazém o padrão deixava os estivadores ~15 cm no ar, 13/11).
+            if (voxelSize > 0f)
+            {
+                surface.overrideVoxelSize = true;
+                surface.voxelSize = voxelSize;
+            }
             Physics.SyncTransforms();
             surface.BuildNavMesh();
             if (!surface.navMeshData)

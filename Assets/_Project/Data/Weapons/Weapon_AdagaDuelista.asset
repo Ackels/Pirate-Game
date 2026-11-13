@@ -49,6 +49,7 @@ MonoBehaviour:
   supportOffset: 0
   supportSlides: 0
   supportSlideGap: 0.12
+  steerByHands: 0
   moveSpeedWhileAttacking: 0.6
   knockdown: 0
   guardCost: 1

@@ -91,6 +91,8 @@ namespace Pirates.Loot
             if (chest) chest.gameObject.SetActive(false);
         }
 
+        public LandChest Chest => chest;
+
         /// <summary>Cava: o X some, o baú sobe do chão e o tesouro conta como achado.</summary>
         public void Dig()
         {

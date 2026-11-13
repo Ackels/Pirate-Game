@@ -92,6 +92,12 @@ namespace Pirates.EditorTools
             AddAudio(camera, ship);
             AddVfx();
             BakeShoreMap(ocean, scenePath);
+            // Porto Alento cresce (12/11): depois da mata (as clareiras escondem as árvores do lugar).
+            if (scenario is CombatScenario.Harbor or CombatScenario.World) AddPortGrowth();
+            // A vila mostra a carreira do capitão (12/11): bandeiras por patente, navio novo na carreira, festa do fim.
+            if (scenario is CombatScenario.Harbor or CombatScenario.World) AddVillageProgress();
+            // Salário da tripulação (12/11), pago na taverna.
+            if (scenario is CombatScenario.Harbor or CombatScenario.World) AddCrewWages();
             OptimizeSceneRendering();
 
             EditorSceneManager.SaveScene(scene, scenePath);
@@ -134,7 +140,8 @@ namespace Pirates.EditorTools
             RenderSettings.ambientMode = AmbientMode.Skybox;
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogDensity = 0.0022f;
+            // 12/11 (pedido do Jhonata, "como no Sea of Thieves"): ilha nítida a ~200 m, silhueta a ~300–400 m, some a ~500 m (era 0,0022: via-se a 550 m).
+            RenderSettings.fogDensity = SeaFogDensity;
             RenderSettings.fogColor = new Color(0.64f, 0.75f, 0.83f);
             // Dia e noite (M11): o ciclo move este sol (de noite, a lua) e acompanha o resto da luz.
             CreateDayNight(sun);
@@ -344,7 +351,7 @@ namespace Pirates.EditorTools
             var camera = go.AddComponent<Camera>();
             camera.fieldOfView = 45f;
             camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 2000f;
+            camera.farClipPlane = SeaFarClip;   // com a névoa de 12/11 nada aparece além de ~700 m
             go.AddComponent<AudioListener>();
             go.AddComponent<ElevatedCameraRig>().SetTarget(target);
             // O que fica entre a câmera e o alvo (casas, árvores, fumaça) fica translúcido.

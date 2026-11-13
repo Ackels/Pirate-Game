@@ -19,6 +19,9 @@ namespace Pirates.Ocean
         [SerializeField] Transform followTarget;
         [SerializeField, Range(16, 254)] int resolution = 128;
         [SerializeField] float size = 500f;
+        [Tooltip("Mar distante (12/11): anel de água com poucos vértices em volta da malha, até esta distância do centro (m). Com a névoa nova, "
+            + "uma ilha a 400 m aparecia sobre o vazio (a malha acaba a 250 m da câmera). 0 = sem anel.")]
+        [SerializeField] float farReach = 1500f;
 
         [Header("Costa (mapa feito pelo gerador)")]
         [SerializeField] Texture2D shoreMap;
@@ -127,7 +130,13 @@ namespace Pirates.Ocean
         }
 
         /// <summary>Debaixo da terra o mar não aparece (a malha anda com a câmera e cobriria o fundo preto).</summary>
-        void OnCovered(bool inside) => GetComponent<MeshRenderer>().enabled = !inside;
+        void OnCovered(bool inside)
+        {
+            GetComponent<MeshRenderer>().enabled = !inside;
+            if (farRenderer) farRenderer.enabled = !inside;
+        }
+
+        MeshRenderer farRenderer;
 
         void OnValidate()
         {
@@ -230,6 +239,66 @@ namespace Pirates.Ocean
             mesh.triangles = triangles;
             mesh.bounds = new Bounds(Vector3.zero, new Vector3(size, 20f, size));
             GetComponent<MeshFilter>().sharedMesh = mesh;
+            BuildFarRing(half);
+        }
+
+        /// <summary>
+        /// Anel do mar distante: anéis quadrados do tamanho da borda da malha até <see cref="farReach"/>, com os mesmos pontos da borda no
+        /// anel de dentro (a onda da GPU vai pela posição no mundo: a emenda fica igual, sem fresta). Poucos vértices: longe, a névoa cobre.
+        /// </summary>
+        void BuildFarRing(float half)
+        {
+            if (farReach <= half) return;
+            var go = new GameObject("MarDistante");
+            go.transform.SetParent(transform, false);
+            var renderer = GetComponent<MeshRenderer>();
+            var mr = go.AddComponent<MeshRenderer>();
+            mr.sharedMaterial = renderer.sharedMaterial;
+            mr.shadowCastingMode = renderer.shadowCastingMode;
+            mr.receiveShadows = renderer.receiveShadows;
+            farRenderer = mr;
+
+            // Pontos da borda (sentido anti-horário), um por vértice da malha.
+            int perSide = resolution, count = perSide * 4;
+            var edge = new Vector2[count];
+            for (int k = 0; k < perSide; k++)
+            {
+                float t = -half + k * spacing;
+                edge[k] = new Vector2(t, -half);
+                edge[perSide + k] = new Vector2(half, t);
+                edge[perSide * 2 + k] = new Vector2(-t, half);
+                edge[perSide * 3 + k] = new Vector2(-half, -t);
+            }
+            float[] scales = { 1f, 1.25f, 1.6f, 2.1f, 2.8f, 3.8f, farReach / half };
+            int rings = scales.Length;
+            var verts = new Vector3[rings * count];
+            var uv = new Vector2[verts.Length];
+            var normal = new Vector3[verts.Length];
+            for (int r = 0; r < rings; r++)
+                for (int k = 0; k < count; k++)
+                {
+                    var p = edge[k] * Mathf.Min(scales[r], farReach / half);
+                    int i = r * count + k;
+                    verts[i] = new Vector3(p.x, 0f, p.y);
+                    uv[i] = new Vector2(p.x / size + 0.5f, p.y / size + 0.5f);
+                    normal[i] = Vector3.up;
+                }
+            var tris = new int[(rings - 1) * count * 6];
+            for (int r = 0, t = 0; r < rings - 1; r++)
+                for (int k = 0; k < count; k++)
+                {
+                    int a = r * count + k, b = r * count + (k + 1) % count;
+                    int c = a + count, d = b + count;
+                    tris[t++] = a; tris[t++] = b; tris[t++] = c;
+                    tris[t++] = b; tris[t++] = d; tris[t++] = c;
+                }
+            var far = new Mesh { name = "OceanSurface (mar distante)" };
+            far.vertices = verts;
+            far.normals = normal;
+            far.uv = uv;
+            far.triangles = tris;
+            far.bounds = new Bounds(Vector3.zero, new Vector3(farReach * 2f, 20f, farReach * 2f));
+            go.AddComponent<MeshFilter>().sharedMesh = far;
         }
 
         void LateUpdate()

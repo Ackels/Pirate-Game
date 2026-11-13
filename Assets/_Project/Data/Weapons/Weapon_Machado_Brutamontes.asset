@@ -30,7 +30,7 @@ MonoBehaviour:
   randomVariants: 1
   variantHitDelays:
   - 0.7
-  - 0.59770113
+  - 0.59574467
   - 0.76666665
   comboWindow: 3.5
   animatedDraw: 0
@@ -49,6 +49,7 @@ MonoBehaviour:
   supportOffset: -0.3
   supportSlides: 1
   supportSlideGap: 0.12
+  steerByHands: 1
   moveSpeedWhileAttacking: 0.1
   knockdown: 1
   guardCost: 3

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a8f3f07d7271a4eace683434d170fa, type: 3}
+  m_Name: Som_Bigorna
+  m_EditorClassIdentifier: Pirates.Audio::Pirates.Audio.SoundCue
+  clips:
+  - {fileID: 8300000, guid: f456ab38be805624b9d57da95bb83f27, type: 3}
+  - {fileID: 8300000, guid: 814ca068576e88940a7b69e096855f44, type: 3}
+  - {fileID: 8300000, guid: 7f3d11d74b41d5542a1f556b7d7764f0, type: 3}
+  - {fileID: 8300000, guid: fb8162572951ba545a291f319b6745eb, type: 3}
+  - {fileID: 8300000, guid: ec45482170e0885448c7a1fd4301b998, type: 3}
+  clipVolumes: []
+  channel: 1
+  volume: {x: 0.3, y: 0.38}
+  pitch: {x: 0.92, y: 1.04}
+  spatial: 1
+  minDistance: 2
+  maxDistance: 18
+  cooldown: 0

@@ -187,8 +187,12 @@ namespace Pirates.EditorTools
             var entrance = new GameObject("Entrada_Mercado");
             entrance.transform.SetParent(village, false);
             entrance.transform.SetPositionAndRotation(ground, stall.rotation);
-            entrance.AddComponent<HarborBuilding>().Configure("Mercado", "comprar e vender", HarborService.Market, 3f, 4f);
-            var behind = stall.position - stall.forward * 1.3f;
+            var market = entrance.AddComponent<HarborBuilding>();
+            market.Configure("Mercado", "comprar e vender", HarborService.Market, 3f, 4f);
+            market.SetAction("Negociar");
+            // 13/11: a mesa do kit virou a barraquinha com o lojista atrás do balcão (PrototypeSceneBuilder.MarketShop.cs).
+            MarketShop(stall);
+            var behind = stall.position - stall.forward * MarketKeeperBehind;
             serviceDoors.Add((PortGround(new Vector2(behind.x - IslandCenter.x, behind.z - IslandCenter.z)), stall.eulerAngles.y));
         }
 

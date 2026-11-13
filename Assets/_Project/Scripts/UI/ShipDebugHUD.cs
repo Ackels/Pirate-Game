@@ -347,14 +347,16 @@ namespace Pirates.UI
                 hullBar.style.opacity = low ? 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
                 if (hull.Stale(HudDraw.Units(health.Current), HudDraw.Units(health.Max))) hull.Text = $"{health.Current:0} / {health.Max:0}";
                 Hud.Set(hullText, hull.Text);
-                if (health.IsDead) sunk.Show("Seu navio afundou!", "F5 para recomeçar");
+                if (health.IsDead && !ShipSunkHUD.Showing) sunk.Show("Seu navio afundou!", "");   // até a janela do ShipSunkHUD aparecer
                 else sunk.Hide();
             }
             if (crew)
             {
-                if (crewCount.Stale(crew.Count, crew.Berths))
+                int morale = Mathf.RoundToInt(crew.Morale * 100f);
+                if (crewCount.Stale(crew.Count, crew.Berths, morale))
                 {
-                    crewCount.Text = $"{crew.Count} / {crew.Berths}";
+                    // Moral (salário, 12/11): só aparece quando cai.
+                    crewCount.Text = morale < 100 ? $"{crew.Count} / {crew.Berths} · moral {morale}%" : $"{crew.Count} / {crew.Berths}";
                     crewBar.Set(crew.Fraction);
                 }
                 Hud.Set(crewText, crewCount.Text);

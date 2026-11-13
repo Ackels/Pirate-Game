@@ -23,6 +23,9 @@ namespace Pirates.Base
             public GameObject[] perLevel = Array.Empty<GameObject>();
             [Tooltip("Objeto ligado só exatamente naquele nível (índice 0 = nível 1): ex. o anel de boias da zona segura de cada nível.")]
             public GameObject[] exactLevel = Array.Empty<GameObject>();
+            [Tooltip("Objetos que somem a partir de um nível (o porto cresce para dentro da mata: as árvores do lugar saem). Nível em clearedLevel.")]
+            public GameObject[] cleared = Array.Empty<GameObject>();
+            public int[] clearedLevel = Array.Empty<int>();
         }
 
         public class BuildJob
@@ -54,6 +57,8 @@ namespace Pirates.Base
         public bool IsBusy => Job != null;
         /// <summary>Velocidade dos trabalhadores (Alojamento). Vale para estas obras e para o estaleiro do navio.</summary>
         public float WorkerSpeed { get; private set; } = 1f;
+        /// <summary>Desconto (0–1) nas compras do mercado pelo crescimento de Porto Alento (12/11).</summary>
+        public float MarketDiscount { get; private set; }
         public float JobSecondsLeft => Job == null ? 0f : Mathf.Max(0f, Job.duration - Job.progress) / WorkerSpeed;
 
         public event Action<BuildingDefinition, int> Built;
@@ -177,7 +182,7 @@ namespace Pirates.Base
         /// <summary>Recalcula os efeitos a partir dos níveis atuais e liga os visuais.</summary>
         void Apply()
         {
-            float speed = 1f, zoneBonus = 0f;
+            float speed = 1f, zoneBonus = 0f, discount = 0f;
             foreach (var building in available)
             {
                 int level = Level(building);
@@ -185,7 +190,9 @@ namespace Pirates.Base
                 float value = building.levels[level - 1].value;
                 if (building.effect == BuildingEffect.WorkerSpeed) speed *= Mathf.Max(0.01f, value);
                 if (building.effect == BuildingEffect.CoastalDefense) zoneBonus += value;
+                if (building.effect == BuildingEffect.PortGrowth) discount += value / 100f;
             }
+            MarketDiscount = Mathf.Clamp01(discount);
             speed *= 1f + CaptainFame.Bonus(PerkEffect.BuildSpeedPercent);
             WorkerSpeed = speed;
             dock.BuildSpeed = speed;
@@ -197,6 +204,9 @@ namespace Pirates.Base
                 int level = Level(v.building);
                 for (int i = 0; i < v.perLevel.Length; i++)
                     if (v.perLevel[i]) v.perLevel[i].SetActive(i < level);
+                if (v.cleared != null)
+                    for (int i = 0; i < v.cleared.Length; i++)
+                        if (v.cleared[i]) v.cleared[i].SetActive(i >= v.clearedLevel.Length || level < v.clearedLevel[i]);
                 if (v.exactLevel == null) continue;
                 for (int i = 0; i < v.exactLevel.Length; i++)
                     if (v.exactLevel[i]) v.exactLevel[i].SetActive(i == level - 1);
@@ -216,6 +226,7 @@ namespace Pirates.Base
                 BuildingEffect.Unlock => $"nível {(value > 0f ? value : 3f):0} dos upgrades do navio liberado",
                 BuildingEffect.ProduceItem => building.producedItem ? $"1 {building.producedItem.displayName.ToLowerInvariant()} a cada {value:0} s" : "-",
                 BuildingEffect.CoastalDefense => $"canhões defendem o porto, zona segura +{value:0} m",
+                BuildingEffect.PortGrowth => $"mercado {value:0}% mais barato",
                 _ => "",
             };
         }

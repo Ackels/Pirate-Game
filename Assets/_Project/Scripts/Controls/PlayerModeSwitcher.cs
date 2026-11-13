@@ -66,7 +66,11 @@ namespace Pirates.Controls
             character.gameObject.SetActive(false);
         }
 
-        public void Disembark(LandingPoint point)
+        /// <param name="anchored">
+        /// Liga a zona segura do navio ancorado (piratas não atacam o navio parado na praia). Na abordagem fica desligada: o navio está no meio
+        /// do combate, e com ela ligada a Esquadra Real e o caçador contavam o jogador "no porto" e sumiam com o navio abordado em 90 s.
+        /// </param>
+        public void Disembark(LandingPoint point, bool anchored = true)
         {
             if (IsOnFoot || !point || Time.frameCount == lastSwitchFrame) return;
             lastSwitchFrame = Time.frameCount;
@@ -75,7 +79,7 @@ namespace Pirates.Controls
 
             foreach (var c in shipControls) if (c) c.enabled = false;
             ship.SetSail(FurledSailIndex());
-            if (anchorZone) anchorZone.enabled = true;
+            if (anchorZone) anchorZone.enabled = anchored;
             if (shipBuoyancy)
             {
                 shipDrag = shipBuoyancy.HorizontalDrag;

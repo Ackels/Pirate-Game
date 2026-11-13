@@ -598,19 +598,24 @@ namespace Pirates.Tutorial
             return true;
         }
 
-        static bool Building(HarborService service, out Vector3 position, out string label)
+        /// <summary>A casa daquele serviço mais perto do capitão (13/11: a taverna tem a porta lá fora e o quadro lá dentro).</summary>
+        bool Building(HarborService service, out Vector3 position, out string label)
         {
             position = default;
             label = null;
+            Vector3 me = switcher && switcher.Character ? switcher.Character.transform.position : transform.position;
+            float best = float.MaxValue;
             for (int i = 0; i < HarborBuilding.Active.Count; i++)
             {
                 var b = HarborBuilding.Active[i];
                 if (b.Service != service) continue;
-                position = b.transform.position + Vector3.up * 3.5f;
+                float d = (b.transform.position - me).sqrMagnitude;
+                if (d >= best) continue;
+                best = d;
+                position = b.transform.position + Vector3.up * (b.SignOnly ? 3.5f : 2.2f);
                 label = b.DisplayName;
-                return true;
             }
-            return false;
+            return best < float.MaxValue;
         }
 
         /// <summary>O morador com "!" mais perto (sem nenhum com "!", o mais perto), menos o guia.</summary>

@@ -22,6 +22,8 @@ namespace Pirates.Missions
         [SerializeField] MissionDefinition[] missions = System.Array.Empty<MissionDefinition>();
         [Tooltip("Conversa à toa quando não tem missão para dar nem para receber (sorteada).")]
         [TextArea(1, 3)] [SerializeField] string[] smallTalk = System.Array.Empty<string>();
+        [Tooltip("Conversa à toa depois do fim da História (Porto Alento livre do tributo; pacote H, passo 4). Vazio = a de sempre.")]
+        [TextArea(1, 3)] [SerializeField] string[] endingTalk = System.Array.Empty<string>();
         [Tooltip("Distância (m) para o F conversar.")]
         [SerializeField] float talkRange = 2.6f;
         [Tooltip("Altura (m) do nome e do \"!\" sobre a cabeça.")]
@@ -40,7 +42,13 @@ namespace Pirates.Missions
         public IReadOnlyList<MissionDefinition> Missions => missions;
         /// <summary>A última oferta recusada ("Agora não"): na próxima conversa ele oferece outra, se tiver (30/10: a Iara tem várias encomendas).</summary>
         public MissionDefinition LastDeclined { get; set; }
-        public IReadOnlyList<string> SmallTalk => smallTalk;
+        /// <summary>Conversa à toa (depois do fim da História, as falas da vila livre, se ele tiver).</summary>
+        public IReadOnlyList<string> SmallTalk => StoryEnded && endingTalk != null && endingTalk.Length > 0 ? endingTalk : smallTalk;
+
+        /// <summary>A História acabou (a Coroa de Prata foi achada): a StoryLine põe isto a cada quadro.</summary>
+        public static bool StoryEnded { get; set; }
+
+        public void SetEndingTalk(string[] lines) => endingTalk = lines ?? System.Array.Empty<string>();
         public float TalkRange => talkRange;
         public Vector3 LabelPosition => transform.position + Vector3.up * labelHeight;
         public bool IsTalking { get; private set; }
@@ -82,6 +90,15 @@ namespace Pirates.Missions
 
         void Awake() => marker = GetComponent<WorldMarker>();
 
+        void Start()
+        {
+            // Olha para o capitão quando ele chega perto (12/11), também durante a conversa.
+            if (!animator) return;
+            var look = animator.GetComponent<Pirates.Core.HeadLook>();
+            if (!look) look = animator.gameObject.AddComponent<Pirates.Core.HeadLook>();
+            look.SetAutoRadius(6f);
+        }
+
         public void Configure(string name, string what, MissionDefinition[] given, string[] chat, Animator model, Behaviour idleBehaviour)
         {
             displayName = name;
@@ -93,7 +110,11 @@ namespace Pirates.Missions
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() => TalkStarted = null;
+        static void ResetStatics()
+        {
+            TalkStarted = null;
+            StoryEnded = false;
+        }
 
         void OnEnable() => active.Add(this);
         void OnDisable() => active.Remove(this);

@@ -344,6 +344,28 @@ namespace Pirates.LandCombat
             aimTracking = tracking;
         }
 
+        Pirates.Core.HeadLook look;
+
+        /// <summary>
+        /// Olhar (12/11): em alerta, a cabeça segue quem ele persegue (o capitão ou um marujo); golpeando, caído ou morto, solta (os golpes
+        /// têm o giro de cabeça deles).
+        /// </summary>
+        void LateUpdate()
+        {
+            if (!look)
+            {
+                var model = GetComponentInChildren<Animator>();
+                if (!model) return;
+                look = model.GetComponent<Pirates.Core.HeadLook>();
+                if (!look) look = model.gameObject.AddComponent<Pirates.Core.HeadLook>();
+            }
+            bool alive = health && health.Current > 0f;
+            Transform who = foe ? foe.transform : target;
+            if (alive && IsAlerted && who && !(combat && combat.IsAttacking) && !(character && character.IsDown))
+                look.SetTarget(who.position + Vector3.up * (who == target && Pirates.Core.HeadLook.Player ? Pirates.Core.HeadLook.Player.position.y - who.position.y : 1.1f));
+            else look.ClearTarget();
+        }
+
         void Awake()
         {
             character = GetComponent<FootCharacter>();
