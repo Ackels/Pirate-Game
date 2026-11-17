@@ -6959,6 +6959,7 @@ GameObject:
   - component: {fileID: 69507357}
   - component: {fileID: 69507359}
   - component: {fileID: 69507358}
+  - component: {fileID: 69507360}
   m_Layer: 0
   m_Name: flag-a
   m_TagString: Untagged
@@ -7038,6 +7039,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69507356}
   m_Mesh: {fileID: -8909280474824286336, guid: 72dd2f98d1715d24fbff5785de3b6af2, type: 3}
+--- !u!114 &69507360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69507356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b480196ba3851418d7216842e15d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.Core::Pirates.Core.FlagWave
+  clothAxis: {x: 0, y: 0, z: -1}
+  poleRadius: 0.19
+  clothBottom: -Infinity
+  turnWithWind: 1
+  maxDistance: 140
 --- !u!1 &70697729
 GameObject:
   m_ObjectHideFlags: 0
@@ -11600,6 +11618,11 @@ MonoBehaviour:
   - {fileID: 1579228944}
   furled: 0.12
   speed: 0.8
+  slackBelly: 0.35
+  fullBelly: 1.2
+  luffAmount: 0.35
+  luffRate: 2.2
+  windDistance: 220
 --- !u!114 &109376487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31192,6 +31215,7 @@ GameObject:
   - component: {fileID: 303517213}
   - component: {fileID: 303517215}
   - component: {fileID: 303517214}
+  - component: {fileID: 303517216}
   m_Layer: 0
   m_Name: flag-a
   m_TagString: Untagged
@@ -31271,6 +31295,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 303517212}
   m_Mesh: {fileID: -8909280474824286336, guid: 8f289bc3ce2d33049963274f0bbf08e2, type: 3}
+--- !u!114 &303517216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303517212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b480196ba3851418d7216842e15d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.Core::Pirates.Core.FlagWave
+  clothAxis: {x: 0, y: 0, z: -1}
+  poleRadius: 0.19
+  clothBottom: -Infinity
+  turnWithWind: 1
+  maxDistance: 140
 --- !u!1 &304166543
 GameObject:
   m_ObjectHideFlags: 0
@@ -75583,6 +75624,11 @@ MonoBehaviour:
   - {fileID: 133405990}
   furled: 0.12
   speed: 0.8
+  slackBelly: 0.35
+  fullBelly: 1.2
+  luffAmount: 0.35
+  luffRate: 2.2
+  windDistance: 220
 --- !u!114 &701169416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103843,6 +103889,7 @@ MonoBehaviour:
   sea: {fileID: 11400000, guid: a03dad7501e45d44e84e147ec13fed34, type: 2}
   island: {fileID: 11400000, guid: 509b3cace16a7f44b872d7e603730f37, type: 2}
   combat: {fileID: 11400000, guid: 0fd526a7428596c46b7a10ca72633246, type: 2}
+  tavern: {fileID: 0}
   switcher: {fileID: 0}
   playerShip: {fileID: 701169408}
   fadeSeconds: 2.5
@@ -103940,6 +103987,7 @@ MonoBehaviour:
     pickup: {fileID: 11400000, guid: 301def87e814e7a4090469aa77eb70c7, type: 2}
     backpackFull: {fileID: 11400000, guid: 8b7d86dcb037e244e95fcfaa3982d719, type: 2}
     chop: {fileID: 11400000, guid: 9e5ecac69edcade46a25e2cb878e40f0, type: 2}
+    anvil: {fileID: 0}
     ghostMoan: {fileID: 11400000, guid: 9fd40ce097dd72b409d099ae8d606e49, type: 2}
     batScreech: {fileID: 11400000, guid: 9adb5273c61e4244fb67468e248ec2f6, type: 2}
     doorOpen: {fileID: 11400000, guid: 24fc1960bad3f764a8fc6b158d41cdff, type: 2}
@@ -103966,6 +104014,7 @@ MonoBehaviour:
     musicSea: {fileID: 11400000, guid: a03dad7501e45d44e84e147ec13fed34, type: 2}
     musicIsland: {fileID: 11400000, guid: 509b3cace16a7f44b872d7e603730f37, type: 2}
     musicCombat: {fileID: 11400000, guid: 0fd526a7428596c46b7a10ca72633246, type: 2}
+    musicTavern: {fileID: 0}
   settings: {fileID: 11400000, guid: b1924ed553dc0774daa65250ae23c1c6, type: 2}
   pirateVoicePitch: 0.82
   seaInterval: {x: 1.6, y: 3.4}
@@ -151184,6 +151233,7 @@ GameObject:
   - component: {fileID: 1422929212}
   - component: {fileID: 1422929214}
   - component: {fileID: 1422929213}
+  - component: {fileID: 1422929215}
   m_Layer: 0
   m_Name: flag-b
   m_TagString: Untagged
@@ -151263,6 +151313,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1422929211}
   m_Mesh: {fileID: 5712869828183054436, guid: 72dd2f98d1715d24fbff5785de3b6af2, type: 3}
+--- !u!114 &1422929215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422929211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b480196ba3851418d7216842e15d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.Core::Pirates.Core.FlagWave
+  clothAxis: {x: 0, y: 0, z: -1}
+  poleRadius: 0.19
+  clothBottom: -Infinity
+  turnWithWind: 1
+  maxDistance: 140
 --- !u!1 &1425340106
 GameObject:
   m_ObjectHideFlags: 0
@@ -186726,6 +186793,7 @@ GameObject:
   - component: {fileID: 1752542234}
   - component: {fileID: 1752542236}
   - component: {fileID: 1752542235}
+  - component: {fileID: 1752542237}
   m_Layer: 0
   m_Name: flag-b
   m_TagString: Untagged
@@ -186805,6 +186873,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1752542233}
   m_Mesh: {fileID: 5712869828183054436, guid: 8f289bc3ce2d33049963274f0bbf08e2, type: 3}
+--- !u!114 &1752542237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752542233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10b480196ba3851418d7216842e15d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Pirates.Core::Pirates.Core.FlagWave
+  clothAxis: {x: 0, y: 0, z: -1}
+  poleRadius: 0.19
+  clothBottom: -Infinity
+  turnWithWind: 1
+  maxDistance: 140
 --- !u!1 &1753353055
 GameObject:
   m_ObjectHideFlags: 0

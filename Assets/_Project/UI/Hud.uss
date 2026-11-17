@@ -3773,3 +3773,54 @@
     font-size: 15px;
     opacity: 0.85;
 }
+
+/* Pintura do navio (16/11): cartões pequenos com a amostra da cor. */
+.hud-paint__head {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-top: 6px;
+    margin-bottom: 3px;
+}
+
+.hud-paint__head > Label {
+    margin-right: 8px;
+}
+
+.hud-paint__grid {
+    justify-content: flex-start;
+}
+
+.hud-paint__card {
+    width: 32.4%;
+    margin-right: 1.2%;
+    padding: 6px 8px 6px 8px;
+}
+
+.hud-paint__card--on {
+    border-width: 2px;
+    border-color: rgba(190, 140, 40, 0.95);
+    background-color: rgba(240, 200, 90, 0.18);
+}
+
+.hud-paint__top {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-paint__swatch {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: rgba(60, 38, 20, 0.85);
+}
+
+.hud-paint__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 4px;
+    min-height: 26px;
+}

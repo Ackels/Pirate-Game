@@ -277,6 +277,36 @@ namespace Pirates.Base
             return Current.StartShipConstruction(target, upgrades, (ItemStack[])target.cost.Clone(), target.buildSeconds);
         }
 
+        // ---------- Pintura do navio (16/11) ----------
+
+        /// <summary>Por que não dá para comprar essa cor (null = dá). Ouro do armazém e depois do porão.</summary>
+        public string PaintBlockReason(LiveryOption option)
+        {
+            var livery = ShipLivery.Current;
+            if (!Current) return "atraque no porto";
+            if (!livery || option == null) return "indisponível";
+            if (livery.Owns(option)) return null;
+            if (option.requiredRank > 0 && Services.TryGet(out ICaptainRank rank) && rank.Rank < option.requiredRank)
+                return $"patente {rank.RankTitle(option.requiredRank)}";
+            int have = Gold ? Available(Gold) : 0;
+            if (have < option.price) return $"faltam {option.price - have} de ouro";
+            return null;
+        }
+
+        /// <summary>Compra (se ainda não tem) e pinta o navio com essa cor. Já comprada = só troca.</summary>
+        public bool BuyPaint(LiveryOption option)
+        {
+            var livery = ShipLivery.Current;
+            if (PaintBlockReason(option) != null) return false;
+            if (!livery.Owns(option))
+            {
+                Spend(Gold, option.price);
+                livery.Grant(option);
+            }
+            else livery.Select(option);
+            return true;
+        }
+
         // ---------- Mercado (praça) ----------
 
         ItemDefinition Gold => Current && Current.Settings ? Current.Settings.repairGold : null;

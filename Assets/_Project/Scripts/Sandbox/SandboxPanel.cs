@@ -659,6 +659,7 @@ namespace Pirates.Sandbox
                 if (!lazarus.IsShown && GUILayout.Button("Lázaro agora")) lazarus.AppearNow();
                 if (lazarus.IsShown && lazarus.Boss && lazarus.Boss.Phase == 1 && GUILayout.Button("Enfurecer Lázaro")) lazarus.Boss.EnrageNow();
                 if (lazarus.IsShown && GUILayout.Button("Sumir com Lázaro")) lazarus.HideNow();
+                if (lazarus.RestLeft > 0f && GUILayout.Button("Encher o tesouro já")) lazarus.EndRestNow();
                 GUILayout.EndHorizontal();
             }
             // O fim (pacote H, passo 4): rever os quadros do epílogo.

@@ -77,6 +77,9 @@ namespace Pirates.Save
         /// <summary>Salário da tripulação (12/11): ouro devido, moral (0–1), horas de jogo até o próximo pagamento e de atraso. hasWages falso = save antigo.</summary>
         public bool hasWages;
         public float wageDebt, crewMorale = 1f, wageHoursToPayday, wageHoursLate;
+        /// <summary>Pintura do navio (16/11): cores compradas e a escolhida de cada parte ("Hull=id"). hasLivery falso = save antigo (cores do kit).</summary>
+        public bool hasLivery;
+        public string[] liveryOwned, liverySelected;
 
         // Equipamento do capitão (E1, 19/10): ids (nome do asset) dos itens equipados, um por lugar (lâmina...). Save de antes não tem
         // (null): nada equipado, o cutelo de começo.

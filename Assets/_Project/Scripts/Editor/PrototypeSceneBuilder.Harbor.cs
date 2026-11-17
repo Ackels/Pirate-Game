@@ -56,6 +56,7 @@ namespace Pirates.EditorTools
             AddUpgrades(player, items, buildings.shipyard);
             AddShipClasses(player, items, combat, buildings.shipyard);
             AddDeckCrew(player);
+            Debug.Log("[Pirates] " + AddLivery(player));
             var supplies = LoadSupplies();
             AddPlayerSupplies(player, supplies, items);
             ConfigureHarborTrade(settings, items, supplies, buildings.forge);

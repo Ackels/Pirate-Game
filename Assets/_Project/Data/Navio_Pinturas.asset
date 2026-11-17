@@ -1,0 +1,411 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47ca61dc12ad2bc4d894a4e585da1938, type: 3}
+  m_Name: Navio_Pinturas
+  m_EditorClassIdentifier: Pirates.Progression::Pirates.Progression.LiveryCatalog
+  options:
+  - id: casco_madeira
+    displayName: Madeira natural
+    slot: 0
+    color: {r: 0.8158378, g: 0.48400682, b: 0.33921605, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_preto
+    displayName: "Preto alcatr\xE3o"
+    slot: 0
+    color: {r: 0.16, g: 0.15, b: 0.16, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_vermelho
+    displayName: Vermelho sangue
+    slot: 0
+    color: {r: 0.62, g: 0.13, b: 0.1, a: 1}
+    original: 0
+    price: 600
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_azul
+    displayName: Azul da Coroa
+    slot: 0
+    color: {r: 0.16, g: 0.3, b: 0.62, a: 1}
+    original: 0
+    price: 600
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_verde
+    displayName: Verde-mar
+    slot: 0
+    color: {r: 0.13, g: 0.46, b: 0.4, a: 1}
+    original: 0
+    price: 600
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_branco
+    displayName: Branco osso
+    slot: 0
+    color: {r: 0.88, g: 0.84, b: 0.74, a: 1}
+    original: 0
+    price: 800
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: casco_dourado
+    displayName: Dourado
+    slot: 0
+    color: {r: 0.9, g: 0.66, b: 0.2, a: 1}
+    original: 0
+    price: 2500
+    requiredRank: 3
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_madeira
+    displayName: Madeira escura
+    slot: 1
+    color: {r: 0.59914666, g: 0.35190547, b: 0.25535426, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_preta
+    displayName: Preta
+    slot: 1
+    color: {r: 0.14, g: 0.13, b: 0.14, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_branca
+    displayName: Branca
+    slot: 1
+    color: {r: 0.9, g: 0.88, b: 0.8, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_vermelha
+    displayName: Vermelha
+    slot: 1
+    color: {r: 0.66, g: 0.14, b: 0.1, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_azul
+    displayName: Azul
+    slot: 1
+    color: {r: 0.16, g: 0.3, b: 0.62, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: faixa_dourada
+    displayName: Dourada
+    slot: 1
+    color: {r: 0.92, g: 0.7, b: 0.22, a: 1}
+    original: 0
+    price: 1200
+    requiredRank: 2
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_cinza
+    displayName: Cinza pirata
+    slot: 2
+    color: {r: 0.27925837, g: 0.29069158, b: 0.3438442, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_brancas
+    displayName: Brancas
+    slot: 2
+    color: {r: 0.94, g: 0.92, b: 0.86, a: 1}
+    original: 0
+    price: 500
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_negras
+    displayName: Negras
+    slot: 2
+    color: {r: 0.12, g: 0.11, b: 0.12, a: 1}
+    original: 0
+    price: 600
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_vermelhas
+    displayName: Vermelhas
+    slot: 2
+    color: {r: 0.66, g: 0.14, b: 0.12, a: 1}
+    original: 0
+    price: 800
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_azuis
+    displayName: Azuis
+    slot: 2
+    color: {r: 0.2, g: 0.34, b: 0.66, a: 1}
+    original: 0
+    price: 700
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: velas_roxas
+    displayName: "Roxas de L\xE1zaro"
+    slot: 2
+    color: {r: 0.38, g: 0.18, b: 0.5, a: 1}
+    original: 0
+    price: 1500
+    requiredRank: 4
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_original
+    displayName: Preta do kit
+    slot: 3
+    color: {r: 0.27925837, g: 0.29069158, b: 0.3438442, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_vermelha
+    displayName: Vermelho sangue
+    slot: 3
+    color: {r: 0.6, g: 0.11, b: 0.09, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_azul
+    displayName: Azul-marinho
+    slot: 3
+    color: {r: 0.13, g: 0.2, b: 0.42, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_verde
+    displayName: Verde-garrafa
+    slot: 3
+    color: {r: 0.1, g: 0.33, b: 0.22, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_branca
+    displayName: Branca
+    slot: 3
+    color: {r: 0.9, g: 0.88, b: 0.8, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_dourada
+    displayName: Dourada
+    slot: 3
+    color: {r: 0.88, g: 0.64, b: 0.18, a: 1}
+    original: 0
+    price: 1000
+    requiredRank: 3
+    emblem: {fileID: 0}
+    ornament: 
+  - id: bandeira_roxa
+    displayName: "Roxa de L\xE1zaro"
+    slot: 3
+    color: {r: 0.32, g: 0.14, b: 0.42, a: 1}
+    original: 0
+    price: 1200
+    requiredRank: 4
+    emblem: {fileID: 0}
+    ornament: 
+  - id: emblema_nenhum
+    displayName: Lisa
+    slot: 4
+    color: {r: 0.16, g: 0.15, b: 0.17, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: emblema_caveira
+    displayName: Caveira e ossos
+    slot: 4
+    color: {r: 0.16, g: 0.15, b: 0.17, a: 1}
+    original: 0
+    price: 250
+    requiredRank: 0
+    emblem: {fileID: 2800000, guid: 1e0621962fd778049bbb63adf3b31cff, type: 3}
+    ornament: 
+  - id: emblema_espadas
+    displayName: Espadas cruzadas
+    slot: 4
+    color: {r: 0.16, g: 0.15, b: 0.17, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 2800000, guid: c3fb3cc693b17fe429679727d8650234, type: 3}
+    ornament: 
+  - id: emblema_ancora
+    displayName: "\xC2ncora"
+    slot: 4
+    color: {r: 0.16, g: 0.15, b: 0.17, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 2800000, guid: cd8cae0fd0000cc49a57ee2290d54b7f, type: 3}
+    ornament: 
+  - id: emblema_coroa
+    displayName: Coroa de Prata
+    slot: 4
+    color: {r: 0.16, g: 0.15, b: 0.17, a: 1}
+    original: 0
+    price: 2000
+    requiredRank: 4
+    emblem: {fileID: 2800000, guid: 4523c6a2c7de4654fa7a432142f90cb5, type: 3}
+    ornament: 
+  - id: marca_original
+    displayName: Caveira clara
+    slot: 5
+    color: {r: 0.6154411, g: 0.6440538, b: 0.772023, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: marca_preta
+    displayName: Preta
+    slot: 5
+    color: {r: 0.12, g: 0.11, b: 0.12, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: marca_branca
+    displayName: Branca como osso
+    slot: 5
+    color: {r: 0.94, g: 0.91, b: 0.82, a: 1}
+    original: 0
+    price: 300
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: marca_vermelha
+    displayName: Vermelha
+    slot: 5
+    color: {r: 0.66, g: 0.13, b: 0.1, a: 1}
+    original: 0
+    price: 400
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: marca_dourada
+    displayName: Dourada
+    slot: 5
+    color: {r: 0.92, g: 0.7, b: 0.22, a: 1}
+    original: 0
+    price: 900
+    requiredRank: 2
+    emblem: {fileID: 0}
+    ornament: 
+  - id: carranca_nenhuma
+    displayName: Sem carranca
+    slot: 6
+    color: {r: 0.55, g: 0.35, b: 0.24, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: carranca_dama
+    displayName: Dama da proa
+    slot: 6
+    color: {r: 0.86, g: 0.8, b: 0.68, a: 1}
+    original: 0
+    price: 900
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: Carranca_Dama
+  - id: carranca_caveira
+    displayName: Caveira dourada
+    slot: 6
+    color: {r: 0.95, g: 0.7, b: 0.26, a: 1}
+    original: 0
+    price: 1400
+    requiredRank: 2
+    emblem: {fileID: 0}
+    ornament: Carranca_Caveira
+  - id: carranca_dourada
+    displayName: Dama dourada
+    slot: 6
+    color: {r: 0.95, g: 0.7, b: 0.26, a: 1}
+    original: 0
+    price: 2500
+    requiredRank: 3
+    emblem: {fileID: 0}
+    ornament: Carranca_DamaDourada
+  - id: lanternas_popa
+    displayName: "S\xF3 a da popa"
+    slot: 7
+    color: {r: 0.3, g: 0.26, b: 0.22, a: 1}
+    original: 1
+    price: 0
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: 
+  - id: lanternas_proa
+    displayName: Lanternas na proa
+    slot: 7
+    color: {r: 1, g: 0.72, b: 0.4, a: 1}
+    original: 0
+    price: 350
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: Lanternas_Proa
+  - id: lanternas_todas
+    displayName: Proa e popa
+    slot: 7
+    color: {r: 1, g: 0.62, b: 0.3, a: 1}
+    original: 0
+    price: 700
+    requiredRank: 0
+    emblem: {fileID: 0}
+    ornament: Lanternas_Todas
+  - id: lanternas_verdes
+    displayName: "Fogo-f\xE1tuo verde"
+    slot: 7
+    color: {r: 0.45, g: 1, b: 0.55, a: 1}
+    original: 0
+    price: 1500
+    requiredRank: 4
+    emblem: {fileID: 0}
+    ornament: Lanternas_Verdes

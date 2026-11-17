@@ -129,6 +129,8 @@ namespace Pirates.EditorTools
             var returner = character.gameObject.AddComponent<BoardingReturn>();
             returner.Configure(boarding);
             if (gameHud) gameHud.gameObject.AddComponent<BoardingHUD>().Bind(boarding, returner);
+            // Palco refeito: a pintura do navio volta a valer nos conveses do seu navio (17/11).
+            if (ship.GetComponent<Pirates.Progression.ShipLivery>()) AddLivery(ship);
         }
 
         /// <summary>Um navio do palco: o modelo × 3, a malha de colisão medida, as rampas das escadas e alguns objetos no convés.</summary>

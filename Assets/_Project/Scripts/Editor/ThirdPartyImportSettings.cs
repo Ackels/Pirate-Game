@@ -64,6 +64,10 @@ namespace Pirates.EditorTools
             importer.importCameras = false;
             importer.importLights = false;
             importer.addCollider = false;
+            // Bandeiras e navios do Pirate Kit (17/11, clima): as bandeiras ondulam numa cópia da malha (FlagWave), que precisa ler os vértices.
+            string file = System.IO.Path.GetFileName(NormalizedPath);
+            if (NormalizedPath.StartsWith(Folder + "/Kenney_PirateKit/") && (file.StartsWith("flag") || file.StartsWith("ship-")))
+                importer.isReadable = true;
             if (Ual2)
             {
                 importer.animationType = ModelImporterAnimationType.Human;

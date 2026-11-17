@@ -18,9 +18,17 @@ namespace Pirates.LandCombat
         /// <summary>
         /// O tesouro de Lázaro, atrás do altar (passo 4): destranca com Lázaro derrotado e tranca de novo quando ele some (o cerco
         /// recomeça), e então o baú esvazia e sorteia outra vez na próxima vitória. A Coroa de Prata vem nele enquanto o jogador não a tem.
+        /// Ouro do fim do jogo (17/11, "frear o ouro"): o baú só se enche de novo <see cref="treasureRest"/> s de jogo depois da última vitória
+        /// que pagou; Lázaro volta a lutar antes disso, mas o baú fica trancado dizendo quanto falta (como a lula e o megalodonte, 30 min).
         /// </summary>
-        public bool IsLocked => !(shown && lazarus && lazarus.IsDead);
-        public string LockedReason => shown ? "derrote Lázaro Negro" : "quebre o cerco do altar e derrote Lázaro Negro";
+        public bool IsLocked => !(shown && lazarus && lazarus.IsDead && paidVictory);
+        public string LockedReason => !shown ? "quebre o cerco do altar e derrote Lázaro Negro"
+            : lazarus && lazarus.IsDead && !paidVictory
+                ? (RestLeft > 0f ? $"o tesouro de Lázaro se enche de novo em {Mathf.CeilToInt(RestLeft / 60f)} min"
+                    : "o tesouro se encheu: saia da ilha e quebre o cerco outra vez")
+            : "derrote Lázaro Negro";
+        /// <summary>Segundos de jogo até o baú poder se encher de novo (0 = já pode).</summary>
+        public float RestLeft => Mathf.Max(0f, restUntil - Time.time);
 
         [SerializeField] AltarSiege siege;
         [SerializeField] EnemyFootAI lazarus;
@@ -34,11 +42,14 @@ namespace Pirates.LandCombat
         [SerializeField] float firstCall = 1.5f, callEvery = 22f;
         [Tooltip("Fora da luta por estes segundos: os mortos voltam para a terra.")]
         [SerializeField] float buryAfter = 4f;
+        [Tooltip("Segundos de jogo entre uma vitória que encheu o baú e a próxima que enche (não é salvo, como os chefes do mar).")]
+        [SerializeField] float treasureRest = 1800f;
 
         LandBoss boss;
         CombatEffects effects;
         float appearAt = -1f, nextCall = float.MaxValue, idleSince = -1f;
-        bool shown, forced;
+        bool shown, forced, paidVictory;
+        float restUntil;
 
         public static LazarusCurse Current { get; private set; }
         public bool IsShown => shown;
@@ -96,6 +107,11 @@ namespace Pirates.LandCombat
         {
             if (b != boss) return;
             nextCall = float.MaxValue;
+            if (Time.time >= restUntil)
+            {
+                paidVictory = true;
+                restUntil = Time.time + treasureRest;
+            }
             if (dead) dead.BuryNow();
         }
 
@@ -157,6 +173,7 @@ namespace Pirates.LandCombat
         void Hide()
         {
             shown = false;
+            paidVictory = false;
             forced = false;
             appearAt = -1f;
             nextCall = float.MaxValue;
@@ -172,6 +189,9 @@ namespace Pirates.LandCombat
         }
 
         public void HideNow() => Hide();
+
+        /// <summary>Testes e sandbox: o baú pode se encher já na próxima vitória.</summary>
+        public void EndRestNow() => restUntil = 0f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()

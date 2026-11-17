@@ -219,6 +219,7 @@ namespace Pirates.Save
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(null);
             if (Services.TryGet(out ISeaChart chart)) chart.Restore(null);
             if (Services.TryGet(out ICrewWages wages)) wages.Restore(false, 0f, 1f, 0f, 0f);
+            if (Services.TryGet(out IShipLivery livery)) livery.Restore(false, null, null);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(null, null, null, 0);
             PlayerLoadout.Restore(null, null);
             LastSaved = null;
@@ -379,6 +380,12 @@ namespace Pirates.Save
                 data.crewMorale = wages.Morale;
                 data.wageHoursToPayday = wages.HoursToPayday;
                 data.wageHoursLate = wages.HoursLate;
+            }
+            if (Services.TryGet(out IShipLivery livery))
+            {
+                data.hasLivery = true;
+                data.liveryOwned = livery.Owned;
+                data.liverySelected = livery.SelectedIds;
             }
             if (Services.TryGet(out IFishJournal fishJournal))
                 fishJournal.Capture(out data.fishIds, out data.fishCounts, out data.fishBest, out data.fishPrizes);
@@ -614,6 +621,7 @@ namespace Pirates.Save
             if (Services.TryGet(out ICollectibles collectibles)) collectibles.Restore(data.collectibles);
             if (Services.TryGet(out ISeaChart chart)) chart.Restore(data.mapDiscovered);
             if (Services.TryGet(out ICrewWages wages)) wages.Restore(data.hasWages, data.wageDebt, data.crewMorale, data.wageHoursToPayday, data.wageHoursLate);
+            if (Services.TryGet(out IShipLivery livery)) livery.Restore(data.hasLivery, data.liveryOwned, data.liverySelected);
             if (Services.TryGet(out IFishJournal fishJournal)) fishJournal.Restore(data.fishIds, data.fishCounts, data.fishBest, data.fishPrizes);
             PlayerLoadout.Restore(data.equipped, FindItem);
 

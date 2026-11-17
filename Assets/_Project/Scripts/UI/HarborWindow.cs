@@ -21,7 +21,7 @@ namespace Pirates.UI
     /// </summary>
     class HarborWindow
     {
-        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy, Kitchen, Drinks }
+        enum Tab { Cargo, Upgrades, Buildings, Missions, Market, Smithy, Kitchen, Drinks, Paint }
 
         const string Bad = "#a8321f", Good = "#2f7a2a";
 
@@ -101,10 +101,27 @@ namespace Pirates.UI
                         footer.Add(Win.Button("Descarregar tudo", visitor.UnloadAll));
                         break;
                     case HarborService.Shipyard:
+                    {
+                        // Pintura do navio (16/11): segunda aba da mesa do mestre carpinteiro.
+                        bool paint = ShipLivery.Current && ShipLivery.Current.Catalog;
+                        if (tab != Tab.Paint || !paint) tab = Tab.Upgrades;
+                        if (paint)
+                        {
+                            var yardTabs = Hud.Row("hud-tabs");
+                            body.Add(yardTabs);
+                            AddTab(yardTabs, Tab.Upgrades, "Conserto e melhorias");
+                            AddTab(yardTabs, Tab.Paint, "Pintura");
+                        }
+                        if (tab == Tab.Paint)
+                        {
+                            AddPaint(body, dock);
+                            break;
+                        }
                         AddRepair(body, dock.Settings);
                         if (upgrades) AddUpgrades(body, dock);
                         else Win.Text(body, "este navio não tem upgrades", "hud-window__empty");
                         break;
+                    }
                     case HarborService.Construction:
                         if (dock.Buildings) AddBuildings(body, dock.Buildings);
                         else Win.Text(body, "este porto não tem construções", "hud-window__empty");
@@ -172,6 +189,8 @@ namespace Pirates.UI
             body.Add(tabs);
             AddTab(tabs, Tab.Cargo, "Carga e conserto");
             if (upgrades) AddTab(tabs, Tab.Upgrades, "Upgrades do navio");
+            bool paintTab = ShipLivery.Current && ShipLivery.Current.Catalog;
+            if (paintTab) AddTab(tabs, Tab.Paint, "Pintura");
             if (dock.Buildings) AddTab(tabs, Tab.Buildings, "Construções da base");
             if (board) AddTab(tabs, Tab.Missions, "Missões");
             bool market = dock.Settings && dock.Settings.market.Length > 0, smithy = dock.Settings && dock.Settings.smithy.Length > 0;
@@ -192,6 +211,9 @@ namespace Pirates.UI
                     break;
                 case Tab.Upgrades when upgrades:
                     AddUpgrades(body, dock);
+                    break;
+                case Tab.Paint when paintTab:
+                    AddPaint(body, dock);
                     break;
                 case Tab.Buildings when dock.Buildings:
                     AddBuildings(body, dock.Buildings);
@@ -593,6 +615,88 @@ namespace Pirates.UI
                     }, reason == null, "hud-button--small"));
                 }
             });
+        }
+
+        // ---------- Pintura do navio (16/11) ----------
+
+        static readonly (LiverySlot slot, string title, string hint)[] PaintSlots =
+        {
+            (LiverySlot.Hull, "Casco", "o costado de fora"),
+            (LiverySlot.Trim, "Faixa", "a faixa e os detalhes do casco"),
+            (LiverySlot.Sails, "Velas", "o pano das velas"),
+            (LiverySlot.Flag, "Bandeira", "o pano das bandeiras dos mastros"),
+            (LiverySlot.Emblem, "Emblema", "o desenho no meio da bandeira"),
+            (LiverySlot.SailMark, "Caveira das velas", "a caveira pintada na vela grande"),
+            (LiverySlot.Figurehead, "Carranca", "a figura na proa, embaixo do gurupés"),
+            (LiverySlot.Lanterns, "Lanternas", "lanternas a mais nas amuradas (acendem à noite)"),
+        };
+
+        /// <summary>
+        /// Pintura: para cada parte do navio, as cores à venda em cartões pequenos (amostra da cor, nome, e "em uso" / "Usar" / preço e
+        /// Comprar). Comprada uma vez, troca-se de graça. Pinta na hora (o navio está atracado lá fora).
+        /// </summary>
+        void AddPaint(VisualElement body, HarborDock dock)
+        {
+            var livery = ShipLivery.Current;
+            var summary = Win.Column(body, "hud-window__summary");
+            window.AddPane(summary, StockSignature, b =>
+            {
+                StockChips(b, false);
+                Win.Text(b, "<size=85%>Comprou uma cor, ela fica sua: troca-se de graça quando quiser.</size>", "hud-window__small", "hud-window__muted");
+            });
+            var scroll = Win.Scroll(body);
+            window.AddPane(scroll, () => Win.Mix(StockSignature(), livery ? livery.Version : 0), list =>
+            {
+                if (!livery || !livery.Catalog) return;
+                var coin = dock.Settings && dock.Settings.repairGold ? dock.Settings.repairGold.icon : null;
+                foreach (var (slot, title, hint) in PaintSlots)
+                {
+                    int count = 0;
+                    foreach (var o in livery.Catalog.options) if (o != null && o.slot == slot) count++;
+                    if (count < 2) continue;
+                    var head = Win.Row(list, "hud-paint__head");
+                    head.Add(Hud.Text($"<b>{title}</b>", "hud-window__label"));
+                    head.Add(Hud.Text(hint, "hud-window__small", "hud-window__muted"));
+                    var grid = Hud.Box("hud-cards", "hud-paint__grid");
+                    list.Add(grid);
+                    foreach (var o in livery.Catalog.options)
+                        if (o != null && o.slot == slot) PaintCard(grid, livery, o, coin);
+                }
+            });
+        }
+
+        void PaintCard(VisualElement grid, ShipLivery livery, LiveryOption option, Texture2D coin)
+        {
+            var card = Win.Section(grid, "hud-cards__card");
+            card.AddToClassList("hud-paint__card");
+            bool used = livery.IsSelected(option.slot, option), owns = livery.Owns(option);
+            if (used) card.AddToClassList("hud-paint__card--on");
+            var top = Win.Row(card, "hud-paint__top");
+            var swatch = Hud.Box("hud-paint__swatch");
+            swatch.style.backgroundColor = option.color;
+            if (option.emblem)
+            {
+                swatch.style.backgroundImage = new StyleBackground(option.emblem);
+                swatch.style.unityBackgroundImageTintColor = new Color(0.93f, 0.9f, 0.8f);
+            }
+            top.Add(swatch);
+            top.Add(Hud.Text($"<b>{option.displayName}</b>", "hud-work__name"));
+            var bottom = Win.Row(card, "hud-paint__bottom");
+            if (used)
+            {
+                bottom.Add(Hud.Text($"<color={Good}>✓ em uso</color>", "hud-window__small"));
+                return;
+            }
+            if (!owns) bottom.Add(Win.Price(coin, option.price));
+            Win.Spacer(bottom);
+            string reason = visitor.PaintBlockReason(option);
+            string label = owns ? "Usar" : "Comprar";
+            var o = option;
+            bottom.Add(Win.Button(reason ?? label, () =>
+            {
+                bool had = livery.Owns(o);
+                if (visitor.BuyPaint(o)) Feed(had ? $"Navio pintado: {o.displayName}" : $"Comprou a pintura: {o.displayName} (-{o.price} ouro)");
+            }, reason == null, "hud-button--small"));
         }
 
         // ---------- Navio novo (estaleiro) ----------

@@ -28,6 +28,7 @@ namespace Pirates.EditorTools
         /// </summary>
         static void OptimizeSceneRendering()
         {
+            AddFlagWavesToOpenScene();
             int off = 0;
             foreach (var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include))
             {
@@ -40,7 +41,31 @@ namespace Pirates.EditorTools
                 renderer.shadowCastingMode = ShadowCastingMode.Off;
                 off++;
             }
-            Debug.Log($"[Pirates] Desempenho: {off} objetos pequenos/vegetação sem sombra.");
+            off += TrimInteriorShadows();
+            Debug.Log($"[Pirates] Desempenho: {off} objetos pequenos/vegetação/interiores sem sombra.");
+        }
+
+        /// <summary>
+        /// Interiores (Interior_*): a vila vista pelas janelas e as malhas dos lustres e lanternas não projetam sombra (a vila de fora
+        /// são ~200 peças e o sol da sala as jogava na passada de sombra; ninguém vê a sombra delas). Público: dá para rodar na cena aberta.
+        /// </summary>
+        public static int TrimInteriorShadows()
+        {
+            int off = 0;
+            foreach (var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include))
+            {
+                if (renderer.shadowCastingMode == ShadowCastingMode.Off) continue;
+                bool inRoom = false, trim = false;
+                for (var t = renderer.transform; t; t = t.parent)
+                {
+                    if (t.name.StartsWith("Interior_")) inRoom = true;
+                    else if (t.name == "Vila_de_Fora" || t.name == "Luzes") trim = true;
+                }
+                if (!inRoom || !trim) continue;
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                off++;
+            }
+            return off;
         }
 
         static bool IsVegetation(string meshName)
