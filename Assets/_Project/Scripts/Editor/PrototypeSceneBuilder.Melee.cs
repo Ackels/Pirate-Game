@@ -20,7 +20,7 @@ namespace Pirates.EditorTools
     {
         const string MeleeReady = "Combat/1H/HumanM@CombatIdle1H01", MeleeSlash = "Combat/1H/HumanM@Attack1H01_R",
             MeleeHit = "Combat/HumanM@CombatDamage01", MeleeDeath = "Combat/HumanM@Death01";
-        const int EnemySlashVariant = 30;
+        const int EnemySlashVariant = 30, EnemyHandVariant = 70;
         const float MeleeSlashImpact = 0.29f, MeleeSlashSpeed = 1f;
 
         /// <summary>Postura de luta do pacote no estado de pronto (em loop; antes era o fim do saque congelado pelo "PoseTime").</summary>
@@ -58,6 +58,9 @@ namespace Pirates.EditorTools
             w.randomVariants = true;
             w.animatorVariants = new[] { 0, 1, EnemySlashVariant };
             w.variantHitDelays = new[] { delay, delay, MeleeSlashImpact / (MeleeSlashSpeed * Mathf.Max(0.1f, w.attackAnimSpeed)) };
+            // Golpes feitos à mão (17/11): estados "Inimigo_Golpe70..72" tocando a guarda; o GreatswordSwing ("CuteloInimigo") põe os braços.
+            w.handMoves = "CuteloInimigo";
+            w.animatorVariants = new[] { EnemyHandVariant, EnemyHandVariant + 1, EnemyHandVariant + 2 };
             EditorUtility.SetDirty(w);
             return w;
         }

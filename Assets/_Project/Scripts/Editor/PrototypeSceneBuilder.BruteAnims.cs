@@ -124,6 +124,9 @@ namespace Pirates.EditorTools
             w.supportSlides = true;
             w.supportSlideGap = 0.12f;
             w.steerByHands = true;
+            // Golpes feitos à mão (17/11): estados "Inimigo_Golpe75..77" tocando a guarda; o GreatswordSwing ("MachadoBruto") põe os braços.
+            w.handMoves = "MachadoBruto";
+            w.animatorVariants = new[] { EnemyHandVariant + 5, EnemyHandVariant + 6, EnemyHandVariant + 7 };
             EditorUtility.SetDirty(w);
             return w;
         }

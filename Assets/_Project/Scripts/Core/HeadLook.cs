@@ -50,10 +50,30 @@ namespace Pirates.Core
             if (!head) head = Find(transform, "Head");
             if (!neck) neck = Find(transform, "Neck");
             if (!head) { enabled = false; return; }
-            // Na pose do Awake a cabeça olha para a frente do personagem.
-            headForwardLocal = Quaternion.Inverse(head.rotation) * transform.forward;
-            if (neck) neckForwardLocal = Quaternion.Inverse(neck.rotation) * transform.forward;
+            // Para onde o rosto aponta, no espaço do osso. Em humanoide, pela pose T do avatar (nela o personagem olha para a frente):
+            // pela pose do quadro em que o componente nasce errava (18/11, Jhonata: esqueletos do KayKit "com a cabeça virada para cima o
+            // tempo todo"; nasciam saindo da cova, deitados, e a "frente" do rosto ficava apontando para cima). Sem avatar, a pose de agora.
+            if (!TPoseForward(head, out headForwardLocal)) headForwardLocal = Quaternion.Inverse(head.rotation) * transform.forward;
+            if (neck && !TPoseForward(neck, out neckForwardLocal)) neckForwardLocal = Quaternion.Inverse(neck.rotation) * transform.forward;
             ready = true;
+        }
+
+        /// <summary>A frente do personagem no espaço do osso, pela pose T guardada no avatar humanoide (giros locais da raiz até o osso).</summary>
+        bool TPoseForward(Transform bone, out Vector3 local)
+        {
+            local = Vector3.forward;
+            if (!animator || !animator.isHuman || !animator.avatar) return false;
+            var skeleton = animator.avatar.humanDescription.skeleton;
+            if (skeleton == null || skeleton.Length == 0) return false;
+            Quaternion rel = Quaternion.identity;
+            for (var t = bone; t && t != animator.transform; t = t.parent)
+            {
+                int i = System.Array.FindIndex(skeleton, s => s.name == t.name);
+                if (i < 0) return false;
+                rel = skeleton[i].rotation * rel;
+            }
+            local = Quaternion.Inverse(rel) * Vector3.forward;
+            return true;
         }
 
         static Transform Find(Transform root, string name)

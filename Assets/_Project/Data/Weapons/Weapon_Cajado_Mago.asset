@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8002a68d020754940b51b0e2367da93e, type: 3}
+  m_Name: Weapon_Cajado_Mago
+  m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
+  displayName: Cajado de fogo
+  icon: {fileID: 0}
+  kind: 1
+  animatorWeaponType: 1
+  damage: 20
+  range: 18
+  angle: 2
+  hitDelay: 0.30833334
+  attackAnimSpeed: 1
+  cooldown: 2.4
+  shotsPerReload: 999
+  reloadTime: 0
+  projectile: {fileID: 6571225820762113376, guid: 74931fbb469e6d54e9baee8588fb7905, type: 3}
+  projectileSpeed: 11
+  attackVariants: 1
+  comboAlternates: 1
+  handMoves: 
+  animatorVariantOffset: 0
+  animatorVariants: 
+  randomVariants: 0
+  variantHitDelays: []
+  comboWindow: 1
+  animatedDraw: 0
+  instantHolster: 0
+  drawGrabTime: 0.45
+  drawDuration: 0.95
+  holsterReleaseTime: 0.85
+  holsterDuration: 1
+  aimPoseSeconds: 1.5
+  aimedShotDelay: 0.04
+  aimedSpread: 0.3
+  aimMoveSpeed: 0.6
+  recoilDegrees: 6
+  pellets: 1
+  pelletSpread: 0
+  twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
+  steerByHands: 0
+  moveSpeedWhileAttacking: 0.3
+  knockdown: 0
+  guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
+  variantStrikes: []

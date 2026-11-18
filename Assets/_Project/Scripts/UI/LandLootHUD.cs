@@ -212,7 +212,7 @@ namespace Pirates.UI
             string kind = prize.category == ItemCategory.Schematic ? "esquema" : prize.equipSlot != EquipSlot.None ? Rarity.SlotName(prize.equipSlot).ToLowerInvariant() : "prêmio";
             prizeBanner.Show($"<color={Rarity.Hex(prize.rarity)}>{Rarity.NameOf(prize.rarity)}</color>: {prize.displayName}!",
                 $"{kind} no baú");
-            prizeBannerUntil = Time.time + prizeBannerSeconds;
+            prizeBannerUntil = Time.time + Hud.BannerTime(prizeBannerSeconds);
         }
 
         void UpdatePrompt()

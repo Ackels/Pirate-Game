@@ -81,14 +81,13 @@ namespace Pirates.EditorTools
         {
             if (!w || !SkeletonClip("Skeleton@Attack01")) return w;
             w.attackAnimSpeed = 1f;
-            w.attackVariants = SkeletonAttacks.Length;
-            w.animatorVariants = new int[SkeletonAttacks.Length];
-            w.variantHitDelays = new float[SkeletonAttacks.Length];
-            for (int v = 0; v < SkeletonAttacks.Length; v++)
-            {
-                w.animatorVariants[v] = SkeletonVariantOffset + v;
-                w.variantHitDelays[v] = (SkeletonImpact - SkeletonAttacks[v].start) / SkeletonAttacks[v].speed;
-            }
+            // Golpes feitos à mão (18/11): o jogo "CuteloEsqueleto" do GreatswordSwing nos estados "Inimigo_Golpe70..72" (tocam a guarda,
+            // que o override do esqueleto troca pela pose corcunda dele); o impacto continua o dos golpes do pacote (0,47 · 0,29 · 0,47 s).
+            w.handMoves = "CuteloEsqueleto";
+            w.attackVariants = 3;
+            w.randomVariants = true;
+            w.animatorVariants = new[] { EnemyHandVariant, EnemyHandVariant + 1, EnemyHandVariant + 2 };
+            w.variantHitDelays = new[] { SkeletonImpact, (SkeletonImpact - SkeletonAttacks[1].start) / SkeletonAttacks[1].speed, SkeletonImpact };
             w.hitDelay = w.variantHitDelays[0];
             EditorUtility.SetDirty(w);
             return w;

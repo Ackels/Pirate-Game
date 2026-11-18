@@ -121,16 +121,16 @@ namespace Pirates.EditorTools
             new()
             {
                 kind = BladeKind.Dagger, file = "PunhalContrabandista", name = "Punhal do contrabandista", rarity = ItemRarity.Rare,
-                model = "Weapon_Dagger", scale = 0.42f, grip = new Vector3(0f, 0.19f, 0f), damage = 22f, animSpeed = 1.35f, range = 1.9f,
+                model = "Weapon_Dagger", scale = 0.62f, grip = new Vector3(0f, 0.19f, 0f), damage = 22f, animSpeed = 1.35f, range = 2.1f,
                 angle = 95f, backstab = 2f,
-                description = "Lâmina curta de quem resolve as coisas no escuro do cais. Golpes rápidos (o terceiro do combo, um bote com dois "
-                    + "cortes), pouco alcance, e pelas costas o dano dobra.",
+                description = "Lâmina curta de quem resolve as coisas no escuro do cais. Golpes rápidos que avançam sobre o inimigo, "
+                    + "pouco alcance, e pelas costas o dano dobra.",
             },
             new()
             {
                 kind = BladeKind.Dagger, file = "AdagaDuelista", name = "Adaga da duelista", rarity = ItemRarity.Epic,
-                model = "Weapon_Dagger", scale = 0.44f, grip = new Vector3(0f, 0.19f, 0f), tint = new Color(0.55f, 0.5f, 0.56f),
-                damage = 25f, animSpeed = 1.45f, range = 2f, angle = 95f, backstab = 2.2f,
+                model = "Weapon_Dagger", scale = 0.65f, grip = new Vector3(0f, 0.19f, 0f), tint = new Color(0.55f, 0.5f, 0.56f),
+                damage = 25f, animSpeed = 1.45f, range = 2.2f, angle = 95f, backstab = 2.2f,
                 description = "A adaga da duelista que guardava a enseada dos contrabandistas. A lâmina mais rápida dos mares; pelas costas, mais "
                     + "que o dobro do dano.",
             },

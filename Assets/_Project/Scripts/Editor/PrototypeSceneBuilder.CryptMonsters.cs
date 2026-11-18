@@ -192,7 +192,11 @@ namespace Pirates.EditorTools
         {
             string path = $"{AnimationFolder}/{file}.controller";
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(path);
-            if (controller) return controller;
+            if (controller)
+            {
+                EnsureGhostClaw(controller);
+                return controller;
+            }
             EnsureFolder(Root, "Animation");
             controller = AnimatorController.CreateAnimatorControllerAtPath(path);
             var machine = controller.layers[0].stateMachine;
@@ -203,8 +207,25 @@ namespace Pirates.EditorTools
             BackTo(State(machine, "Levar", MonsterClip(GhostModelPath, "HitReact")), idle);
             State(machine, "Morrer", MonsterClip(GhostModelPath, "Death"));
             machine.defaultState = idle;
+            EnsureGhostClaw(controller);
             AssetDatabase.SaveAssets();
             return controller;
+        }
+
+        /// <summary>Garra da alma (18/11): o soco do kit, que só o Capelão usava (nos feitiços); volta a flutuar.</summary>
+        static void EnsureGhostClaw(AnimatorController controller)
+        {
+            var machine = controller.layers[0].stateMachine;
+            AnimatorState idle = null;
+            foreach (var s in machine.states)
+            {
+                if (s.state.name == "Garra") return;
+                if (s.state.name == "Flutuar") idle = s.state;
+            }
+            var claw = State(machine, "Garra", MonsterClip(GhostModelPath, "Punch"));
+            if (idle) BackTo(claw, idle);
+            EditorUtility.SetDirty(controller);
+            AssetDatabase.SaveAssets();
         }
 
         // ---------- Morcego ----------
@@ -267,7 +288,11 @@ namespace Pirates.EditorTools
         {
             string path = AnimationFolder + "/Morcego.controller";
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(path);
-            if (controller) return controller;
+            if (controller)
+            {
+                EnsureBatBite(controller);
+                return controller;
+            }
             EnsureFolder(Root, "Animation");
             controller = AnimatorController.CreateAnimatorControllerAtPath(path);
             var machine = controller.layers[0].stateMachine;
@@ -276,8 +301,25 @@ namespace Pirates.EditorTools
             BackTo(State(machine, "Levar", MonsterClip(BatModelPath, "Bat_Hit")), fly);
             State(machine, "Morrer", MonsterClip(BatModelPath, "Bat_Death"));
             machine.defaultState = fly;
+            EnsureBatBite(controller);
             AssetDatabase.SaveAssets();
             return controller;
+        }
+
+        /// <summary>Mordida do morcego agarrado no peito (18/11): o segundo ataque do kit, que não era usado; volta ao voo.</summary>
+        static void EnsureBatBite(AnimatorController controller)
+        {
+            var machine = controller.layers[0].stateMachine;
+            AnimatorState fly = null;
+            foreach (var s in machine.states)
+            {
+                if (s.state.name == "Morder") return;
+                if (s.state.name == "Voar") fly = s.state;
+            }
+            var bite = State(machine, "Morder", MonsterClip(BatModelPath, "Bat_Attack2"));
+            if (fly) BackTo(bite, fly);
+            EditorUtility.SetDirty(controller);
+            AssetDatabase.SaveAssets();
         }
 
         // ---------- Ajuda ----------

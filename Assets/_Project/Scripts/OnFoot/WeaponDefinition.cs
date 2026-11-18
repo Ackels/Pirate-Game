@@ -34,10 +34,19 @@ namespace Pirates.OnFoot
         [Min(0)] public int shotsPerReload;
         [Tooltip("Pistola: segundos de recarga.")]
         public float reloadTime = 2.5f;
+        [Tooltip("Magia (18/11, mago esqueleto): no lugar da bala instantânea, este projétil (prefab com um Core.IProjectile) sai da boca " +
+                 "e voa até estourar. Vazio = tiro normal.")]
+        public GameObject projectile;
+        [Tooltip("Velocidade do projétil (m/s).")]
+        public float projectileSpeed = 12f;
 
         [Header("Combo")]
         [Tooltip("Golpes diferentes em sequência (parâmetro AttackVariant). 1 = sempre o mesmo.")]
         [Min(1)] public int attackVariants = 1;
+        [Tooltip("Golpes sorteados por posição do combo (17/11): com 2, os golpes 0 e 1 são as duas versões do 1º, 2 e 3 do 2º... Cada clique sorteia uma.")]
+        [Min(1)] public int comboAlternates = 1;
+        [Tooltip("Golpes feitos à mão do capitão (GreatswordSwing) por nome (ex.: \"Cutelo\"); vazio = pelo tipo da arma.")]
+        public string handMoves;
         [Tooltip("Somado ao AttackVariant no Animator: golpes próprios com a mesma pose (adaga do duelista = cutelo com os golpes 2 e 3).")]
         [Min(0)] public int animatorVariantOffset;
         [Tooltip("AttackVariant do Animator de cada golpe (mesma ordem; vazio = golpe + offset). O 3º golpe do cutelo (finalização) é o 6.")]
@@ -169,5 +178,11 @@ namespace Pirates.OnFoot
         public float extraRecovery;
         [Tooltip("Empurrão (m/s) deste golpe; 0 = o da arma.")]
         public float push;
+        [Tooltip("Dano × isto (0 = 1): vale para todas as armas que usam a mesma tabela de golpes (o giro do machado bate mais fraco).")]
+        public float damageScale;
+        [Tooltip("Puxão antes do impacto (s desde o começo do golpe; 0 = nenhum): o gancho do capitão fisga e traz o inimigo.")]
+        public float pullAt;
+        [Tooltip("Quanto o puxão traz o inimigo (m), alcance e abertura da fisgada.")]
+        public float pullDistance, pullRange = 2.4f, pullAngle = 90f;
     }
 }

@@ -120,6 +120,7 @@ namespace Pirates.VFX
             }
             ResourceNode.Struck += OnChopped;
             ResourceNode.Landed += OnTreeLanded;
+            Pirates.OnFoot.GreatswordSwing.HeavyLanding += OnHeavyLanding;
             Scan();
         }
 
@@ -130,6 +131,7 @@ namespace Pirates.VFX
             DestroyFoot();
             ResourceNode.Struck -= OnChopped;
             ResourceNode.Landed -= OnTreeLanded;
+            Pirates.OnFoot.GreatswordSwing.HeavyLanding -= OnHeavyLanding;
             if (!effects) return;
             effects.Blasted -= OnBlasted;
             effects.Splashed -= OnSplashed;
@@ -366,6 +368,13 @@ namespace Pirates.VFX
         /// Esqueleto amaldiçoado: saindo da cova, torrões de terra voando, poeira marrom em anel e um brilho verde subindo; virando pó ao
         /// amanhecer, poeira clara de osso e o brilho verde se apagando. Só os sistemas que já existem.
         /// </summary>
+        /// <summary>Golpe com salto do capitão aterrissou (o salto do carrasco): poeira e torrões, com o baque da terra.</summary>
+        void OnHeavyLanding(Vector3 point)
+        {
+            if (effects) effects.Unearth(point, false);
+            else OnUnearthed(point, false);
+        }
+
         void OnUnearthed(Vector3 point, bool rising)
         {
             if (Far(point)) return;

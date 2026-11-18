@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_Adaga_Duelista
   m_EditorClassIdentifier: Pirates.OnFoot::Pirates.OnFoot.WeaponDefinition
   displayName: Adaga
+  icon: {fileID: 0}
   kind: 0
   animatorWeaponType: 0
   damage: 14
@@ -24,13 +25,17 @@ MonoBehaviour:
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 2
-  animatorVariantOffset: 2
+  comboAlternates: 1
+  handMoves: AdagaInimiga
+  animatorVariantOffset: 0
+  animatorVariants: 490000004a000000i
   randomVariants: 1
   variantHitDelays:
   - 0.3043478
   - 0.7391305
   comboWindow: 1.4
   animatedDraw: 0
+  instantHolster: 0
   drawGrabTime: 0.45
   drawDuration: 0.95
   holsterReleaseTime: 0.85
@@ -43,6 +48,15 @@ MonoBehaviour:
   pellets: 1
   pelletSpread: 0
   twoHanded: 0
+  supportOffset: 0
+  supportSlides: 0
+  supportSlideGap: 0.12
+  steerByHands: 0
   moveSpeedWhileAttacking: 0.3
   knockdown: 0
   guardCost: 1
+  breaksGuard: 0
+  hitPush: 0
+  backstabDamage: 1
+  holy: 0
+  variantStrikes: []

@@ -1240,6 +1240,8 @@ namespace Pirates.EditorTools
                     customKnockdown = true, knockdown = Pirates.Core.Knockdown.Stumble, extraRecovery = 0.3f, push = 4f,
                 },
             };
+            // Golpes feitos à mão e sorteados (17/11).
+            PlayerCutlassCombo(w);
             EditorUtility.SetDirty(w);
         }
 

@@ -197,6 +197,9 @@ namespace Pirates.OnFoot
         }
 
         /// <summary>Explosão: empurra para fora (desliza no chão e some aos poucos) e, com <c>velocity.y</c>, tira do chão.</summary>
+        /// <summary>Freio do empurrão (m/s²): quem puxa calcula a velocidade pela distância.</summary>
+        public float PushDrag => pushDrag;
+
         public void Push(Vector3 velocity)
         {
             if (Incapacitated) return;

@@ -175,14 +175,14 @@ namespace Pirates.UI
         {
             if (banner == null || pulled >= total) return;
             banner.Show($"Alavanca {pulled} de {total}", "a armadilha da ala para e um braseiro acende");
-            bannerUntil = Time.time + bannerSeconds;
+            bannerUntil = Time.time + Hud.BannerTime(bannerSeconds);
         }
 
         void OnArrived(RuinPassage p)
         {
             if (banner == null || string.IsNullOrEmpty(p.ArrivalTitle)) return;
             banner.Show(p.ArrivalTitle, p.ArrivalSubtitle);
-            bannerUntil = Time.time + arrivalSeconds;
+            bannerUntil = Time.time + Hud.BannerTime(arrivalSeconds);
         }
 
         void OnOpened(RuinPuzzle p)
@@ -190,7 +190,7 @@ namespace Pirates.UI
             if (banner == null) return;
             // Título curto: com o nome da ruína passava da faixa.
             banner.Show("O portão se abriu!", $"{p.DisplayName}: o santuário está livre");
-            bannerUntil = Time.time + bannerSeconds + 1f;
+            bannerUntil = Time.time + Hud.BannerTime(bannerSeconds + 1f);
         }
     }
 }

@@ -24,15 +24,19 @@ MonoBehaviour:
   cooldown: 0.8571429
   shotsPerReload: 0
   reloadTime: 2.5
-  attackVariants: 2
+  attackVariants: 3
+  comboAlternates: 1
+  handMoves: CuteloEsqueleto
   animatorVariantOffset: 0
-  animatorVariants: 1400000015000000i
-  randomVariants: 0
+  animatorVariants: 460000004700000048000000i
+  randomVariants: 1
   variantHitDelays:
   - 0.47
   - 0.29166666
+  - 0.47
   comboWindow: 1.5714287
   animatedDraw: 1
+  instantHolster: 0
   drawGrabTime: 0.4615385
   drawDuration: 0.95
   holsterReleaseTime: 0.84666663

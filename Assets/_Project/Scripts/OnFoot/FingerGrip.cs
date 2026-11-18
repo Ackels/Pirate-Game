@@ -14,9 +14,9 @@ namespace Pirates.OnFoot
     public class FingerGrip : MonoBehaviour
     {
         [Tooltip("Dobra de cada junta dos dedos com a mão fechada (graus: base, meio, ponta).")]
-        [SerializeField] Vector3 gripBend = new(65f, 80f, 55f);
+        [SerializeField] Vector3 gripBend = new(30f, 90f, 70f);
         [Tooltip("Dobra do polegar com a mão fechada (graus: base, ponta).")]
-        [SerializeField] Vector2 thumbBend = new(35f, 40f);
+        [SerializeField] Vector2 thumbBend = new(20f, 45f);
         [Tooltip("Quanto a mão fica fechada sem arma (0 = aberta como no modelo, 1 = fechada).")]
         [SerializeField] float relaxed = 0.25f;
         [SerializeField] float blendSeconds = 0.12f;
@@ -134,8 +134,100 @@ namespace Pirates.OnFoot
             if (!animator || !animator.isHuman) return;
             right.hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
             left.hand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            UnfoldFingers(right.hand, ".R");
+            UnfoldFingers(left.hand, ".L");
             Build();
         }
+
+        /// <summary>
+        /// Dedos de volta para a frente (18/11, Jhonata: "a mão tá para trás... a arma está grudada no pulso"). No kit os dedos nascem no
+        /// pulso (o primeiro osso de cada um é a palma) e o adaptador para humanoide pôs neles uma mão nova; na pose T essa mão ganha o giro
+        /// da mão do Starter Assets e os dedos, filhos dela, giravam junto: a palma ficava ~165° para trás, virada para o cotovelo, em toda
+        /// animação. Aqui os dedos (só eles: o lugar das armas na mão fica como foi medido) desfazem o giro que a mão tem na pose T do avatar,
+        /// voltando à direção do repouso do kit em relação ao antebraço.
+        /// </summary>
+        void UnfoldFingers(Transform hand, string suffix)
+        {
+            if (!hand || !animator.avatar || !unfoldFingers) return;
+            Quaternion handT = Quaternion.identity; bool found = false;
+            foreach (var b in animator.avatar.humanDescription.skeleton)
+                if (b.name == hand.name) { handT = b.rotation; found = true; break; }
+            if (!found) return;
+            var undo = Quaternion.Inverse(handT);
+            var roots = new System.Collections.Generic.List<Transform>();
+            foreach (var name in FingerRoots)
+            {
+                var f = Find(hand, name + suffix);
+                if (!f || f.parent != hand) continue;
+                f.localPosition = undo * f.localPosition;
+                f.localRotation = undo * f.localRotation;
+                roots.Add(f);
+            }
+            if (suffix != ".R") return;
+            rootBones = roots.ToArray();
+            rootPos = new Vector3[rootBones.Length]; rootRot = new Quaternion[rootBones.Length];
+            for (int i = 0; i < rootBones.Length; i++) { rootPos[i] = rootBones[i].localPosition; rootRot[i] = rootBones[i].localRotation; }
+        }
+
+        Transform[] rootBones; Vector3[] rootPos; Quaternion[] rootRot; Transform aimedSlot;
+
+        /// <summary>
+        /// Mão em volta do cabo (18/11): a mão desdobrada aponta ao longo do antebraço e o cabo da arma (medido no osso da mão) ia ao longo
+        /// dos dedos. A mão gira no pulso (só os dedos, que formam a palma no kit) até a linha dos nós ficar ao longo do cabo, o indicador
+        /// do lado da lâmina e os dedos atravessados no cabo; depois a pose fechada é refeita e o cabo passa pelo centro do punho.
+        /// </summary>
+        void AimFingers(Transform slot, Transform visual)
+        {
+            aimedSlot = slot;
+            if (!aimHand || rootBones == null || rootBones.Length == 0 || !right.valid || right.open == null) return;
+            if (!MeasureWeapon(slot, visual, out var axis, out _)) return;
+            var hand = right.hand;
+            // De volta à pose aberta e à base desdobrada para medir.
+            for (int i = 0; i < right.bones.Length; i++) right.bones[i].localRotation = right.open[i];
+            for (int i = 0; i < rootBones.Length; i++) { rootBones[i].localPosition = rootPos[i]; rootBones[i].localRotation = rootRot[i]; }
+            Transform index1 = Find(hand, "Index1.R"), pinky1 = Find(hand, "Pinky1.R"), middle1 = Find(hand, "Middle1.R");
+            if (!index1 || !pinky1 || !middle1 || index1.childCount == 0 || pinky1.childCount == 0) return;
+            Vector3 f0 = hand.InverseTransformDirection(SegmentDir(middle1));
+            Vector3 k0 = hand.InverseTransformDirection(index1.GetChild(0).position - pinky1.GetChild(0).position);
+            Vector3 k1 = hand.InverseTransformDirection(axis).normalized;
+            Vector3 f1 = f0 - k1 * Vector3.Dot(f0, k1);
+            if (f1.sqrMagnitude < 1e-4f) f1 = Vector3.Cross(k1, Vector3.Cross(f0, k1));
+            if (f1.sqrMagnitude < 1e-8f || k0.sqrMagnitude < 1e-10f) return;
+            Quaternion r = Quaternion.LookRotation(f1.normalized, k1) * Quaternion.Inverse(Quaternion.LookRotation(f0.normalized, k0.normalized));
+            for (int i = 0; i < rootBones.Length; i++) { rootBones[i].localPosition = r * rootPos[i]; rootBones[i].localRotation = r * rootRot[i]; }
+            right.open = null;
+            Setup(right, ".R");
+        }
+
+        /// <summary>Eixo comprido das malhas da arma (no mundo, da pegada para a ponta da lâmina).</summary>
+        static bool MeasureWeapon(Transform slot, Transform visual, out Vector3 axis, out Bounds box)
+        {
+            axis = Vector3.zero; box = new Bounds(); bool first = true;
+            foreach (var f in visual.GetComponentsInChildren<MeshFilter>())
+            {
+                if (!f.sharedMesh) continue;
+                var mb = f.sharedMesh.bounds;
+                for (int k = 0; k < 8; k++)
+                {
+                    var c = mb.center + Vector3.Scale(mb.extents, new Vector3((k & 1) == 0 ? -1 : 1, (k & 2) == 0 ? -1 : 1, (k & 4) == 0 ? -1 : 1));
+                    var p = slot.InverseTransformPoint(f.transform.TransformPoint(c));
+                    if (first) { box = new Bounds(p, Vector3.zero); first = false; } else box.Encapsulate(p);
+                }
+            }
+            if (first) return false;
+            var size = box.size;
+            int a = size.x >= size.y && size.x >= size.z ? 0 : size.y >= size.z ? 1 : 2;
+            Vector3 axisLocal = Vector3.zero; axisLocal[a] = Mathf.Abs(box.max[a]) >= Mathf.Abs(box.min[a]) ? 1f : -1f;
+            axis = slot.TransformDirection(axisLocal).normalized;
+            return true;
+        }
+
+        [Tooltip("Gira a mão (os dedos) no pulso até os nós ficarem ao longo do cabo da arma de lâmina.")]
+        [SerializeField] bool aimHand = true;
+
+        static readonly string[] FingerRoots = { "Index1", "Middle1", "Ring1", "Pinky1", "Thumb1" };
+        [Tooltip("Desfaz nos dedos o giro que a mão tem na pose T do avatar (os dedos do kit apontavam para o cotovelo).")]
+        [SerializeField] bool unfoldFingers = true;
 
         void Build()
         {
@@ -260,6 +352,11 @@ namespace Pirates.OnFoot
                 rightHolds = visual && visual.gameObject.activeInHierarchy && slot && visual.IsChildOf(slot) && !combat.IsSwapping;
                 // Duas mãos: a esquerda segura também (cano, cabo).
                 leftHolds = rightHolds && combat.Current.supportOffset != 0f && support && support.enabled;
+            }
+            if (rightHolds && combat.Current.kind == WeaponKind.Melee)
+            {
+                var slotNow = combat.HandSlot(combat.CurrentIndex);
+                if (slotNow != aimedSlot) AimFingers(slotNow, combat.WeaponVisual(combat.CurrentIndex));
             }
             if (rightHolds && fitHandle) FitHandle();
             Blend(right, rightHolds ? 1f : relaxed);

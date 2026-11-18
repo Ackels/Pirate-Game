@@ -133,7 +133,7 @@ namespace Pirates.UI
             if (banner == null) return;
             // Título curto: "Coleção completa: Moedas da Frota de Prata" passava da faixa.
             banner.Show("Coleção completa!", string.IsNullOrEmpty(got) ? spec.doneLine : $"{spec.doneLine}  ({got})");
-            bannerUntil = Time.time + bannerSeconds;
+            bannerUntil = Time.time + Hud.BannerTime(bannerSeconds);
             var h = GameHud.Current;
             if (h && !string.IsNullOrEmpty(got)) h.Feed(GameHud.FeedKind.Notice, $"<b>{spec.name}</b>: {got}", HudColors.Gold);
         }

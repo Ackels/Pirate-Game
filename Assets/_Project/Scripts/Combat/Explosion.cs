@@ -28,8 +28,12 @@ namespace Pirates.Combat
         static readonly HashSet<IDamageable> damaged = new();
         static readonly HashSet<IPushable> pushed = new();
 
-        /// <summary>Explode em <paramref name="center"/>. <paramref name="self"/> não leva o próprio dano (o barril que explodiu).</summary>
-        public static void Detonate(Vector3 center, in Spec spec, GameObject source, IDamageable self = null)
+        /// <summary>
+        /// Explode em <paramref name="center"/>. <paramref name="self"/> não leva o próprio dano (o barril que explodiu). Com
+        /// <paramref name="spareSourceTeam"/>, o time de quem atirou não leva dano nem empurrão (a bola de fogo do mago esqueleto não fere os
+        /// outros mortos); o capitão já poupa os marujos dele sempre.
+        /// </summary>
+        public static void Detonate(Vector3 center, in Spec spec, GameObject source, IDamageable self = null, bool spareSourceTeam = false)
         {
             if (Services.TryGet(out CombatEffects effects)) effects.Explosion(center, spec.radius);
             damaged.Clear();
@@ -37,7 +41,7 @@ namespace Pirates.Combat
             // Bomba ou barril aceso pelo capitão (12/11): os marujos dele não levam dano nem são derrubados; o próprio capitão continua levando
             // (a bomba que bate na parede ao lado dele).
             var owner = source ? source.GetComponentInParent<ITeamMember>() : null;
-            bool spareAllies = owner != null && owner.Team == Teams.Player;
+            bool spareAllies = owner != null && (owner.Team == Teams.Player || spareSourceTeam);
             int count = Physics.OverlapSphereNonAlloc(center, spec.radius, hits, ~0, QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
@@ -49,7 +53,7 @@ namespace Pirates.Combat
                 if (spareAllies && (target != null || pushable != null))
                 {
                     var member = col.GetComponentInParent<ITeamMember>();
-                    if (member != null && member != owner && member.Team == owner.Team) continue;
+                    if (member != null && (member != owner || spareSourceTeam) && member.Team == owner.Team) continue;
                 }
                 // Só gasta a conta (e o raio de cobertura) com quem leva dano ou empurrão: chão, árvores e pedras ficam de fora.
                 if (target == null && pushable == null) continue;

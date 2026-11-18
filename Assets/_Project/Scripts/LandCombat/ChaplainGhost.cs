@@ -17,7 +17,11 @@ namespace Pirates.LandCombat
     /// <item>cabeçada (amarelo = erga a guarda; aparada, fica tonto e aberto por <see cref="stunSeconds"/>);</item>
     /// <item>almas do chão: um círculo aparece debaixo do capitão e, no fim, as almas estouram dali (azul = a guarda não segura: saia do
     /// círculo ou role);</item>
-    /// <item>fogo-fátuo: três bolas que perseguem devagar (a guarda segura e apara).</item>
+    /// <item>fogo-fátuo: três bolas que perseguem devagar (a guarda segura e apara);</item>
+    /// <item>varredura (18/11): perto, no lugar da cabeçada às vezes, prepara e gira com a garra, pegando quem estiver em volta (a
+    /// guarda segura e apara; afastar-se escapa);</item>
+    /// <item>corrente de almas (18/11): de média distância, risca no chão uma faixa até o capitão e as almas estouram em onda ao longo
+    /// dela, de perto para longe (azul = a guarda não segura: saia da faixa de lado ou role).</item>
     /// </list>
     /// Depois de cada golpe fica sólido um pouco (a hora de bater); leva até <see cref="hitsPerWindow"/> golpes e some. Com metade da vida,
     /// fica furioso (mais rápido) e chama as duas almas penadas do salão de tempos em tempos. Não cambaleia com golpe. A Lâmina de São
@@ -25,7 +29,7 @@ namespace Pirates.LandCombat
     /// </summary>
     public class ChaplainGhost : CryptMonster, ILockSource
     {
-        enum Phase { Hidden, Rising, Phased, Materializing, Solid, WindUp, Lament, Volley, Recover, Stunned, Summon, Fury, Fading, Dead }
+        enum Phase { Hidden, Rising, Phased, Materializing, Solid, WindUp, Lament, Chain, Volley, Recover, Stunned, Summon, Fury, Fading, Dead }
 
         static readonly List<ChaplainGhost> bosses = new();
         /// <summary>Os Capelães ligados (a barra do chefe percorre esta lista).</summary>
@@ -56,6 +60,13 @@ namespace Pirates.LandCombat
         [Header("Almas do chão")]
         [SerializeField] float lamentDamage = 22f;
         [SerializeField] float lamentRadius = 2.6f, lamentSeconds = 1.4f, lamentRecover = 1.8f, lamentCooldown = 7f;
+        [Header("Varredura (18/11)")]
+        [Tooltip("Chance de varrer no lugar da cabeçada (fúria: mais), dano, alcance em volta, preparo e quanto ele gira (graus/s) no golpe.")]
+        [SerializeField] float sweepChance = 0.4f, sweepDamage = 18f, sweepRadius = 3f, sweepWindUp = 0.95f, sweepSpin = 1100f;
+        [Header("Corrente de almas (18/11)")]
+        [Tooltip("Dano, comprimento e meia largura da faixa, preparo, velocidade da onda, distância mínima/máxima do capitão e espera entre uma e outra.")]
+        [SerializeField] float chainDamage = 20f, chainLength = 10f, chainHalfWidth = 0.85f, chainSeconds = 1.25f, chainWaveSpeed = 13f;
+        [SerializeField] float chainMin = 3f, chainMax = 8.5f, chainCooldown = 8f;
         [Header("Fogo-fátuo")]
         [SerializeField] float orbDamage = 10f;
         [SerializeField] float orbSpeed = 6.5f, orbTurn = 70f, orbLife = 4f, orbGap = 0.3f, orbReach = 0.6f;
@@ -81,7 +92,12 @@ namespace Pirates.LandCombat
         Material[] materials = Array.Empty<Material>();
         Color[] baseColors = Array.Empty<Color>();
         Phase phase = Phase.Hidden;
-        float phaseStart, phaseUntil, alpha = -1f, warn, nextLament, nextVolley, nextSummon, glowIntensity;
+        float phaseStart, phaseUntil, alpha = -1f, warn, nextLament, nextVolley, nextSummon, glowIntensity, nextChain, spinFrom, spinUntil, chainStart;
+        bool sweeping;
+        int chainBursts;
+        Vector3 chainFrom, chainDir;
+        float chainReach;
+        static readonly RaycastHit[] wallHits = new RaycastHit[16];
         Color warnTint;
         Vector3 destination, lamentCenter;
         bool struck, swung, flashed, enraged, soulsCalled;
@@ -102,7 +118,8 @@ namespace Pirates.LandCombat
         public override bool IsGhost => true;
         public override float VoicePitch => 0.62f;
         public override float WarningHeight => 3.4f;
-        public override bool WarnUnblockable => phase == Phase.Lament;
+        public override bool WarnUnblockable => phase == Phase.Lament || (phase == Phase.Chain && !struck);
+        public bool IsSweeping => sweeping && phase == Phase.WindUp;
         protected override bool IsPhased => phase is Phase.Phased or Phase.Materializing or Phase.Fading;
         protected override float BodyHeight => 1.6f;
 
@@ -116,6 +133,13 @@ namespace Pirates.LandCombat
                     case Phase.WindUp when !struck:
                     case Phase.Lament when !struck:
                         return Mathf.Max(0f, phaseUntil - now);
+                    case Phase.Chain when !struck && TargetAlive:
+                    {
+                        // Até a onda chegar onde o capitão está na faixa.
+                        float along = Mathf.Clamp(Vector3.Dot(target.transform.position - chainFrom, chainDir), 0f, chainReach);
+                        float wave = now >= phaseUntil ? (now - phaseUntil) * chainWaveSpeed : 0f;
+                        return Mathf.Max(0f, phaseUntil - now) + Mathf.Max(0f, along - wave) / chainWaveSpeed;
+                    }
                     case Phase.Volley when TargetAlive:
                         return Mathf.Max(0f, phaseUntil - now) + Mathf.Max(0f, (TargetChest - transform.position).magnitude - orbReach) / orbSpeed;
                 }
@@ -193,6 +217,7 @@ namespace Pirates.LandCombat
             if (!effects) Services.TryGet(out effects);
             hitsTaken = 0;
             nextLament = Time.time + 3f;
+            nextChain = Time.time + 4f;
             nextVolley = Time.time + 2f;
             // Sobe do altar: aparece devagar, invencível, e geme (o aviso de que a luta começou).
             SetVisible(true);
@@ -262,6 +287,7 @@ namespace Pirates.LandCombat
         void HideAttacks()
         {
             if (ring) ring.enabled = false;
+            spinUntil = 0f;
             for (int i = 0; i < orbs.Length; i++)
             {
                 if (orbs[i]) orbs[i].gameObject.SetActive(false);
@@ -277,7 +303,8 @@ namespace Pirates.LandCombat
             phaseUntil = Time.time + seconds * tempo;
             struck = swung = flashed = false;
             if (next is not (Phase.WindUp or Phase.Lament or Phase.Volley)) SetWarn(0f, warnColor);
-            if (ring && next != Phase.Lament) ring.enabled = false;
+            if (ring && next is not (Phase.Lament or Phase.Chain)) ring.enabled = false;
+            if (next != Phase.WindUp) sweeping = false;
             switch (next)
             {
                 case Phase.Rising:
@@ -304,6 +331,29 @@ namespace Pirates.LandCombat
                     Play("Lancar", 0.1f);
                     lamentCenter = target.transform.position;
                     DrawRing(0f);
+                    if (ring) ring.enabled = true;
+                    break;
+                case Phase.Chain:
+                    // Risca a faixa do pé dele até passar do capitão.
+                    Raise(Cue.Attack);
+                    Play("Lancar", 0.1f);
+                    chainFrom = transform.position;
+                    chainFrom.y = target.transform.position.y;
+                    chainDir = target.transform.position - chainFrom;
+                    chainDir.y = 0f;
+                    chainDir = chainDir.sqrMagnitude > 0.0001f ? chainDir.normalized : transform.forward;
+                    chainFrom += chainDir * 0.8f;
+                    chainBursts = 0;
+                    // Para na primeira parede ou coluna (não atravessa pedra).
+                    chainReach = chainLength;
+                    int hits = Physics.SphereCastNonAlloc(chainFrom + Vector3.up * 0.9f, 0.25f, chainDir, wallHits, chainLength, ~0, QueryTriggerInteraction.Ignore);
+                    for (int i = 0; i < hits; i++)
+                    {
+                        var c = wallHits[i].collider;
+                        if (wallHits[i].distance <= 0f || c.GetComponentInParent<FootCharacter>() || c.GetComponentInParent<CryptMonster>()) continue;
+                        chainReach = Mathf.Min(chainReach, Mathf.Max(1f, wallHits[i].distance));
+                    }
+                    DrawChain(0f);
                     if (ring) ring.enabled = true;
                     break;
                 case Phase.Summon:
@@ -336,6 +386,8 @@ namespace Pirates.LandCombat
             if (body) body.localPosition = Vector3.up * (Mathf.Sin(now * 1.7f) * 0.15f);
             if (halo) halo.Rotate(0f, 55f * dt, 0f, Space.Self);
             UpdateOrbs(dt, now);
+            // A volta da varredura (gira o corpo inteiro).
+            if (now < spinUntil && now >= spinFrom) transform.Rotate(0f, sweepSpin * dt, 0f, Space.World);
             if (phase == Phase.Dead)
             {
                 float k = Mathf.Clamp01((now - phaseStart) / 2.2f);
@@ -377,7 +429,12 @@ namespace Pirates.LandCombat
                     Vector3 to = target.transform.position - transform.position;
                     to.y = 0f;
                     Face(target.transform.position, dt);
-                    if (to.magnitude <= strikeRange) Enter(Phase.WindUp, windUpSeconds);
+                    if (to.magnitude <= strikeRange)
+                    {
+                        bool sweep = Random.value < (enraged ? sweepChance + 0.15f : sweepChance);
+                        Enter(Phase.WindUp, sweep ? sweepWindUp : windUpSeconds);
+                        sweeping = sweep;
+                    }
                     else
                     {
                         Vector3 goal = target.transform.position + Vector3.up * hover;
@@ -401,6 +458,9 @@ namespace Pirates.LandCombat
                     Enter(Phase.Recover, lamentRecover);
                     break;
                 }
+                case Phase.Chain:
+                    UpdateChain(dt, now);
+                    break;
                 case Phase.Volley:
                 {
                     if (TargetAlive) Face(target.transform.position, dt);
@@ -465,6 +525,12 @@ namespace Pirates.LandCombat
                 Enter(Phase.Volley, volleyWindUp);
                 return;
             }
+            if (d >= chainMin && d <= chainMax && now >= nextChain && Random.value < (enraged ? 0.55f : 0.45f))
+            {
+                nextChain = now + chainCooldown * (enraged ? 0.7f : 1f);
+                Enter(Phase.Chain, chainSeconds);
+                return;
+            }
             if (now >= nextLament && Random.value < (enraged ? 0.45f : 0.35f))
             {
                 nextLament = now + lamentCooldown * (enraged ? 0.7f : 1f);
@@ -477,7 +543,7 @@ namespace Pirates.LandCombat
         void UpdateStrike(float dt, float now)
         {
             if (!TargetAlive) return;
-            Face(target.transform.position, dt);
+            if (now >= spinFrom || !sweeping) Face(target.transform.position, dt);
             float left = phaseUntil - now;
             float k = (now - phaseStart) / Mathf.Max(0.01f, phaseUntil - phaseStart);
             SetWarn(Mathf.Clamp01(k * 1.6f) * (left <= flashLead ? flashBoost : 1f), warnColor);
@@ -489,10 +555,19 @@ namespace Pirates.LandCombat
             if (left <= swingLead && !swung)
             {
                 swung = true;
-                Play("Golpe", 0.05f);
+                Play(sweeping ? "Garra" : "Golpe", 0.05f);
+            }
+            if (sweeping)
+            {
+                // Gira com a garra esticada: a volta começa logo antes do golpe e termina logo depois.
+                if (left <= 0.18f && spinUntil < phaseUntil)
+                {
+                    spinFrom = now;
+                    spinUntil = phaseUntil + 0.18f;
+                }
             }
             // Avança na cabeçada (os últimos ~0,35 s).
-            if (left <= 0.35f)
+            else if (left <= 0.35f)
             {
                 Vector3 flat = target.transform.position - transform.position;
                 flat.y = 0f;
@@ -503,8 +578,11 @@ namespace Pirates.LandCombat
             Raise(Cue.Strike);
             Vector3 d = target.transform.position - transform.position;
             d.y = 0f;
-            var guard = d.magnitude <= strikeRange + 0.6f
-                ? Strike(strikeDamage * (enraged ? 1.15f : 1f), TargetChest - d.normalized * 0.3f) : CharacterCombat.GuardResult.None;
+            float reach = sweeping ? sweepRadius : strikeRange + 0.6f;
+            var guard = d.magnitude <= reach
+                ? Strike((sweeping ? sweepDamage : strikeDamage) * (enraged ? 1.15f : 1f), TargetChest - d.normalized * 0.3f)
+                : CharacterCombat.GuardResult.None;
+            if (sweeping && wisps) wisps.Emit(24);
             if (guard == CharacterCombat.GuardResult.Parried)
             {
                 Play("Levar", 0.05f);
@@ -535,6 +613,46 @@ namespace Pirates.LandCombat
             flat.y = 0f;
             if (flat.magnitude > lamentRadius + 0.25f) return;
             Strike(lamentDamage * (enraged ? 1.15f : 1f), TargetChest, Knockdown.Stumble, lamentCenter, unblockable: true);
+        }
+
+        /// <summary>A faixa se acende; no fim, a onda de almas corre por ela, de perto para longe.</summary>
+        void UpdateChain(float dt, float now)
+        {
+            if (now < phaseUntil)
+            {
+                float k = Mathf.Clamp01((now - phaseStart) / Mathf.Max(0.01f, phaseUntil - phaseStart));
+                SetWarn(Mathf.Clamp01(k * 1.6f) * (phaseUntil - now <= flashLead ? flashBoost : 1f), lamentColor);
+                DrawChain(k);
+                return;
+            }
+            if (ring) ring.enabled = false;
+            float wave = (now - phaseUntil) * chainWaveSpeed;
+            // Um estouro por metro que a onda passou.
+            while (chainBursts <= Mathf.Min(wave, chainReach))
+            {
+                Vector3 p = chainFrom + chainDir * chainBursts;
+                if (chainBursts % 2 == 0 && effects) effects.Unearth(p, true);
+                if (wisps)
+                {
+                    var emit = new ParticleSystem.EmitParams { position = p + Vector3.up * 0.2f, velocity = Vector3.up * Random.Range(2.5f, 4.5f), applyShapeToPosition = false };
+                    wisps.Emit(emit, 3);
+                }
+                if (chainBursts == 0) Raise(Cue.Burst);
+                chainBursts++;
+            }
+            if (!struck && TargetAlive)
+            {
+                Vector3 to = target.transform.position - chainFrom;
+                to.y = 0f;
+                float along = Vector3.Dot(to, chainDir);
+                float side = Mathf.Abs(Vector3.Dot(to, Vector3.Cross(Vector3.up, chainDir)));
+                if (along >= -0.4f && along <= chainReach + 0.4f && along <= wave && side <= chainHalfWidth + 0.25f)
+                {
+                    struck = true;
+                    Strike(chainDamage * (enraged ? 1.15f : 1f), TargetChest, Knockdown.Stumble, target.transform.position - chainDir, unblockable: true);
+                }
+            }
+            if (wave >= chainReach) Enter(Phase.Recover, lamentRecover);
         }
 
         void CallSouls()
@@ -636,6 +754,23 @@ namespace Pirates.LandCombat
                 float a = i / (float)(n - 1) * Mathf.PI * 2f;
                 ringPoints[i] = c + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * lamentRadius;
             }
+            ring.SetPositions(ringPoints);
+            float w = Mathf.Lerp(0.06f, 0.2f, k);
+            ring.startWidth = ring.endWidth = w;
+            var col = Color.Lerp(new Color(0.35f, 0.7f, 1f, 0.6f), new Color(0.85f, 1f, 1f, 1f), k * k);
+            ring.startColor = ring.endColor = col;
+        }
+
+        /// <summary>O contorno da faixa da corrente no chão (o mesmo traço do círculo das almas).</summary>
+        void DrawChain(float k)
+        {
+            if (!ring || ringPoints.Length < 5) return;
+            Vector3 side = Vector3.Cross(Vector3.up, chainDir) * chainHalfWidth;
+            Vector3 a = chainFrom + Vector3.up * 0.06f, b = a + chainDir * chainReach;
+            int n = ringPoints.Length;
+            // Retângulo fechado com os pontos que o traço tem (o resto fica no último canto).
+            Vector3[] corners = { a - side, b - side, b + side, a + side, a - side };
+            for (int i = 0; i < n; i++) ringPoints[i] = corners[Mathf.Min(i, 4)];
             ring.SetPositions(ringPoints);
             float w = Mathf.Lerp(0.06f, 0.2f, k);
             ring.startWidth = ring.endWidth = w;

@@ -173,7 +173,7 @@ namespace Pirates.UI
         {
             if (banner == null) return;
             banner.Show($"Nova patente: {fame.RankTitle(rank)}", fame.PendingPerks > 0 ? "aperte C para escolher um bônus" : null);
-            bannerUntil = Time.time + bannerSeconds;
+            bannerUntil = Time.time + Hud.BannerTime(bannerSeconds);
         }
 
         // ---------- Painel ----------

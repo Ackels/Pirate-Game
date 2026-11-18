@@ -106,6 +106,7 @@ namespace Pirates.OnFoot
         FootCharacter character;
         CharacterAnimatorDriver driver;
         Transform rightHand;
+        GreatswordSwing swingCtl;
         float weight;
 
         // Eixo da arma em uso, medido uma vez por arma (espaço local do visual).
@@ -121,7 +122,7 @@ namespace Pirates.OnFoot
             driver = GetComponent<CharacterAnimatorDriver>();
             if (animator.isHuman) rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
             if (!animator.isHuman || !animator.avatar) return;
-            if (!GetComponent<FingerGrip>()) gameObject.AddComponent<FingerGrip>(); if (!GetComponent<ProceduralTouches>()) gameObject.AddComponent<ProceduralTouches>(); if (!GetComponent<TwoHandSteer>()) gameObject.AddComponent<TwoHandSteer>();
+            if (!GetComponent<FingerGrip>()) gameObject.AddComponent<FingerGrip>(); if (!GetComponent<ProceduralTouches>()) gameObject.AddComponent<ProceduralTouches>(); if (!GetComponent<TwoHandSteer>()) gameObject.AddComponent<TwoHandSteer>(); swingCtl = GetComponent<GreatswordSwing>(); if (!swingCtl) swingCtl = gameObject.AddComponent<GreatswordSwing>();
             leftShoulder = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
             var leftElbow = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
             var leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
@@ -168,6 +169,8 @@ namespace Pirates.OnFoot
 
         bool InPosedState()
         {
+            // Volta do golpe do espadão feito à mão: a mão esquerda volta ao cabo pelo IK só do braço, aos poucos (17/11).
+            if (swingCtl && swingCtl.Recovering) return true;
             // Só com o Animator pronto: desligado (o capitão começa no navio) o GetLayerIndex dá −1 e a pose nunca mais ligava.
             if (posedLayer == -2 && animator.isActiveAndEnabled && animator.isInitialized)
             {
@@ -298,6 +301,8 @@ namespace Pirates.OnFoot
         {
             visual = null;
             if (!combat || !rightHand) return false;
+            // O golpe do espadão feito à mão manda nos dois braços (17/11).
+            if (swingCtl && swingCtl.Active) return false;
             var weapon = combat.Current;
             if (!weapon || weapon.supportOffset == 0f || combat.IsSwapping || combat.IsReloading) return false;
             if (character && (character.IsDown || character.IsDodging)) return false;
@@ -364,6 +369,19 @@ namespace Pirates.OnFoot
         // alvo novo, então as duas mãos continuam no cabo.
 
         HeadVolume headVolume;
+
+        /// <summary>Volume da cabeça (com o chapéu) agora, no mundo: centro, eixos e raios.</summary>
+        public bool TryGetHeadVolume(out Vector3 center, out Quaternion axes, out Vector3 radii)
+        {
+            center = default; axes = Quaternion.identity; radii = default;
+            if (!hasHeadVolume || !headBone) return false;
+            var root = character ? character.transform : transform;
+            float scale = root.lossyScale.y;
+            axes = headBone.rotation * headToBody;
+            center = headBone.position + axes * (headVolume.center * scale);
+            radii = headVolume.radii * scale;
+            return true;
+        }
         bool hasHeadVolume;
         Transform headBone, shoulder;
         Quaternion headToBody = Quaternion.identity;
@@ -373,6 +391,7 @@ namespace Pirates.OnFoot
 
         bool HeadClearWanted()
         {
+            if (swingCtl && swingCtl.Active) return false;
             // Só o capitão (07/11): no brutamontes e no Barba-Negra o braço direito girado no ombro levava o cabo para onde a mão esquerda não
             // alcança, e as mãos se separavam até 0,8 m na preparação do golpe ("a mão/braço dele fica todo contorcido"). No capitão o cabo é
             // curto perto da mão e a diferença é pequena (0,38 → 0,48 m no pior quadro).

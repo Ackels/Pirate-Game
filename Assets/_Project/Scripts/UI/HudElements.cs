@@ -10,6 +10,15 @@ namespace Pirates.UI
     /// </summary>
     static class Hud
     {
+        /// <summary>
+        /// Quanto as faixas grandes (onda, alavancas, capítulo, abordagem...) ficam na tela, sobre o tempo pedido por cada HUD (18/11, pedido do
+        /// Jhonata: "demora muito pra sumir"). Um número só para todas; os segundos de cada HUD ficam como estão.
+        /// </summary>
+        public const float BannerTimeScale = 0.55f;
+
+        /// <summary>Segundos que uma faixa fica na tela (o pedido × <see cref="BannerTimeScale"/>, no mínimo 1,5 s).</summary>
+        public static float BannerTime(float seconds) => Mathf.Max(1.5f, seconds * BannerTimeScale);
+
         public static VisualElement Box(params string[] classes)
         {
             var box = new VisualElement { pickingMode = PickingMode.Ignore };

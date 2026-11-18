@@ -72,7 +72,7 @@ namespace Pirates.UI
         {
             if (banner == null) return;
             banner.Show("O fim do Mar de Prata", "a névoa fez o navio rodar e voltar");
-            bannerUntil = Time.unscaledTime + bannerSeconds;
+            bannerUntil = Time.unscaledTime + Hud.BannerTime(bannerSeconds);
         }
     }
 }

@@ -187,9 +187,9 @@ namespace Pirates.UI
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => cameraHintShown = false;
 
-        void OnRescued() => rescuedUntil = Time.time + 3f;
+        void OnRescued() => rescuedUntil = Time.time + Hud.BannerTime(3f);
         void OnHurt(DamageInfo info) { if (hud) hud.Flash(); }
-        void OnRespawned() => respawnedUntil = Time.time + 3.5f;
+        void OnRespawned() => respawnedUntil = Time.time + Hud.BannerTime(3.5f);
 
         void OnAte(float healed)
         {

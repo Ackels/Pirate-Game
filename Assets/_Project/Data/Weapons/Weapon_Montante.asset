@@ -24,14 +24,22 @@ MonoBehaviour:
   cooldown: 0.9
   shotsPerReload: 0
   reloadTime: 2.5
-  attackVariants: 3
+  attackVariants: 9
+  comboAlternates: 3
+  handMoves: 
   animatorVariantOffset: 0
-  animatorVariants: 08000000090000000a000000i
+  animatorVariants: 080000003c0000003d000000090000003e0000003f0000000a0000004000000041000000i
   randomVariants: 0
   variantHitDelays:
   - 0.41666666
+  - 0.4
+  - 0.42
   - 0.31666666
+  - 0.5
+  - 0.32
   - 0.35833332
+  - 0.55
+  - 0.4
   comboWindow: 1.8
   animatedDraw: 1
   instantHolster: 0
@@ -69,6 +77,41 @@ MonoBehaviour:
     lungeSpeed: 0
     extraRecovery: 0
     push: 0
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 3.2
+    angle: 50
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 4
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 170
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
+    damageScale: 0.9
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
   - range: 0
     angle: 0
     damage: 0
@@ -79,6 +122,41 @@ MonoBehaviour:
     lungeSpeed: 0
     extraRecovery: 0
     push: 0
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 2.9
+    angle: 360
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.15
+    push: 4
+    damageScale: 0.9
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 140
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 3
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
   - range: 0
     angle: 0
     damage: 0
@@ -89,3 +167,38 @@ MonoBehaviour:
     lungeSpeed: 0
     extraRecovery: 0
     push: 5
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 200
+    damage: 0
+    customKnockdown: 1
+    knockdown: 1
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.2
+    push: 5.5
+    damageScale: 1.15
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 0
+    damage: 0
+    customKnockdown: 1
+    knockdown: 1
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.25
+    push: 6.5
+    damageScale: 1.1
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90

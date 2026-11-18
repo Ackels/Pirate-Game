@@ -25,8 +25,10 @@ MonoBehaviour:
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 3
+  comboAlternates: 1
+  handMoves: CuteloInimigo
   animatorVariantOffset: 0
-  animatorVariants: 00000000010000001e000000i
+  animatorVariants: 460000004700000048000000i
   randomVariants: 1
   variantHitDelays:
   - 0.375
@@ -34,6 +36,7 @@ MonoBehaviour:
   - 0.36249998
   comboWindow: 1.375
   animatedDraw: 0
+  instantHolster: 0
   drawGrabTime: 0.4615385
   drawDuration: 0.95
   holsterReleaseTime: 0.84666663

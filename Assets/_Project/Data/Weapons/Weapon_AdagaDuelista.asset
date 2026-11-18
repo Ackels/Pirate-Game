@@ -17,23 +17,32 @@ MonoBehaviour:
   kind: 0
   animatorWeaponType: 0
   damage: 25
-  range: 2
+  range: 2.2
   angle: 95
-  hitDelay: 0.2413793
+  hitDelay: 0.17931034
   attackAnimSpeed: 1.45
   cooldown: 0.41379312
   shotsPerReload: 0
   reloadTime: 2.5
-  attackVariants: 3
+  attackVariants: 9
+  comboAlternates: 3
+  handMoves: Adaga
   animatorVariantOffset: 0
-  animatorVariants: 070000000800000009000000i
+  animatorVariants: 32000000330000003400000035000000360000003700000038000000390000003a000000i
   randomVariants: 0
   variantHitDelays:
-  - 0.2413793
-  - 0.28965515
-  - 0.22758621
+  - 0.17931034
+  - 0.19310345
+  - 0.22068964
+  - 0.16551723
+  - 0.30344826
+  - 0.13793103
+  - 0.26206896
+  - 0.34482756
+  - 0.27586207
   comboWindow: 0.7586207
   animatedDraw: 1
+  instantHolster: 0
   drawGrabTime: 0.4615385
   drawDuration: 0.95
   holsterReleaseTime: 0.84666663
@@ -68,8 +77,13 @@ MonoBehaviour:
     lungeSpeed: 0
     extraRecovery: 0
     push: 0
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
   - range: 0
-    angle: 0
+    angle: 115
     damage: 0
     customKnockdown: 0
     knockdown: 0
@@ -78,14 +92,115 @@ MonoBehaviour:
     lungeSpeed: 0
     extraRecovery: 0
     push: 0
-  - range: 2.2
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 130
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 3
+    damageScale: 1.1
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
     angle: 0
-    damage: 29
+    damage: 0
     customKnockdown: 0
     knockdown: 0
     unblockable: 0
     followUps:
-    - 0.20689656
+    - 0.11034482
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
+    damageScale: 0.6
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 2.4
+    angle: 360
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
     lungeSpeed: 0
     extraRecovery: 0.15
-    push: 2.6
+    push: 0
+    damageScale: 0
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 0
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps:
+    - 0.12413793
+    lungeSpeed: 0
+    extraRecovery: 0
+    push: 0
+    damageScale: 0.65
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 0
+    angle: 0
+    damage: 0
+    customKnockdown: 1
+    knockdown: 1
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.25
+    push: 3.5
+    damageScale: 1.3
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 2.4
+    angle: 140
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.15
+    push: 0
+    damageScale: 1.1
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90
+  - range: 2.5
+    angle: 70
+    damage: 0
+    customKnockdown: 0
+    knockdown: 0
+    unblockable: 0
+    followUps: []
+    lungeSpeed: 0
+    extraRecovery: 0.2
+    push: 4
+    damageScale: 1.4
+    pullAt: 0
+    pullDistance: 0
+    pullRange: 2.4
+    pullAngle: 90

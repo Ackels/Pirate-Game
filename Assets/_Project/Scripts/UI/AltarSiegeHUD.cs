@@ -99,7 +99,7 @@ namespace Pirates.UI
         {
             if (banner == null) return;
             banner.Show(title, subtitle);
-            bannerUntil = Time.unscaledTime + bannerSeconds;
+            bannerUntil = Time.unscaledTime + Hud.BannerTime(bannerSeconds);
         }
     }
 }

@@ -310,7 +310,7 @@ namespace Pirates.UI
         {
             if (banner == null) return;
             banner.Show(p.name, p.kind == SeaChart.PlaceKind.Lair ? "covil marcado na carta (M)" : "ilha marcada na carta (M)");
-            bannerUntil = Time.unscaledTime + bannerSeconds;
+            bannerUntil = Time.unscaledTime + Hud.BannerTime(bannerSeconds);
         }
 
         /// <summary>A seta do navio (proa para cima, gira com o rumo).</summary>

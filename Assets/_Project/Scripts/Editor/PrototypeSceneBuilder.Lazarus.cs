@@ -145,7 +145,7 @@ namespace Pirates.EditorTools
                     w.variantStrikes[i] = s;
                 }
             EditorUtility.SetDirty(w);
-            return SteeredByHands(WithSupportHand(w, GreatswordSupport));
+            return BossHandMoves(SteeredByHands(WithSupportHand(w, GreatswordSupport)));
         }
 
         /// <summary>Roupa do Lázaro do prólogo (paleta 2 do capitão) com os olhos de prata acesos (a máscara dos olhos do Barba-Negra).</summary>

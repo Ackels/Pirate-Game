@@ -56,12 +56,14 @@ namespace Pirates.EditorTools
         /// <summary>Quando cada golpe sai (LandBoss.Move): distância, peso, fase, espera, brecha depois.</summary>
         static LandBoss.Move[] ChiefMoves() => new[]
         {
-            new LandBoss.Move { name = "Corte", variant = 0, maxRange = 4.2f, weight = 3f, recovery = 0.7f, combo = true },
-            new LandBoss.Move { name = "Corte largo", variant = 1, maxRange = 4.2f, weight = 2.5f, recovery = 0.8f, combo = true },
+            new LandBoss.Move { name = "Corte", variant = 0, maxRange = 4.2f, weight = 2f, recovery = 0.7f, combo = true },
+            new LandBoss.Move { name = "Corte largo", variant = 1, maxRange = 4.2f, weight = 2f, recovery = 0.8f, combo = true },
             new LandBoss.Move { name = "Corte duplo", variant = 2, maxRange = 4f, weight = 2f, recovery = 0.9f },
             new LandBoss.Move { name = "Golpe de cima", variant = 3, maxRange = 3.6f, weight = 1.5f, cooldown = 4f, recovery = 1.1f },
-            new LandBoss.Move { name = "Giro", variant = 4, maxRange = 3.2f, cooldown = 6f, recovery = 1f, breaker = true },
-            new LandBoss.Move { name = "Salto", variant = 5, minRange = 5.5f, maxRange = 11f, weight = 1f, cooldown = 7f, recovery = 1.2f },
+            // Giro e salto também no sorteio (18/11): o giro com peso 1,8 (e continua como resposta), o salto de qualquer distância (de perto é
+            // um salto curto que crava; ele luta a menos de 2,5 m e o salto quase nunca saía).
+            new LandBoss.Move { name = "Giro", variant = 4, maxRange = 3.2f, weight = 1.8f, cooldown = 6f, recovery = 1f, breaker = true },
+            new LandBoss.Move { name = "Salto", variant = 5, minRange = 0f, maxRange = 11f, weight = 1.5f, cooldown = 6f, recovery = 1.2f },
             new LandBoss.Move { name = "Chute", variant = 6, maxRange = 2.6f, cooldown = 4f, recovery = 0.6f, guardBreaker = true },
             new LandBoss.Move { name = "Sequência", variant = 7, maxRange = 4.5f, weight = 2.5f, phase = 2, cooldown = 6f, recovery = 1f },
         };
@@ -69,7 +71,21 @@ namespace Pirates.EditorTools
         static bool IsChief(string postName) => postName.StartsWith("Chefe");
 
         /// <summary>Espadão do chefe (Data/Weapons/Weapon_Espadao_Chefe; preservado se existe).</summary>
-        static WeaponDefinition ChiefSword() => SteeredByHands(WithSupportHand(ChiefSwordAsset(), GreatswordSupport));
+        static WeaponDefinition ChiefSword() => BossHandMoves(SteeredByHands(WithSupportHand(ChiefSwordAsset(), GreatswordSupport)));
+
+        /// <summary>
+        /// Golpes feitos à mão do Barba-Negra e de Lázaro (17/11): estados "Inimigo_Golpe80..87" tocando a guarda do espadão; o chute (6)
+        /// continua no estado gravado ("Espadao_Golpe6"). O GreatswordSwing ("EspadaoChefe") põe os braços.
+        /// </summary>
+        static WeaponDefinition BossHandMoves(WeaponDefinition w)
+        {
+            if (!w) return w;
+            w.handMoves = "EspadaoChefe";
+            int b = EnemyHandVariant + 10;
+            w.animatorVariants = new[] { b, b + 1, b + 2, b + 3, b + 4, b + 5, 6, b + 7 };
+            EditorUtility.SetDirty(w);
+            return w;
+        }
 
         /// <summary>Arma guiada pelas duas mãos da animação (TwoHandSteer, 07/11): no Barba-Negra e no Lázaro a mão esquerda presa no cabo esticava o braço.</summary>
         static WeaponDefinition SteeredByHands(WeaponDefinition w)

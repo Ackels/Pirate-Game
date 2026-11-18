@@ -16,7 +16,8 @@ namespace Pirates.LandCombat
     public abstract class CryptMonster : MonoBehaviour, IAssistTarget
     {
         /// <summary>Attack = começou a preparar o golpe (o aviso); Strike = o golpe saiu; Burst = as almas estouram do chão (Capelão).</summary>
-        public enum Cue { Appear, Attack, Strike, Hurt, Die, Vanish, Burst }
+        /// <summary>Smash (18/11) = pancada pesada que acerta ou bate no chão (as feras).</summary>
+        public enum Cue { Appear, Attack, Strike, Hurt, Die, Vanish, Burst, Smash }
 
         static readonly List<CryptMonster> active = new();
         /// <summary>Os monstros ligados (o aviso de golpe da UI percorre esta lista).</summary>

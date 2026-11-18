@@ -12,10 +12,14 @@ namespace Pirates.LandCombat
     /// cabeçada (preparo de <see cref="windUpSeconds"/>: fica vermelha e guincha; a animação do golpe só começa nos últimos
     /// <see cref="swingLead"/> s; passa pela guarda como golpe de lâmina). Levou golpe: tranco e some de novo (o
     /// jogador acerta um golpe por aparição, ou mais aparando). Aparada: fica tonta, sólida, por <see cref="stunSeconds"/>.
+    /// Golpes novos (18/11, pedido do Jhonata), sorteados com a cabeçada: <b>garra</b> (o soco do kit: preparo mais curto, dano menor) e
+    /// <b>atravessar</b> (fica azul no preparo, vira transparente e passa voando por dentro do capitão: tira fôlego, um pouco de vida e o
+    /// deixa lento; a guarda não segura, o rolamento escapa; golpe no preparo cancela).
     /// </summary>
     public class RestlessSoul : CryptMonster
     {
-        enum Phase { Hidden, Phased, Materializing, Solid, WindUp, Recover, Stunned, Fading, Dead }
+        enum Phase { Hidden, Phased, Materializing, Solid, WindUp, Pass, Recover, Stunned, Fading, Dead }
+        enum Move { Headbutt, Claw, Pass }
 
         [SerializeField] Transform body;
         [SerializeField] Renderer[] renderers = System.Array.Empty<Renderer>();
@@ -32,6 +36,19 @@ namespace Pirates.LandCombat
         [SerializeField] Vector2 phasedSeconds = new(0.8f, 1.6f);
         [Tooltip("A que distância do capitão ela aparece.")]
         [SerializeField] Vector2 appearDistance = new(2.4f, 3.6f);
+        [Header("Bote (18/11, o soco parado no lugar não agradava)")]
+        [Tooltip("No preparo da garra e da cabeçada: quanto sobe (m) e inclina para trás (graus); no golpe: quanto mergulha para a frente (graus), quantos metros avança e a que velocidade.")]
+        [SerializeField] float rearRise = 0.45f, rearLean = 28f, strikeLean = 40f, lungeDistance = 1.4f, lungeSpeed = 10f;
+        [Header("Garra (18/11)")]
+        [Tooltip("Dano, preparo e quando a animação do soco começa (antes do impacto).")]
+        [SerializeField] float clawDamage = 10f, clawWindUp = 0.65f, clawLead = 0.35f;
+        [Header("Atravessar (18/11)")]
+        [Tooltip("Dano (passa pela guarda), fôlego que tira, lentidão (velocidade e segundos), preparo, velocidade e até onde passa depois do capitão.")]
+        [SerializeField] float passDamage = 4f, passStamina = 35f, passSlow = 0.5f, passSlowSeconds = 1.5f;
+        [SerializeField] float passWindUp = 0.9f, passSpeed = 9f, passOvershoot = 3f, passReach = 0.8f;
+        [SerializeField] Color passColor = new(0.5f, 1.1f, 2.4f, 1f);
+        [Tooltip("Peso no sorteio: cabeçada, garra, atravessar.")]
+        [SerializeField] Vector3 moveWeights = new(0.45f, 0.35f, 0.2f);
         [Header("Visual")]
         [SerializeField] float hover = 0.35f;
         [SerializeField, Range(0f, 1f)] float solidAlpha = 0.85f, phasedAlpha = 0.1f;
@@ -45,14 +62,32 @@ namespace Pirates.LandCombat
         Color[] baseColors = System.Array.Empty<Color>();
         Phase phase = Phase.Hidden;
         float phaseStart, phaseUntil, alpha = -1f, warn;
-        Vector3 destination;
+        Vector3 destination, passTo;
         bool struck, swung, flashed;
+        Move move;
+        float windUpNow, leanNow, riseNow, leanGoal, riseGoal, lungeLeft;
 
         public override bool IsGhost => true;
         /// <summary>Sólida (leva dano).</summary>
         public bool IsSolid => phase is Phase.Solid or Phase.WindUp or Phase.Recover or Phase.Stunned;
         public string PhaseName => phase.ToString();
-        public override float ImpactIn => phase == Phase.WindUp && !struck ? Mathf.Max(0f, phaseUntil - Time.time) : -1f;
+        public string MoveName => move.ToString();
+        /// <summary>Atravessar: a guarda não segura (aviso azul: role).</summary>
+        public override bool WarnUnblockable => move == Move.Pass && phase is Phase.WindUp or Phase.Pass;
+        public override float ImpactIn => phase switch
+        {
+            Phase.WindUp when !struck => Mathf.Max(0f, phaseUntil - Time.time)
+                + (move == Move.Pass && TargetAlive ? Mathf.Max(0f, FlatTo(target.transform.position) - passReach) / passSpeed : 0f),
+            Phase.Pass when !struck && TargetAlive => Mathf.Max(0f, FlatTo(target.transform.position) - passReach) / passSpeed,
+            _ => -1f,
+        };
+
+        float FlatTo(Vector3 p)
+        {
+            Vector3 d = p - transform.position;
+            d.y = 0f;
+            return d.magnitude;
+        }
         protected override bool IsPhased => phase is Phase.Phased or Phase.Materializing or Phase.Fading;
 
         /// <summary>A Lâmina de São Telmo pegou a alma transparente: leva o golpe, solta o ectoplasma e foge para outro lado.</summary>
@@ -155,6 +190,8 @@ namespace Pirates.LandCombat
             phaseUntil = Time.time + seconds;
             struck = swung = flashed = false;
             if (next != Phase.WindUp) SetWarn(0f);
+            if (next is not (Phase.WindUp or Phase.Recover)) leanGoal = riseGoal = 0f;
+            if (next == Phase.Recover) riseGoal = 0f;
             switch (next)
             {
                 case Phase.Materializing:
@@ -180,7 +217,14 @@ namespace Pirates.LandCombat
         {
             float dt = Time.deltaTime;
             if (dt <= 0f || phase == Phase.Hidden) return;
-            if (body) body.localPosition = Vector3.up * (Mathf.Sin(Time.time * 2.3f + post.x) * 0.12f);
+            if (body)
+            {
+                // O bote: armar (sobe e inclina para trás) e mergulhar (inclina para a frente), suavizado.
+                leanNow = Mathf.MoveTowards(leanNow, leanGoal, (leanGoal > leanNow ? 420f : 160f) * dt);
+                riseNow = Mathf.MoveTowards(riseNow, riseGoal, 2.5f * dt);
+                body.localPosition = Vector3.up * (Mathf.Sin(Time.time * 2.3f + post.x) * 0.12f + riseNow);
+                body.localRotation = Quaternion.Euler(leanNow, 0f, 0f);
+            }
             if (phase == Phase.Dead)
             {
                 float k = Mathf.Clamp01((Time.time - phaseStart) / 1.4f);
@@ -223,7 +267,7 @@ namespace Pirates.LandCombat
                     Vector3 to = target.transform.position - transform.position;
                     to.y = 0f;
                     Face(target.transform.position, dt);
-                    if (to.magnitude <= attackRange) Enter(Phase.WindUp, windUpSeconds);
+                    if (to.magnitude <= attackRange) BeginWindUp();
                     else
                     {
                         Vector3 goal = target.transform.position + Vector3.up * hover;
@@ -237,25 +281,48 @@ namespace Pirates.LandCombat
                     if (!TargetAlive) break;
                     Face(target.transform.position, dt);
                     float left = phaseUntil - now;
-                    float k = (now - phaseStart) / windUpSeconds;
+                    float k = (now - phaseStart) / windUpNow;
                     SetWarn(Mathf.Clamp01(k * 1.6f) * (left <= flashLead ? flashBoost : 1f));
+                    if (move == Move.Pass)
+                    {
+                        // Recua um pouco e treme antes de atravessar.
+                        Vector3 back = transform.position - target.transform.position;
+                        back.y = 0f;
+                        if (back.sqrMagnitude > 0.0001f && back.magnitude < 2.6f) MoveTo(transform.position + back.normalized, 1.5f, dt);
+                        if (now >= phaseUntil) BeginPass();
+                        break;
+                    }
                     if (left <= flashLead && !flashed)
                     {
                         flashed = true;
                         if (wisps) wisps.Emit(12);
                     }
-                    if (left <= swingLead && !swung)
+                    float lead = move == Move.Claw ? clawLead : swingLead;
+                    if (!swung)
+                    {
+                        // Armando: sobe e inclina para trás, cada vez mais.
+                        float arm = Mathf.Clamp01((now - phaseStart) / Mathf.Max(0.05f, windUpNow - lead));
+                        leanGoal = -rearLean * arm;
+                        riseGoal = rearRise * arm;
+                    }
+                    if (left <= lead && !swung)
                     {
                         swung = true;
-                        Play("Golpe", 0.05f);
+                        Play(move == Move.Claw ? "Garra" : "Golpe", 0.05f);
+                        // O bote: mergulha para a frente e avança até colar no capitão.
+                        leanGoal = strikeLean;
+                        riseGoal = 0f;
+                        lungeLeft = lungeDistance;
+                        if (wisps) wisps.Emit(10);
                     }
-                    // Avança na cabeçada (os últimos ~0,35 s).
-                    if (left <= 0.35f)
+                    if (swung && lungeLeft > 0f)
                     {
-                        Vector3 goal = target.transform.position + Vector3.up * hover;
-                        Vector3 flat = goal - transform.position;
+                        Vector3 flat = target.transform.position - transform.position;
                         flat.y = 0f;
-                        if (flat.magnitude > 0.9f) MoveTo(transform.position + flat.normalized * 0.5f, 4f, dt);
+                        float step = Mathf.Min(lungeLeft, lungeSpeed * dt, Mathf.Max(0f, flat.magnitude - 0.7f));
+                        if (step > 0f && flat.sqrMagnitude > 0.0001f) transform.position += flat.normalized * step;
+                        lungeLeft = step > 0f ? lungeLeft - step : 0f;
+                        if (wisps && Random.value < 0.5f) wisps.Emit(1);
                     }
                     if (now < phaseUntil || struck) break;
                     struck = true;
@@ -263,7 +330,7 @@ namespace Pirates.LandCombat
                     Vector3 d = target.transform.position - transform.position;
                     d.y = 0f;
                     var guard = d.magnitude <= attackRange + 0.5f
-                        ? Strike(damage, TargetChest - d.normalized * 0.3f) : CharacterCombat.GuardResult.None;
+                        ? Strike(move == Move.Claw ? clawDamage : damage, TargetChest - d.normalized * 0.3f) : CharacterCombat.GuardResult.None;
                     if (guard == CharacterCombat.GuardResult.Parried)
                     {
                         Play("Levar", 0.05f);
@@ -271,6 +338,22 @@ namespace Pirates.LandCombat
                         Enter(Phase.Stunned, stunSeconds);
                     }
                     else Enter(Phase.Recover, recoverSeconds);
+                    // Volta a ficar em pé devagar depois do bote.
+                    leanGoal = 0f;
+                    break;
+                }
+                case Phase.Pass:
+                {
+                    // Voa reto, transparente, por dentro do capitão e sai do outro lado.
+                    SetAlpha(Mathf.MoveTowards(alpha, 0.35f, dt / 0.2f));
+                    MoveTo(passTo, passSpeed, dt);
+                    Face(passTo, dt * 3f);
+                    if (!struck && TargetAlive && FlatTo(target.transform.position) <= passReach)
+                    {
+                        struck = true;
+                        PassThrough();
+                    }
+                    if ((transform.position - passTo).sqrMagnitude < 0.04f || now >= phaseUntil) Enter(Phase.Fading, fadeSeconds);
                     break;
                 }
                 case Phase.Recover:
@@ -290,6 +373,42 @@ namespace Pirates.LandCombat
                     Enter(Phase.Phased, Random.Range(phasedSeconds.x, phasedSeconds.y));
                     break;
             }
+        }
+
+        // ---------- Golpes ----------
+
+        void BeginWindUp()
+        {
+            float h = Mathf.Max(0f, moveWeights.x), c = Mathf.Max(0f, moveWeights.y), q = Mathf.Max(0f, moveWeights.z);
+            float r = Random.value * Mathf.Max(0.0001f, h + c + q);
+            move = r < h ? Move.Headbutt : r < h + c ? Move.Claw : Move.Pass;
+            windUpNow = move switch { Move.Claw => clawWindUp, Move.Pass => passWindUp, _ => windUpSeconds };
+            Enter(Phase.WindUp, windUpNow);
+        }
+
+        void BeginPass()
+        {
+            Vector3 c = target.transform.position;
+            Vector3 dir = c - transform.position;
+            dir.y = 0f;
+            dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : transform.forward;
+            passTo = c + dir * passOvershoot + Vector3.up * hover;
+            SetSolid(false);
+            Raise(Cue.Vanish);
+            if (wisps) wisps.Emit(14);
+            Play("Voar", 0.05f);
+            Enter(Phase.Pass, 1.6f);
+        }
+
+        /// <summary>Passou por dentro: o frio tira fôlego e deixa lento; rolando (invencível) escapa.</summary>
+        void PassThrough()
+        {
+            Raise(Cue.Strike);
+            if (wisps) wisps.Emit(20);
+            if (target.DodgeInvulnerable) return;
+            Strike(passDamage, TargetChest, unblockable: true);
+            if (target.TryGetComponent<Stamina>(out var stamina)) stamina.Spend(passStamina);
+            target.SetSpeedMultiplier(passSlow, passSlowSeconds);
         }
 
         // ---------- Ajuda ----------
@@ -357,7 +476,7 @@ namespace Pirates.LandCombat
         {
             for (int i = 0; i < materials.Length; i++)
             {
-                var c = Color.Lerp(baseColors[i], warnColor, Mathf.Min(1f, warn));
+                var c = Color.Lerp(baseColors[i], move == Move.Pass ? passColor : warnColor, Mathf.Min(1f, warn));
                 if (warn > 1f) c *= warn;
                 c.a = baseColors[i].a * alpha;
                 materials[i].SetColor(BaseColorId, c);

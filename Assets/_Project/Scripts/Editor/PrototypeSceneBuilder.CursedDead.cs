@@ -44,7 +44,8 @@ namespace Pirates.EditorTools
             tint = new Color(0.85f, 0.95f, 0.85f), glow = new Color(0.05f, 0.2f, 0.08f),
             moves = new[]
             {
-                new CursedBeast.Move { state = "Punch", range = 2.6f, windUp = 0.8f, damage = 22f, recover = 0.7f, weight = 3f },
+                // Soco que às vezes emenda a clavada (18/11).
+                new CursedBeast.Move { state = "Punch", range = 2.6f, windUp = 0.8f, damage = 22f, recover = 0.7f, weight = 3f, chainTo = 2, chainChance = 0.5f },
                 new CursedBeast.Move { state = "Weapon", range = 2.9f, windUp = 1.1f, damage = 34f, recover = 1.1f, cooldown = 3.5f, weight = 2f, knockdown = Knockdown.Stumble },
             },
         };
@@ -61,8 +62,29 @@ namespace Pirates.EditorTools
                 new CursedBeast.Move { state = "Punch", range = 2.6f, windUp = 0.7f, damage = 20f, recover = 0.6f, weight = 3f },
                 new CursedBeast.Move { state = "Weapon", range = 2.9f, windUp = 1f, damage = 28f, recover = 1f, cooldown = 4f, weight = 1.5f, knockdown = Knockdown.Stumble },
                 new CursedBeast.Move { state = "Duck", minRange = 5f, range = 12f, windUp = 0.8f, damage = 30f, recover = 1.2f, cooldown = 7f, weight = 6f, knockdown = Knockdown.Blast, leap = true },
+                // Investida de chifre e grito que empurra (18/11).
+                new CursedBeast.Move { state = "Duck", minRange = 3.5f, range = 10f, windUp = 0.9f, damage = 24f, recover = 1.4f, cooldown = 6f, weight = 3f, knockdown = Knockdown.Stumble, charge = true },
+                new CursedBeast.Move { state = "Duck", range = 4.5f, windUp = 0.9f, damage = 8f, recover = 1f, cooldown = 8f, weight = 1.5f, roar = true },
             },
         };
+
+        /// <summary>Põe a tabela de golpes das feras nas da cena aberta (sem regerar) e salva a cena.</summary>
+        public static string PatchBeastMovesInOpenScene()
+        {
+            string log = "";
+            foreach (var b in Object.FindObjectsByType<CursedBeast>(FindObjectsInactive.Include))
+            {
+                var spec = b.name.StartsWith("Fera_Ogro") ? OrcSpec : b.name.StartsWith("Fera_DemonioAzul") ? DemonSpec(true)
+                    : b.name.StartsWith("Fera_Demonio") ? DemonSpec(false) : null;
+                if (spec == null) continue;
+                b.SetMoves(spec.moves);
+                EditorUtility.SetDirty(b);
+                log += b.name + ":" + spec.moves.Length + " ";
+            }
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+            return log;
+        }
 
         /// <summary>Depois do NavMesh da ilha: os grupos da trilha e do cemitério e o cerco do altar.</summary>
         static void AddCursedDead(Transform island, FootCharacter player, GameObject hud, LandLootAssets landLoot = null, LootItems items = null)

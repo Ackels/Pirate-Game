@@ -81,7 +81,7 @@ namespace Pirates.UI
             banner.Show($"{e.part}: aprendido!", next == null
                 ? "Fim do tutorial. Bons ventos, capitão!"
                 : $"Agora: {next.ToLowerInvariant()}.");
-            bannerUntil = Time.unscaledTime + 5f;
+            bannerUntil = Time.unscaledTime + Hud.BannerTime(5f);
         }
 
         void Update()

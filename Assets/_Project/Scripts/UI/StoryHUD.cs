@@ -126,7 +126,7 @@ namespace Pirates.UI
                 var (t, s, f) = pending.Dequeue();
                 banner.Show(t, s);
                 feedAfterBanner = f;
-                bannerUntil = Time.unscaledTime + bannerSeconds;
+                bannerUntil = Time.unscaledTime + Hud.BannerTime(bannerSeconds);
             }
             else if (bannerUntil > 0f)
             {

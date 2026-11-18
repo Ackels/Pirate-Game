@@ -25,8 +25,10 @@ MonoBehaviour:
   shotsPerReload: 0
   reloadTime: 2.5
   attackVariants: 3
+  comboAlternates: 1
+  handMoves: MachadoBruto
   animatorVariantOffset: 0
-  animatorVariants: 
+  animatorVariants: 4b0000004c0000004d000000i
   randomVariants: 1
   variantHitDelays:
   - 0.7
@@ -34,6 +36,7 @@ MonoBehaviour:
   - 0.76666665
   comboWindow: 3.5
   animatedDraw: 0
+  instantHolster: 0
   drawGrabTime: 0.45
   drawDuration: 0.95
   holsterReleaseTime: 0.85

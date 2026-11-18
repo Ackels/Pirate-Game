@@ -91,6 +91,35 @@ namespace Pirates.OnFoot
         void LateUpdate()
         {
             if (!ik || !rightHand || !leftHand) return;
+            // Golpe feito à mão (GreatswordSwing) mandando: a pegada fica como estava (o golpe parte dela e volta para ela) e, no fim, volta
+            // inteira, misturada em resumeSeconds a partir da pose em que o golpe terminou (17/11: desligar e religar em 0,15 s girava o
+            // machado ~25° por quadro, uma "piscada" no começo e no fim de cada golpe).
+            if (!swing) swing = GetComponent<GreatswordSwing>();
+            if (swing && swing.Busy) { heldBySwing = true; return; }
+            Transform held = null;
+            if (heldBySwing)
+            {
+                heldBySwing = false;
+                if (visual) { weight = 1f; held = visual; heldPos = visual.localPosition; heldRot = visual.localRotation; resumeT = 0f; }
+            }
+            Steer();
+            if (resumeT < 1f && visual)
+            {
+                resumeT = Mathf.Min(1f, resumeT + Time.deltaTime / resumeSeconds);
+                float u = resumeT * resumeT * (3f - 2f * resumeT);
+                visual.localPosition = Vector3.Lerp(heldPos, visual.localPosition, u);
+                visual.localRotation = Quaternion.Slerp(heldRot, visual.localRotation, u);
+            }
+        }
+
+        [Tooltip("Depois de um golpe feito à mão, em quanto tempo a pegada volta (s).")]
+        [SerializeField] float resumeSeconds = 0.15f;
+        Vector3 heldPos;
+        Quaternion heldRot;
+        float resumeT = 1f;
+
+        void Steer()
+        {
             if (weight > 0.001f) SpreadKnees(weight);
             bool want = ik.TryGetSteer(out var v, out var a, out var b, out float s, out bool sl);
             if (want && v != visual)
@@ -329,6 +358,8 @@ namespace Pirates.OnFoot
         public void SetFlipDegrees(float degrees) => flipDegrees = degrees;
         [Tooltip("Nas armas que escorregam, a mão direita gira isto (graus) no eixo do antebraço antes de tudo (o machado vai junto).")]
         [SerializeField] float rightTwist = 0f;
+        GreatswordSwing swing;
+        bool heldBySwing;
         Quaternion rightAnimRotation = Quaternion.identity;
         Transform rightElbow;
         /// <summary>Teste: giro da mão direita no antebraço.</summary>

@@ -178,7 +178,7 @@ namespace Pirates.UI
             if (banner != null)
             {
                 banner.Show(title, subtitle);
-                bannerUntil = Time.time + bannerSeconds;
+                bannerUntil = Time.time + Hud.BannerTime(bannerSeconds);
             }
             var h = GameHud.Current;
             if (h) h.Feed(GameHud.FeedKind.Notice, $"<b>{title}</b>\n<size=75%>{subtitle} · chegou ao porão</size>", PrizeColor);

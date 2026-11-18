@@ -686,7 +686,26 @@ namespace Pirates.OnFoot
             if (meleeAssist && weapon.kind == WeaponKind.Melee) direction = AssistDirection(direction, weapon);
 
             // Combo: clicar de novo logo depois continua a sequência de golpes.
-            int variant = Time.time - lastAttackTime <= weapon.comboWindow ? (lastVariant + 1) % weapon.attackVariants : 0;
+            int alternates = Mathf.Clamp(weapon.comboAlternates, 1, weapon.attackVariants);
+            int slots = Mathf.Max(1, weapon.attackVariants / alternates);
+            int slot = Time.time - lastAttackTime <= weapon.comboWindow && lastVariant >= 0 ? (lastVariant / alternates + 1) % slots : 0;
+            // Cada posição do combo sorteia uma das versões do golpe (cada arma tem as suas; não fica repetitivo).
+            // Nunca a mesma versão da última vez nesta posição (com 3, sorteia entre as outras 2).
+            int alt = 0;
+            if (alternates > 1)
+            {
+                if (lastAltBySlot == null || lastAltBySlot.Length != slots || lastAltWeapon != weapon)
+                {
+                    lastAltBySlot = new int[slots];
+                    for (int i = 0; i < slots; i++) lastAltBySlot[i] = -1;
+                    lastAltWeapon = weapon;
+                }
+                int prev = lastAltBySlot[slot];
+                alt = UnityEngine.Random.Range(0, prev >= 0 ? alternates - 1 : alternates);
+                if (prev >= 0 && alt >= prev) alt++;
+                lastAltBySlot[slot] = alt;
+            }
+            int variant = slot * alternates + alt;
             if (queuedVariant >= 0 && queuedVariant < weapon.attackVariants) variant = queuedVariant;
             else if (weapon.randomVariants && weapon.attackVariants > 1)
             {
@@ -774,6 +793,15 @@ namespace Pirates.OnFoot
 
         IEnumerator Strike(WeaponDefinition weapon, int index, int variant, Vector3 direction, Vector3 aimPoint, float delay, float spread, bool riposte = false)
         {
+            // Puxão do gancho antes do impacto.
+            var early = weapon.kind == WeaponKind.Melee ? weapon.StrikeFor(variant) : null;
+            if (early != null && early.pullDistance > 0f && early.pullAt > 0f && early.pullAt < delay)
+            {
+                yield return new WaitForSeconds(early.pullAt);
+                delay -= early.pullAt;
+                Pull(early, transform.forward);
+                early = null;
+            }
             if (delay > 0f) yield return new WaitForSeconds(delay);
             if (weapon.kind != WeaponKind.Melee)
             {
@@ -802,6 +830,36 @@ namespace Pirates.OnFoot
             pendingStrike = null;
         }
 
+        // Versão sorteada da última vez em cada posição do combo (para não repetir o mesmo golpe).
+        int[] lastAltBySlot;
+        WeaponDefinition lastAltWeapon;
+
+        /// <summary>Gancho: traz para perto quem está à frente, até ficar a 1 m (empurrão ao contrário, freado como o empurrão).</summary>
+        void Pull(StrikeOverride strike, Vector3 direction)
+        {
+            Vector3 chest = transform.position + Vector3.up * chestHeight;
+            int count = Physics.OverlapSphereNonAlloc(chest, strike.pullRange, snapHits, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                var col = snapHits[i];
+                if (col.transform.IsChildOf(transform) || IsAlly(col)) continue;
+                var body = col.GetComponentInParent<FootCharacter>();
+                if (!body || body == character || body.Incapacitated) continue;
+                Vector3 to = body.transform.position - transform.position;
+                to.y = 0f;
+                float dist = to.magnitude;
+                if (dist < 0.01f || Vector3.Angle(direction, to) > strike.pullAngle * 0.5f) continue;
+                float pull = Mathf.Min(strike.pullDistance, dist - 1f);
+                if (pull <= 0.02f) continue;
+                // Distância freada pelo pushDrag do alvo: v = raiz(2 · freio · d).
+                body.Push(-to / dist * Mathf.Sqrt(2f * body.PushDrag * pull));
+                Pulled?.Invoke(body.transform.position + Vector3.up * chestHeight * 0.8f);
+            }
+        }
+
+        /// <summary>Alguém foi fisgado pelo gancho (ponto no peito dele).</summary>
+        public event Action<Vector3> Pulled;
+
         /// <summary>Ângulo a partir da frente de quem leva o golpe que conta como "pelas costas" (o mesmo do tranco do FootHealthReactions).</summary>
         public const float BackstabAngle = 110f;
 
@@ -817,7 +875,8 @@ namespace Pirates.OnFoot
             hitThisSwing.Clear();
             float range = strike != null && strike.range > 0f ? strike.range : weapon.range;
             float angle = strike != null && strike.angle > 0f ? strike.angle : weapon.angle;
-            float damage = (strike != null && strike.damage > 0f ? strike.damage : weapon.damage) * DamageMultiplier * (riposte ? riposteDamage : 1f);
+            float damage = (strike != null && strike.damage > 0f ? strike.damage : weapon.damage) * DamageMultiplier * (riposte ? riposteDamage : 1f)
+                * (strike != null && strike.damageScale > 0f ? strike.damageScale : 1f);
             float push = strike != null && strike.push > 0f ? strike.push : weapon.hitPush;
             var flags = StrikeFlags.None;
             if (riposte) flags |= StrikeFlags.Riposte;
@@ -957,6 +1016,15 @@ namespace Pirates.OnFoot
             float cone = weapon.angle * spread;
             Vector3 shotDir = Quaternion.Euler(UnityEngine.Random.Range(-1f, 1f) * cone * 0.25f,
                                                UnityEngine.Random.Range(-1f, 1f) * cone * 0.5f, 0f) * aimDir;
+
+            // Magia (mago esqueleto, 18/11): o projétil voa e estoura sozinho. Sem o Fired: nada de estampido nem fumaça de pólvora.
+            if (weapon.projectile)
+            {
+                var shot = Instantiate(weapon.projectile, origin, Quaternion.LookRotation(shotDir));
+                if (shot.TryGetComponent(out IProjectile projectile))
+                    projectile.Launch(gameObject, shotDir * weapon.projectileSpeed, weapon.damage, weapon.range);
+                return;
+            }
 
             // Bacamarte: o leque em área (Spray). O dano de todos os chumbos que pegam no mesmo alvo vira um golpe só (uma reação, um número).
             pelletDamage.Clear();

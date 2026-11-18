@@ -187,7 +187,7 @@ namespace Pirates.UI
         {
             if (banner == null) return;
             banner.Show("Abordagem!", $"{shipName} · F no seu convés volta ao navio");
-            bannerUntil = Time.time + 3.5f;
+            bannerUntil = Time.time + Hud.BannerTime(3.5f);
         }
 
         void OnCrewDefeated() { }
@@ -254,7 +254,7 @@ namespace Pirates.UI
             foreach (var s in cargo) if (s.item) parts.Add($"{s.amount} {s.item.displayName}");
             if (recruited > 0) parts.Add($"{recruited} {(recruited == 1 ? "tripulante" : "tripulantes")}");
             banner.Show(title + "!", parts.Count > 0 ? string.Join(" · ", parts) : "nada de valor a bordo");
-            bannerUntil = Time.time + 5f;
+            bannerUntil = Time.time + Hud.BannerTime(5f);
             var h = GameHud.Current;
             if (h && spilled)
                 h.Feed(GameHud.FeedKind.Notice, "<b>O porão encheu</b>\n<size=75%>o resto fica boiando ao lado do seu navio (F para pegar)</size>",

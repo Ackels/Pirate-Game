@@ -885,8 +885,8 @@ Transform:
   m_GameObject: {fileID: 4785077}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -0, y: -0, z: -0.0836}
-  m_LocalScale: {x: 0.44, y: 0.44, z: 0.44}
+  m_LocalPosition: {x: -0, y: -0, z: -0.12349999}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 473800073}
@@ -104326,7 +104326,7 @@ MonoBehaviour:
     variant: 0
     minRange: 0
     maxRange: 4.2
-    weight: 3
+    weight: 2
     phase: 1
     cooldown: 0
     recovery: 0.7
@@ -104337,7 +104337,7 @@ MonoBehaviour:
     variant: 1
     minRange: 0
     maxRange: 4.2
-    weight: 2.5
+    weight: 2
     phase: 1
     cooldown: 0
     recovery: 0.8
@@ -104370,7 +104370,7 @@ MonoBehaviour:
     variant: 4
     minRange: 0
     maxRange: 3.2
-    weight: 1
+    weight: 1.8
     phase: 1
     cooldown: 6
     recovery: 1
@@ -104379,11 +104379,11 @@ MonoBehaviour:
     guardBreaker: 0
   - name: Salto
     variant: 5
-    minRange: 5.5
+    minRange: 0
     maxRange: 11
-    weight: 1
+    weight: 1.5
     phase: 1
-    cooldown: 7
+    cooldown: 6
     recovery: 1.2
     combo: 0
     breaker: 0
@@ -104443,6 +104443,7 @@ MonoBehaviour:
   eyeCalm: 1.2
   eyeFury: 3
   eyeFlare: 6
+  repeatWeight: 0.25
 --- !u!114 &636137758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104897,8 +104898,8 @@ Transform:
   m_GameObject: {fileID: 639239739}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -0, y: -0, z: -0.079799995}
-  m_LocalScale: {x: 0.42, y: 0.42, z: 0.42}
+  m_LocalPosition: {x: -0, y: -0, z: -0.1178}
+  m_LocalScale: {x: 0.62, y: 0.62, z: 0.62}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1446711466}

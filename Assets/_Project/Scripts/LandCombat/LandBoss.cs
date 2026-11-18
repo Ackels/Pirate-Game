@@ -235,18 +235,25 @@ namespace Pirates.LandCombat
                 behindAt = float.NegativeInfinity;
                 return pick;
             }
+            // Sorteio (18/11, Jhonata: "a maioria dos golpes é o mesmo, dificilmente dá o giro ou o pulo"): o giro (resposta) também entra no
+            // sorteio pelo peso dele, e o último golpe vale só repeatWeight do peso (não repete tanto).
             float total = 0f;
-            foreach (var m in moves) if (Valid(m, distance) && !m.breaker && !m.guardBreaker) total += m.weight;
+            foreach (var m in moves) if (Valid(m, distance) && !m.guardBreaker) total += Weight(m);
             if (total <= 0f) return null;
             float roll = UnityEngine.Random.value * total;
             foreach (var m in moves)
             {
-                if (!Valid(m, distance) || m.breaker || m.guardBreaker) continue;
-                roll -= m.weight;
-                if (roll <= 0f) return m;
+                if (!Valid(m, distance) || m.guardBreaker) continue;
+                roll -= Weight(m);
+                if (roll <= 0f) { lastPick = m; return m; }
             }
             return null;
         }
+
+        [Tooltip("Peso do golpe que acabou de sair no próximo sorteio (fração).")]
+        [SerializeField, Range(0f, 1f)] float repeatWeight = 0.25f;
+        Move lastPick;
+        float Weight(Move m) => m == lastPick ? m.weight * repeatWeight : m.weight;
 
         Move Best(float distance, Func<Move, bool> kind)
         {

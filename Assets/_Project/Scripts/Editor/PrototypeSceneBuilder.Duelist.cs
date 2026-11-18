@@ -36,7 +36,20 @@ namespace Pirates.EditorTools
         static bool IsDuelist(string postName) => postName.StartsWith("Duelista");
 
         /// <summary>Adaga da duelista (Data/Weapons/Weapon_Adaga_Duelista; preservada se existe).</summary>
-        static WeaponDefinition DuelistDagger() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Adaga_Duelista.asset", w =>
+        static WeaponDefinition DuelistDagger() => DuelistHandMoves(DuelistDaggerAsset());
+
+        /// <summary>Golpes feitos à mão da duelista (17/11): estados "Inimigo_Golpe73/74" tocando a guarda; o GreatswordSwing ("AdagaInimiga") põe os braços.</summary>
+        static WeaponDefinition DuelistHandMoves(WeaponDefinition w)
+        {
+            if (!w) return w;
+            w.handMoves = "AdagaInimiga";
+            w.animatorVariantOffset = 0;
+            w.animatorVariants = new[] { EnemyHandVariant + 3, EnemyHandVariant + 4 };
+            UnityEditor.EditorUtility.SetDirty(w);
+            return w;
+        }
+
+        static WeaponDefinition DuelistDaggerAsset() => LoadOrCreateAsset<WeaponDefinition>(WeaponsFolder + "/Weapon_Adaga_Duelista.asset", w =>
         {
             w.displayName = "Adaga";
             w.kind = WeaponKind.Melee;

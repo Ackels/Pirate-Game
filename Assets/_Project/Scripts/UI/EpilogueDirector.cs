@@ -114,7 +114,7 @@ namespace Pirates.UI
                     hud.Banners.Add(banner);
                 }
                 banner.Show("Fim de A Coroa de Prata", "o Mar de Prata continua seu: contratos, tesouros e chefes esperam");
-                bannerUntil = Time.unscaledTime + bannerSeconds;
+                bannerUntil = Time.unscaledTime + Hud.BannerTime(bannerSeconds);
                 hud.Feed(GameHud.FeedKind.Notice, "<b>A Coroa de Prata</b>\n<size=75%>equipe no encaixe Relíquia da tela I: mais ouro, fama e tesouro</size>",
                     HudColors.Gold);
             }

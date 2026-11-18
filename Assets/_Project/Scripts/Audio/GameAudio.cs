@@ -182,6 +182,12 @@ namespace Pirates.Audio
                         SoundPlayer.At(sounds.explosion, p, 0.45f, 0.6f);
                         SoundPlayer.At(sounds.ghostMoan, p, 0.9f, 0.85f * v);
                         break;
+                    // Pancada pesada das feras (18/11): estrondo grave, baque de corpo e madeira rachando.
+                    case Pirates.LandCombat.CryptMonster.Cue.Smash:
+                        SoundPlayer.At(sounds.explosion, p, 0.55f, 0.5f);
+                        SoundPlayer.At(sounds.bodyFall, p, 1f, 0.6f);
+                        SoundPlayer.At(sounds.crateBreak, p, 0.5f, 0.55f);
+                        break;
                 }
                 return;
             }

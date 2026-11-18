@@ -64,6 +64,10 @@ namespace Pirates.OnFoot
         [SerializeField] Vector2 straightWristAim = new(0.6f, 0.2f);
         [Tooltip("Depois de girar o antebraço, o pulso pode dobrar até isto (graus) para chegar mais perto do alvo.")]
         [SerializeField] float straightWristBend = 35f;
+        [Tooltip("Estados do tronco da pose de espada pronta (parado e correndo) com o pulso reto e a lâmina para a frente (18/11, Jhonata: os inimigos seguravam a espada com a lâmina para o lado e a mão virada para trás).")]
+        [SerializeField] string[] readyWristStates = { "EspadaPronta", "CorrerComEspada" };
+        [Tooltip("Para onde a lâmina aponta na pose pronta: para fora do peito (x), para a frente (y) e para cima (z), somados.")]
+        [SerializeField] Vector3 readyWristAim = new(0.3f, 1f, 0.15f);
 
         [Header("Filtro de virada")]
         [Tooltip("Mão, antebraço, pé ou canela girando mais que isto (graus) de um quadro para o outro é tranco da mistura, não movimento.")]
@@ -101,7 +105,9 @@ namespace Pirates.OnFoot
         Transform rightFore;
         Quaternion handInFore = Quaternion.identity;
         readonly HashSet<int> straightWristHashes = new();
+        readonly HashSet<int> readyWristHashes = new();
         float straightWrist;
+        bool readyAim;
         Vector3 bladeEndA, bladeEndB;
 
         void Awake()
@@ -150,6 +156,12 @@ namespace Pirates.OnFoot
                 {
                     int hash = Animator.StringToHash(name);
                     if (animator.HasState(layer, hash)) straightWristHashes.Add(hash);
+                }
+            if (layer >= 0 && readyWristStates != null)
+                foreach (var name in readyWristStates)
+                {
+                    int hash = Animator.StringToHash(name);
+                    if (animator.HasState(layer, hash)) readyWristHashes.Add(hash);
                 }
             limbs[0] = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
             limbs[1] = animator.GetBoneTransform(HumanBodyBones.LeftHand);
@@ -376,7 +388,9 @@ namespace Pirates.OnFoot
         /// </summary>
         void StraightWrist()
         {
-            straightWrist = Mathf.MoveTowards(straightWrist, InStates(straightWristHashes) ? 1f : 0f, Time.deltaTime / 0.1f);
+            bool strike = InStates(straightWristHashes), ready = !strike && InStates(readyWristHashes);
+            if (strike || ready) readyAim = ready;
+            straightWrist = Mathf.MoveTowards(straightWrist, strike || ready ? 1f : 0f, Time.deltaTime / 0.1f);
             if (straightWrist <= 0f || !combat || !rightHand || !rightFore) return;
             var weapon = combat.Current;
             if (!weapon || weapon.kind != WeaponKind.Melee) return;
@@ -396,7 +410,9 @@ namespace Pirates.OnFoot
             Vector3 chestPos = (upperChest ? upperChest : chest ? chest : hips).position;
             Vector3 outward = Vector3.ProjectOnPlane(handPos - chestPos, transform.up);
             outward = outward.sqrMagnitude > 1e-4f ? outward.normalized : transform.right;
-            Vector3 target = (outward + transform.forward * straightWristAim.x + transform.up * straightWristAim.y).normalized;
+            Vector3 target = readyAim
+                ? (outward * readyWristAim.x + transform.forward * readyWristAim.y + transform.up * readyWristAim.z).normalized
+                : (outward + transform.forward * straightWristAim.x + transform.up * straightWristAim.y).normalized;
 
             // Lâmina com o pulso reto, girando em volta do eixo do antebraço: o ângulo que mais a aproxima do alvo.
             Vector3 d = (straight * bladeInHand).normalized;

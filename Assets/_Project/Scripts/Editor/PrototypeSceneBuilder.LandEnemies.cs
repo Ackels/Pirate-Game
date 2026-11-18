@@ -210,7 +210,13 @@ namespace Pirates.EditorTools
             if (modelAnimator && modelAnimator.isHuman && !model.GetComponent<PostureLimiter>())
                 model.gameObject.AddComponent<PostureLimiter>().ConfigureBend(24f, 0.35f, 25f, 0.2f);
             var combat = go.AddComponent<CharacterCombat>();
-            if (weapon.twoHanded)
+            bool mage = weapon.twoHanded && IsSkeletonMage(kitModel);
+            if (mage)
+            {
+                // Mago esqueleto (18/11): cajado e bola de fogo no lugar do bacamarte (PrototypeSceneBuilder.Mage.cs).
+                SetupSkeletonMage(go, model, combat);
+            }
+            else if (weapon.twoHanded)
             {
                 // Bacamarteiro: o bacamarte do jogador (duas mãos, pose de rifle), com o mesmo aviso dos atiradores (faíscas na caçoleta).
                 // A mosqueteira da Guarda Negra usa o mosquete-machadinha do kit; os bacamarteiros, o bacamarte.
@@ -270,7 +276,8 @@ namespace Pirates.EditorTools
             ai.Configure(player.transform, camp);
             // Chega perto (só mira a 9 m: a 11 m pegavam 3 de 6 chumbos), recua só colado (2,5 m) e segura a mira 1,1–1,5 s (dá para sair
             // do leque correndo de lado).
-            if (weapon.twoHanded) ai.ConfigureRanged(6f, 2.5f, 9f, new Vector2(1.1f, 1.5f), 2.5f);
+            if (mage) ConfigureMageAI(ai);
+            else if (weapon.twoHanded) ai.ConfigureRanged(6f, 2.5f, 9f, new Vector2(1.1f, 1.5f), 2.5f);
             if (IsBrute(name)) MakeBrute(go, model, ai);
             if (IsDuelist(name)) MakeDuelist(go, model, ai);
             if (IsChief(name)) MakeChief(go, model, ai);

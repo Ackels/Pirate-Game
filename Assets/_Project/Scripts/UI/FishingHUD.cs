@@ -175,7 +175,7 @@ namespace Pirates.UI
             if (h) h.Feed(GameHud.FeedKind.Pickup, $"Pescou: <b>{item.displayName}</b>{size}{note}  <size=80%>(+1 na mochila)</size>", item.color);
             if (item.rarity < ItemRarity.Rare || banner == null) return;
             banner.Show($"<color={Rarity.Hex(item.rarity)}>{Rarity.NameOf(item.rarity)}</color>: {item.displayName}!", "pescado");
-            bannerUntil = Time.time + bannerSeconds;
+            bannerUntil = Time.time + Hud.BannerTime(bannerSeconds);
         }
 
         void OnBaitPacked(FishingRod who, ItemDefinition bait, int amount)
